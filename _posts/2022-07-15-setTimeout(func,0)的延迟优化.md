@@ -66,7 +66,7 @@ keywords: JavaScript
 })();
 ```
 性能测试：
-```JavaScript
+```javascript
 {
     setZeroTimeout(test1);
     let i = 0;
