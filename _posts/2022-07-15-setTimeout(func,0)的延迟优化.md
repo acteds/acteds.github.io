@@ -9,7 +9,7 @@ keywords: JavaScript
 根据[MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/setTimeout#%E5%AE%9E%E9%99%85%E5%BB%B6%E6%97%B6%E6%AF%94%E8%AE%BE%E5%AE%9A%E5%80%BC%E6%9B%B4%E4%B9%85%E7%9A%84%E5%8E%9F%E5%9B%A0%EF%BC%9A%E6%9C%80%E5%B0%8F%E5%BB%B6%E8%BF%9F%E6%97%B6%E9%97%B4)所言，setTimeout函数的最小延迟>=4ms。
 也[有人](https://dbaron.org/log/20100309-faster-timeouts)实现了延迟更小的异步方法：
 无参数setZeroTimeout():
-```javaScript
+```javascript
 // 闭包
 (function () {
     var timeouts = [];
@@ -40,7 +40,7 @@ keywords: JavaScript
 ## 修改
 ### 不定参数的setZeroTimeout()
 通过一些特性，可以将以上代码变成，能够带参调用：
-```javaScript
+```javascript
 // 闭包
 (function () {
     var timeouts = [];
@@ -97,15 +97,15 @@ keywords: JavaScript
 
 ```
 控制台：
-```c
+```
 100次调用setZeroTimeout()耗时:4ms
 100次调用setTimeout()耗时:466ms
 ```
 
-## 不定参数的setZeroInterval()
+### 不定参数的setZeroInterval()
 顺便拓展一下setInterval()
 因为需要考虑取消执行，因此会需要处理多线程问题。
-```JavaScript
+```javascript
 // 闭包
 (function () {
     let interval = [];
@@ -160,7 +160,7 @@ keywords: JavaScript
 ```
 性能测试：
 单次测试：
-```JavaScript
+```javascript
 {
     let count = 0;
     let startTime = Date.now();
@@ -184,12 +184,12 @@ keywords: JavaScript
 }
 ```
 控制台：
-```c
+```
 id:1,100次调用setZeroInterval()耗时:4ms
 id:112,100次调用setInterval()耗时:391ms
 ```
 多次测试：
-```JavaScript
+```javascript
 //多次测试setZeroInterval(),请单独分别复制运行
 for (let i = 0; i < 130;i++)
 {
@@ -220,7 +220,7 @@ for (let i = 0; i < 130;i++)
 
 ```
 控制台：
-```c
+```
 id:7,100次调用setZeroInterval()耗时:348ms
 id:266,100次调用setInterval()耗时:408ms
 ```
