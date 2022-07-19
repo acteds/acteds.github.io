@@ -113,6 +113,14 @@
     } ,
   
     {
+      "title"    : "异步函数：Promise使用指南",
+      "category" : "JavaScript",
+      
+      "url"      : "https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/",
+      "keywords" : "JavaScript"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
