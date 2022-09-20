@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2022-09-20T10:42:05+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">异步函数：Promise使用指南</title><link href="https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" rel="alternate" type="text/html" title="异步函数：Promise使用指南" /><published>2022-07-19T00:00:00+08:00</published><updated>2022-07-19T00:00:00+08:00</updated><id>https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%20Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97</id><content type="html" xml:base="https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2022-09-20T10:43:37+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">异步函数：Promise使用指南</title><link href="https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" rel="alternate" type="text/html" title="异步函数：Promise使用指南" /><published>2022-07-19T00:00:00+08:00</published><updated>2022-07-19T00:00:00+08:00</updated><id>https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%20Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97</id><content type="html" xml:base="https://acteds.github.io/2022/07/19/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0-Promise%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;  一些基本概念:&lt;a href=&quot;https://www.runoob.com/js/js-async.html&quot;&gt;异步编程&lt;/a&gt;、&lt;a href=&quot;https://www.runoob.com/js/js-promise.html&quot;&gt;Promise&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
@@ -453,35 +453,4 @@ id:112,100次调用setInterval()耗时:391ms
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;id:7,100次调用setZeroInterval()耗时:348ms
 id:266,100次调用setInterval()耗时:408ms
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;根据电脑性能不同，循环次数越多，setZeroInterval()越慢。&lt;/p&gt;</content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html">引言 根据MDN所言，setTimeout函数的最小延迟&amp;gt;=4ms。 也有人实现了延迟更小的异步方法： 无参数setZeroTimeout(): ```javascript // 闭包 (function () { var timeouts = []; var messageName = “zero-timeout-message”;</summary></entry><entry><title type="html">哔哩哔哩粉丝勋章排序</title><link href="https://acteds.github.io/2022/05/03/%E7%B2%89%E4%B8%9D%E7%89%8C%E5%AD%90%E6%8E%92%E5%BA%8F/" rel="alternate" type="text/html" title="哔哩哔哩粉丝勋章排序" /><published>2022-05-03T00:00:00+08:00</published><updated>2022-05-03T00:00:00+08:00</updated><id>https://acteds.github.io/2022/05/03/%E7%B2%89%E4%B8%9D%E7%89%8C%E5%AD%90%E6%8E%92%E5%BA%8F</id><content type="html" xml:base="https://acteds.github.io/2022/05/03/%E7%B2%89%E4%B8%9D%E7%89%8C%E5%AD%90%E6%8E%92%E5%BA%8F/">&lt;h1 id=&quot;脚本主页&quot;&gt;&lt;a href=&quot;https://greasyfork.org/zh-CN/scripts/444384&quot;&gt;脚本主页&lt;/a&gt;&lt;/h1&gt;
-&lt;h1 id=&quot;功能&quot;&gt;功能&lt;/h1&gt;
-&lt;ol&gt;
-  &lt;li&gt;修改表格每行的高度,可自定义&lt;/li&gt;
-  &lt;li&gt;去除分页&lt;/li&gt;
-  &lt;li&gt;按照牌子等级和经验排序&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&quot;效果&quot;&gt;效果&lt;/h1&gt;
-&lt;p&gt;&lt;a href=&quot;https://link.bilibili.com/p/center/#/user-center/wearing-center/my-medal&quot;&gt;&lt;img src=&quot;https://greasyfork.s3.us-east-2.amazonaws.com/2kku39cn00z8gd7m24pkz1rxw302&quot; alt=&quot;示例图片&quot; title=&quot;点击进入&quot; /&gt;&lt;/a&gt;&lt;/p&gt;</content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html">脚本主页 功能 修改表格每行的高度,可自定义 去除分页 按照牌子等级和经验排序</summary></entry><entry><title type="html">天天基金数据抽取</title><link href="https://acteds.github.io/2021/06/13/%E5%A4%A9%E5%A4%A9%E5%9F%BA%E9%87%91%E6%95%B0%E6%8D%AE%E6%8A%BD%E5%8F%96/" rel="alternate" type="text/html" title="天天基金数据抽取" /><published>2021-06-13T00:00:00+08:00</published><updated>2021-06-13T00:00:00+08:00</updated><id>https://acteds.github.io/2021/06/13/%E5%A4%A9%E5%A4%A9%E5%9F%BA%E9%87%91%E6%95%B0%E6%8D%AE%E6%8A%BD%E5%8F%96</id><content type="html" xml:base="https://acteds.github.io/2021/06/13/%E5%A4%A9%E5%A4%A9%E5%9F%BA%E9%87%91%E6%95%B0%E6%8D%AE%E6%8A%BD%E5%8F%96/">&lt;h1 id=&quot;脚本主页&quot;&gt;&lt;a href=&quot;https://greasyfork.org/zh-CN/scripts/427892&quot;&gt;脚本主页&lt;/a&gt;&lt;/h1&gt;
-&lt;h1 id=&quot;注意事项&quot;&gt;注意事项&lt;/h1&gt;
-&lt;ol&gt;
-  &lt;li&gt;与月[高\低]点的差距算上了估值.在收盘更新了净值后依然会用当前最新累计净值乘以估值&lt;/li&gt;
-  &lt;li&gt;2.0版本更新后可以清理一下存储数据,2.0大幅重构了逻辑.&lt;/li&gt;
-  &lt;li&gt;右键可以复制重要属性:累计净值,一年前累计净值,任期回报.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&quot;用以快捷显示&quot;&gt;用以快捷显示:&lt;/h1&gt;
-&lt;ol&gt;
-  &lt;li&gt;累计净值&lt;/li&gt;
-  &lt;li&gt;一年前累计净值&lt;/li&gt;
-  &lt;li&gt;最新一个任期回报&lt;/li&gt;
-  &lt;li&gt;年平均回报&lt;/li&gt;
-  &lt;li&gt;近一年累计净值增长率&lt;/li&gt;
-  &lt;li&gt;近一个月(指近20个交易日)最大累计净值&lt;/li&gt;
-  &lt;li&gt;当天估值离高点的差值&lt;/li&gt;
-  &lt;li&gt;近一个月(指近20个交易日)最小累计净值&lt;/li&gt;
-  &lt;li&gt;当天估值离低点的差值&lt;/li&gt;
-  &lt;li&gt;当天估值变化率&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://greasyfork.s3.us-east-2.amazonaws.com/7oh66bduywqng9aghegzed1m3j76&quot; alt=&quot;示例图片&quot; /&gt;&lt;/p&gt;</content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html">脚本主页 注意事项 与月[高\低]点的差距算上了估值.在收盘更新了净值后依然会用当前最新累计净值乘以估值 2.0版本更新后可以清理一下存储数据,2.0大幅重构了逻辑. 右键可以复制重要属性:累计净值,一年前累计净值,任期回报.</summary></entry></feed>
+&lt;p&gt;根据电脑性能不同，循环次数越多，setZeroInterval()越慢。&lt;/p&gt;</content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html">引言 根据MDN所言，setTimeout函数的最小延迟&amp;gt;=4ms。 也有人实现了延迟更小的异步方法： 无参数setZeroTimeout(): ```javascript // 闭包 (function () { var timeouts = []; var messageName = “zero-timeout-message”;</summary></entry></feed>
