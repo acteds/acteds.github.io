@@ -6,12 +6,12 @@ description: Spring配置文件的合并
 keywords: Spring,Java
 ---
 ## 引言
-&emsp;&emsp;在Spring MVC中，可以将`DispatcherServlet`所需的所有配置信息都包含在根`ApplicationContext`中，这样就不需要单独为`DispatcherServlet`创建一个XML文件了。  
-&emsp;&emsp;实际上，在使用Spring MVC时，**建议**将所有Bean定义和配置信息都放在**一个**名为`applicationContext.xml`的文件中，以便于管理和维护。然后，在`web.xml`文件中配置`DispatcherServlet`，并将其`contextConfigLocation`参数设置为`classpath:/applicationContext.xml`，这样就可以让`DispatcherServlet`自动加载应用程序的所有Bean定义和配置信息了。  
-&emsp;&emsp;总之，虽然需要在`web.xml`文件中配置`DispatcherServlet`并指定其`contextConfigLocation`参数所需的XML文件，但是这个XML文件里面的**所有内容**都可以转移到根`ApplicationContext`中，以便于更好地管理和维护Spring应用程序。  
+&emsp;&emsp;在Spring MVC中，可以将`DispatcherServlet`所需的所有配置信息都包含在根`ApplicationContext`中，这样就不需要单独为`DispatcherServlet`创建一个XML文件了。   
 
 
 ## 详解   
+&emsp;&emsp;实际上，在使用Spring MVC时，**建议**将所有Bean定义和配置信息都放在**一个**名为`applicationContext.xml`的文件中，以便于管理和维护。然后，在`web.xml`文件中配置`DispatcherServlet`，并将其`contextConfigLocation`参数设置为`classpath:/applicationContext.xml`，这样就可以让`DispatcherServlet`自动加载应用程序的所有Bean定义和配置信息了。  
+&emsp;&emsp;总之，虽然需要在`web.xml`文件中配置`DispatcherServlet`并指定其`contextConfigLocation`参数所需的XML文件，但是这个XML文件里面的**所有内容**都可以转移到根`ApplicationContext`中，以便于更好地管理和维护Spring应用程序。 
 &emsp;&emsp;下面是一个示例`web.xml`文件的配置，其中`DispatcherServlet`的`contextConfigLocation`参数被设置为`classpath:/applicationContext.xml`：  
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
