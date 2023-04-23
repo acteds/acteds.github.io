@@ -1,12 +1,12 @@
 ---
 layout: post
-title: @Transactional注解无效
+title: Transactional注解无效
 categories: Java
 description: Spring的容器访问权限
 keywords: Spring,Java
 ---
 ## 引言
-&emsp;&emsp;在使用`@Transactional`注解方法时没有产生应有的效果,通过排除发现`@Transactional`注解是无效状态.  
+&emsp;&emsp;在使用`Transactional`注解方法时没有产生应有的效果,通过排除发现`Transactional`注解是无效状态.  
 
 ## 详解   
 &emsp;&emsp;SSM架构下，Spring是一个容器，通过`applicationContext.xml`配置。  
