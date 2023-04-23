@@ -121,6 +121,22 @@
     } ,
   
     {
+      "title"    : "2023-04-20-@Transactional注解无效",
+      "category" : "Spring,Java",
+      
+      "url"      : "https://acteds.github.io/2023/04/20/@Transactional%E6%B3%A8%E8%A7%A3%E6%97%A0%E6%95%88-copy/",
+      "keywords" : "Spring,Java"
+    } ,
+  
+    {
+      "title"    : "合并servlet-name-servlet.xml与applicationContext.xml",
+      "category" : "Spring,Java",
+      
+      "url"      : "https://acteds.github.io/2023/04/21/%E5%90%88%E5%B9%B6servlet-name-servlet.xml%E4%B8%8EapplicationContext.xml/",
+      "keywords" : "Spring,Java"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
