@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 2023-04-20-@Transactional注解无效
-categories: Spring,Java
+title: @Transactional注解无效
+categories: Java
 description: Spring的容器访问权限
 keywords: Spring,Java
 ---

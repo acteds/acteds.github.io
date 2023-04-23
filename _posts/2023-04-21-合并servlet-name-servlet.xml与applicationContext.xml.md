@@ -1,10 +1,11 @@
 ---
 layout: post
 title: 合并servlet-name-servlet.xml与applicationContext.xml
-categories: Spring,Java
+categories: Java
 description: Spring配置文件的合并
 keywords: Spring,Java
 ---
+
 ## 引言
 &emsp;&emsp;在Spring MVC中，可以将`DispatcherServlet`所需的所有配置信息都包含在根`ApplicationContext`中，这样就不需要单独为`DispatcherServlet`创建一个XML文件了。   
 
