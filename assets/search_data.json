@@ -137,11 +137,19 @@
     } ,
   
     {
-      "title"    : "2023-04-26-在浏览某些网站时字体很奇怪",
+      "title"    : "在浏览某些网站时字体很奇怪",
       "category" : "Chrome",
       
-      "url"      : "https://acteds.github.io/2023/04/26/%E5%9C%A8%E6%B5%8F%E8%A7%88%E6%9F%90%E4%BA%9B%E7%BD%91%E7%AB%99%E6%97%B6%E5%AD%97%E4%BD%93%E5%BE%88%E5%A5%87%E6%80%AA/",
+      "url"      : "https://acteds.github.io/2023/04/26/%E5%9C%A8%E6%B5%8F%E8%A7%88%E6%9F%90%E4%BA%9B%E7%BD%91%E7%AB%99%E6%97%B6%E5%AD%97%E4%BD%93%E5%BE%88%E5%A5%87%E6%80%AA-copy/",
       "keywords" : "Chrome"
+    } ,
+  
+    {
+      "title"    : "MySQL的驱动版本更替后日期返回值的变化",
+      "category" : "Java",
+      
+      "url"      : "https://acteds.github.io/2023/05/17/MySQL%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%9B%BF%E5%90%8E%E6%97%A5%E6%9C%9F%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%8F%98%E5%8C%96/",
+      "keywords" : "MySQL,Java"
     } ,
   
     {
