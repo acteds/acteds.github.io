@@ -16,10 +16,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set Ruby 2.7
+      - name: Set Ruby 3.3.0
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.4
+          ruby-version: 3.3.0
 
       - name: Install and Build
         run: |
