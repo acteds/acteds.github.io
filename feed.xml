@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T16:35:12+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T16:39:05+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;  若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
@@ -24,11 +24,13 @@
     &lt;p&gt;记住第一行,我这里即&lt;strong&gt;b3778315&lt;/strong&gt;.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;将文件&lt;strong&gt;name.pem&lt;/strong&gt;改成:&lt;strong&gt;b3778315.0&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;证书的准备工作就完成了.
-    &lt;h3 id=&quot;其他准备工作&quot;&gt;其他准备工作&lt;/h3&gt;
-    &lt;p&gt;需要取得root权限,并取得系统盘写入权限. &lt;br /&gt;
+  &lt;li&gt;证书的准备工作就完成了.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;其他准备工作&quot;&gt;其他准备工作&lt;/h3&gt;
+&lt;p&gt;需要取得root权限,并取得系统盘写入权限. &lt;br /&gt;
 就拿&lt;a href=&quot;https://mumu.163.com/update/&quot;&gt;mumu模拟器12&lt;/a&gt;举例,需要勾选:&lt;/p&gt;
-  &lt;/li&gt;
+&lt;ul&gt;
   &lt;li&gt;设置中心-其他-开启手机Root权限.&lt;/li&gt;
   &lt;li&gt;设置中心-磁盘-可写系统盘.&lt;/li&gt;
 &lt;/ul&gt;
