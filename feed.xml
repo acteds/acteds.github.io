@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T13:13:59+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T16:35:12+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;  若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
 &lt;h3 id=&quot;导出证书&quot;&gt;导出证书&lt;/h3&gt;
-&lt;p&gt;  就拿&lt;a href=&quot;https://www.charlesproxy.com/&quot;&gt;Charles&lt;/a&gt;举例：导出pem证书:Help-SSL Proxying-Save Charles Root Certificate…,名称假定为&lt;kbd&gt;**name.pem**&lt;/kbd&gt;&lt;/p&gt;
+&lt;p&gt;  就拿&lt;a href=&quot;https://www.charlesproxy.com/&quot;&gt;Charles&lt;/a&gt;举例：导出pem证书:Help-SSL Proxying-Save Charles Root Certificate…,名称假定为&lt;strong&gt;name.pem&lt;/strong&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;修改名称&quot;&gt;修改名称&lt;/h3&gt;
 &lt;p&gt;  使用&lt;a href=&quot;https://slproweb.com/products/Win32OpenSSL.html&quot;&gt;openssl&lt;/a&gt;.&lt;/p&gt;
@@ -15,19 +15,19 @@
   &lt;li&gt;若已有pem文件,则输入以下代码:
     &lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;openssl x509 -inform PEM -subject_hash_old -in name.pem
 &lt;/code&gt;&lt;/pre&gt;
-    &lt;p&gt;   会输出形如:&lt;/p&gt;
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;**b3778315**
+    &lt;p&gt;会输出形如:&lt;/p&gt;
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;b3778315
 -----BEGIN CERTIFICATE-----
 省略
 -----END CERTIFICATE-----
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;   记住第一行,我这里即&lt;strong&gt;b3778315&lt;/strong&gt;.&lt;/p&gt;
+    &lt;p&gt;记住第一行,我这里即&lt;strong&gt;b3778315&lt;/strong&gt;.&lt;/p&gt;
   &lt;/li&gt;
-  &lt;li&gt;将文件&lt;kbd&gt;**name.pem**&lt;/kbd&gt;改成&lt;kbd&gt;**b3778315.0**&lt;/kbd&gt;.&lt;/li&gt;
+  &lt;li&gt;将文件&lt;strong&gt;name.pem&lt;/strong&gt;改成:&lt;strong&gt;b3778315.0&lt;/strong&gt;&lt;/li&gt;
   &lt;li&gt;证书的准备工作就完成了.
     &lt;h3 id=&quot;其他准备工作&quot;&gt;其他准备工作&lt;/h3&gt;
-    &lt;p&gt;  需要取得root权限,并取得系统盘写入权限. &lt;br /&gt;
-  就拿&lt;a href=&quot;https://mumu.163.com/update/&quot;&gt;mumu模拟器12&lt;/a&gt;举例,需要勾选:&lt;/p&gt;
+    &lt;p&gt;需要取得root权限,并取得系统盘写入权限. &lt;br /&gt;
+就拿&lt;a href=&quot;https://mumu.163.com/update/&quot;&gt;mumu模拟器12&lt;/a&gt;举例,需要勾选:&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;设置中心-其他-开启手机Root权限.&lt;/li&gt;
   &lt;li&gt;设置中心-磁盘-可写系统盘.&lt;/li&gt;
@@ -53,7 +53,7 @@ su
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;  可通过ls命令查看文件是否存在.  &lt;br /&gt;
   这样证书安装就完成了. &lt;br /&gt;
-  以上步骤也可通过各种有读写系统路径的管理器来操作,注意文件权限设置.&lt;/p&gt;</content><author><name>acteds</name></author><category term="安卓" /><summary type="html">引言   若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.</summary></entry><entry><title type="html">节流与去重的重要性</title><link href="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/" rel="alternate" type="text/html" title="节流与去重的重要性" /><published>2024-01-10T00:00:00+08:00</published><updated>2024-01-10T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7</id><content type="html" xml:base="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+  以上步骤也可通过各种有读写系统路径的管理器来操作,注意文件权限设置.&lt;/p&gt;</content><author><name>acteds</name></author><category term="Android" /><summary type="html">引言   若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.</summary></entry><entry><title type="html">节流与去重的重要性</title><link href="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/" rel="alternate" type="text/html" title="节流与去重的重要性" /><published>2024-01-10T00:00:00+08:00</published><updated>2024-01-10T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7</id><content type="html" xml:base="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver&quot;&gt;MutationObserver&lt;/a&gt;接口提供了侦听DOM数变化的功能,可以监听DOM中属性、内容和节点的修改。&lt;/p&gt;
 
 &lt;p&gt;  例如:&lt;/p&gt;
