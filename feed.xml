@@ -1,4 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-11T01:31:18+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">节流与去重的重要性</title><link href="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/" rel="alternate" type="text/html" title="节流与去重的重要性" /><published>2024-01-10T00:00:00+08:00</published><updated>2024-01-10T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7</id><content type="html" xml:base="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T13:13:59+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;p&gt;  若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.&lt;/p&gt;
+
+&lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
+&lt;h3 id=&quot;导出证书&quot;&gt;导出证书&lt;/h3&gt;
+&lt;p&gt;  就拿&lt;a href=&quot;https://www.charlesproxy.com/&quot;&gt;Charles&lt;/a&gt;举例：导出pem证书:Help-SSL Proxying-Save Charles Root Certificate…,名称假定为&lt;kbd&gt;**name.pem**&lt;/kbd&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;修改名称&quot;&gt;修改名称&lt;/h3&gt;
+&lt;p&gt;  使用&lt;a href=&quot;https://slproweb.com/products/Win32OpenSSL.html&quot;&gt;openssl&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;若第一步没有取得.pem证书而是.cer证书,则可以使用以下代码转换:
+    &lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;openssl x509 -inform der -in name.cer -out name.pem
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;若已有pem文件,则输入以下代码:
+    &lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;openssl x509 -inform PEM -subject_hash_old -in name.pem
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;p&gt;   会输出形如:&lt;/p&gt;
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;**b3778315**
+-----BEGIN CERTIFICATE-----
+省略
+-----END CERTIFICATE-----
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;   记住第一行,我这里即&lt;strong&gt;b3778315&lt;/strong&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;将文件&lt;kbd&gt;**name.pem**&lt;/kbd&gt;改成&lt;kbd&gt;**b3778315.0**&lt;/kbd&gt;.&lt;/li&gt;
+  &lt;li&gt;证书的准备工作就完成了.
+    &lt;h3 id=&quot;其他准备工作&quot;&gt;其他准备工作&lt;/h3&gt;
+    &lt;p&gt;  需要取得root权限,并取得系统盘写入权限. &lt;br /&gt;
+  就拿&lt;a href=&quot;https://mumu.163.com/update/&quot;&gt;mumu模拟器12&lt;/a&gt;举例,需要勾选:&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;设置中心-其他-开启手机Root权限.&lt;/li&gt;
+  &lt;li&gt;设置中心-磁盘-可写系统盘.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;执行adb命令&quot;&gt;执行ADB命令&lt;/h3&gt;
+&lt;p&gt;  连接,并获取root权限,端口举例为mumu模拟器12:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;adb connect 127.0.0.1:7555
+adb shell
+su
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;  在手机上确认授权.退出shell&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;exit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;  写入文件:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;adb push b3778315.0 /etc/security/cacerts/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;  控制台回应:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[100%] /etc/security/cacerts/b3778315.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;  更改权限:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-Bash&quot;&gt;adb shell chmod 644 /etc/security/cacerts/b3778315.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;  可通过ls命令查看文件是否存在.  &lt;br /&gt;
+  这样证书安装就完成了. &lt;br /&gt;
+  以上步骤也可通过各种有读写系统路径的管理器来操作,注意文件权限设置.&lt;/p&gt;</content><author><name>acteds</name></author><category term="安卓" /><summary type="html">引言   若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.</summary></entry><entry><title type="html">节流与去重的重要性</title><link href="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/" rel="alternate" type="text/html" title="节流与去重的重要性" /><published>2024-01-10T00:00:00+08:00</published><updated>2024-01-10T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7</id><content type="html" xml:base="https://acteds.github.io/2024/01/10/%E8%8A%82%E6%B5%81%E4%B8%8E%E5%8E%BB%E9%87%8D%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver&quot;&gt;MutationObserver&lt;/a&gt;接口提供了侦听DOM数变化的功能,可以监听DOM中属性、内容和节点的修改。&lt;/p&gt;
 
 &lt;p&gt;  例如:&lt;/p&gt;
@@ -33,8 +88,10 @@
 
 &lt;p&gt;  这个回调函数接收两个参数：&lt;/p&gt;
 
-&lt;p&gt;   * &lt;strong&gt;records&lt;/strong&gt;：这是一个包含所有观察到的 DOM 变化的数组（MutationRecord 对象）。每个 MutationRecord 包含了有关单个 DOM 变化的信息，比如发生变化的节点、变化类型等。&lt;br /&gt;
-   * itself（可选）：这个参数是 MutationObserver 实例自身。它指向了触发这个回调函数的 MutationObserver 实例。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;records&lt;/strong&gt;：这是一个包含所有观察到的 DOM 变化的数组（MutationRecord 对象）。每个 MutationRecord 包含了有关单个 DOM 变化的信息，比如发生变化的节点、变化类型等。&lt;/li&gt;
+  &lt;li&gt;itself（可选）：这个参数是 MutationObserver 实例自身。它指向了触发这个回调函数的 MutationObserver 实例。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;  在 MutationObserver 的回调函数中，records 是一个 MutationRecord 对象的数组，代表了所有检测到的 DOM 变化。每个 MutationRecord 对象都包含了关于单个 DOM 变化的详细信息。&lt;/p&gt;
 
@@ -51,9 +108,11 @@
 &lt;h3 id=&quot;启动侦听&quot;&gt;启动侦听&lt;/h3&gt;
 &lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;nx&quot;&gt;mutationObserver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;observe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;  创建完实例后即可使用实例的observe()函数启动侦听。&lt;br /&gt;
-   * target:要观察变化的DOM。&lt;br /&gt;
-   * options（可选）:此对象的配置项描述了DOM的哪些变化应该报告给 MutationObserver的callback。当调用observe()时，childList、attributes和characterData中，必须有一个参数为 true。否则会抛出TypeError异常。&lt;/p&gt;
+&lt;p&gt;  创建完实例后即可使用实例的observe()函数启动侦听。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;target:要观察变化的DOM。&lt;/li&gt;
+  &lt;li&gt;options（可选）:此对象的配置项描述了DOM的哪些变化应该报告给 MutationObserver的callback。当调用observe()时，childList、attributes和characterData中，必须有一个参数为 true。否则会抛出TypeError异常。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;  options 的属性如下：&lt;br /&gt;
   1. subtree（可选）:当为 true 时，将会监听以 target 为根节点的整个子树。包括子树中所有节点的属性，而不仅仅是针对 target。默认值为 false。&lt;br /&gt;
