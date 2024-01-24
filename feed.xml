@@ -1,4 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-13T16:39:05+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-25T00:24:36+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">更新IDEA并保留所有兼容的设置</title><link href="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="更新IDEA并保留所有兼容的设置" /><published>2024-01-24T00:00:00+08:00</published><updated>2024-01-24T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;p&gt;  更新IDEA并不是一个好的想法,因为很容易出现兼容性问题,在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件.  &lt;br /&gt;
+  此次更新前版本为2019.3.3,更新后版本为2023.3.2&lt;br /&gt;
+  也会说一下我的常用配置.&lt;/p&gt;
+
+&lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;下载&lt;a href=&quot;https://www.jetbrains.com/idea/download/&quot;&gt;官方.zip&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;解压到合适的文件夹(我这里是D:\ideaIU-2023.3.2\)&lt;/li&gt;
+  &lt;li&gt;修改配置文件:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea.properties&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;此处设置将配置文件移入程序目录,若不设置则配置文件会出现在用户文件夹.
+        &lt;div class=&quot;language-properties highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;idea.config.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.home.path}/.IntelliJIdea2023.3.2/config&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;idea.system.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.home.path}/.IntelliJIdea2023.3.2/system&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;idea.plugins.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.config.path}/plugins&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;idea.log.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.system.path}/log&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;修改VM文件:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea64.exe.vmoptions&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;比如设置打开项目时的默认路径:
+        &lt;div class=&quot;language-properties highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;-Duser.home&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;D:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\i&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deaIU-2023.3.2&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\I&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deaProjects&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;复制老项目到新项目文件&lt;/li&gt;
+  &lt;li&gt;打开新版&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IDEA:D:\ideaIU-2023.3.2\bin\idea64.exe&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;随便打开一个项目.&lt;/li&gt;
+  &lt;li&gt;导入设置:
+    &lt;ul&gt;
+      &lt;li&gt;文件-管理IDE设置-导入设置&lt;/li&gt;
+      &lt;li&gt;找到老的设置文件夹,例如:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\Users\{你的用户名}\.IntelliJIdea2019.3\config&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;点击确认.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;完成了.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;注意&quot;&gt;注意&lt;/h2&gt;
+&lt;p&gt;  在使用这个方法前我使用过在老版导出全部设置,然后在新版导入全部设置.但还是有大部分设置没有被导入,最致命的是配色方案没有被导入,配色方案还是单独备份一下比较好.&lt;br /&gt;
+  而使用我这个方法可以导入大部分的设置高亮以及插件,若插件不兼容则IDEA不会把插件导入新版.因为两个版本都在,因此可以对比插件找平替了,用不习惯或者出现问题也可以直接用老版.&lt;/p&gt;
+&lt;h2 id=&quot;常用设置&quot;&gt;常用设置&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;字体没有成功导入,需要手动修改:设置-编辑器-字体-Consolas&lt;/li&gt;
+  &lt;li&gt;版本控制提交栏调出来:设置-版本控制-使用非模式提交界面&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;插件平替增强&quot;&gt;插件平替增强&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;设置背景图片现在不用插件&lt;a href=&quot;https://plugins.jetbrains.com/plugin/8502-background-image-plus&quot;&gt;Background Image Plus&lt;/a&gt;了:设置-外观-UI选项-背景图片…&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/10046-alibaba-java-coding-guidelines&quot;&gt;Alibaba Java Coding Guidelines&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/22381-alibaba-java-coding-guidelines-fix-some-bug-&quot;&gt;Alibaba Java Coding Guidelines(Fix Some Bug)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/7275-codeglance&quot;&gt;CodeGlance&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/18824-codeglance-pro&quot;&gt;CodeGlance Pro&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/8321-free-mybatis-plugin&quot;&gt;Free MyBatis plugin&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/10119-mybatisx&quot;&gt;MyBatisX&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/7654-gsonformat&quot;&gt;GsonFormat&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/20094-gsonformat&quot;&gt;Gsonformat&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/10465-highlightbracketpair&quot;&gt;HighlightBracketPair&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/17320-highlightbracketpair&quot;&gt;HighlightBracketPair&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/8554-ide-features-trainer&quot;&gt;IDE Features Trainer&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/9792-key-promoter-x&quot;&gt;Key Promoter X&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/6317-lombok&quot;&gt;Lombok&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/7179-maven-helper&quot;&gt;Maven Helper&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/10080-rainbow-brackets&quot;&gt;Rainbow Brackets&lt;/a&gt; —- &lt;a href=&quot;https://plugins.jetbrains.com/plugin/20710-rainbow-brackets-lite--free-and-opensource&quot;&gt;Rainbow Brackets Lite-Free and OpenSource&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/8286-sequencediagram&quot;&gt;SequenceDiagram&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/4509-statistic&quot;&gt;Statistic&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/12798-tabnine-ai-code-completion--chat-in-java-js-ts-python--more&quot;&gt;Tabnine: AI Code Completion &amp;amp; Chat in Java JS/TS Python &amp;amp; More&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/8579-translation&quot;&gt;Translation&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/9442-vue-js&quot;&gt;Vue.js&lt;/a&gt; —- 插件正常兼容&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;  力荐插件:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/18553-show-comment&quot;&gt;Show Comment&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/13710-chinese-simplified-language-pack----&quot;&gt;Chinese(Simplified)Language Pack/中文语言包&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>acteds</name></author><category term="IDEA" /><summary type="html">引言   更新IDEA并不是一个好的想法,因为很容易出现兼容性问题,在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件.   此次更新前版本为2019.3.3,更新后版本为2023.3.2   也会说一下我的常用配置.</summary></entry><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;  若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
