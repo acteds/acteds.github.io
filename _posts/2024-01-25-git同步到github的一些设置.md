@@ -1,9 +1,9 @@
 ---
 layout: post
 title: Git推送到Github的一些设置
-categories: Git,GitHub
+categories: [Git, GitHub]
 description: Git推送到Github的一些设置
-keywords: Git,GitHub
+keywords: Git, GitHub
 ---
 
 ## 引言
