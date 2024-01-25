@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-25T13:38:02+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Git推送到Github的一些设置</title><link href="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="Git推送到Github的一些设置" /><published>2024-01-25T00:00:00+08:00</published><updated>2024-01-25T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
-&lt;p&gt;  记录一些通常设置.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-01-25T13:56:16+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Git推送到Github的一些设置</title><link href="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="Git推送到Github的一些设置" /><published>2024-01-25T00:00:00+08:00</published><updated>2024-01-25T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;p&gt;  记录一些通常设置。&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;下载&lt;a href=&quot;https://git-scm.com/downloads&quot;&gt;Git&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;设置Git环境变量&lt;/li&gt;
-  &lt;li&gt;配置SSH,完成GitHub身份验证&lt;br /&gt;
-  终端输入:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C 邮箱地址&lt;/code&gt;,邮箱地址为GitHub的邮箱地址.并填写相关信息.&lt;br /&gt;
-  找到公钥文件(id_rsa.pub),打开复制内容&lt;br /&gt;
-  在GitHub上添加SSH keys(头像-Settings-SSH and GPG keys-New SSH key),标题随便,key内填公钥内容.&lt;/li&gt;
-  &lt;li&gt;验证是否成功:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -T git@github.com&lt;/code&gt;&lt;br /&gt;
+  &lt;li&gt;配置SSH，完成GitHub身份验证&lt;br /&gt;
+  终端输入：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C 邮箱地址&lt;/code&gt;，邮箱地址为GitHub的邮箱地址。
+  找到公钥文件(id_rsa.pub)，打开文件,复制内容&lt;br /&gt;
+  在GitHub上添加SSH keys(头像-Settings-SSH and GPG keys-New SSH key)，标题随便，key内填公钥内容。&lt;/li&gt;
+  &lt;li&gt;验证是否成功：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -T git@github.com&lt;/code&gt;&lt;br /&gt;
   若出现ssh: connect to host github.com port 22: Connection timed out&lt;br /&gt;
-  可以尝试修改SSH主机名:&lt;br /&gt;
-  在.ssh文件夹中新建config文件,无扩展名,并写入以下内容:
+  可以尝试修改SSH主机名：&lt;br /&gt;
+  在.ssh文件夹中新建config文件，无扩展名，并写入以下内容：
     &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Host github.com
 User 你的GitHub账号名称或邮箱地址
 Hostname ssh.github.com
@@ -20,50 +20,53 @@ PreferredAuthentications publickey
 IdentityFile ~/.ssh/id_rsa
 Port 443
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;  重新验证是否成功：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -T git@github.com&lt;/code&gt;&lt;br /&gt;
+  输入yes即可。&lt;/p&gt;
   &lt;/li&gt;
-  &lt;li&gt;验证是否成功:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -T git@github.com&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;输入yes即可.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;额外操作&quot;&gt;额外操作&lt;/h2&gt;
-&lt;p&gt;  在使用 Git 进行代码托管和版本控制的过程中，如果你想在提交代码时被正确的识别和归属，那么需要设置正确的 Git 邮箱地址。如果不设置邮箱，那么提交代码的作者将会是默认的 Git 用户，这可能会导致代码历史不可读性，并且无法更好地识别谁提交的代码。
-  配置 git config:&lt;/p&gt;
+&lt;p&gt;  在使用 Git 进行代码托管和版本控制的过程中，如果你想在提交代码时被正确的识别和归属，那么需要设置正确的 Git 邮箱地址。如果不设置邮箱，那么提交代码的作者将会是默认的 Git 用户，这会导致代码历史不可读，并且无法更好地识别谁提交的代码。&lt;br /&gt;
+  配置 git config：&lt;/p&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config --global user.name github_name
 git config --global user.email github_email
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;  显示带有颜色和图形的 Git 日志:&lt;/p&gt;
+&lt;p&gt;  显示带有颜色和图形的 Git 日志：&lt;/p&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config --global alias.lg &quot;log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&amp;lt;%an&amp;gt;%Creset' --abbrev-commit&quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;  参数解析:&lt;/p&gt;
+&lt;p&gt;  参数解析：&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;–color: 启用彩色输出。&lt;/li&gt;
-  &lt;li&gt;–graph: 以图形的方式展示分支和合并历史。&lt;/li&gt;
-  &lt;li&gt;–pretty=format: 定制输出格式，使用一系列的占位符表示不同的信息。&lt;/li&gt;
-  &lt;li&gt;%Cred%h%Creset: 以红色显示短的提交哈希。&lt;/li&gt;
-  &lt;li&gt;-%C(yellow)%d%Creset: 显示分支和标签信息，并使用黄色。&lt;/li&gt;
-  &lt;li&gt;%s: 显示提交信息。&lt;/li&gt;
-  &lt;li&gt;%Cgreen(%cr)%Creset: 以绿色显示相对的提交时间。&lt;/li&gt;
-  &lt;li&gt;%C(bold blue)&amp;lt;%an&amp;gt;%Creset: 以粗体蓝色显示作者。&lt;/li&gt;
+  &lt;li&gt;–color： 启用彩色输出。&lt;/li&gt;
+  &lt;li&gt;–graph： 以图形的方式展示分支和合并历史。&lt;/li&gt;
+  &lt;li&gt;–pretty=format： 定制输出格式，使用一系列的占位符表示不同的信息。&lt;/li&gt;
+  &lt;li&gt;%Cred%h%Creset： 以红色显示短的提交哈希。&lt;/li&gt;
+  &lt;li&gt;-%C(yellow)%d%Creset： 显示分支和标签信息，并使用黄色。&lt;/li&gt;
+  &lt;li&gt;%s： 显示提交信息。&lt;/li&gt;
+  &lt;li&gt;%Cgreen(%cr)%Creset： 以绿色显示相对的提交时间。&lt;/li&gt;
+  &lt;li&gt;%C(bold blue)&amp;lt;%an&amp;gt;%Creset： 以粗体蓝色显示作者。&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;p&gt;  全局配置文件在用户根目录下的.gitconfig文件，也可直接修改这个文件进行配置&lt;br /&gt;
+  若只想作用于单个仓库，只需要去掉–global参数&lt;br /&gt;
+   单个仓库配置文件在.git/config文件。&lt;/p&gt;
 &lt;h2 id=&quot;推送代码&quot;&gt;推送代码&lt;/h2&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git init
 git add .
 git commit -m &quot;init&quot;
 git remote add github git@github.com:[id]/[库名].git
 git push -u origin [远程分支名]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>acteds</name></author><category term="Git,GitHub" /><summary type="html">引言   记录一些通常设置.</summary></entry><entry><title type="html">更新IDEA并保留所有兼容的设置</title><link href="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="更新IDEA并保留所有兼容的设置" /><published>2024-01-24T00:00:00+08:00</published><updated>2024-01-24T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
-&lt;p&gt;  更新IDEA并不是一个好的想法,因为很容易出现兼容性问题,在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件.  &lt;br /&gt;
-  此次更新前版本为2019.3.3,更新后版本为2023.3.2&lt;br /&gt;
-  也会说一下我的常用配置.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>acteds</name></author><category term="Git,GitHub" /><summary type="html">引言   记录一些通常设置。</summary></entry><entry><title type="html">更新IDEA并保留所有兼容的设置</title><link href="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="更新IDEA并保留所有兼容的设置" /><published>2024-01-24T00:00:00+08:00</published><updated>2024-01-24T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/24/%E6%9B%B4%E6%96%B0IDEA%E5%B9%B6%E4%BF%9D%E7%95%99%E6%89%80%E6%9C%89%E5%85%BC%E5%AE%B9%E7%9A%84%E8%AE%BE%E7%BD%AE/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;p&gt;  更新IDEA并不是一个好的想法，因为很容易出现兼容性问题，在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件。  &lt;br /&gt;
+  此次更新前版本为2019.3.3，更新后版本为2023.3.2。&lt;br /&gt;
+  也会说一下我的常用配置。&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
 &lt;ol&gt;
   &lt;li&gt;下载&lt;a href=&quot;https://www.jetbrains.com/idea/download/&quot;&gt;官方.zip&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;解压到合适的文件夹(我这里是D:\ideaIU-2023.3.2\)&lt;/li&gt;
-  &lt;li&gt;修改配置文件:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea.properties&lt;/code&gt;
+  &lt;li&gt;修改配置文件：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea.properties&lt;/code&gt;
     &lt;ul&gt;
-      &lt;li&gt;此处设置将配置文件移入程序目录,若不设置则配置文件会出现在用户文件夹.
+      &lt;li&gt;此处设置将配置文件移入程序目录，若不设置则配置文件会出现在用户文件夹。
         &lt;div class=&quot;language-properties highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;idea.config.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.home.path}/.IntelliJIdea2023.3.2/config&lt;/span&gt;
 &lt;span class=&quot;py&quot;&gt;idea.system.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.home.path}/.IntelliJIdea2023.3.2/system&lt;/span&gt;
 &lt;span class=&quot;py&quot;&gt;idea.plugins.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;${idea.config.path}/plugins&lt;/span&gt;
@@ -72,9 +75,9 @@ git push -u origin [远程分支名]
       &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;修改VM文件:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea64.exe.vmoptions&lt;/code&gt;
+  &lt;li&gt;修改VM文件：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D:\ideaIU-2023.3.2\bin\idea64.exe.vmoptions&lt;/code&gt;
     &lt;ul&gt;
-      &lt;li&gt;比如设置打开项目时的默认路径:
+      &lt;li&gt;比如设置打开项目时的默认路径：
         &lt;div class=&quot;language-properties highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;-Duser.home&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;D:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\i&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deaIU-2023.3.2&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\I&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deaProjects&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
       &lt;/li&gt;
@@ -82,24 +85,24 @@ git push -u origin [远程分支名]
   &lt;/li&gt;
   &lt;li&gt;复制老项目到新项目文件&lt;/li&gt;
   &lt;li&gt;打开新版&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IDEA:D:\ideaIU-2023.3.2\bin\idea64.exe&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;随便打开一个项目.&lt;/li&gt;
-  &lt;li&gt;导入设置:
+  &lt;li&gt;随便打开一个项目。&lt;/li&gt;
+  &lt;li&gt;导入设置：
     &lt;ul&gt;
       &lt;li&gt;文件-管理IDE设置-导入设置&lt;/li&gt;
-      &lt;li&gt;找到老的设置文件夹,例如:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\Users\{你的用户名}\.IntelliJIdea2019.3\config&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;点击确认.&lt;/li&gt;
+      &lt;li&gt;找到老的设置文件夹，例如：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\Users\{你的用户名}\.IntelliJIdea2019.3\config&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;点击确认。&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;完成了.&lt;/li&gt;
+  &lt;li&gt;完成了。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;注意&quot;&gt;注意&lt;/h2&gt;
-&lt;p&gt;  在使用这个方法前我使用过在老版导出全部设置,然后在新版导入全部设置.但还是有大部分设置没有被导入,最致命的是配色方案没有被导入,配色方案还是单独备份一下比较好.&lt;br /&gt;
-  而使用我这个方法可以导入大部分的设置高亮以及插件,若插件不兼容则IDEA不会把插件导入新版.因为两个版本都在,因此可以对比插件找平替了,用不习惯或者出现问题也可以直接用老版.&lt;/p&gt;
+&lt;p&gt;  在使用这个方法前我使用过在老版导出全部设置，然后在新版导入全部设置。但还是有大部分设置没有被导入，最致命的是配色方案没有被导入，配色方案还是单独备份一下比较好。&lt;br /&gt;
+  而使用我这个方法可以导入大部分的设置高亮以及插件，若插件不兼容则IDEA不会把插件导入新版。因为两个版本都在，因此可以对比插件找平替了，用不习惯或者出现问题也可以直接用老版。&lt;/p&gt;
 &lt;h2 id=&quot;常用设置&quot;&gt;常用设置&lt;/h2&gt;
 &lt;ol&gt;
-  &lt;li&gt;字体没有成功导入,需要手动修改:设置-编辑器-字体-Consolas&lt;/li&gt;
-  &lt;li&gt;版本控制提交栏调出来:设置-版本控制-使用非模式提交界面&lt;/li&gt;
+  &lt;li&gt;字体没有成功导入，需要手动修改：设置-编辑器-字体-Consolas&lt;/li&gt;
+  &lt;li&gt;版本控制提交栏调出来：设置-版本控制-使用非模式提交界面&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;插件平替增强&quot;&gt;插件平替增强&lt;/h2&gt;
@@ -126,7 +129,7 @@ git push -u origin [远程分支名]
 &lt;ol&gt;
   &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/18553-show-comment&quot;&gt;Show Comment&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://plugins.jetbrains.com/plugin/13710-chinese-simplified-language-pack----&quot;&gt;Chinese(Simplified)Language Pack/中文语言包&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;</content><author><name>acteds</name></author><category term="IDEA" /><summary type="html">引言   更新IDEA并不是一个好的想法,因为很容易出现兼容性问题,在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件.   此次更新前版本为2019.3.3,更新后版本为2023.3.2   也会说一下我的常用配置.</summary></entry><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;/ol&gt;</content><author><name>acteds</name></author><category term="IDEA" /><summary type="html">引言   更新IDEA并不是一个好的想法，因为很容易出现兼容性问题，在此次更新到最新版中消耗我时间最多的是将不兼容的插件找一个平替插件。   此次更新前版本为2019.3.3，更新后版本为2023.3.2。   也会说一下我的常用配置。</summary></entry><entry><title type="html">在高版本安卓系统上安装证书的办法</title><link href="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/" rel="alternate" type="text/html" title="在高版本安卓系统上安装证书的办法" /><published>2024-01-13T00:00:00+08:00</published><updated>2024-01-13T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95</id><content type="html" xml:base="https://acteds.github.io/2024/01/13/%E5%9C%A8%E9%AB%98%E7%89%88%E6%9C%AC%E5%AE%89%E5%8D%93%E7%B3%BB%E7%BB%9F%E4%B8%8A%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6%E7%9A%84%E5%8A%9E%E6%B3%95/">&lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
 &lt;p&gt;  若有抓包需求,则必须安装证书,但Android7.0之后默认不信任用户添加到系统的CA证书.&lt;/p&gt;
 
 &lt;h2 id=&quot;详解&quot;&gt;详解&lt;/h2&gt;
