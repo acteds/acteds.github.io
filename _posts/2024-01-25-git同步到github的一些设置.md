@@ -14,7 +14,7 @@ keywords: Git, GitHub
  * 下载[Git](https://git-scm.com/downloads)  
  * 设置Git环境变量  
  * 配置SSH，完成GitHub身份验证  
-&emsp;&emsp;终端输入：`ssh-keygen -t rsa -C 邮箱地址`，邮箱地址为GitHub的邮箱地址。
+&emsp;&emsp;终端输入：`ssh-keygen -t rsa -C 邮箱地址`，邮箱地址为GitHub的邮箱地址。  
 &emsp;&emsp;找到公钥文件(id_rsa.pub)，打开文件,复制内容  
 &emsp;&emsp;在GitHub上添加SSH keys(头像-Settings-SSH and GPG keys-New SSH key)，标题随便，key内填公钥内容。  
  * 验证是否成功：`ssh -T git@github.com`  
