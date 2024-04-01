@@ -115,6 +115,14 @@
     } ,
   
     {
+      "title"    : "批处理batch重点知识_2.if",
+      "category" : "windows",
+      
+      "url"      : "https://acteds.github.io/2019/04/25/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86_2-if/",
+      "keywords" : "windows, batch"
+    } ,
+  
+    {
       "title"    : "setTimeout(func,0)的延迟优化",
       "category" : "JavaScript",
       
