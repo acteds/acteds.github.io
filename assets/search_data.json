@@ -123,6 +123,14 @@
     } ,
   
     {
+      "title"    : "批处理batch重点知识_3.for(1)",
+      "category" : "windows",
+      
+      "url"      : "https://acteds.github.io/2019/05/03/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86_3-for(1)/",
+      "keywords" : "windows, batch"
+    } ,
+  
+    {
       "title"    : "setTimeout(func,0)的延迟优化",
       "category" : "JavaScript",
       
