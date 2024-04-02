@@ -107,26 +107,34 @@
 
   
     {
-      "title"    : "批处理batch重点知识_1.基础",
+      "title"    : "批处理batch重点知识1.基础",
       "category" : "windows",
       
-      "url"      : "https://acteds.github.io/2019/04/13/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86_1.%E5%9F%BA%E7%A1%80/",
+      "url"      : "https://acteds.github.io/2019/04/13/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%861.%E5%9F%BA%E7%A1%80/",
       "keywords" : "windows, batch"
     } ,
   
     {
-      "title"    : "批处理batch重点知识_2.if",
+      "title"    : "批处理batch重点知识2.if",
       "category" : "windows",
       
-      "url"      : "https://acteds.github.io/2019/04/25/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86_2-if/",
+      "url"      : "https://acteds.github.io/2019/04/25/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%862.if/",
       "keywords" : "windows, batch"
     } ,
   
     {
-      "title"    : "批处理batch重点知识_3.for",
+      "title"    : "批处理batch重点知识3.for",
       "category" : "windows",
       
-      "url"      : "https://acteds.github.io/2019/05/03/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86_3-for/",
+      "url"      : "https://acteds.github.io/2019/05/03/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%863.for/",
+      "keywords" : "windows, batch"
+    } ,
+  
+    {
+      "title"    : "批处理batch重点知识4.变量延迟",
+      "category" : "windows",
+      
+      "url"      : "https://acteds.github.io/2019/05/17/%E6%89%B9%E5%A4%84%E7%90%86batch%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%864.%E5%8F%98%E9%87%8F%E5%BB%B6%E8%BF%9F/",
       "keywords" : "windows, batch"
     } ,
   
