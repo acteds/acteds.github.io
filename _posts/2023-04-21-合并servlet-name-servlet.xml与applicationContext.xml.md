@@ -12,8 +12,8 @@ keywords: Spring,Java
 
 ## 详解   
 &emsp;&emsp;实际上，在使用Spring MVC时，**建议**将所有Bean定义和配置信息都放在**一个**名为`applicationContext.xml`的文件中，以便于管理和维护。然后，在`web.xml`文件中配置`DispatcherServlet`，并将其`contextConfigLocation`参数设置为`classpath:/applicationContext.xml`，这样就可以让`DispatcherServlet`自动加载应用程序的所有Bean定义和配置信息了。  
-&emsp;&emsp;总之，虽然需要在`web.xml`文件中配置`DispatcherServlet`并指定其`contextConfigLocation`参数所需的XML文件，但是这个XML文件里面的**所有内容**都可以转移到根`ApplicationContext`中，以便于更好地管理和维护Spring应用程序。 
-&emsp;&emsp;下面是一个示例`web.xml`文件的配置，其中`DispatcherServlet`的`contextConfigLocation`参数被设置为`classpath:/applicationContext.xml`：  
+&emsp;&emsp;总之，虽然需要在`web.xml`文件中配置`DispatcherServlet`并指定其`contextConfigLocation`参数所需的XML文件，但是这个XML文件里面的**所有内容**都可以转移到根`ApplicationContext`中，以便于更好地管理和维护Spring应用程序。   
+&emsp;&emsp;下面是一个`web.xml`文件的配置，其中`DispatcherServlet`的`contextConfigLocation`参数被设置为`classpath:/applicationContext.xml`：  
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
@@ -36,13 +36,12 @@ keywords: Spring,Java
     </servlet-mapping>
 </web-app>
 ```
-&emsp;&emsp;在这个示例中，我们配置了一个名为`myDispatcherServlet`的`DispatcherServlet`，并将其`contextConfigLocation`参数设置为`classpath:/applicationContext.xml`。这意味着在应用程序启动时，`DispatcherServlet`会自动加载位于类路径上的`applicationContext.xml`文件，并使用其中定义的Bean来处理所有的请求。同时，我们将`DispatcherServlet`映射到了应用程序的根路径“/”，这意味着所有的请求都将由它来处理。  
+&emsp;&emsp;我们配置了一个名为`myDispatcherServlet`的`DispatcherServlet`，并将其`contextConfigLocation`参数设置为`classpath:/applicationContext.xml`。这意味着在应用程序启动时，`DispatcherServlet`会自动加载位于类路径上的`applicationContext.xml`文件，并使用其中定义的Bean来处理所有的请求。同时，我们将`DispatcherServlet`映射到了应用程序的根路径“/”，这意味着所有的请求都将由它来处理。  
 &emsp;&emsp;重要的是要确保`DispatcherServlet`的`contextConfigLocation`参数正确指向了包含所有Bean定义和配置信息的XML文件。  
 
-&emsp;&emsp;在这个web.xml文件的配置中，已经在`servlet`中指定了`Servlet`上下文的位置，因此**不需要**再添加`<context-param>`元素来指定Spring应用程序上下文的位置。  
-&emsp;&emsp;如果已通过此方法配置`applicationContext.xml`在应用程序中只使用一个`ApplicationContext.xml`文件来配置Spring bean,则**不需要**添加`<context-param>`元素到`web.xml`文件中,即不需要使用:  
+&emsp;&emsp;这个`web.xml`文件的配置已经在`servlet`中指定了`Servlet`上下文的位置，因此**不需要**再添加`<context-param>`元素来指定Spring应用程序上下文的位置。即不需要使用:  
 ```xml
-context-param>
+<context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:/applicationContext.xml</param-value><!--加载src目录下的applicationContext.xml文件-->
 </context-param>
