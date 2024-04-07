@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-04-07T16:43:53+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Git推送到Github的一些设置</title><link href="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="Git推送到Github的一些设置" /><published>2024-01-25T00:00:00+08:00</published><updated>2024-01-25T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/"><![CDATA[<h2 id="引言">引言</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-04-07T17:52:07+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Git推送到Github的一些设置</title><link href="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/" rel="alternate" type="text/html" title="Git推送到Github的一些设置" /><published>2024-01-25T00:00:00+08:00</published><updated>2024-01-25T00:00:00+08:00</updated><id>https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE</id><content type="html" xml:base="https://acteds.github.io/2024/01/25/git%E5%90%8C%E6%AD%A5%E5%88%B0github%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BE%E7%BD%AE/"><![CDATA[<h2 id="引言">引言</h2>
 <p>  记录一些通常设置。</p>
 
 <h2 id="详解">详解</h2>
@@ -531,7 +531,7 @@ su
 <p>  java反射、注解、泛型部分笔记。</p>
 
 <h1 id="反射">反射</h1>
-<p>  获取<strong>class</strong>的<strong>Class</strong>实例:<br />
+<p>  获取<strong>class</strong>的<strong>Class</strong>实例：<br />
   直接通过<strong>class</strong>的静态变量<strong>class</strong>获取：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
 </code></pre></div></div>
@@ -542,7 +542,7 @@ su
 <p>  通过静态方法<code class="language-plaintext highlighter-rouge">Class.forName()</code>获取：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.lang.String"</span><span class="o">);</span>
 </code></pre></div></div>
-<h2 id="class实例基本信息"><strong>Class实例基本信息:</strong></h2>
+<h2 id="class实例基本信息"><strong>Class实例基本信息：</strong></h2>
 
 <table>
   <thead>
@@ -616,7 +616,7 @@ su
     <tr>
       <td>Class</td>
       <td>getGenericSuperclass()</td>
-      <td>获取泛型父类的<code class="language-plaintext highlighter-rouge">class</code></td>
+      <td>获取泛型父类的<code class="language-plaintext highlighter-rouge">class</code>。</td>
     </tr>
   </tbody>
 </table>
@@ -635,22 +635,22 @@ su
     <tr>
       <td>Field</td>
       <td>getField(String name)</td>
-      <td>根据字段名获取某个public的field（包括父类继承）</td>
+      <td>根据字段名获取某个public的field（包括父类继承）。</td>
     </tr>
     <tr>
       <td>Field</td>
       <td>getDeclaredField(String name)</td>
-      <td>根据字段名获取当前类的某个field（不包括父类继承）</td>
+      <td>根据字段名获取当前类的某个field（不包括父类继承）。</td>
     </tr>
     <tr>
       <td>Field[]</td>
       <td>getFields()</td>
-      <td>获取所有public的field（包括父类继承）</td>
+      <td>获取所有public的field（包括父类继承）。</td>
     </tr>
     <tr>
       <td>Field[]</td>
       <td>getDeclaredFields()</td>
-      <td>获取当前类的所有field（不包括父类继承）</td>
+      <td>获取当前类的所有field（不包括父类继承）。</td>
     </tr>
   </tbody>
 </table>
@@ -691,9 +691,9 @@ su
   </tbody>
 </table>
 
-<p>  通过使用<code class="language-plaintext highlighter-rouge">Field</code>对象的<code class="language-plaintext highlighter-rouge">get(实例变量)</code>可以得到该<code class="language-plaintext highlighter-rouge">Fileld</code>对应的字段在指定实例变量的值<br />
-  通过使用<code class="language-plaintext highlighter-rouge">Field</code>对象的<code class="language-plaintext highlighter-rouge">set(实例变量,新值)</code>可以设置该<code class="language-plaintext highlighter-rouge">Fileld</code>对应的字段在指定实例变量的值<br />
-  默认是不允许访问<code class="language-plaintext highlighter-rouge">private</code>字段的,可以通过调用<code class="language-plaintext highlighter-rouge">Field</code>的<code class="language-plaintext highlighter-rouge">setAccessible(true)</code>实现访问。</p>
+<p>  通过使用<code class="language-plaintext highlighter-rouge">Field</code>对象的<code class="language-plaintext highlighter-rouge">get(实例变量)</code>可以得到该<code class="language-plaintext highlighter-rouge">Fileld</code>对应的字段在指定实例变量的值。<br />
+  通过使用<code class="language-plaintext highlighter-rouge">Field</code>对象的<code class="language-plaintext highlighter-rouge">set(实例变量,新值)</code>可以设置该<code class="language-plaintext highlighter-rouge">Fileld</code>对应的字段在指定实例变量的值。<br />
+  默认是不允许访问<code class="language-plaintext highlighter-rouge">private</code>字段的，可以通过调用<code class="language-plaintext highlighter-rouge">Field</code>的<code class="language-plaintext highlighter-rouge">setAccessible(true)</code>实现访问。</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="o">;</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
@@ -727,22 +727,22 @@ su
     <tr>
       <td>Method</td>
       <td>getMethod(String name, Class&lt;?&gt;… parameterTypes)</td>
-      <td>获取某个<code class="language-plaintext highlighter-rouge">public</code>的<code class="language-plaintext highlighter-rouge">Method</code>（包括父类继承）name:方法名,parameterTypes:形式参数的Class</td>
+      <td>获取某个<code class="language-plaintext highlighter-rouge">public</code>的<code class="language-plaintext highlighter-rouge">Method</code>。（包括父类继承）name：方法名,parameterTypes：形式参数的Class。</td>
     </tr>
     <tr>
       <td>Method</td>
       <td>getDeclaredMethod(String name, Class&lt;?&gt;… parameterTypes)</td>
-      <td>获取当前类的某个<code class="language-plaintext highlighter-rouge">Method</code>（不包括父类继承）name:方法名,parameterTypes:形式参数的Class</td>
+      <td>获取当前类的某个<code class="language-plaintext highlighter-rouge">Method</code>。（不包括父类继承）name：方法名,parameterTypes：形式参数的Class。</td>
     </tr>
     <tr>
       <td>Method[]</td>
       <td>getMethods()</td>
-      <td>获取所有<code class="language-plaintext highlighter-rouge">public</code>的<code class="language-plaintext highlighter-rouge">Method</code>（包括父类继承）</td>
+      <td>获取所有<code class="language-plaintext highlighter-rouge">public</code>的<code class="language-plaintext highlighter-rouge">Method</code>。（包括父类继承）</td>
     </tr>
     <tr>
       <td>Method[]</td>
       <td>getDeclaredMethods()</td>
-      <td>获取当前类的所有<code class="language-plaintext highlighter-rouge">Method</code>（不包括父类继承）</td>
+      <td>获取当前类的所有<code class="language-plaintext highlighter-rouge">Method</code>。（不包括父类继承）</td>
     </tr>
   </tbody>
 </table>
@@ -769,7 +769,7 @@ su
     <tr>
       <td> </td>
       <td>invoke(Object o,Object …arg)</td>
-      <td>调用指定对象o上此 Method表示的方法,方法的形式参数为arg。若为静态方法,则o设置为null,</td>
+      <td>调用指定对象o上此 Method表示的方法，方法的形式参数为arg。若为静态方法，则o设置为null。</td>
     </tr>
     <tr>
       <td>void</td>
@@ -779,13 +779,13 @@ su
   </tbody>
 </table>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// String对象:</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// String对象：</span>
 <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"Hello world"</span><span class="o">;</span>
-<span class="c1">// 获取String substring(int)方法，参数为int:</span>
+<span class="c1">// 获取String substring(int)方法，参数为int：</span>
 <span class="nc">Method</span> <span class="n">m</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(</span><span class="s">"substring"</span><span class="o">,</span> <span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="c1">// 在s对象上调用该方法并获取结果:</span>
+<span class="c1">// 在s对象上调用该方法并获取结果：</span>
 <span class="nc">String</span> <span class="n">r</span> <span class="o">=</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">m</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="mi">6</span><span class="o">);</span>
-<span class="c1">// 打印调用结果:</span>
+<span class="c1">// 打印调用结果：</span>
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">r</span><span class="o">);</span>
 </code></pre></div></div>
 <h2 id="访问构造方法的方法">访问构造方法的方法</h2>
@@ -802,17 +802,17 @@ su
     <tr>
       <td>Object</td>
       <td>newInstance()</td>
-      <td>只能调用公有的无参数构造方法。(已废弃,应写    getDeclaredConstructor().newInstance())</td>
+      <td>只能调用公有的无参数构造方法。(已废弃，应写    getDeclaredConstructor().newInstance())。</td>
     </tr>
     <tr>
       <td>Constructor</td>
       <td>getConstructor(Class … arg)</td>
-      <td>获取指定类的指定<strong>公有</strong>构造方法,arg为形式参数.</td>
+      <td>获取指定类的指定<strong>公有</strong>构造方法，arg为形式参数。</td>
     </tr>
     <tr>
       <td>Constructor</td>
       <td>getDeclaredConstructor(Class… arg)</td>
-      <td>获取指定类的构造方法,arg为形式参数.</td>
+      <td>获取指定类的构造方法，arg为形式参数。</td>
     </tr>
     <tr>
       <td>Constructor[]</td>
@@ -841,7 +841,7 @@ su
     <tr>
       <td>Object</td>
       <td>newInstance(Object …arg)</td>
-      <td>调用构造方法,参数为arg。</td>
+      <td>调用构造方法，参数为arg。</td>
     </tr>
     <tr>
       <td>void</td>
@@ -851,14 +851,14 @@ su
   </tbody>
 </table>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取String的Class实例:String s=new Stirng();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取String的Class实例：String s=new Stirng();</span>
 <span class="nc">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
-<span class="c1">// 调用构造方法:</span>
+<span class="c1">// 调用构造方法：</span>
 <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">cls</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
-<span class="c1">// 获取构造方法Integer(int):Integer n1=new Integer(123);</span>
+<span class="c1">// 获取构造方法Integer(int)：Integer n1=new Integer(123);</span>
 <span class="nc">Constructor</span> <span class="n">cons1</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getConstructor</span><span class="o">(</span><span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="c1">// 调用构造方法:</span>
+<span class="c1">// 调用构造方法：</span>
 <span class="nc">Integer</span> <span class="n">n1</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Integer</span><span class="o">)</span> <span class="n">cons1</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="mi">123</span><span class="o">);</span>
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">n1</span><span class="o">);</span>
 </code></pre></div></div>
@@ -1052,7 +1052,7 @@ su
 
 <hr />
 
-<p>  注解定义后也是一种<code class="language-plaintext highlighter-rouge">class</code>，所有的注解都继承自<code class="language-plaintext highlighter-rouge">java.lang.annotation.Annotation</code>，因此，读取注解，需要使用反射API。 
+<p>  注解定义后也是一种<code class="language-plaintext highlighter-rouge">class</code>，所有的注解都继承自<code class="language-plaintext highlighter-rouge">java.lang.annotation.Annotation</code>，因此，读取注解，需要使用反射API。<br />
   Java提供的使用反射API读取<code class="language-plaintext highlighter-rouge">Annotation</code>的方法包括：<br />
   判断某个注解是否<strong>存在</strong>于<code class="language-plaintext highlighter-rouge">Class</code>、<code class="language-plaintext highlighter-rouge">Field</code>、<code class="language-plaintext highlighter-rouge">Method</code>或<code class="language-plaintext highlighter-rouge">Constructor</code>：</p>
 
@@ -1064,7 +1064,7 @@ su
 </ul>
 
 <p>  例如：</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 判断@Report是否存在于Person类:</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 判断@Report是否存在于Person类：</span>
 <span class="nc">Person</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="nc">Report</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 </code></pre></div></div>
 <p>  使用反射API<strong>读取</strong>Annotation：</p>
@@ -1076,7 +1076,7 @@ su
 </ul>
 
 <p>  例如：</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取Person定义的@Report注解:</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取Person定义的@Report注解：</span>
 <span class="nc">Report</span> <span class="n">report</span> <span class="o">=</span> <span class="nc">Person</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="nc">Report</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 <span class="kt">int</span> <span class="n">type</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="na">type</span><span class="o">();</span>
 <span class="nc">String</span> <span class="n">level</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="na">level</span><span class="o">();</span>
@@ -1087,11 +1087,11 @@ su
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">hello</span><span class="o">(</span><span class="nd">@NotNull</span> <span class="nd">@Range</span><span class="o">(</span><span class="n">max</span><span class="o">=</span><span class="mi">5</span><span class="o">)</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nd">@NotNull</span> <span class="nc">String</span> <span class="n">prefix</span><span class="o">)</span> <span class="o">{}</span>
 </code></pre></div></div>
 <p>  要读取方法参数的注解，先用反射获取<code class="language-plaintext highlighter-rouge">Method</code>实例，然后读取方法参数的所有注解：</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取Method实例:</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 获取Method实例：</span>
 <span class="nc">Method</span> <span class="n">m</span> <span class="o">=</span> <span class="nc">Main</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredMethod</span><span class="o">(</span><span class="s">"hello"</span><span class="o">,</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="c1">// 获取所有参数的Annotation:</span>
+<span class="c1">// 获取所有参数的Annotation：</span>
 <span class="nc">Annotation</span><span class="o">[][]</span> <span class="n">annos</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="na">getParameterAnnotations</span><span class="o">();</span>
-<span class="c1">// 第一个参数（索引为0）的所有Annotation:</span>
+<span class="c1">// 第一个参数（索引为0）的所有Annotation：</span>
 <span class="nc">Annotation</span><span class="o">[]</span> <span class="n">annosOfName</span> <span class="o">=</span> <span class="n">annos</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
 <span class="k">for</span> <span class="o">(</span><span class="nc">Annotation</span> <span class="n">anno</span> <span class="o">:</span> <span class="n">annosOfName</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">anno</span> <span class="k">instanceof</span> <span class="nc">Range</span><span class="o">)</span> <span class="o">{</span>
@@ -1106,7 +1106,7 @@ su
 </code></pre></div></div>
 <h2 id="尝试在方法参数上实现-notnull-range">尝试在方法参数上实现 <strong>@NotNull @Range</strong></h2>
 
-<p>  对于方法的形式参数，Java的反射机制并不能直接获取参数的值,毕竟只有在方法调用的时候才有值,因此失败了。如果需要在方法运行时对参数进行检查，可以使用面向切面编程（AOP）结合反射来实现。<br />
+<p>  对于方法的形式参数，Java的反射机制并不能直接获取参数的值，毕竟只有在方法调用的时候才有值，因此失败了。如果需要在方法运行时对参数进行检查，可以使用面向切面编程（AOP）结合反射来实现。<br />
   不过对于对象的字段，可以直接通过反射获取字段的值，并进行判断。但要注意判断的时机需要另外的事件来触发。</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
@@ -1149,9 +1149,9 @@ su
             <span class="k">if</span> <span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">annotation</span><span class="o">.</span><span class="na">min</span><span class="o">()</span> <span class="o">||</span> <span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">annotation</span><span class="o">.</span><span class="na">max</span><span class="o">())</span> <span class="o">{</span>
                 <span class="nc">String</span> <span class="n">text</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="na">value</span><span class="o">()</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">" 无效,长度必须不小于:"</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">min</span><span class="o">()</span> <span class="o">+</span> <span class="s">",不大于:"</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">max</span><span class="o">();</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="na">value</span><span class="o">()</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">" 无效,长度必须不小于："</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">min</span><span class="o">()</span> <span class="o">+</span> <span class="s">",不大于："</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">max</span><span class="o">();</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">" 无效,长度必须不小于:"</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">min</span><span class="o">()</span> <span class="o">+</span> <span class="s">",不大于:"</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">max</span><span class="o">();</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">" 无效,长度必须不小于："</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">min</span><span class="o">()</span> <span class="o">+</span> <span class="s">",不大于："</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="na">max</span><span class="o">();</span>
                 <span class="o">}</span>
                 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">text</span><span class="o">);</span>
 <span class="c1">//              throw new IllegalArgumentException(text);</span>
@@ -1203,7 +1203,7 @@ su
 </code></pre></div></div>
 <p>  除了<code class="language-plaintext highlighter-rouge">ArrayList&lt;T&gt;</code>使用了泛型，还可以在接口中使用泛型。例如，<code class="language-plaintext highlighter-rouge">Arrays.sort(Object[])</code>可以对任意数组进行排序，但待排序的元素必须实现<code class="language-plaintext highlighter-rouge">Comparable&lt;T&gt;</code>这个泛型接口。</p>
 <h2 id="泛型类">泛型类</h2>
-<p>  泛型类写法:</p>
+<p>  泛型类写法：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="no">T</span> <span class="n">first</span><span class="o">;</span>
     <span class="kd">private</span> <span class="no">T</span> <span class="n">last</span><span class="o">;</span>
@@ -1219,9 +1219,9 @@ su
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  定义泛型类时，在类名后面定义<code class="language-plaintext highlighter-rouge">泛型类型参数</code><br />
+<p>  定义泛型类时，在类名后面定义<code class="language-plaintext highlighter-rouge">泛型类型参数</code>。<br />
   <strong>在泛型类中定义的泛型类型参数只能用于整个类的实例。而不能用于类的静态成员（静态字段、静态方法、静态内部类）。</strong><br />
-  初始化:</p>
+  初始化：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">=</span><span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;&gt;(</span><span class="s">"1"</span><span class="o">,</span><span class="s">"2"</span><span class="o">);</span><span class="c1">//或new Pair&lt;String&gt;("1","2");</span>
 </code></pre></div></div>
@@ -1304,7 +1304,7 @@ su
 <span class="o">}</span>
 
 </code></pre></div></div>
-<p>  在这个例子中，<code class="language-plaintext highlighter-rouge">myMethod</code>是一个泛型方法，它使用了泛型方法类型参数<code class="language-plaintext highlighter-rouge">U</code>，这个类型参数与泛型类<code class="language-plaintext highlighter-rouge">MyClass</code>中的类型参数<code class="language-plaintext highlighter-rouge">T</code>是不同的,它也使用了泛型类方法类型参数<code class="language-plaintext highlighter-rouge">T</code>。在<code class="language-plaintext highlighter-rouge">myMethod&lt;Integer&gt;(123, "haha")</code>这个调用中，类型参数<code class="language-plaintext highlighter-rouge">U</code>被指定为<code class="language-plaintext highlighter-rouge">Integer</code>，类型参数<code class="language-plaintext highlighter-rouge">T</code>在类实例化时被推断为<code class="language-plaintext highlighter-rouge">String</code>。因此，<code class="language-plaintext highlighter-rouge">myMethod</code>方法的第一个参数<code class="language-plaintext highlighter-rouge">u</code>是<code class="language-plaintext highlighter-rouge">Integer</code>类型，第二个参数<code class="language-plaintext highlighter-rouge">t</code>是<code class="language-plaintext highlighter-rouge">String</code>类型。</p>
+<p>  在这个例子中，<code class="language-plaintext highlighter-rouge">myMethod</code>是一个泛型方法，它使用了泛型方法类型参数<code class="language-plaintext highlighter-rouge">U</code>，这个类型参数与泛型类<code class="language-plaintext highlighter-rouge">MyClass</code>中的类型参数<code class="language-plaintext highlighter-rouge">T</code>是不同的，它也使用了泛型类方法类型参数<code class="language-plaintext highlighter-rouge">T</code>。在<code class="language-plaintext highlighter-rouge">myMethod&lt;Integer&gt;(123, "haha")</code>这个调用中，类型参数<code class="language-plaintext highlighter-rouge">U</code>被指定为<code class="language-plaintext highlighter-rouge">Integer</code>，类型参数<code class="language-plaintext highlighter-rouge">T</code>在类实例化时被推断为<code class="language-plaintext highlighter-rouge">String</code>。因此，<code class="language-plaintext highlighter-rouge">myMethod</code>方法的第一个参数<code class="language-plaintext highlighter-rouge">u</code>是<code class="language-plaintext highlighter-rouge">Integer</code>类型，第二个参数<code class="language-plaintext highlighter-rouge">t</code>是<code class="language-plaintext highlighter-rouge">String</code>类型。</p>
 
 <h3 id="泛型类与泛型方法使用相同的泛型类型参数名">泛型类与泛型方法使用相同的泛型类型参数名</h3>
 
@@ -1322,9 +1322,9 @@ su
 </code></pre></div></div>
 <p>  在这个例子中，类<code class="language-plaintext highlighter-rouge">MyClass&lt;T&gt;</code>有一个泛型类型参数<code class="language-plaintext highlighter-rouge">T</code>，表示类的类型参数。泛型方法<code class="language-plaintext highlighter-rouge">printValue</code>中也有一个泛型类型参数<code class="language-plaintext highlighter-rouge">T</code>，表示方法级别的类型参数。这两个<code class="language-plaintext highlighter-rouge">T</code>是不同的，在方法中使用的<code class="language-plaintext highlighter-rouge">T</code>只在方法范围内有效，不会与类的泛型类型参数产生冲突。</p>
 
-<p>  但这样写会在泛型方法中隐藏类的同名泛型类型参数，在泛型方法中就<strong>用不了</strong>类的同名泛型类型参数了,因为它已经被方法中定义的泛型类型参数隐藏了,而并不存在一个<code class="language-plaintext highlighter-rouge">this.</code>来调用泛型类的泛型类型参数。</p>
+<p>  但这样写会在泛型方法中隐藏类的同名泛型类型参数，在泛型方法中就<strong>用不了</strong>类的同名泛型类型参数了，因为它已经被方法中定义的泛型类型参数隐藏了，而并不存在一个<code class="language-plaintext highlighter-rouge">this.</code>来调用泛型类的泛型类型参数。</p>
 
-<p>  因此<strong>不建议这么做</strong>，因为这样也很容易让人误解。<strong>更不建议将</strong><code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">Stirng</code>之类的，别人看了会打人，而且同样会隐藏<code class="language-plaintext highlighter-rouge">Stirng</code>,从而导致你要通过<code class="language-plaintext highlighter-rouge">java.lang.String</code>使用<code class="language-plaintext highlighter-rouge">String</code>。</p>
+<p>  因此<strong>不建议这么做</strong>，因为这样也很容易让人误解。<strong>更不建议将</strong><code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">Stirng</code>之类的，别人看了会打人，而且同样会隐藏<code class="language-plaintext highlighter-rouge">Stirng</code>，从而导致你要通过<code class="language-plaintext highlighter-rouge">java.lang.String</code>使用<code class="language-plaintext highlighter-rouge">String</code>。</p>
 
 <h3 id="静态泛型方法">静态泛型方法</h3>
 
@@ -1345,7 +1345,7 @@ su
 <p>  在这个例子中，<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>是在静态泛型方法<code class="language-plaintext highlighter-rouge">myStaticMethod</code>的返回类型<code class="language-plaintext highlighter-rouge">void</code>之前声明的，用于定义该方法的泛型类型参数。在调用静态方法时，需要使用<strong><code class="language-plaintext highlighter-rouge">MyClass.&lt;String&gt;</code></strong>来指定类型参数。</p>
 <ul>
   <li>泛型类的泛型类型参数是在实例化对象时确定的，而静态方法是在类加载时就可以直接调用的，无需创建对象实例。所以静态方法中的返回值、参数等不能使用泛型类的泛型类型参数。因此静态方法如果需要使用泛型，必须定义自己的泛型类型参数。</li>
-  <li><strong>必须</strong>将静态方法的泛型类型参数和泛型类的泛型类型参数<strong>区分开</strong>。<strong>其实相同也没关系</strong>,就是容易让人误解,也不存在覆盖泛型类类型参数的问题,因为本来静态方法就不能用类的非静态的东西,但在静态泛型方法内还是存在同名隐藏问题,比如之前说的将<code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">String</code>。</li>
+  <li><strong>必须</strong>将静态方法的泛型类型参数和泛型类的泛型类型参数<strong>区分开</strong>。<strong>其实相同也没关系</strong>，就是容易让人误解，也不存在覆盖泛型类类型参数的问题，因为本来静态方法就不能用类的非静态的东西，但在静态泛型方法内还是存在同名隐藏问题，比如之前说的将<code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">String</code>。</li>
 </ul>
 
 <h2 id="多个泛型类型">多个泛型类型</h2>
@@ -1449,7 +1449,7 @@ su
   <strong>局限三</strong>：无法判断带泛型的类型：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;&gt;(</span><span class="mi">123</span><span class="o">,</span> <span class="mi">456</span><span class="o">);</span>
-<span class="c1">// Compile error:</span>
+<span class="c1">// Compile error：</span>
 <span class="k">if</span> <span class="o">(</span><span class="n">p</span> <span class="k">instanceof</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="o">{}</span>
 </code></pre></div></div>
 <p>  原因和前面一样，并不存在<code class="language-plaintext highlighter-rouge">Pair&lt;String&gt;.class</code>，而是只有唯一的<code class="language-plaintext highlighter-rouge">Pair.class</code>。<br />
@@ -1459,7 +1459,7 @@ su
     <span class="kd">private</span> <span class="no">T</span> <span class="n">first</span><span class="o">;</span>
     <span class="kd">private</span> <span class="no">T</span> <span class="n">last</span><span class="o">;</span>
     <span class="kd">public</span> <span class="nf">Pair</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// Compile error:</span>
+        <span class="c1">// Compile error：</span>
         <span class="n">first</span> <span class="o">=</span> <span class="k">new</span> <span class="no">T</span><span class="o">();</span>
         <span class="n">last</span> <span class="o">=</span> <span class="k">new</span> <span class="no">T</span><span class="o">();</span>
     <span class="o">}</span>
@@ -1473,7 +1473,7 @@ su
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">first</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">();</span>
 <span class="n">last</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">();</span>
 </code></pre></div></div>
-<p>  这样一来，创建<code class="language-plaintext highlighter-rouge">new Pair&lt;String&gt;()</code>和创建<code class="language-plaintext highlighter-rouge">new Pair&lt;Integer&gt;()</code>,内部的<code class="language-plaintext highlighter-rouge">first</code>和<code class="language-plaintext highlighter-rouge">last</code>全部成了<code class="language-plaintext highlighter-rouge">Object</code>类型，显然编译器要阻止这种类型不对的代码,为了<strong>防止</strong>可能的错误出现<strong>编译器</strong>直接<strong>一刀切</strong>这个操作。</p>
+<p>  这样一来，创建<code class="language-plaintext highlighter-rouge">new Pair&lt;String&gt;()</code>和创建<code class="language-plaintext highlighter-rouge">new Pair&lt;Integer&gt;()</code>，内部的<code class="language-plaintext highlighter-rouge">first</code>和<code class="language-plaintext highlighter-rouge">last</code>全部成了<code class="language-plaintext highlighter-rouge">Object</code>类型，显然编译器要阻止这种类型不对的代码，为了<strong>防止</strong>可能的错误出现<strong>编译器</strong>直接<strong>一刀切</strong>这个操作。</p>
 
 <p>  而且在泛型中这种写法可能会造成尝试去<code class="language-plaintext highlighter-rouge">new</code>一个不能直接实例化的<code class="language-plaintext highlighter-rouge">Type</code>，比如当我们这么写传入了一个抽象类：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">pair</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;&gt;();</span>
@@ -1504,11 +1504,11 @@ su
 <span class="o">}</span>
 </code></pre></div></div>
 <p>  在 Java 中，泛型类型在编译时会被擦除，<strong>编译器</strong>会把泛型类型的信息擦除掉，将其替换为其上限类型（如果有指定上限类型的话），或者替换为 <code class="language-plaintext highlighter-rouge">Object</code> 类型。这是为了与 Java 的运行时类型擦除机制相适配 <br />
-  定义的<code class="language-plaintext highlighter-rouge">equals(T t)</code>方法实际上会被擦拭成<code class="language-plaintext highlighter-rouge">equals(Object t)</code>，而这个方法是继承自<code class="language-plaintext highlighter-rouge">Object</code>的，而<strong>编译器</strong>会阻止一个实际上会变成覆写的泛型方法定义。 
+  定义的<code class="language-plaintext highlighter-rouge">equals(T t)</code>方法实际上会被擦拭成<code class="language-plaintext highlighter-rouge">equals(Object t)</code>，而这个方法是继承自<code class="language-plaintext highlighter-rouge">Object</code>的，而<strong>编译器</strong>会阻止一个实际上会变成覆写的泛型方法定义。<br />
   因为仅仅通过泛型代码的定义，<strong>编译器</strong>是<strong>无法确定</strong>泛型<strong>是否覆写</strong>了此方法。</p>
 
 <p>  在泛型类型擦除后，<code class="language-plaintext highlighter-rouge">Pair</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code>与 <code class="language-plaintext highlighter-rouge">Object</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法的签名相同。因此，从方法签名的角度来看，<code class="language-plaintext highlighter-rouge">Pair</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法应该是重写了 <code class="language-plaintext highlighter-rouge">Object</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法。<br />
-  但是，由于 Java 泛型的设计，<strong>编译器</strong>会在编译时对泛型类型进行额外的类型检查，以确保类型安全。在这种情况下，<strong>编译器</strong>会注意到 <code class="language-plaintext highlighter-rouge">Pair</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法<strong>使用了泛型类型</strong> <code class="language-plaintext highlighter-rouge">T</code>，而 <code class="language-plaintext highlighter-rouge">Object</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法使用了原始的 <code class="language-plaintext highlighter-rouge">Object</code> 类型，在编译时这会被认为是<strong>不同</strong>的方法。
+  但是，由于 Java 泛型的设计，<strong>编译器</strong>会在编译时对泛型类型进行额外的类型检查，以确保类型安全。在这种情况下，<strong>编译器</strong>会注意到 <code class="language-plaintext highlighter-rouge">Pair</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法<strong>使用了泛型类型</strong> <code class="language-plaintext highlighter-rouge">T</code>，而 <code class="language-plaintext highlighter-rouge">Object</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法使用了原始的 <code class="language-plaintext highlighter-rouge">Object</code> 类型，在编译时这会被认为是<strong>不同</strong>的方法。<br />
   因此，编译器会认为 <code class="language-plaintext highlighter-rouge">Pair</code> 类中的 <code class="language-plaintext highlighter-rouge">equals</code> 方法<strong>不是重写</strong>，而是一个<strong>新定义的方法</strong>。<br />
   这也是为了确保子类重写父类方法时不会改变方法的行为，避免在子类中意外修改了父类的行为。</p>
 
@@ -1516,7 +1516,7 @@ su
 
 <hr />
 
-<p>  虽然擦除后不是覆写,但编译器装作有泛型的行为,导致在调用<code class="language-plaintext highlighter-rouge">test()</code>时编译器不知道调用哪个<code class="language-plaintext highlighter-rouge">test()</code>,非预期效果,编译器报错:</p>
+<p>  虽然擦除后不是覆写，但编译器装作有泛型的行为，导致在调用<code class="language-plaintext highlighter-rouge">test()</code>时编译器不知道调用哪个<code class="language-plaintext highlighter-rouge">test()</code>，非预期效果，编译器报错：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="nc">Test</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">t1</span><span class="o">=</span><span class="k">new</span> <span class="nc">Test</span><span class="o">&lt;&gt;();</span>
@@ -1541,7 +1541,7 @@ su
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  结果:</p>
+<p>  结果：</p>
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class com.aotmd.Test
 public void com.aotmd.Test.test(java.lang.Object)
 public void com.aotmd.SuperTest.test(java.lang.Number)
@@ -1564,12 +1564,12 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="nc">Class</span><span class="o">&lt;</span><span class="nc">IntPair</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="nc">IntPair</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
         <span class="nc">Type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getGenericSuperclass</span><span class="o">();</span><span class="c1">//获取泛型父类的class</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="k">instanceof</span> <span class="nc">ParameterizedType</span><span class="o">)</span> <span class="o">{</span><span class="c1">//判断是否为ParameterizedType,如果是，则表示泛型父类有实际类型参数。</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="k">instanceof</span> <span class="nc">ParameterizedType</span><span class="o">)</span> <span class="o">{</span><span class="c1">//判断是否为ParameterizedType，如果是，则表示泛型父类有实际类型参数。</span>
             <span class="nc">ParameterizedType</span> <span class="n">pt</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ParameterizedType</span><span class="o">)</span> <span class="n">t</span><span class="o">;</span>
             <span class="nc">Type</span><span class="o">[]</span> <span class="n">types</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="na">getActualTypeArguments</span><span class="o">();</span> <span class="c1">// 获取实际类型参数的数组，本例中数组长度为1。</span>
             <span class="nc">Type</span> <span class="n">firstType</span> <span class="o">=</span> <span class="n">types</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span> <span class="c1">// 获取第一个实际类型参数</span>
             <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">firstType</span><span class="o">);</span>
-            <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">typeClass</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;)</span> <span class="n">firstType</span><span class="o">;</span><span class="c1">//将其转换为 Class 对象,若还是泛型K则转换失败.</span>
+            <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">typeClass</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;)</span> <span class="n">firstType</span><span class="o">;</span><span class="c1">//将其转换为 Class 对象，若还是泛型K则转换失败。</span>
             <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">typeClass</span><span class="o">);</span> <span class="c1">// Integer</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -1594,7 +1594,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  修改<code class="language-plaintext highlighter-rouge">IntPair</code>,然后重新运行,类型转换会出错:</p>
+<p>  修改<code class="language-plaintext highlighter-rouge">IntPair</code>，然后重新运行，类型转换会出错:</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">IntPair</span><span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="nf">IntPair</span><span class="o">(</span><span class="no">K</span> <span class="n">o1</span><span class="o">,</span><span class="no">K</span> <span class="n">o2</span><span class="o">)</span> <span class="o">{</span>
         <span class="kd">super</span><span class="o">(</span><span class="n">o1</span><span class="o">,</span><span class="n">o2</span><span class="o">);</span>
@@ -1618,7 +1618,6 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 
 <p>  Java的泛型是采用擦拭法实现的；<br />
   擦拭法决定了泛型<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>：</p>
-
 <ul>
   <li>不能是基本类型，例如：<code class="language-plaintext highlighter-rouge">int</code>；</li>
   <li>不能获取带泛型类型的<code class="language-plaintext highlighter-rouge">Class</code>，例如：<code class="language-plaintext highlighter-rouge">Pair&lt;String&gt;.class</code>；</li>
@@ -1630,7 +1629,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   子类可以获取父类的泛型类型<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。</p>
 
 <h2 id="extends通配符在形式参数的作用">extends通配符在形式参数的作用</h2>
-<p>  之前说明泛型的继承关系：<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类,他们之前没有什么关系。<br />
+<p>  之前说明泛型的继承关系：<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类，他们之前没有什么关系。<br />
   假设我们定义了<code class="language-plaintext highlighter-rouge">Pair&lt;T&gt;</code>：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
@@ -1664,10 +1663,10 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">));</span>
 </code></pre></div></div>
 <p>  直接运行，会得到一个编译错误：</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">java:</span> <span class="nl">不兼容的类型:</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span><span class="n">无法转换为Pair</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java: 不兼容的类型: Pair&lt;Integer&gt;无法转换为Pair&lt;Number&gt;
 </code></pre></div></div>
-<p>  原因很明显，因为<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类,它们之间没什么关系，因此，<code class="language-plaintext highlighter-rouge">add(Pair&lt;Number&gt; p)</code>方法,不接受参数类型<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>。
-  方法里的代码逻辑是没有问题,<code class="language-plaintext highlighter-rouge">Number</code>是<code class="language-plaintext highlighter-rouge">Integer</code>的父类。问题在于方法参数类型定死了只能传入<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>。</p>
+<p>  原因很明显，因为<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类，它们之间没什么关系，因此，<code class="language-plaintext highlighter-rouge">add(Pair&lt;Number&gt; p)</code>方法，不接受参数类型<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>。<br />
+  方法里的代码逻辑是没有问题，<code class="language-plaintext highlighter-rouge">Number</code>是<code class="language-plaintext highlighter-rouge">Integer</code>的父类。问题在于方法参数类型定死了只能传入<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>。</p>
 
 <hr />
 
@@ -1683,10 +1682,10 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   对<code class="language-plaintext highlighter-rouge">Pair&lt;? extends Number&gt;</code>类型调用<code class="language-plaintext highlighter-rouge">getFirst()</code>方法，实际的方法签名变成了：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="nc">Number</span><span class="o">&gt;</span> <span class="nf">getFirst</span><span class="o">();</span>
 </code></pre></div></div>
-<p>  即返回值是<code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Number</code>的子类,因为 <code class="language-plaintext highlighter-rouge">Number</code> 是 <code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt;</code> 的上界，所以返回值可以安全地赋值给 <code class="language-plaintext highlighter-rouge">Number</code> 类型的变量 <code class="language-plaintext highlighter-rouge">first</code>(向上提升)：</p>
+<p>  即返回值是<code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Number</code>的子类，因为 <code class="language-plaintext highlighter-rouge">Number</code> 是 <code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt;</code> 的上界，所以返回值可以安全地赋值给 <code class="language-plaintext highlighter-rouge">Number</code> 类型的变量 <code class="language-plaintext highlighter-rouge">first</code>(向上提升)：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Number</span> <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
 </code></pre></div></div>
-<p>  不能赋值给<code class="language-plaintext highlighter-rouge">Integer</code>，<code class="language-plaintext highlighter-rouge">Integer</code>可不是<code class="language-plaintext highlighter-rouge">Object</code>接收万物,也即可能的向下转型是不安全的：</p>
+<p>  不能赋值给<code class="language-plaintext highlighter-rouge">Integer</code>，<code class="language-plaintext highlighter-rouge">Integer</code>可不是<code class="language-plaintext highlighter-rouge">Object</code>接收万物，也即可能的向下转型是不安全的：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span><span class="c1">//错误</span>
 </code></pre></div></div>
 <p>  这是因为实际的返回类型可能是<code class="language-plaintext highlighter-rouge">Integer</code>，也可能是<code class="language-plaintext highlighter-rouge">Double</code>或者其他类型，编译器只能确定类型一定是<code class="language-plaintext highlighter-rouge">Number</code>的子类（包括<code class="language-plaintext highlighter-rouge">Number</code>类型本身），但具体类型无法确定。</p>
@@ -1731,12 +1730,12 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 </code></pre></div></div>
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java: 不兼容的类型: java.lang.Integer无法转换为capture#1, 共 ? extends java.lang.Number
 </code></pre></div></div>
-<p>  编译错误发生在<code class="language-plaintext highlighter-rouge">p.setFirst()</code>,我们对<code class="language-plaintext highlighter-rouge">add(Pair&lt;? extends Number&gt; p)</code>传入了<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>类型的<code class="language-plaintext highlighter-rouge">p</code>，对于<code class="language-plaintext highlighter-rouge">setFirst(? extends Number)</code>为什么不能传入<code class="language-plaintext highlighter-rouge">Integer</code>呢？<br />
-  因为我们还能传入<code class="language-plaintext highlighter-rouge">Pair&lt;Double&gt;</code>类型的<code class="language-plaintext highlighter-rouge">p</code>,而传入<code class="language-plaintext highlighter-rouge">setFirst</code>的代码类型并不会变成<code class="language-plaintext highlighter-rouge">Double</code>类型,代码是固定的，形式参数类型为<code class="language-plaintext highlighter-rouge">Pair&lt;Double&gt;</code>的<code class="language-plaintext highlighter-rouge">setFirst()</code>当然是无法接受<code class="language-plaintext highlighter-rouge">Integer</code>类型的。<br />
-  为了避免产生安全问题,编译器一刀切,直接<strong>不接受任何写行为</strong>.  <br />
-  唯一的例外是可以给方法参数传入<code class="language-plaintext highlighter-rouge">null</code>,因为泛型只接受引用类型,也即对象,因为擦除法都擦成<code class="language-plaintext highlighter-rouge">Object</code>了,而所有的对象都可以赋值<code class="language-plaintext highlighter-rouge">null</code>,所以这是安全的行为.</p>
+<p>  编译错误发生在<code class="language-plaintext highlighter-rouge">p.setFirst()</code>，我们对<code class="language-plaintext highlighter-rouge">add(Pair&lt;? extends Number&gt; p)</code>传入了<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>类型的<code class="language-plaintext highlighter-rouge">p</code>，对于<code class="language-plaintext highlighter-rouge">setFirst(? extends Number)</code>为什么不能传入<code class="language-plaintext highlighter-rouge">Integer</code>呢？<br />
+  因为我们还能传入<code class="language-plaintext highlighter-rouge">Pair&lt;Double&gt;</code>类型的<code class="language-plaintext highlighter-rouge">p</code>，而传入<code class="language-plaintext highlighter-rouge">setFirst</code>的代码类型并不会变成<code class="language-plaintext highlighter-rouge">Double</code>类型，代码是固定的，形式参数类型为<code class="language-plaintext highlighter-rouge">Pair&lt;Double&gt;</code>的<code class="language-plaintext highlighter-rouge">setFirst()</code>当然是无法接受<code class="language-plaintext highlighter-rouge">Integer</code>类型的。<br />
+  为了避免产生安全问题，编译器一刀切，直接<strong>不接受任何写行为</strong>。<br />
+  唯一的例外是可以给方法参数传入<code class="language-plaintext highlighter-rouge">null</code>，因为泛型只接受引用类型，也即对象，因为擦除法都擦成<code class="language-plaintext highlighter-rouge">Object</code>了，而所有的对象都可以赋值<code class="language-plaintext highlighter-rouge">null</code>，所以这是安全的行为。</p>
 
-<p>  总的来说,调用:<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt; getFirst();</code>读,则需要用上界接收。写则因为可能向下转型的原因被切了，只有<code class="language-plaintext highlighter-rouge">null</code>值可以赋值给所有对象，才做为例外。</p>
+<p>  总的来说，调用：<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt; getFirst();</code>读，则需要用上界接收。写则因为可能向下转型的原因被切了，只有<code class="language-plaintext highlighter-rouge">null</code>值可以赋值给所有对象，才做为例外。</p>
 
 <h3 id="extends通配符形式参数实例">extends通配符形式参数实例</h3>
 
@@ -1758,7 +1757,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
     <span class="k">return</span> <span class="n">sum</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  使用<code class="language-plaintext highlighter-rouge">? extends Integer</code>限制了只读,只能调用<code class="language-plaintext highlighter-rouge">size()</code>,<code class="language-plaintext highlighter-rouge">get()</code>,不能调用<code class="language-plaintext highlighter-rouge">add()</code>,<code class="language-plaintext highlighter-rouge">remove()</code>。</p>
+<p>  使用<code class="language-plaintext highlighter-rouge">? extends Integer</code>限制了只读，只能调用<code class="language-plaintext highlighter-rouge">size()</code>，<code class="language-plaintext highlighter-rouge">get()</code>，不能调用<code class="language-plaintext highlighter-rouge">add()</code>，<code class="language-plaintext highlighter-rouge">remove()</code>。</p>
 
 <h3 id="使用extends在类限定t类型">使用extends在类限定T类型</h3>
 <p>  在定义<strong>泛型类型</strong><code class="language-plaintext highlighter-rouge">Pair&lt;T&gt;</code>的时候，也可以使用<code class="language-plaintext highlighter-rouge">extends</code>通配符来限定<code class="language-plaintext highlighter-rouge">T</code>的类型：</p>
@@ -1781,14 +1780,14 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 
 <p>  <font color="red"><b>使用类似`&lt;? extends Number&gt;`通配符参与方法的形式参数时表示：</b></font></p>
 <ul>
-  <li><strong>调用:<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt; getFirst();</code>读,则必须至少用上界<code class="language-plaintext highlighter-rouge">Number</code>接收,也可以用<code class="language-plaintext highlighter-rouge">Number</code>的父类接收,比如<code class="language-plaintext highlighter-rouge">Object</code>，避免可能的向下转型。</strong></li>
-  <li><strong>对于<code class="language-plaintext highlighter-rouge">setFirst(&lt;? extends Number&gt; o)</code>写则,因为可能向下转型的原因被一刀切了，只有<code class="language-plaintext highlighter-rouge">null</code>值可以赋值给所有对象，才做为例外。(如果有下界倒是可以赋值下界或下界的子类,避免向下转型了)</strong></li>
+  <li><strong>调用：<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt; getFirst();</code>读，则必须至少用上界<code class="language-plaintext highlighter-rouge">Number</code>接收，也可以用<code class="language-plaintext highlighter-rouge">Number</code>的父类接收，比如<code class="language-plaintext highlighter-rouge">Object</code>，避免可能的向下转型。</strong></li>
+  <li><strong>对于<code class="language-plaintext highlighter-rouge">setFirst(&lt;? extends Number&gt; o)</code>写则，因为可能向下转型的原因被一刀切了，只有<code class="language-plaintext highlighter-rouge">null</code>值可以赋值给所有对象，才做为例外。(如果有下界倒是可以赋值下界或下界的子类，避免向下转型了)</strong></li>
   <li><strong>方法被修饰的形式参数能够接收所有泛型类型为<code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Number</code>子类的泛型类型。</strong></li>
 </ul>
 
-<p>  <font color="red"><b>`&lt;? extends 上界&gt;`:传参类型&lt;=上界,只能写`null`，读&gt;=上界。</b></font></p>
+<p>  <font color="red"><b>`&lt;? extends 上界&gt;`：传参类型&lt;=上界，只能写`null`，读&gt;=上界。</b></font></p>
 
-<p>  其实<strong>不在方法参数</strong>也能用<code class="language-plaintext highlighter-rouge">&lt;? extends 上界&gt;</code>,效果是相同的。</p>
+<p>  其实<strong>不在方法参数</strong>也能用<code class="language-plaintext highlighter-rouge">&lt;? extends 上界&gt;</code>，效果是相同的。</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
@@ -1809,7 +1808,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 </ul>
 
 <h2 id="super通配符在形式参数的作用">super通配符在形式参数的作用</h2>
-<p>  之前说明泛型的继承关系：<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类,他们之前没有什么关系。
+<p>  之前说明泛型的继承关系：<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类，他们之前没有什么关系。<br />
   考察下面的<code class="language-plaintext highlighter-rouge">set</code>方法：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">first</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">p</span><span class="o">.</span><span class="na">setFirst</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
@@ -1817,7 +1816,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <span class="o">}</span>
 </code></pre></div></div>
 <p>  传入<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>是允许的，而传入<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>是不允许的。<br />
-  和<code class="language-plaintext highlighter-rouge">extends</code>通配符相反，这次，我们希望接受泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的<code class="language-plaintext highlighter-rouge">Pair</code>类型。还是向上提升的问题，父类可以指向子类，所以写操作是安全的。同样的,向下转型不安全,因此禁止读取。</p>
+  和<code class="language-plaintext highlighter-rouge">extends</code>通配符相反，这次，我们希望接受泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的<code class="language-plaintext highlighter-rouge">Pair</code>类型。还是向上提升的问题，父类可以指向子类，所以写操作是安全的。同样的，向下转型不安全，因此禁止读取。</p>
 
 <p>  使用<code class="language-plaintext highlighter-rouge">super</code>通配符来改写这个方法：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">first</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
@@ -1865,28 +1864,28 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p>  <code class="language-plaintext highlighter-rouge">Pair&lt;? super Integer&gt;</code>的<code class="language-plaintext highlighter-rouge">setFirst()</code>方法签名实际上是：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">setFirst</span><span class="o">(?</span> <span class="kd">super</span> <span class="nc">Integer</span><span class="o">);</span>
 </code></pre></div></div>
-<p>  因此，可以安全地传入<code class="language-plaintext highlighter-rouge">Integer</code>类型。如果你传<code class="language-plaintext highlighter-rouge">Number</code>类型,不好意思,因为泛型有可能是<code class="language-plaintext highlighter-rouge">Integer</code>所以不可以，即：有可能造成<code class="language-plaintext highlighter-rouge">Number</code>转<code class="language-plaintext highlighter-rouge">Integer</code>了,即向下转型。所以你想写入,则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入,也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能的向下转型。<br />
+<p>  因此，可以安全地传入<code class="language-plaintext highlighter-rouge">Integer</code>类型。如果你传<code class="language-plaintext highlighter-rouge">Number</code>类型，不好意思，因为泛型有可能是<code class="language-plaintext highlighter-rouge">Integer</code>所以不可以，即：有可能造成<code class="language-plaintext highlighter-rouge">Number</code>转<code class="language-plaintext highlighter-rouge">Integer</code>了，即向下转型。所以你想写入，则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入，也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能的向下转型。<br />
   而<code class="language-plaintext highlighter-rouge">Pair&lt;? super Integer&gt;</code>的<code class="language-plaintext highlighter-rouge">getFirst()</code>方法，它的方法签名实际上是：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?</span> <span class="kd">super</span> <span class="nc">Integer</span> <span class="nf">getFirst</span><span class="o">();</span>
 </code></pre></div></div>
-<p>  无法使用<code class="language-plaintext highlighter-rouge">Integer</code>类型来接收<code class="language-plaintext highlighter-rouge">getFirst()</code>的返回值,还是老样子,<code class="language-plaintext highlighter-rouge">Integer</code>可不是<code class="language-plaintext highlighter-rouge">Object</code>接收万物,也即可能的向下转型是不安全的：</p>
+<p>  无法使用<code class="language-plaintext highlighter-rouge">Integer</code>类型来接收<code class="language-plaintext highlighter-rouge">getFirst()</code>的返回值，还是老样子，<code class="language-plaintext highlighter-rouge">Integer</code>可不是<code class="language-plaintext highlighter-rouge">Object</code>接收万物，也即可能的向下转型是不安全的：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
 </code></pre></div></div>
-<p>  因为如果传入的实际类型是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>，在上面的代码中编译器无法将<code class="language-plaintext highlighter-rouge">Number</code>类型转型为<code class="language-plaintext highlighter-rouge">Integer</code>,即向下转型。<br />
-  唯一可以接收<code class="language-plaintext highlighter-rouge">getFirst()</code>方法返回值的是<code class="language-plaintext highlighter-rouge">Object</code>类型,因为它是所有类的父类,它能包容一切,除它自己外,所有对它的赋值都是向上提升,因此是安全的：</p>
+<p>  因为如果传入的实际类型是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>，在上面的代码中编译器无法将<code class="language-plaintext highlighter-rouge">Number</code>类型转型为<code class="language-plaintext highlighter-rouge">Integer</code>，即向下转型。<br />
+  唯一可以接收<code class="language-plaintext highlighter-rouge">getFirst()</code>方法返回值的是<code class="language-plaintext highlighter-rouge">Object</code>类型，因为它是所有类的父类，它能包容一切，除它自己外，所有对它的赋值都是向上提升，因此是安全的：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
 </code></pre></div></div>
 
 <p>  <font color="red"><b>使用类似`&lt;? super Integer&gt;`通配符参与方法的形式参数时表示：</b></font></p>
 <ul>
-  <li><strong>调用:<code class="language-plaintext highlighter-rouge">&lt;? super Integer&gt; getFirst();</code>读,因为没有限定上界,那只能用<code class="language-plaintext highlighter-rouge">Object</code>接收,避免可能的向下转型。</strong></li>
-  <li><strong>对于<code class="language-plaintext highlighter-rouge">setFirst(&lt;? super Integer&gt; o)</code>写则,则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入,也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能向下转型。</strong></li>
+  <li><strong>调用：<code class="language-plaintext highlighter-rouge">&lt;? super Integer&gt; getFirst();</code>读，因为没有限定上界，那只能用<code class="language-plaintext highlighter-rouge">Object</code>接收，避免可能的向下转型。</strong></li>
+  <li><strong>对于<code class="language-plaintext highlighter-rouge">setFirst(&lt;? super Integer&gt; o)</code>写则，则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入，也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能向下转型。</strong></li>
   <li><strong>方法修饰的形式参数能够接收所有泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的泛型类型。</strong></li>
 </ul>
 
-<p>  <font color="red"><b>`&lt;? super 下界&gt;`:传参类型&gt;=下界,写&lt;=下界，读只能`Object`。</b></font></p>
+<p>  <font color="red"><b>`&lt;? super 下界&gt;`：传参类型&gt;=下界，写&lt;=下界，读只能`Object`。</b></font></p>
 
 <p>  其实不在方法参数也能用<code class="language-plaintext highlighter-rouge">&lt;? super 下界&gt;</code>。</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
@@ -1908,10 +1907,10 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p>  对比<code class="language-plaintext highlighter-rouge">extends</code>和<code class="language-plaintext highlighter-rouge">super</code>，作为方法参数，<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>类型和<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>类型的区别在于：</p>
 <ul>
   <li>
-    <font color="red"><b>`&lt;? extends T&gt;`:传参类型&lt;=`T`,只能写`null`，读&gt;=`T`。</b></font>
+    <font color="red"><b>`&lt;? extends T&gt;`：传参类型&lt;=`T`，只能写`null`，读&gt;=`T`。</b></font>
   </li>
   <li>
-    <font color="red"><b>`&lt;? super T&gt;`:  传参类型&gt;=`T`,写&lt;=`T`，读只能`Object`。</b></font>
+    <font color="red"><b>`&lt;? super T&gt;`：  传参类型&gt;=`T`，写&lt;=`T`，读只能`Object`。</b></font>
   </li>
 </ul>
 
@@ -1919,7 +1918,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   Java标准库的<code class="language-plaintext highlighter-rouge">Collections</code>类定义的<code class="language-plaintext highlighter-rouge">copy()</code>方法：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Collections</span> <span class="o">{</span>
-    <span class="c1">// 把src的每个元素复制到dest中:</span>
+    <span class="c1">// 把src的每个元素复制到dest中：</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">copy</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">dest</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">src</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">src</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
             <span class="no">T</span> <span class="n">t</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
@@ -1930,7 +1929,6 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 </code></pre></div></div>
 <p>  它的作用是把一个<code class="language-plaintext highlighter-rouge">List</code>的每个元素依次添加到另一个<code class="language-plaintext highlighter-rouge">List</code>中。它的第一个参数是<code class="language-plaintext highlighter-rouge">List&lt;? super T&gt;</code>，表示目标<code class="language-plaintext highlighter-rouge">List</code>，第二个参数<code class="language-plaintext highlighter-rouge">List&lt;? extends T&gt;</code>，表示要复制的<code class="language-plaintext highlighter-rouge">List</code>。我们可以简单地用<code class="language-plaintext highlighter-rouge">for</code>循环实现复制。在<code class="language-plaintext highlighter-rouge">for</code>循环中，对于类型<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>的变量<code class="language-plaintext highlighter-rouge">src</code>可以安全的读，而对于类型<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>的变量<code class="language-plaintext highlighter-rouge">dest</code>可以安全的写。<br />
   这个<code class="language-plaintext highlighter-rouge">copy()</code>方法的定义就完美地展示了<code class="language-plaintext highlighter-rouge">extends</code>和<code class="language-plaintext highlighter-rouge">super</code>的意图：</p>
-
 <ul>
   <li><code class="language-plaintext highlighter-rouge">copy()</code>方法内部不会读取<code class="language-plaintext highlighter-rouge">dest</code>，因为不能调用<code class="language-plaintext highlighter-rouge">dest.get()</code>来获取<code class="language-plaintext highlighter-rouge">T</code>的引用；</li>
   <li><code class="language-plaintext highlighter-rouge">copy()</code>方法内部也不会修改<code class="language-plaintext highlighter-rouge">src</code>，因为不能调用<code class="language-plaintext highlighter-rouge">src.add(T)</code>。</li>
@@ -1938,24 +1936,24 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">numList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
 <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">intList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="c1">// copy List&lt;Integer&gt; to List&lt;Number&gt; ok:</span>
+<span class="c1">// copy List&lt;Integer&gt; to List&lt;Number&gt; ok：</span>
 <span class="nc">Collections</span><span class="o">.</span><span class="na">copy</span><span class="o">(</span><span class="n">numList</span><span class="o">,</span> <span class="n">intList</span><span class="o">);</span>
 </code></pre></div></div>
 <p>  这两个 <code class="language-plaintext highlighter-rouge">T</code> 是<strong>同一个类型</strong>。在方法签名中，<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code> 定义了方法级别的泛型类型参数，表示 <code class="language-plaintext highlighter-rouge">copy</code> 方法是一个泛型方法，它接受一个类型为 <code class="language-plaintext highlighter-rouge">T</code> 的参数。类型参数的推断是基于传入参数的类型来确定的，编译器会尝试推断出最具体的类型，然后将其用作所有相关类型参数的类型。如果无法推断出一个具体的类型，编译器将无法确定如何匹配类型参数，从而导致编译错误。</p>
 
-<p>  使用前面的结论:</p>
+<p>  使用前面的结论：</p>
 
 <ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>:<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>,只能写<code class="language-plaintext highlighter-rouge">null</code>，读&gt;=<code class="language-plaintext highlighter-rouge">T</code>。</strong></li>
-  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>:  <code class="language-plaintext highlighter-rouge">Number</code>&gt;=<code class="language-plaintext highlighter-rouge">T</code>,写&lt;=<code class="language-plaintext highlighter-rouge">T</code>，读只能<code class="language-plaintext highlighter-rouge">Object</code>。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>：<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>，只能写<code class="language-plaintext highlighter-rouge">null</code>，读&gt;=<code class="language-plaintext highlighter-rouge">T</code>。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>：  <code class="language-plaintext highlighter-rouge">Number</code>&gt;=<code class="language-plaintext highlighter-rouge">T</code>，写&lt;=<code class="language-plaintext highlighter-rouge">T</code>，读只能<code class="language-plaintext highlighter-rouge">Object</code>。</strong></li>
 </ul>
 
-<p>  可以得出:<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>&lt;=<code class="language-plaintext highlighter-rouge">Number</code>。<br />
-  在在这次调用中<code class="language-plaintext highlighter-rouge">T</code>的类型确定需要满足两个条件,即:</p>
+<p>  可以得出：<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>&lt;=<code class="language-plaintext highlighter-rouge">Number</code>。<br />
+  在在这次调用中<code class="language-plaintext highlighter-rouge">T</code>的类型确定需要满足两个条件，即：</p>
 
 <ul>
-  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>,所以<code class="language-plaintext highlighter-rouge">Number</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的父类,也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Number</code>或其子类</li>
-  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>,所以<code class="language-plaintext highlighter-rouge">Integer</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的子类,也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Integer</code>或其父类</li>
+  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>，所以<code class="language-plaintext highlighter-rouge">Number</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的父类，也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Number</code>或其子类</li>
+  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>，所以<code class="language-plaintext highlighter-rouge">Integer</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的子类，也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Integer</code>或其父类</li>
 </ul>
 
 <p>  因此，<code class="language-plaintext highlighter-rouge">T</code> 可以被推断为 <code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Integer</code>，从而实现了将 <code class="language-plaintext highlighter-rouge">Integer</code> 类型的列表复制到 <code class="language-plaintext highlighter-rouge">Number</code> 类型的列表的操作。这种根据实际类型推断泛型类型参数的过程称为类型推断。</p>
@@ -1976,12 +1974,12 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span> <span class="kd">extends</span> <span class="nc">Number</span><span class="o">&gt;</span> <span class="o">{</span>  <span class="o">}</span>
 </code></pre></div></div>
 <p>  将T限制为<code class="language-plaintext highlighter-rouge">Number</code>类型或<code class="language-plaintext highlighter-rouge">Number</code>的子类。<br />
-  那么有没有<code class="language-plaintext highlighter-rouge">super</code>通配符来限定<code class="language-plaintext highlighter-rouge">T</code>的类型呢?我想到这样的代码:</p>
+  那么有没有<code class="language-plaintext highlighter-rouge">super</code>通配符来限定<code class="language-plaintext highlighter-rouge">T</code>的类型呢?我想到这样的代码：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span> <span class="kd">super</span> <span class="nc">Number</span><span class="o">&gt;</span> <span class="o">{</span>  <span class="o">}</span>
 </code></pre></div></div>
 <p>  将T限制为<code class="language-plaintext highlighter-rouge">Number</code>类型或<code class="language-plaintext highlighter-rouge">Number</code>的父类。<br />
-  <strong>不,java中没有实现在类中对下界进行限定</strong>。</p>
+  <strong>不，java中没有实现在类中对下界进行限定</strong>。</p>
 
 <h3 id="无限定通配符">无限定通配符</h3>
 
@@ -1994,7 +1992,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   <li>不允许调用<code class="language-plaintext highlighter-rouge">T get()</code>方法并获取<code class="language-plaintext highlighter-rouge">T</code>引用（只能获取<code class="language-plaintext highlighter-rouge">Object</code>引用）。</li>
 </ul>
 
-<p>  也就是说:<font color="red"><b>`&lt;?&gt;`传参类型随便,只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font></p>
+<p>  也就是说：<font color="red"><b>`&lt;?&gt;`传参类型随便，只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font></p>
 
 <p>  换句话说，既不能读，也不能写，那只能做一些<code class="language-plaintext highlighter-rouge">null</code>判断：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isNull</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?&gt;</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
@@ -2036,25 +2034,25 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <span class="o">}</span>
 </code></pre></div></div>
 <p>  上述代码是可以正常编译运行的，因为<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>是<code class="language-plaintext highlighter-rouge">Pair&lt;?&gt;</code>的子类，可以安全地向上转型。<br />
-  <strong>实际上<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code> 等同于 <code class="language-plaintext highlighter-rouge">&lt;? extends Object&gt;</code>，表示未知类型的通配符，表示可以匹配任何类型。</strong>
-  那么有没有一个等同于<code class="language-plaintext highlighter-rouge">&lt;? super 最下子类</code>&gt;答案是没有的,因为这个最下子类并不是一个具体的东西,如果有,那么他也可以匹配任何类型,只能写null和最下子类,只能用Object读。功能基本和<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>重复了</p>
+  <strong>实际上<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code> 等同于 <code class="language-plaintext highlighter-rouge">&lt;? extends Object&gt;</code>，表示未知类型的通配符，表示可以匹配任何类型。</strong><br />
+  那么有没有一个等同于<code class="language-plaintext highlighter-rouge">&lt;? super 最下子类</code>&gt;答案是没有的，因为这个最下子类并不是一个具体的东西，如果有，那么他也可以匹配任何类型，只能写null和最下子类，只能用Object读。功能基本和<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>重复了</p>
 
 <h2 id="总结">总结</h2>
 
 <h3 id="说明">说明</h3>
 
-<p>  泛型的继承关系<strong>可以</strong>把类向上转型，而泛型参数<strong>不能产生变化</strong>
+<p>  泛型的继承关系<strong>可以</strong>把类向上转型，而泛型参数<strong>不能产生变化</strong>。<br />
   如果实例化时<strong>不定义泛型类型参数</strong>时，那么默认会使用<code class="language-plaintext highlighter-rouge">Object</code>作为泛型类型参数。<br />
   编译器如果能自动推断出泛型类型，可以省略定义后面的泛型类型。</p>
 
 <h3 id="定义">定义</h3>
 
-<p>  定义泛型类时，在类名后面定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，定义泛型方法时，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。
-  泛型类定义的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code><strong>只能用于整个类的实例</strong>，而不能用于类的静态成员（静态字段、静态方法、静态内部类）。
-  泛型方法定义的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code><strong>只适用于该方法</strong>，在泛型类中的方法仍然可以设置为泛型方法，也可以使用泛型类的标识符。
-  如果泛型类是<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，泛型方法也是<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，这两个<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>是不同的，在泛型方法中会隐藏泛型类的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<strong>不建议这么做</strong>，因为这样也很容易让人误解。<strong>更不建议将</strong><code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">Stirng</code>之类的，别人看了会打人，而且同样会隐藏<code class="language-plaintext highlighter-rouge">Stirng</code>,从而导致你要通过<code class="language-plaintext highlighter-rouge">java.lang.String</code>使用<code class="language-plaintext highlighter-rouge">String</code>。  <br />
-  泛型类的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>不能用于静态方法。静态方法同样可以变成泛型方法，使用同样的方法，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。
-  泛型还可以定义多种类型。如类型<code class="language-plaintext highlighter-rouge">&lt;T, K&gt;</code>,Java标准库的<code class="language-plaintext highlighter-rouge">Map&lt;K, V&gt;</code>就是使用两种泛型类型的例子。</p>
+<p>  定义泛型类时，在类名后面定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，定义泛型方法时，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<br />
+  泛型类定义的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code><strong>只能用于整个类的实例</strong>，而不能用于类的静态成员（静态字段、静态方法、静态内部类）。<br />
+  泛型方法定义的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code><strong>只适用于该方法</strong>，在泛型类中的方法仍然可以设置为泛型方法，也可以使用泛型类的标识符。<br />
+  如果泛型类是<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，泛型方法也是<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，这两个<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>是不同的，在泛型方法中会隐藏泛型类的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<strong>不建议这么做</strong>，因为这样也很容易让人误解。<strong>更不建议将</strong><code class="language-plaintext highlighter-rouge">T</code>写成<code class="language-plaintext highlighter-rouge">Stirng</code>之类的，别人看了会打人，而且同样会隐藏<code class="language-plaintext highlighter-rouge">Stirng</code>，从而导致你要通过<code class="language-plaintext highlighter-rouge">java.lang.String</code>使用<code class="language-plaintext highlighter-rouge">String</code>。    <br />
+  泛型类的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>不能用于静态方法。静态方法同样可以变成泛型方法，使用同样的方法，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<br />
+  泛型还可以定义多种类型。如类型<code class="language-plaintext highlighter-rouge">&lt;T, K&gt;</code>，Java标准库的<code class="language-plaintext highlighter-rouge">Map&lt;K, V&gt;</code>就是使用两种泛型类型的例子。</p>
 
 <h3 id="擦拭法-1">擦拭法</h3>
 
@@ -2066,7 +2064,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   <li>不能实例化<code class="language-plaintext highlighter-rouge">T</code>类型，例如：<code class="language-plaintext highlighter-rouge">new T()</code>。</li>
 </ul>
 
-<p>  泛型方法要防止重复定义方法，例如：<code class="language-plaintext highlighter-rouge">public boolean equals(T obj)</code>； 
+<p>  泛型方法要防止重复定义方法，例如：<code class="language-plaintext highlighter-rouge">public boolean equals(T obj)</code>。<br />
   一个类可以继承自一个泛型类，子类可以获取父类的泛型类型<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。</p>
 
 <h3 id="extendssuper">extends、super、？</h3>
@@ -2074,20 +2072,20 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p>  作为方法参数，<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>类型、<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>类型和<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>的区别在于：</p>
 <ul>
   <li>
-    <font color="red"><b>`&lt;? extends T&gt;`:传参类型&lt;=`T`,只能写`null`，读&gt;=`T`。</b></font>
+    <font color="red"><b>`&lt;? extends T&gt;`：传参类型&lt;=`T`，只能写`null`，读&gt;=`T`。</b></font>
   </li>
   <li>
-    <font color="red"><b>`&lt;? super T&gt;`:  传参类型&gt;=`T`,写&lt;=`T`，读只能`Object`。</b></font>
+    <font color="red"><b>`&lt;? super T&gt;`：  传参类型&gt;=`T`，写&lt;=`T`，读只能`Object`。</b></font>
   </li>
   <li>
-    <font color="red"><b>`&lt;?&gt;`传参类型随便,只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font>
+    <font color="red"><b>`&lt;?&gt;`传参类型随便，只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font>
   </li>
 </ul>
 
-<p>  <code class="language-plaintext highlighter-rouge">&lt;?&gt;</code> 等同于 <code class="language-plaintext highlighter-rouge">&lt;? extends Object&gt;</code>，表示未知类型的通配符，表示可以匹配任何类型。
-  大多数情况下，可以引入泛型参数<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>消除<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>通配符。
-  <strong>不在方法参数也能用<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>、<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>、<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>。</strong>
-  用<code class="language-plaintext highlighter-rouge">&lt;T extends Number&gt;</code>定义<strong>泛型类</strong>时表示<strong>使用时泛型类型限定为<code class="language-plaintext highlighter-rouge">Number</code>以及<code class="language-plaintext highlighter-rouge">Number</code>的子类。(泛型类型&lt;=上界)</strong>
+<p>  <code class="language-plaintext highlighter-rouge">&lt;?&gt;</code> 等同于 <code class="language-plaintext highlighter-rouge">&lt;? extends Object&gt;</code>，表示未知类型的通配符，表示可以匹配任何类型。<br />
+  大多数情况下，可以引入泛型参数<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>消除<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>通配符。<br />
+  <strong>不在方法参数也能用<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>、<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>、<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>。</strong><br />
+  用<code class="language-plaintext highlighter-rouge">&lt;T extends Number&gt;</code>定义<strong>泛型类</strong>时表示<strong>使用时泛型类型限定为<code class="language-plaintext highlighter-rouge">Number</code>以及<code class="language-plaintext highlighter-rouge">Number</code>的子类。(泛型类型&lt;=上界)</strong><br />
   其实就是因为java<strong>向上提升安全，而向下转型不安全</strong></p>
 
 <h2 id="泛型和反射">泛型和反射</h2>
@@ -2151,7 +2149,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  显然编译器要阻止这种类型不对的代码,为了防止可能的错误出现编译器直接一刀切这个操作。<br />
+<p>  显然编译器要阻止这种类型不对的代码，为了防止可能的错误出现编译器直接一刀切这个操作。<br />
   而且在泛型中这种写法可能会造成尝试去<code class="language-plaintext highlighter-rouge">new</code>一个不能直接实例化的<code class="language-plaintext highlighter-rouge">Type</code>，比如当我们这么写传入了抽象类：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
@@ -2194,13 +2192,13 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  泛型方法写法,<code class="language-plaintext highlighter-rouge">&lt;Pair&gt;</code>可省略:</p>
+<p>  泛型方法写法，<code class="language-plaintext highlighter-rouge">&lt;Pair&gt;</code>可省略：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;[]</span> <span class="n">ps</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;[])</span><span class="k">new</span> <span class="nc">Pair</span><span class="o">().&lt;</span><span class="nc">Pair</span><span class="o">&gt;</span><span class="n">createArray</span><span class="o">(</span><span class="nc">Pair</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="mi">5</span><span class="o">);</span>
 <span class="kd">public</span> <span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="no">K</span><span class="o">[]</span> <span class="nf">createArray</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="no">K</span><span class="o">&gt;</span> <span class="n">cls</span><span class="o">,</span><span class="kt">int</span> <span class="n">len</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="o">(</span><span class="no">K</span><span class="o">[])</span> <span class="nc">Array</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">cls</span><span class="o">,</span> <span class="n">len</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>  静态泛型方法写法,<code class="language-plaintext highlighter-rouge">&lt;Pair&gt;</code>可省略:</p>
+<p>  静态泛型方法写法，<code class="language-plaintext highlighter-rouge">&lt;Pair&gt;</code>可省略：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;[]</span> <span class="n">ps</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;[])</span><span class="nc">Pair</span><span class="o">.&lt;</span><span class="nc">Pair</span><span class="o">&gt;</span><span class="n">createArray</span><span class="o">(</span><span class="nc">Pair</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="mi">5</span><span class="o">);</span>
 <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="no">K</span><span class="o">[]</span> <span class="nf">createArray</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="no">K</span><span class="o">&gt;</span> <span class="n">cls</span><span class="o">,</span><span class="kt">int</span> <span class="n">len</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="o">(</span><span class="no">K</span><span class="o">[])</span> <span class="nc">Array</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">cls</span><span class="o">,</span> <span class="n">len</span><span class="o">);</span>
@@ -2247,7 +2245,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   更详细的解释请参考《<a href="https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/">Effective Java</a>》“Item 32: Combine generics and varargs judiciously”。</p>
 
 <p>  泛型是通过类型擦除来实现的，而可变参数<strong>只是</strong>一个传递数组变量的语法糖，本质上还是<strong>创建</strong>一个数组然后传入。<br />
-  所以泛型可变参数实际上就是 <code class="language-plaintext highlighter-rouge">Object</code> 数组，这样代码就可以等价为</p>
+  所以泛型可变参数实际上就是 <code class="language-plaintext highlighter-rouge">Object</code> 数组，这样代码就可以等价为：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
 
@@ -2277,7 +2275,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 
 <hr />
 
-<p>  以下是用jad反编译的，jad反编译后的是被擦拭后的，而使用cfr、jdgui反编译都是接近于源码的便于阅读的(<a href="http://java-decompiler.github.io/">jd-gui工具</a>,<a href="https://github.com/iloveeclipse/plugins">Bytecode Outline</a>插件,不但可以看字节码，还可以看如何生成字节码)<br />
+<p>  以下是用jad反编译的，jad反编译后的是被擦拭后的，而使用cfr、jdgui反编译都是接近于源码的便于阅读的。(<a href="http://java-decompiler.github.io/">jd-gui工具</a>，<a href="https://github.com/iloveeclipse/plugins">Bytecode Outline</a>插件，不但可以看字节码，还可以看如何生成字节码。）<br />
   反编译后的代码中出现的<code class="language-plaintext highlighter-rouge">transient</code>关键字，这是由于反编译工具对代码进行了简化和优化。transient关键字通常用于修饰成员变量，表示这些变量不会被序列化，与我们讨论的问题无关。</p>
 
 <p>  源代码：</p>
@@ -2351,7 +2349,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p>  <strong>可变参数的方法，实际接收的是一个数组</strong>，所以调用可变参数的方法时，会把参数封装成一个数组。如果在泛型方法里，调用泛型可变参数的方法，那么入参会被擦拭成<code class="language-plaintext highlighter-rouge">Object</code>数组。<br />
   报错解释：<code class="language-plaintext highlighter-rouge">main</code>直接调用<code class="language-plaintext highlighter-rouge">asArray</code>时，编译器知道<code class="language-plaintext highlighter-rouge">asArray</code>的入参是<code class="language-plaintext highlighter-rouge">String</code>，但是在调用<code class="language-plaintext highlighter-rouge">pickTwo</code>中编译器不知道<code class="language-plaintext highlighter-rouge">K</code>的类型将会是什么，所以调用<code class="language-plaintext highlighter-rouge">asArray</code>时入参封装（擦拭）成了<code class="language-plaintext highlighter-rouge">Object[]</code>，main中得到返回值强转为<code class="language-plaintext highlighter-rouge">String[]</code>时，就会报错。而在<code class="language-plaintext highlighter-rouge">toS</code>、<code class="language-plaintext highlighter-rouge">toS2</code>中尽管也会被擦拭成<code class="language-plaintext highlighter-rouge">Object</code>，但只是用<code class="language-plaintext highlighter-rouge">Object</code>持有对象引用，对象类型并没有改变，所以在<code class="language-plaintext highlighter-rouge">main</code>中强转时不会报错。</p>
 
-<p>  可变参数改成反射则没有问题</p>
+<p>  可变参数改成反射则没有问题：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
 
