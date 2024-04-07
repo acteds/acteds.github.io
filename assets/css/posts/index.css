@@ -123,3 +123,52 @@
     background-color: #777;
     border-radius: 10px;
 }
+/* 滚动条样式 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 1, 0.2) rgba(0, 0, 1, 0.05);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:vertical {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    transition: 1s;
+    height: 60px;
+    width: 60px;
+    border: 1px solid #ab23fd;
+}
+
+::-webkit-scrollbar:hover {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 1, 0.8);
+    border-radius: 100px;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
