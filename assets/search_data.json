@@ -104,6 +104,8 @@
   
   
   
+  
+  
 
   
     {
@@ -256,6 +258,22 @@
       
       "url"      : "https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B/",
       "keywords" : "Java"
+    } ,
+  
+    {
+      "title"    : "Java集合-List和Map常用实现类",
+      "category" : "Java",
+      
+      "url"      : "https://acteds.github.io/2024/04/07/Java%E9%9B%86%E5%90%88-List%E5%92%8CMap%E5%B8%B8%E7%94%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB/",
+      "keywords" : "Java"
+    } ,
+  
+    {
+      "title"    : "简单实现hashmap",
+      "category" : "",
+      
+      "url"      : "https://acteds.github.io/2024/04/08/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0HashMap/",
+      "keywords" : ""
     } ,
   
     {

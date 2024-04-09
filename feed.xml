@@ -1,4 +1,1202 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-04-09T09:26:55+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Java泛型</title><link href="https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B/" rel="alternate" type="text/html" title="Java泛型" /><published>2024-03-21T00:00:00+08:00</published><updated>2024-03-21T00:00:00+08:00</updated><id>https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B</id><content type="html" xml:base="https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="https://acteds.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://acteds.github.io/" rel="alternate" type="text/html" /><updated>2024-04-09T09:41:55+08:00</updated><id>https://acteds.github.io/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">简单实现hashmap</title><link href="https://acteds.github.io/2024/04/08/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0HashMap/" rel="alternate" type="text/html" title="简单实现hashmap" /><published>2024-04-08T00:00:00+08:00</published><updated>2024-04-08T00:00:00+08:00</updated><id>https://acteds.github.io/2024/04/08/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0HashMap</id><content type="html" xml:base="https://acteds.github.io/2024/04/08/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0HashMap/"><![CDATA[<h1 id="简单实现hashmap">简单实现HashMap</h1>
+
+<p>  实现的方法：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>V put(K key, V value)</td>
+      <td>把<code class="language-plaintext highlighter-rouge">key</code>和<code class="language-plaintext highlighter-rouge">value</code>做映射并放入<code class="language-plaintext highlighter-rouge">Map</code>。如果放入的<code class="language-plaintext highlighter-rouge">key</code><strong>已经存在</strong>，则会更新<code class="language-plaintext highlighter-rouge">value</code>并返回被删除的旧的<code class="language-plaintext highlighter-rouge">value</code>，否则，返回<code class="language-plaintext highlighter-rouge">null</code>。</td>
+    </tr>
+    <tr>
+      <td>V get(K key)</td>
+      <td>通过<code class="language-plaintext highlighter-rouge">key</code>获取到对应的<code class="language-plaintext highlighter-rouge">value</code>。如果<code class="language-plaintext highlighter-rouge">key</code>不存在，则返回<code class="language-plaintext highlighter-rouge">null</code>。</td>
+    </tr>
+    <tr>
+      <td>Set<code class="language-plaintext highlighter-rouge">&lt;K&gt;</code> keySet()</td>
+      <td>返回<code class="language-plaintext highlighter-rouge">key</code>的<code class="language-plaintext highlighter-rouge">Set</code>集合。</td>
+    </tr>
+    <tr>
+      <td>V remove(K key)</td>
+      <td>通过<code class="language-plaintext highlighter-rouge">key</code>获取到对应的键值对删除，并弹出<code class="language-plaintext highlighter-rouge">value</code>。如果<code class="language-plaintext highlighter-rouge">key</code>不存在，则返回<code class="language-plaintext highlighter-rouge">null</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>  包括哈希冲突处理，扩容处理，可设置默认大小与负载因子，默认大小会自动提高到最近的2的幂，扩容时容量翻倍。<br />
+  扩容操作包括以下步骤：</p>
+<ol>
+  <li>创建一个新的数组，大小是原数组的两倍。</li>
+  <li>将原数组中的元素<strong>重新计算哈希值</strong>，并根据新数组的大小<strong>重新分配位置</strong>。</li>
+  <li>将重新计算位置后的元素放入新数组中。</li>
+  <li>将新数组设置为 <code class="language-plaintext highlighter-rouge">HashMap</code> 的数组，替换原数组。</li>
+</ol>
+
+<p>  与重新生成一个HashMap相比，扩容不需要重新建立键值对，也不需要判断<code class="language-plaintext highlighter-rouge">key</code>覆盖，但在哈希冲突后依然要重新建立链表。<br />
+  链表为空时没有销毁，而是保留，以备下次使用，提高性能。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">MyHashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MyHashMap</span><span class="o">&lt;&gt;(</span><span class="mi">1</span><span class="o">,</span> <span class="mf">0.75</span><span class="no">F</span><span class="o">);</span>
+<span class="c1">//        Map&lt;String, String&gt; map = new HashMap&lt;&gt;(1, 0.75F);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span><span class="s">"123"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"你好"</span><span class="o">)==</span><span class="kc">null</span><span class="o">?</span><span class="s">"不存在"</span><span class="o">:</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"你好"</span><span class="o">));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"你好"</span><span class="o">)==</span><span class="kc">null</span><span class="o">?</span><span class="s">"不存在"</span><span class="o">:</span><span class="s">"已删除"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小蔡"</span><span class="o">,</span> <span class="s">"篮球"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小红"</span><span class="o">,</span> <span class="s">"游泳"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小刚"</span><span class="o">,</span> <span class="s">"跑步"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小美"</span><span class="o">,</span> <span class="s">"唱歌"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小美"</span><span class="o">,</span> <span class="s">"唱歌2"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小强"</span><span class="o">,</span> <span class="s">"画画"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小明"</span><span class="o">,</span> <span class="s">"编程"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小蔡"</span><span class="o">,</span> <span class="s">"唱、跳、rap、篮球"</span><span class="o">));</span><span class="c1">//弹出被覆盖Value</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">devOut</span><span class="o">());</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">k</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"key="</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="s">",value = "</span><span class="o">+</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">k</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * 自定义hashMap
+ * @param &lt;K&gt; key
+ * @param &lt;V&gt; value
+ */</span>
+<span class="kd">class</span> <span class="nc">MyHashMap</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;{</span>
+    <span class="kd">private</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">array</span><span class="o">;</span>
+    <span class="cm">/** 数组大小*/</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="o">;</span>
+    <span class="cm">/** 填充因子 */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">actualSize</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+    <span class="cm">/** 负载因子 */</span>
+    <span class="kd">private</span> <span class="kt">float</span> <span class="n">loadFactor</span><span class="o">=</span><span class="mf">0.75f</span><span class="o">;</span>
+
+    <span class="cm">/**
+     *
+     * @param initialCapacity 数组初始长度
+     * @param loadFactor 负载因子
+     */</span>
+    <span class="kd">public</span> <span class="nf">MyHashMap</span><span class="o">(</span><span class="kt">int</span> <span class="n">initialCapacity</span><span class="o">,</span><span class="kt">float</span> <span class="n">loadFactor</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">initialCapacity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"非法初始容量: "</span> <span class="o">+</span> <span class="n">initialCapacity</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nc">Float</span><span class="o">.</span><span class="na">isNaN</span><span class="o">(</span><span class="n">loadFactor</span><span class="o">)||</span><span class="n">loadFactor</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="no">F</span> <span class="o">||</span> <span class="n">loadFactor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"非法负载因子: "</span> <span class="o">+</span> <span class="n">loadFactor</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">initialCapacity</span> <span class="o">&gt;</span> <span class="mi">1073741824</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">initialCapacity</span> <span class="o">=</span> <span class="mi">1073741824</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 提升到2的整数幂</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">size</span><span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">nextPowerOfTwo</span><span class="o">(</span><span class="n">initialCapacity</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">loadFactor</span><span class="o">=</span><span class="n">loadFactor</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">array</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nf">MyHashMap</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">array</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 如果capacity不是2的整数幂，则增加到大于capacity的最近的2的整数幂
+     * @param capacity 待提升数字
+     * @return 2的整数幂
+     */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">nextPowerOfTwo</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">capacity</span> <span class="o">&amp;</span> <span class="o">(</span><span class="n">capacity</span> <span class="o">-</span> <span class="mi">1</span><span class="o">))</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">capacity</span><span class="o">;</span> <span class="c1">// 如果a已经是2的整数幂，则直接返回a</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">power</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">power</span> <span class="o">&lt;</span> <span class="n">capacity</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">power</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="o">;</span> <span class="c1">// 不断左移，直到找到大于a的最近的2的整数幂</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="n">power</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="no">V</span> <span class="nf">get</span><span class="o">(</span><span class="no">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">getKeyHash</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]==</span><span class="kc">null</span><span class="o">){</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="no">KV</span><span class="o">)</span>  <span class="o">{</span>
+            <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=(</span><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="k">for</span> <span class="o">(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">)){</span>
+                    <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 获取key哈希值。
+     * @param key 键
+     * @return key的哈希值
+     */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">getKeyHash</span><span class="o">(</span><span class="no">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">hash</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">key</span> <span class="o">==</span><span class="kc">null</span><span class="o">){</span>
+            <span class="n">hash</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+        <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+            <span class="n">hash</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">%</span> <span class="n">size</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">hash</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="no">V</span> <span class="nf">put</span><span class="o">(</span><span class="no">K</span> <span class="n">key</span><span class="o">,</span> <span class="no">V</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">getKeyHash</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="c1">//哈希桶是空的</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+            <span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]=</span><span class="k">new</span> <span class="no">KV</span><span class="o">&lt;&gt;(</span><span class="n">key</span><span class="o">,</span><span class="n">value</span><span class="o">);</span>
+            <span class="n">actualSize</span><span class="o">++;</span>
+            <span class="n">expansion</span><span class="o">();</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 哈希桶已占用,哈希冲突</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="no">KV</span><span class="o">)</span>  <span class="o">{</span>
+            <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="no">K</span> <span class="n">k</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">();</span>
+            <span class="c1">//覆盖检测</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nc">Objects</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">key</span><span class="o">)){</span>
+                <span class="no">V</span> <span class="n">v</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+                <span class="n">item</span><span class="o">.</span><span class="na">setV</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+                <span class="c1">//如果覆盖，则弹出旧值</span>
+                <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">//无覆盖则生成链表,并添加</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+            <span class="c1">//旧元素</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+            <span class="c1">//新元素</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="no">KV</span><span class="o">&lt;&gt;(</span><span class="n">key</span><span class="o">,</span><span class="n">value</span><span class="o">));</span>
+            <span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]=</span><span class="n">list</span><span class="o">;</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=(</span><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="c1">//是否为空链表</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()){</span>
+                <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="no">KV</span><span class="o">&lt;&gt;(</span><span class="n">key</span><span class="o">,</span><span class="n">value</span><span class="o">));</span>
+                <span class="n">actualSize</span><span class="o">++;</span>
+                <span class="n">expansion</span><span class="o">();</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">//覆盖检测</span>
+            <span class="k">for</span> <span class="o">(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+                <span class="no">K</span> <span class="n">k</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nc">Objects</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">key</span><span class="o">)){</span>
+                    <span class="no">V</span> <span class="n">v</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+                    <span class="n">item</span><span class="o">.</span><span class="na">setV</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+                    <span class="c1">//如果覆盖，则弹出旧值</span>
+                    <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="c1">//无覆盖则添加</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="no">KV</span><span class="o">&lt;&gt;(</span><span class="n">key</span><span class="o">,</span><span class="n">value</span><span class="o">));</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 删除指定key的键值对
+     * @param key key
+     * @return value
+     */</span>
+    <span class="kd">public</span> <span class="no">V</span> <span class="nf">remove</span><span class="o">(</span><span class="no">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">getKeyHash</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 是一个元素,则删除,并弹出value</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="no">KV</span><span class="o">)</span>  <span class="o">{</span>
+            <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]=</span><span class="kc">null</span><span class="o">;</span>
+            <span class="n">actualSize</span><span class="o">--;</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="c1">// 是链表,则遍历,找到key相等的删除并弹出</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=(</span><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;)</span><span class="n">array</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+            <span class="k">for</span> <span class="o">(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+                <span class="no">K</span> <span class="n">k</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nc">Objects</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">key</span><span class="o">)){</span>
+                    <span class="no">V</span> <span class="n">v</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+                    <span class="n">list</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+                    <span class="c1">// 如果链表为空则降低填充因子</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()){</span>
+                        <span class="n">actualSize</span><span class="o">--;</span>
+                    <span class="o">}</span>
+                    <span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 返回所有key
+     * @return Set&lt;K&gt;
+     */</span>
+    <span class="kd">public</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="nf">keySet</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="n">keySet</span><span class="o">=</span><span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="n">traverse</span><span class="o">((</span><span class="n">t</span><span class="o">)-&gt;{</span>
+                <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">t</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+                <span class="n">keySet</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">());</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="n">keySet</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 遍历MyHashMap,每个元素调用都调用一次callback
+     * @param callback 回调函数,每个元素调用一次
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">traverse</span><span class="o">(</span><span class="nc">Callback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Object</span> <span class="n">o</span> <span class="o">:</span> <span class="n">array</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">==</span><span class="kc">null</span><span class="o">){</span><span class="k">continue</span><span class="o">;}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="no">KV</span><span class="o">)</span>  <span class="o">{</span>
+                <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">o</span><span class="o">;</span>
+                <span class="n">callback</span><span class="o">.</span><span class="na">onCallback</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+                <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=(</span><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;)</span><span class="n">o</span><span class="o">;</span>
+                <span class="k">for</span> <span class="o">(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">callback</span><span class="o">.</span><span class="na">onCallback</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 扩容
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">expansion</span><span class="o">(){</span>
+        <span class="k">if</span> <span class="o">((</span><span class="kt">float</span><span class="o">)</span> <span class="n">actualSize</span> <span class="o">/</span><span class="n">size</span><span class="o">&gt;=</span><span class="n">loadFactor</span><span class="o">){</span>
+            <span class="c1">// 创建一个新的数组，大小是原数组的两倍。</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"扩容前："</span><span class="o">+</span><span class="n">devOut</span><span class="o">());</span>
+            <span class="nc">Object</span><span class="o">[]</span> <span class="n">newArray</span><span class="o">=</span><span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="n">size</span><span class="o">*</span><span class="mi">2</span><span class="o">];</span>
+            <span class="c1">//重新设置哈希算法,容量翻倍</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">size</span><span class="o">*=</span><span class="mi">2</span><span class="o">;</span>
+            <span class="c1">// 重新计算填充因子</span>
+            <span class="kt">var</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">()</span> <span class="o">{</span>
+                <span class="kt">int</span> <span class="n">actualSize</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+            <span class="o">};</span>
+            <span class="c1">// 将原数组中的元素重新计算哈希值，并根据新数组的大小重新分配位置。</span>
+            <span class="c1">// 将重新计算位置后的元素放入新数组中。</span>
+
+            <span class="n">traverse</span><span class="o">((</span><span class="n">t</span><span class="o">)-&gt;{</span>
+                <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">t0</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">t</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+                <span class="no">K</span> <span class="n">key</span><span class="o">=</span><span class="n">t0</span><span class="o">.</span><span class="na">getK</span><span class="o">();</span>
+                <span class="no">V</span> <span class="n">value</span><span class="o">=</span><span class="n">t0</span><span class="o">.</span><span class="na">getV</span><span class="o">();</span>
+                <span class="kt">int</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">getKeyHash</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+                <span class="c1">// 哈希桶是空的</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+                    <span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">]=</span><span class="n">t0</span><span class="o">;</span>
+                    <span class="n">ref</span><span class="o">.</span><span class="na">actualSize</span><span class="o">++;</span>
+                    <span class="k">return</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="c1">// 哈希桶已占用,哈希冲突</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="no">KV</span><span class="o">)</span>  <span class="o">{</span>
+                    <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+                    <span class="no">K</span> <span class="n">k</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getK</span><span class="o">();</span>
+                    <span class="c1">//覆盖检测（添加前就检测了，不会有重复的key）</span>
+                    <span class="c1">//无覆盖则生成链表,并添加</span>
+                    <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+                    <span class="c1">//旧元素</span>
+                    <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+                    <span class="c1">//新元素</span>
+                    <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">t0</span><span class="o">);</span>
+                    <span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">]=</span><span class="n">list</span><span class="o">;</span>
+                    <span class="k">return</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+                    <span class="nc">List</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;</span> <span class="n">list</span><span class="o">=(</span><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;&gt;)</span><span class="n">newArray</span><span class="o">[</span><span class="n">hash</span><span class="o">];</span>
+                    <span class="c1">//是否为空链表（也不用检测了，因为扩容不会执行remove）</span>
+                    <span class="c1">//覆盖检测（添加前就检测了，不会有重复的key）</span>
+                    <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">t0</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="c1">// 将新数组设置为 `HashMap` 的数组，替换原数组。</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">array</span><span class="o">=</span><span class="n">newArray</span><span class="o">;</span>
+            <span class="c1">// 重设填充因子</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">actualSize</span><span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="na">actualSize</span><span class="o">;</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"扩容后："</span><span class="o">+</span><span class="n">devOut</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="c1">// 定义一个回调接口</span>
+    <span class="kd">interface</span> <span class="nc">Callback</span><span class="o">{</span>
+         <span class="kt">void</span> <span class="nf">onCallback</span><span class="o">(</span><span class="nc">Object</span><span class="o">...</span><span class="na">t</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">StringBuffer</span> <span class="n">sb</span><span class="o">=</span><span class="k">new</span> <span class="nc">StringBuffer</span><span class="o">();</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">()).</span><span class="na">append</span><span class="o">(</span><span class="s">"{"</span><span class="o">);</span>
+        <span class="kt">var</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">()</span> <span class="o">{</span>
+            <span class="kt">boolean</span> <span class="n">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">};</span>
+        <span class="n">traverse</span><span class="o">((</span><span class="n">t</span><span class="o">)-&gt;{</span>
+            <span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;</span> <span class="n">item</span><span class="o">=(</span><span class="no">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;)</span><span class="n">t</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">item</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">","</span><span class="o">);</span>
+            <span class="n">ref</span><span class="o">.</span><span class="na">flag</span> <span class="o">=</span><span class="kc">true</span><span class="o">;</span>
+        <span class="o">});</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ref</span><span class="o">.</span><span class="na">flag</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">deleteCharAt</span><span class="o">(</span><span class="n">sb</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"}"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">devOut</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"当前已用%d个哈希桶，哈希桶总数量：%d，结构：%s"</span><span class="o">,</span> <span class="n">actualSize</span><span class="o">,</span><span class="n">size</span><span class="o">,</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">array</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">KV</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span><span class="no">V</span><span class="o">&gt;{</span>
+        <span class="kd">private</span> <span class="no">K</span> <span class="n">k</span><span class="o">;</span><span class="kd">private</span> <span class="no">V</span> <span class="n">v</span><span class="o">;</span>
+        <span class="kd">public</span> <span class="nf">KV</span><span class="o">(</span><span class="no">K</span> <span class="n">k</span><span class="o">,</span> <span class="no">V</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span><span class="k">this</span><span class="o">.</span><span class="na">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">;</span><span class="k">this</span><span class="o">.</span><span class="na">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">;}</span>
+        <span class="kd">public</span> <span class="no">K</span> <span class="nf">getK</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="n">k</span><span class="o">;}</span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">setK</span><span class="o">(</span><span class="no">K</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span><span class="k">this</span><span class="o">.</span><span class="na">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">;}</span><span class="kd">public</span> <span class="no">V</span> <span class="nf">getV</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="n">v</span><span class="o">;}</span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">setV</span><span class="o">(</span><span class="no">V</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span><span class="k">this</span><span class="o">.</span><span class="na">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">;}</span>
+        <span class="nd">@Override</span> <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="n">k</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">v</span><span class="o">;</span> <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  控制台输出：</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>扩容前：当前已用1个哈希桶，哈希桶总数量：1，结构：[null=123]
+扩容后：当前已用1个哈希桶，哈希桶总数量：2，结构：[null=123, null]
+com.aotmd.MyHashMap{null=123}
+com.aotmd.MyHashMap{}
+不存在
+不存在
+扩容前：当前已用2个哈希桶，哈希桶总数量：2，结构：[小蔡=篮球, 小红=游泳]
+扩容后：当前已用2个哈希桶，哈希桶总数量：4，结构：[null, null, 小蔡=篮球, 小红=游泳]
+篮球
+当前已用2个哈希桶，哈希桶总数量：4，结构：[null, null, 小蔡=唱、跳、rap、篮球, [小红=游泳, 小刚=跑步, 小美=唱歌2, 小强=画画, 小明=编程]]
+key=小刚,value = 跑步
+key=小强,value = 画画
+key=小美,value = 唱歌2
+key=小明,value = 编程
+key=小红,value = 游泳
+key=小蔡,value = 唱、跳、rap、篮球
+com.aotmd.MyHashMap{小蔡=唱、跳、rap、篮球,小红=游泳,小刚=跑步,小美=唱歌2,小强=画画,小明=编程}
+</code></pre></div></div>
+<p>  修改一下,使用系统的HashMap,测试一下是否一致:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//        MyHashMap&lt;String, String&gt; map = new MyHashMap&lt;&gt;(1, 0.75F);</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;(</span><span class="mi">1</span><span class="o">,</span> <span class="mf">0.75</span><span class="no">F</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span><span class="s">"123"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"你好"</span><span class="o">)==</span><span class="kc">null</span><span class="o">?</span><span class="s">"不存在"</span><span class="o">:</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"你好"</span><span class="o">));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"你好"</span><span class="o">)==</span><span class="kc">null</span><span class="o">?</span><span class="s">"不存在"</span><span class="o">:</span><span class="s">"已删除"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小蔡"</span><span class="o">,</span> <span class="s">"篮球"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小红"</span><span class="o">,</span> <span class="s">"游泳"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小刚"</span><span class="o">,</span> <span class="s">"跑步"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小美"</span><span class="o">,</span> <span class="s">"唱歌"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小美"</span><span class="o">,</span> <span class="s">"唱歌2"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小强"</span><span class="o">,</span> <span class="s">"画画"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小明"</span><span class="o">,</span> <span class="s">"编程"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"小蔡"</span><span class="o">,</span> <span class="s">"唱、跳、rap、篮球"</span><span class="o">));</span><span class="c1">//弹出被覆盖Value</span>
+<span class="c1">//        System.out.println(map.devOut());</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">k</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"key="</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="s">",value = "</span><span class="o">+</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">k</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  控制台输出：</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{null=123}
+{}
+不存在
+不存在
+篮球
+key=小红,value = 游泳
+key=小刚,value = 跑步
+key=小强,value = 画画
+key=小蔡,value = 唱、跳、rap、篮球
+key=小美,value = 唱歌2
+key=小明,value = 编程
+{小红=游泳, 小刚=跑步, 小强=画画, 小蔡=唱、跳、rap、篮球, 小美=唱歌2, 小明=编程}
+</code></pre></div></div>
+<p>  没有问题</p>]]></content><author><name>acteds</name></author><summary type="html"><![CDATA[简单实现HashMap]]></summary></entry><entry><title type="html">Java集合-List和Map常用实现类</title><link href="https://acteds.github.io/2024/04/07/Java%E9%9B%86%E5%90%88-List%E5%92%8CMap%E5%B8%B8%E7%94%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB/" rel="alternate" type="text/html" title="Java集合-List和Map常用实现类" /><published>2024-04-07T00:00:00+08:00</published><updated>2024-04-07T00:00:00+08:00</updated><id>https://acteds.github.io/2024/04/07/Java%E9%9B%86%E5%90%88-List%E5%92%8CMap%E5%B8%B8%E7%94%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB</id><content type="html" xml:base="https://acteds.github.io/2024/04/07/Java%E9%9B%86%E5%90%88-List%E5%92%8CMap%E5%B8%B8%E7%94%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB/"><![CDATA[<h1 id="引言">引言</h1>
+<p>  java集合List和Map常用实现类，还包括函数式接口，方法引用笔记。</p>
+
+<h1 id="集合">集合</h1>
+<p>  在Java中，如果一个Java对象可以在内部持有若干其他Java对象，并对外提供访问接口，我们把这种Java对象称为集合。很显然，Java的数组可以看作是一种集合：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">ss</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="mi">10</span><span class="o">];</span> <span class="c1">// 可以持有10个String对象</span>
+<span class="n">ss</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="s">"Hello"</span><span class="o">;</span> <span class="c1">// 可以放入String对象</span>
+<span class="nc">String</span> <span class="n">first</span> <span class="o">=</span> <span class="n">ss</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span> <span class="c1">// 可以获取String对象</span>
+</code></pre></div></div>
+<p>  既然Java提供了数组这种数据类型，可以充当集合，那么，我们为什么还需要其他集合类？这是因为数组有如下限制：</p>
+<ul>
+  <li>数组初始化后大小不可变；</li>
+  <li>数组只能按索引顺序存取。</li>
+</ul>
+
+<p>  因此，我们需要各种不同类型的集合类来处理不同的数据，例如：</p>
+<ul>
+  <li>可变大小的顺序链表；</li>
+  <li>保证无重复元素的集合；</li>
+</ul>
+
+<h1 id="collection">Collection</h1>
+<p>  Java标准库自带的<code class="language-plaintext highlighter-rouge">java.util</code>包提供了集合类：<code class="language-plaintext highlighter-rouge">Collection</code>，它是除<code class="language-plaintext highlighter-rouge">Map</code>外所有其他集合类的根接口。Java的<code class="language-plaintext highlighter-rouge">java.util</code>包主要提供了以下三种类型的集合：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">List</code>：一种有序列表的集合，例如，按索引排列的<code class="language-plaintext highlighter-rouge">Student</code>的<code class="language-plaintext highlighter-rouge">List</code>；</li>
+  <li><code class="language-plaintext highlighter-rouge">Set</code>：一种保证没有重复元素的集合，例如，所有无重复名称的<code class="language-plaintext highlighter-rouge">Student</code>的<code class="language-plaintext highlighter-rouge">Set</code>；</li>
+  <li><code class="language-plaintext highlighter-rouge">Map</code>：一种通过键值（key-value）查找的映射表集合，例如，根据<code class="language-plaintext highlighter-rouge">Student</code>的<code class="language-plaintext highlighter-rouge">name</code>查找对应<code class="language-plaintext highlighter-rouge">Student</code>的<code class="language-plaintext highlighter-rouge">Map</code>。</li>
+</ul>
+
+<p>  Java集合的设计有几个特点：一是实现了接口和实现类相分离，例如，有序表的接口是<code class="language-plaintext highlighter-rouge">List</code>，具体的实现类有<code class="language-plaintext highlighter-rouge">ArrayList</code>，<code class="language-plaintext highlighter-rouge">LinkedList</code>等，二是支持泛型，我们可以限制在一个集合中只能放入同一种数据类型的元素，例如：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(); // 只能放入String类型
+</code></pre></div></div>
+<p>  最后，Java访问集合总是通过统一的方式——迭代器（Iterator）来实现，它最明显的好处在于无需知道集合内部元素是按什么方式存储的。<br />
+  由于Java的集合设计非常久远，中间经历过大规模改进，我们要注意到有一小部分集合类是遗留类，不应该继续使用：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Hashtable</code>：一种线程安全的<code class="language-plaintext highlighter-rouge">Map</code>实现；</li>
+  <li><code class="language-plaintext highlighter-rouge">Vector</code>：一种线程安全的<code class="language-plaintext highlighter-rouge">List</code>实现；</li>
+  <li><code class="language-plaintext highlighter-rouge">Stack</code>：基于<code class="language-plaintext highlighter-rouge">Vector</code>实现的<code class="language-plaintext highlighter-rouge">LIFO</code>的栈。</li>
+</ul>
+
+<p>  还有一小部分接口是遗留接口，也不应该继续使用：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Enumeration&lt;E&gt;</code>：已被<code class="language-plaintext highlighter-rouge">Iterator&lt;E&gt;</code>取代。</li>
+</ul>
+
+<h1 id="list">List</h1>
+<p>  <strong><code class="language-plaintext highlighter-rouge">List</code>的子接口</strong>除了<code class="language-plaintext highlighter-rouge">List</code>接口外，还有<code class="language-plaintext highlighter-rouge">Deque</code>（双端队列）和<code class="language-plaintext highlighter-rouge">Queue</code>（队列）等接口，它们分别代表具有不同特性的列表。<code class="language-plaintext highlighter-rouge">Deque</code>支持在两端添加和删除元素，而<code class="language-plaintext highlighter-rouge">Queue</code>通常采用先进先出（FIFO）的方式管理元素。<br />
+  在Java 8中，集合框架引入了一些新的特性，如<code class="language-plaintext highlighter-rouge">forEach()</code>方法、<code class="language-plaintext highlighter-rouge">stream</code>流操作、函数式接口等，可以更方便地对集合进行操作和处理。<br />
+  在实际应用中，需要增删元素的有序列表，我们使用最多的是<code class="language-plaintext highlighter-rouge">ArrayList</code>。<br />
+  <code class="language-plaintext highlighter-rouge">ArrayList</code>把添加和删除的操作封装起来，让我们操作<code class="language-plaintext highlighter-rouge">List</code>类似于操作数组，却不用关心内部元素如何移动。<br />
+  <code class="language-plaintext highlighter-rouge">List&lt;E&gt;</code>接口有几个主要的接口方法：</p>
+<ul>
+  <li>在末尾添加一个元素：<code class="language-plaintext highlighter-rouge">boolean add(E e)</code></li>
+  <li>在指定索引添加一个元素：<code class="language-plaintext highlighter-rouge">boolean add(int index, E e)</code></li>
+  <li>删除指定索引的元素：<code class="language-plaintext highlighter-rouge">E remove(int index)</code></li>
+  <li>删除某个元素：<code class="language-plaintext highlighter-rouge">boolean remove(Object e)</code></li>
+  <li>获取指定索引的元素：<code class="language-plaintext highlighter-rouge">E get(int index)</code></li>
+  <li>获取链表大小（包含元素的个数）：<code class="language-plaintext highlighter-rouge">int size()</code></li>
+</ul>
+
+<p>  实现<code class="language-plaintext highlighter-rouge">List</code>接口并非只能通过数组（即<code class="language-plaintext highlighter-rouge">ArrayList</code>的实现方式）来实现，另一种<code class="language-plaintext highlighter-rouge">LinkedList</code>通过“链表”也实现了List接口。在<code class="language-plaintext highlighter-rouge">LinkedList</code>中，它的内部每个元素都指向在<code class="language-plaintext highlighter-rouge">LinkedList</code>中，它的内部每个元素都指向下一个元素：</p>
+<pre><code class="language-ascii">        ┌───┬───┐   ┌───┬───┐   ┌───┬───┐   ┌───┬───┐
+HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C │ ●─┼──&gt;│ D │   │
+        └───┴───┘   └───┴───┘   └───┴───┘   └───┴───┘
+</code></pre>
+
+<p>  我们来比较一下<code class="language-plaintext highlighter-rouge">ArrayList</code>和<code class="language-plaintext highlighter-rouge">LinkedList</code>：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left">ArrayList</th>
+      <th style="text-align: left">LinkedList</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">获取指定元素</td>
+      <td style="text-align: left">速度很快</td>
+      <td style="text-align: left">需要从头开始查找元素</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">添加元素到末尾</td>
+      <td style="text-align: left">速度很快</td>
+      <td style="text-align: left">速度很快</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">在指定位置添加/删除</td>
+      <td style="text-align: left">需要移动元素</td>
+      <td style="text-align: left">不需要移动元素</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">内存占用</td>
+      <td style="text-align: left">少</td>
+      <td style="text-align: left">较大</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>  <code class="language-plaintext highlighter-rouge">ArrayList</code>适合随机访问，而<code class="language-plaintext highlighter-rouge">LinkedList</code>适合插入和删除操作频繁的场景。<br />
+  通常情况下，我们总是优先使用<code class="language-plaintext highlighter-rouge">ArrayList</code>。<code class="language-plaintext highlighter-rouge">List</code>接口<strong>允许</strong>添加<strong>重复</strong>的元素，<code class="language-plaintext highlighter-rouge">List</code>还<strong>允许添加</strong><code class="language-plaintext highlighter-rouge">null</code>。<br />
+  除了使用<code class="language-plaintext highlighter-rouge">ArrayList</code>和<code class="language-plaintext highlighter-rouge">LinkedList</code>，我们还可以通过<code class="language-plaintext highlighter-rouge">List</code>接口提供的<code class="language-plaintext highlighter-rouge">of()</code>方法，根据给定元素快速创建<code class="language-plaintext highlighter-rouge">List</code>：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  但是<code class="language-plaintext highlighter-rouge">List.of()</code>方法不接受<code class="language-plaintext highlighter-rouge">null</code>值，如果传入<code class="language-plaintext highlighter-rouge">null</code>，会抛出<code class="language-plaintext highlighter-rouge">NullPointerException</code>异常。</p>
+<h2 id="遍历list">遍历List</h2>
+<p>  可以用<code class="language-plaintext highlighter-rouge">for</code>循环根据索引配合<code class="language-plaintext highlighter-rouge">get(int)</code>方法遍历，但这种方式并不推荐，一是代码复杂，二是因为<code class="language-plaintext highlighter-rouge">get(int)</code>方法只有<code class="language-plaintext highlighter-rouge">ArrayList</code>的实现是高效的，换成<code class="language-plaintext highlighter-rouge">LinkedList</code>后，索引越大，访问速度越慢。<br />
+  迭代器<code class="language-plaintext highlighter-rouge">Iterator</code>本身也是一个对象，但它是由<code class="language-plaintext highlighter-rouge">List</code>的<strong>实例</strong>调用<code class="language-plaintext highlighter-rouge">iterator()</code>方法的时候创建的。<code class="language-plaintext highlighter-rouge">Iterator</code>对象知道如何遍历一个<code class="language-plaintext highlighter-rouge">List</code>，并且不同的<code class="language-plaintext highlighter-rouge">List</code>类型，返回的<code class="language-plaintext highlighter-rouge">Iterator</code>对象实现也是不同的，但<strong>总是</strong>具有<strong>最高</strong>的访问效率。</p>
+
+<p>  <code class="language-plaintext highlighter-rouge">Iterator</code>对象有两个方法：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">boolean hasNext()</code>判断是否有下一个元素</li>
+  <li><code class="language-plaintext highlighter-rouge">E next()</code>返回下一个元素。</li>
+</ul>
+
+<p>  使用<code class="language-plaintext highlighter-rouge">Iterator</code>遍历<code class="language-plaintext highlighter-rouge">List</code>代码如下：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">iterator</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span> <span class="n">iterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">();</span> <span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Integer</span> <span class="n">next</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  由于<code class="language-plaintext highlighter-rouge">Iterator</code>遍历是如此常用，所以，Java的<code class="language-plaintext highlighter-rouge">for each</code>循环本身就可以帮我们使用<code class="language-plaintext highlighter-rouge">Iterator</code>遍历。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">Integer</span> <span class="n">next</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  只要实现了<code class="language-plaintext highlighter-rouge">Iterable</code>接口的集合类都可以直接用<code class="language-plaintext highlighter-rouge">for each</code>循环来遍历，Java编译器本身并不知道如何遍历集合对象，但它会自动把<code class="language-plaintext highlighter-rouge">for each</code>循环变成<code class="language-plaintext highlighter-rouge">Iterator</code>的调用，原因就在于<code class="language-plaintext highlighter-rouge">Iterable</code>接口定义了一个<code class="language-plaintext highlighter-rouge">Iterator&lt;E&gt; iterator()</code>方法，强迫集合类必须返回一个<code class="language-plaintext highlighter-rouge">Iterator</code>实例。<br />
+  在使用迭代器遍历集合时，如果在遍历过程中<strong>修改</strong>了集合的结构（例如添加或删除元素），会导致<code class="language-plaintext highlighter-rouge">ConcurrentModificationException</code>异常。为了避免这种情况，可以使用迭代器的<code class="language-plaintext highlighter-rouge">remove()</code>方法来删除元素，而不是直接调用集合的删除方法。</p>
+<h2 id="list和array转换">List和Array转换</h2>
+<p>  把<code class="language-plaintext highlighter-rouge">List</code>变为<code class="language-plaintext highlighter-rouge">Array</code>有三种方法：<br />
+  <strong>1.</strong>调用<code class="language-plaintext highlighter-rouge">toArray()</code>方法直接返回一个<code class="language-plaintext highlighter-rouge">Object[]</code>数组，这种方法会丢失类型信息，所以实际应用很少。<br />
+  <strong>2.</strong>给<code class="language-plaintext highlighter-rouge">toArray(T[])</code>传入一个类型相同的<code class="language-plaintext highlighter-rouge">Array</code>，<code class="language-plaintext highlighter-rouge">List</code>内部自动把元素复制到传入的<code class="language-plaintext highlighter-rouge">Array</code>中：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">12</span><span class="o">,</span> <span class="mi">34</span><span class="o">,</span> <span class="mi">56</span><span class="o">);</span>
+    <span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Integer</span><span class="o">[</span><span class="mi">3</span><span class="o">]);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">Integer</span> <span class="n">n</span> <span class="o">:</span> <span class="n">array</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+<p>  <code class="language-plaintext highlighter-rouge">toArray(T[])</code>是泛型方法，因此<code class="language-plaintext highlighter-rouge">T</code>是<strong>独立</strong>的，可以传入其他类型的数组，比如<code class="language-plaintext highlighter-rouge">Number</code>类型，如果传入不兼容类型的数组，则会抛出<code class="language-plaintext highlighter-rouge">ArrayStoreException</code>，如果传入的数组长度小了，则会自动创建一个刚好够大的数组，如果多了则对多的部分填<code class="language-plaintext highlighter-rouge">null</code>。<br />
+  最常用的是传入一个“恰好”大小的数组：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Integer</span><span class="o">[</span><span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">()]);</span>
+</code></pre></div></div>
+<p>  <strong>3.</strong>更简洁的写法是使用<code class="language-plaintext highlighter-rouge">List</code>接口定义的<code class="language-plaintext highlighter-rouge">T[] toArray(IntFunction&lt;T[]&gt; generator)</code>方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">Integer</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  当使用 <code class="language-plaintext highlighter-rouge">toArray(IntFunction&lt;A[]&gt; generator)</code> 方法时，它会使用传入的 <code class="language-plaintext highlighter-rouge">generator</code> 函数来创建一个新的 <code class="language-plaintext highlighter-rouge">Integer</code> 数组，数组的大小通常为列表的大小。<code class="language-plaintext highlighter-rouge">IntFunction&lt;A[]&gt; generator</code> 是一个函数式接口，接受一个整数参数并返回一个泛型数组。可以通过方法引用 <code class="language-plaintext highlighter-rouge">Integer[]::new</code> 来指定生成的数组类型。<a href="#方法引用">详细解释请看这里</a>。<br />
+  反过来，把<code class="language-plaintext highlighter-rouge">Array</code>变为<code class="language-plaintext highlighter-rouge">List</code>就简单多了，通过<code class="language-plaintext highlighter-rouge">List.of(T...)</code>方法最简单：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">{</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span> <span class="o">};</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">array</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  对于JDK 11之前的版本，可以使用<code class="language-plaintext highlighter-rouge">Arrays.asList(T...)</code>方法把数组转换成<code class="language-plaintext highlighter-rouge">List</code>。<br />
+  因为返回的<code class="language-plaintext highlighter-rouge">List</code>不一定就是<code class="language-plaintext highlighter-rouge">ArrayList</code>或者<code class="language-plaintext highlighter-rouge">LinkedList</code>，因此转换后返回的是一个<strong>只读</strong><code class="language-plaintext highlighter-rouge">List</code>。</p>
+
+<h2 id="equals方法">equals()方法</h2>
+<p>  <code class="language-plaintext highlighter-rouge">boolean contains(Object o)</code>方法判断<code class="language-plaintext highlighter-rouge">List</code>是否包含某个指定元素。<br />
+  <code class="language-plaintext highlighter-rouge">int indexOf(Object o)</code>方法返回某个元素的索引，如果元素不存在，就返回<code class="language-plaintext highlighter-rouge">-1</code>。<br />
+  实际上<code class="language-plaintext highlighter-rouge">contains()</code>内部也是调用的<code class="language-plaintext highlighter-rouge">indexOf()</code>,<code class="language-plaintext highlighter-rouge">indexOf()</code>内部<strong>会使用</strong><code class="language-plaintext highlighter-rouge">equals()</code><strong>判断是否相等</strong>而不是使用<code class="language-plaintext highlighter-rouge">==</code>判断。<code class="language-plaintext highlighter-rouge">ArrayList&lt;&gt;</code>的<code class="language-plaintext highlighter-rouge">indexOf()</code>的源码如下：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">int</span> <span class="nf">indexOf</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="no">E</span><span class="o">[]</span> <span class="n">a</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">a</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span><span class="o">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">a</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">i</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">for</span><span class="o">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">a</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">i</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  因此如果<strong>要使用</strong><code class="language-plaintext highlighter-rouge">List</code>的<code class="language-plaintext highlighter-rouge">contains()</code>、<code class="language-plaintext highlighter-rouge">indexOf()</code>方法，<strong>必须</strong>正确覆写<code class="language-plaintext highlighter-rouge">equals()</code>方法，否则，放进去的实例的<code class="language-plaintext highlighter-rouge">equals()</code>方法就是继承自<code class="language-plaintext highlighter-rouge">Object</code>的<code class="language-plaintext highlighter-rouge">equals()</code>，也就是<code class="language-plaintext highlighter-rouge">==</code>，因此永远不相等。</p>
+
+<hr />
+
+<p><strong>编写equals</strong>
+  <code class="language-plaintext highlighter-rouge">equals()</code>方法必须满足以下条件：</p>
+<ul>
+  <li>自反性（Reflexive）：对于非<code class="language-plaintext highlighter-rouge">null</code>的<code class="language-plaintext highlighter-rouge">x</code>来说，<code class="language-plaintext highlighter-rouge">x.equals(x)</code>必须返回<code class="language-plaintext highlighter-rouge">true</code>；</li>
+  <li>对称性（Symmetric）：对于非<code class="language-plaintext highlighter-rouge">null</code>的<code class="language-plaintext highlighter-rouge">x</code>和<code class="language-plaintext highlighter-rouge">y</code>来说，如果<code class="language-plaintext highlighter-rouge">x.equals(y)</code>为<code class="language-plaintext highlighter-rouge">true</code>，则<code class="language-plaintext highlighter-rouge">y.equals(x)</code>也必须为<code class="language-plaintext highlighter-rouge">true</code>；</li>
+  <li>传递性（Transitive）：对于非<code class="language-plaintext highlighter-rouge">null</code>的<code class="language-plaintext highlighter-rouge">x</code>、<code class="language-plaintext highlighter-rouge">y</code>和<code class="language-plaintext highlighter-rouge">z</code>来说，如果<code class="language-plaintext highlighter-rouge">x.equals(y)</code>为<code class="language-plaintext highlighter-rouge">true</code>，<code class="language-plaintext highlighter-rouge">y.equals(z)</code>也为<code class="language-plaintext highlighter-rouge">true</code>，那么<code class="language-plaintext highlighter-rouge">x.equals(z)</code>也必须为<code class="language-plaintext highlighter-rouge">true</code>；</li>
+  <li>一致性（Consistent）：对于非<code class="language-plaintext highlighter-rouge">null</code>的<code class="language-plaintext highlighter-rouge">x</code>和<code class="language-plaintext highlighter-rouge">y</code>来说，只要<code class="language-plaintext highlighter-rouge">x</code>和<code class="language-plaintext highlighter-rouge">y</code>状态不变，则<code class="language-plaintext highlighter-rouge">x.equals(y)</code>总是一致地返回<code class="language-plaintext highlighter-rouge">true</code>或者<code class="language-plaintext highlighter-rouge">false</code>；</li>
+  <li>对<code class="language-plaintext highlighter-rouge">null</code>的比较：即<code class="language-plaintext highlighter-rouge">x.equals(null)</code>永远返回<code class="language-plaintext highlighter-rouge">false</code>。</li>
+</ul>
+
+<p>  以<code class="language-plaintext highlighter-rouge">Person</code>类为例：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  首先，定义“相等”的逻辑含义。对于<code class="language-plaintext highlighter-rouge">Person</code>类，如果<code class="language-plaintext highlighter-rouge">name</code>相等，并且<code class="language-plaintext highlighter-rouge">age</code>相等，我们就认为两个<code class="language-plaintext highlighter-rouge">Person</code>实例相等。对于<strong>引用字段</strong>比较，使用<code class="language-plaintext highlighter-rouge">equals()</code>，对于<strong>基本类型字段</strong>的比较，使用<code class="language-plaintext highlighter-rouge">==</code>。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Person</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">boolean</span> <span class="n">nameEquals</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="c1">//如果都是null则相等</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">p</span><span class="o">.</span><span class="na">name</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">nameEquals</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">//如果this.name不是null则调用它的equals</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">nameEquals</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">nameEquals</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="na">age</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  如果<code class="language-plaintext highlighter-rouge">Person</code>有好几个引用类型的字段，上面的写法就太复杂了。要简化引用类型的比较，我们使用<code class="language-plaintext highlighter-rouge">Objects.equals()</code>静态方法，注意不是<code class="language-plaintext highlighter-rouge">Object</code>而是<code class="language-plaintext highlighter-rouge">Objects</code>：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="o">==</span> <span class="n">o</span><span class="o">)</span> <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Person</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Objects</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">,</span> <span class="n">p</span><span class="o">.</span><span class="na">name</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="na">age</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  <code class="language-plaintext highlighter-rouge">Objects.equals()</code>静态方法：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">==</span> <span class="n">b</span> <span class="o">||</span> <span class="n">a</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  是同一个对象或都是<code class="language-plaintext highlighter-rouge">null</code>，<code class="language-plaintext highlighter-rouge">a</code>不是<code class="language-plaintext highlighter-rouge">null</code>则调用<code class="language-plaintext highlighter-rouge">a</code>的<code class="language-plaintext highlighter-rouge">equals</code><br />
+  要求是同一个类的写法：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="o">==</span> <span class="n">o</span><span class="o">)</span> <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">getClass</span><span class="o">()</span> <span class="o">!=</span> <span class="n">o</span><span class="o">.</span><span class="na">getClass</span><span class="o">())</span> <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Person</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">age</span> <span class="o">!=</span> <span class="n">p</span><span class="o">.</span><span class="na">age</span><span class="o">)</span> <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="k">return</span> <span class="nc">Objects</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">p</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<h1 id="map">Map</h1>
+<p>  通过一个键去查询对应的值。使用<code class="language-plaintext highlighter-rouge">List</code>来实现存在效率非常低的问题，因为平均需要扫描一半的元素才能确定，而<code class="language-plaintext highlighter-rouge">Map</code>这种键值（key-value）映射表的数据结构，作用就是能高效通过<code class="language-plaintext highlighter-rouge">key</code>快速查找<code class="language-plaintext highlighter-rouge">value</code>（元素）。<br />
+  <code class="language-plaintext highlighter-rouge">Map</code>也是一个接口，最常用的实现类是<code class="language-plaintext highlighter-rouge">HashMap</code>。除了<code class="language-plaintext highlighter-rouge">HashMap</code>外，还有<code class="language-plaintext highlighter-rouge">TreeMap</code>（基于红黑树实现）和<code class="language-plaintext highlighter-rouge">LinkedHashMap</code>（保持插入顺序或访问顺序）等<code class="language-plaintext highlighter-rouge">Map</code>的实现类，它们可以根据具体的需求选择合适的实现类。<br />
+  <code class="language-plaintext highlighter-rouge">HashMap</code>之所以能根据<code class="language-plaintext highlighter-rouge">key</code>直接拿到<code class="language-plaintext highlighter-rouge">value</code>，原因是它内部通过空间换时间的方法，用一个大数组存储所有<code class="language-plaintext highlighter-rouge">value</code>，并根据key直接计算出<code class="language-plaintext highlighter-rouge">value</code>应该存储在哪个索引。<br />
+  <code class="language-plaintext highlighter-rouge">Map</code>的<code class="language-plaintext highlighter-rouge">key</code>不能重复，<code class="language-plaintext highlighter-rouge">value</code>可以重复。<code class="language-plaintext highlighter-rouge">Map</code><strong>不保证顺序</strong>。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>V put(K key, V value)</td>
+      <td>把<code class="language-plaintext highlighter-rouge">key</code>和<code class="language-plaintext highlighter-rouge">value</code>做了映射并放入<code class="language-plaintext highlighter-rouge">Map</code>。如果放入的<code class="language-plaintext highlighter-rouge">key</code><strong>已经存在</strong>，则会更新<code class="language-plaintext highlighter-rouge">value</code>并返回被删除的旧的<code class="language-plaintext highlighter-rouge">value</code>，否则，返回<code class="language-plaintext highlighter-rouge">null</code>。</td>
+    </tr>
+    <tr>
+      <td>V get(K key)</td>
+      <td>通过<code class="language-plaintext highlighter-rouge">key</code>获取到对应的<code class="language-plaintext highlighter-rouge">value</code>。如果<code class="language-plaintext highlighter-rouge">key</code>不存在，则返回<code class="language-plaintext highlighter-rouge">null</code>。</td>
+    </tr>
+    <tr>
+      <td>boolean containsKey(K key)</td>
+      <td>查询某个<code class="language-plaintext highlighter-rouge">key</code>是否存在。</td>
+    </tr>
+    <tr>
+      <td>boolean containsValue(V value)</td>
+      <td>查询某个<code class="language-plaintext highlighter-rouge">value</code>是否存在。</td>
+    </tr>
+    <tr>
+      <td>keySet()</td>
+      <td>返回<code class="language-plaintext highlighter-rouge">key</code>的<code class="language-plaintext highlighter-rouge">Set</code>集合。</td>
+    </tr>
+    <tr>
+      <td>entrySet()</td>
+      <td>返回此地图中包含的映射的<code class="language-plaintext highlighter-rouge">Set</code>视图。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>遍历</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">=</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"k1"</span><span class="o">,</span><span class="s">"v1"</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"k2"</span><span class="o">,</span><span class="s">"v2"</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"k3"</span><span class="o">,</span><span class="s">"v3"</span><span class="o">);</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">stringStringEntry</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">stringStringEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+    <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">stringStringEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"value = "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">k</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"value = "</span><span class="o">+</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">k</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>  使用<code class="language-plaintext highlighter-rouge">key</code>存取<code class="language-plaintext highlighter-rouge">value</code>的时候，就会引出一个问题：<br />
+  获取<code class="language-plaintext highlighter-rouge">Map</code>的<code class="language-plaintext highlighter-rouge">value</code>时，传入的<code class="language-plaintext highlighter-rouge">key</code>不一定就是放入的那个<code class="language-plaintext highlighter-rouge">key</code>对象。而<code class="language-plaintext highlighter-rouge">Map</code>依然能够正常读取。换句话讲，取<code class="language-plaintext highlighter-rouge">value</code>时，两个<code class="language-plaintext highlighter-rouge">key</code>应该内容相同，但不一定是同一个对象。<br />
+  因为在<code class="language-plaintext highlighter-rouge">Map</code>的内部，对<code class="language-plaintext highlighter-rouge">key</code>做比较是通过<code class="language-plaintext highlighter-rouge">equals()</code>实现的，这一点和<code class="language-plaintext highlighter-rouge">List</code>查找元素需要正确覆写<code class="language-plaintext highlighter-rouge">equals()</code>是一样的，即正确使用<code class="language-plaintext highlighter-rouge">Map</code><strong>必须保证</strong>：作为<code class="language-plaintext highlighter-rouge">key</code>的对象必须<strong>正确覆写</strong><code class="language-plaintext highlighter-rouge">equals()</code>和<code class="language-plaintext highlighter-rouge">hashCode()</code>方法。<br />
+  通过<code class="language-plaintext highlighter-rouge">key</code>计算索引的方式就是调用<code class="language-plaintext highlighter-rouge">key</code>对象的<code class="language-plaintext highlighter-rouge">hashCode()</code>方法，它返回一个<code class="language-plaintext highlighter-rouge">int</code>整数。<code class="language-plaintext highlighter-rouge">HashMap</code>正是通过这个方法直接定位<code class="language-plaintext highlighter-rouge">key</code>对应的<code class="language-plaintext highlighter-rouge">value</code>的索引，继而直接返回<code class="language-plaintext highlighter-rouge">value</code>。<br />
+  <code class="language-plaintext highlighter-rouge">hashCode()</code>方法要严格遵循以下规范：</p>
+<ol>
+  <li>如果两个对象<strong>相等</strong>，则两个对象的<code class="language-plaintext highlighter-rouge">hashCode()</code><strong>必须</strong>相等；</li>
+  <li>如果两个对象<strong>不相等</strong>，则两个对象的<code class="language-plaintext highlighter-rouge">hashCode()</code><strong>尽量</strong>不要相等。</li>
+  <li><code class="language-plaintext highlighter-rouge">equals()</code>用到的用于比较的每一个字段，都必须在<code class="language-plaintext highlighter-rouge">hashCode()</code>中用于计算；<code class="language-plaintext highlighter-rouge">equals()</code>中没有使用到的字段，绝不可放在<code class="language-plaintext highlighter-rouge">hashCode()</code>中计算。</li>
+</ol>
+
+<p>  而第二条如果尽量满足，则可以保证查询效率，因为不同的对象，如果返回相同的<code class="language-plaintext highlighter-rouge">hashCode()</code>，会造成<code class="language-plaintext highlighter-rouge">Map</code>内部存储冲突，即<strong>哈希冲突</strong>，使存取的效率下降。<br />
+  示例：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">firstName</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">firstName</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">:</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">31</span> <span class="o">*</span> <span class="n">result</span> <span class="o">+</span> <span class="o">(</span><span class="n">lastName</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastName</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">:</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">31</span> <span class="o">*</span> <span class="n">result</span> <span class="o">+</span> <span class="n">age</span><span class="o">;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  也可以直接使用<code class="language-plaintext highlighter-rouge">Objects.hash()</code></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nc">Objects</span><span class="o">.</span><span class="na">hash</span><span class="o">(</span><span class="n">firstName</span><span class="o">,</span><span class="n">lastName</span><span class="o">,</span><span class="n">age</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  对于放入<code class="language-plaintext highlighter-rouge">HashMap</code>的<code class="language-plaintext highlighter-rouge">value</code>对象，没有任何要求。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span><span class="s">"123"</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">null</span><span class="o">));</span>
+</code></pre></div></div>
+<p>  在<code class="language-plaintext highlighter-rouge"> HashMap</code> 中使用 <code class="language-plaintext highlighter-rouge">null</code> 作为键是可以编译通过的，因为 <code class="language-plaintext highlighter-rouge">HashMap</code> 的实现允许键为 <code class="language-plaintext highlighter-rouge">null</code>。在这种情况下，<code class="language-plaintext highlighter-rouge">null</code> 的哈希码会被计算为 0，并存储在哈希表的第一个位置。因此，当你调用 <code class="language-plaintext highlighter-rouge">map.get(null)</code> 时，会返回键为 <code class="language-plaintext highlighter-rouge">null</code> 对应的值 “123”。但需要注意的是，在使用 <code class="language-plaintext highlighter-rouge">null </code>作为键时要格外小心，因为它可能会导致混淆和错误。</p>
+<h2 id="哈希冲突">哈希冲突</h2>
+<p>  如果不同的两个<code class="language-plaintext highlighter-rouge">key</code>，例如<code class="language-plaintext highlighter-rouge">"a"</code>和<code class="language-plaintext highlighter-rouge">"b"</code>，它们的<code class="language-plaintext highlighter-rouge">hashCode()</code>恰好是相同的，就会造成<strong>哈希冲突</strong>。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"Xiao Ming"</span><span class="o">));</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"Xiao Hong"</span><span class="o">));</span>
+</code></pre></div></div>
+<p>  假设<code class="language-plaintext highlighter-rouge">"a"</code>和<code class="language-plaintext highlighter-rouge">"b"</code>这两个<code class="language-plaintext highlighter-rouge">key</code>最终计算出的索引都是5，造成哈希冲突，那么在<code class="language-plaintext highlighter-rouge">HashMap</code>的数组中，实际存储的不是一个<code class="language-plaintext highlighter-rouge">Person</code>实例，而是一个<code class="language-plaintext highlighter-rouge">List</code>，它包含两个<code class="language-plaintext highlighter-rouge">Entry</code>，一个是<code class="language-plaintext highlighter-rouge">"a"</code>的映射，一个是<code class="language-plaintext highlighter-rouge">"b"</code>的映射：</p>
+<pre><code class="language-ascii">  ┌───┐
+0 │   │
+  ├───┤
+1 │   │
+  ├───┤
+2 │   │
+  ├───┤
+3 │   │
+  ├───┤
+4 │   │
+  ├───┤
+5 │ ●─┼───&gt; List&lt;Entry&lt;String, Person&gt;&gt;
+  ├───┤
+6 │   │
+  ├───┤
+7 │   │
+  └───┘
+</code></pre>
+<p>  在查找的时候，例如：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"a"</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  HashMap内部通过<code class="language-plaintext highlighter-rouge">"a"</code>找到的实际上是<code class="language-plaintext highlighter-rouge">List&lt;Entry&lt;String, Person&gt;&gt;</code>，它还需要遍历这个<code class="language-plaintext highlighter-rouge">List</code>，并找到一个<code class="language-plaintext highlighter-rouge">Entry</code>，它的<code class="language-plaintext highlighter-rouge">key</code>字段是<code class="language-plaintext highlighter-rouge">"a"</code>，才能返回对应的<code class="language-plaintext highlighter-rouge">Person</code>实例。<br />
+  我们把不同的<code class="language-plaintext highlighter-rouge">key</code>具有相同的<code class="language-plaintext highlighter-rouge">hashCode()</code>的情况称之为<strong>哈希冲突</strong>。在冲突的时候，一种最简单的解决办法是用<code class="language-plaintext highlighter-rouge">List</code>存储<code class="language-plaintext highlighter-rouge">hashCode()</code>相同的<code class="language-plaintext highlighter-rouge">key-value</code>。显然，如果冲突的概率越大，这个<code class="language-plaintext highlighter-rouge">List</code>就越长，<code class="language-plaintext highlighter-rouge">Map</code>的<code class="language-plaintext highlighter-rouge">get()</code>方法效率就越低，这就是为什么要尽量满足条件二：如果两个对象不相等，则两个对象的<code class="language-plaintext highlighter-rouge">hashCode()</code>尽量不要相等。<br />
+  HashMap中依据<code class="language-plaintext highlighter-rouge">key</code>的hash值来确定<code class="language-plaintext highlighter-rouge">value</code>存储位置，所以<strong>一定</strong>要重写<code class="language-plaintext highlighter-rouge">hashCode</code>方法，而重写<code class="language-plaintext highlighter-rouge">equals</code>方法，是为了解决<code class="language-plaintext highlighter-rouge">hash</code><strong>冲突</strong>，如果两个<code class="language-plaintext highlighter-rouge">key</code>的<code class="language-plaintext highlighter-rouge">hash</code>值相同，就会调用<code class="language-plaintext highlighter-rouge">equals</code>方法，比较<code class="language-plaintext highlighter-rouge">key</code>值是否相同。<br />
+  在存储时：如果<code class="language-plaintext highlighter-rouge">hash</code>值相同，且<code class="language-plaintext highlighter-rouge">equals</code>结果相同就覆盖更新<code class="language-plaintext highlighter-rouge">value</code>值，如果<code class="language-plaintext highlighter-rouge">equals</code>结果不同，即不是同一个<code class="language-plaintext highlighter-rouge">key</code>，<code class="language-plaintext highlighter-rouge">HashMap</code>会将这两个<code class="language-plaintext highlighter-rouge">key-value</code>对以链表或红黑树的形式存储在同一个位置上。<br />
+  在取值时：如果计算的<code class="language-plaintext highlighter-rouge">hash</code>值所指的索引位置有多个值，则根据<code class="language-plaintext highlighter-rouge">equals</code>方法找到对应的<code class="language-plaintext highlighter-rouge">key-value</code>对。如果<code class="language-plaintext highlighter-rouge">equals</code>结果相同就返回当前<code class="language-plaintext highlighter-rouge">value</code>值，如果不同就遍历<code class="language-plaintext highlighter-rouge">List</code>中下一个元素。即要<code class="language-plaintext highlighter-rouge">key</code>与<code class="language-plaintext highlighter-rouge">hash</code>同时匹配才会认为是同一个<code class="language-plaintext highlighter-rouge">key</code>。<br />
+  JDK中源码:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">hash</span> <span class="o">==</span> <span class="n">hash</span> <span class="o">&amp;&amp;</span> <span class="o">((</span><span class="n">k</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">key</span><span class="o">)</span> <span class="o">==</span> <span class="n">key</span> <span class="o">||</span> <span class="o">(</span><span class="n">key</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">k</span><span class="o">)))){</span><span class="n">ops</span><span class="o">;}</span>
+</code></pre></div></div>
+<h2 id="扩容">扩容</h2>
+<p>  <code class="language-plaintext highlighter-rouge">HashMap</code>初始化时<strong>默认</strong>的<strong>数组大小</strong>为16，任何<code class="language-plaintext highlighter-rouge">key</code>，无论它的<code class="language-plaintext highlighter-rouge">hashCode()</code>有多大，都可以简单地通过：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="mh">0xf</span><span class="o">;</span> <span class="c1">// 0xf = 15</span>
+</code></pre></div></div>
+<p>  把索引确定在0～15，即永远不会超出数组范围，上述算法只是一种最简单的实现。<br />
+  这里的<strong>数组大小指哈希桶的数量</strong>，<strong>不等于</strong>键值对的数量，而是指的是可以容纳的哈希桶的数量。每个哈希桶可以存储<strong>多个键值对</strong>（链表，红黑树），因此即使存储了大量的键值对，如果它们的<strong>哈希值冲突</strong>导致它们应该存储在同一个哈希桶中，实际上只会占用一个哈希桶的空间。<code class="language-plaintext highlighter-rouge">HashMap</code>会根据键值对的数量动态调整数组的大小，以保持较低的<strong>填充因子</strong>，从而保证较好的性能。<br />
+  <code class="language-plaintext highlighter-rouge">HashMap</code>的<strong>填充因子</strong>超过一定阈值时，<code class="language-plaintext highlighter-rouge">HashMap</code>会在内部自动扩容，每次<strong>扩容一倍</strong>。<br />
+  阈值根据<strong>负载因子</strong>确定,默认为<strong>0.75f</strong>。<br />
+  如果初始容量为 1024，那么当 <code class="language-plaintext highlighter-rouge">HashMap</code> 的 size 超过 1024 * 负载因子（默认是 0.75f）= 768 时，就会触发扩容操作，此时新的数组大小将是原来的两倍，即 2048。<br />
+  扩容操作包括以下步骤：</p>
+<ol>
+  <li>创建一个新的数组，大小是原数组的两倍。</li>
+  <li>将原数组中的元素<strong>重新计算哈希值</strong>，并根据新数组的大小<strong>重新分配位置</strong>。</li>
+  <li>将重新计算位置后的元素放入新数组中。</li>
+  <li>将新数组设置为 <code class="language-plaintext highlighter-rouge">HashMap</code> 的数组，替换原数组。</li>
+</ol>
+
+<p>  <code class="language-plaintext highlighter-rouge">HashMap</code> 的扩容操作是一个比较<strong>耗时</strong>的操作，因为需要重新计算哈希值并重新分配位置。因此，尽量在初始化时指定 <code class="language-plaintext highlighter-rouge">HashMap</code> 的<strong>初始容量</strong>和<strong>负载因子</strong>，避免频繁扩容，提高性能。<br />
+  在 <strong>HashMap</strong> 中，每个数组元素（哈希桶）可以存储一个链表或红黑树头节点。当<strong>链表</strong>的元素数量<strong>超过</strong>一定阈值（<strong>默认为 8</strong>）时，链表会转换为红黑树，以提高查找效率。当<strong>红黑树</strong>中的节点数量<strong>少于</strong>一个阈值（<strong>默认为6</strong>）时，红黑树会转换回链表结构。这种转换是为了避免在红黑树中维护的额外开销，因为当节点数量较少时，链表可能比红黑树更有效率。<br />
+  红黑树在<code class="language-plaintext highlighter-rouge">HashMap</code>中是从<strong>JDK 8</strong>开始引入的。<strong>在JDK 8之前</strong>，<code class="language-plaintext highlighter-rouge">HashMap</code>使用的是<strong>数组+链表</strong>的方式来处理哈希冲突。<br />
+  通常<strong>建议将容量设置为 2 的幂次方</strong>，如果设置的容量不是 2 的幂次方，<code class="language-plaintext highlighter-rouge">HashMap</code> 会自动向上取最接近的 2 的幂次方作为实际的容量。负载因子应该是一个大于0且小于1的浮点数，注意加f。<br />
+  只能在初始化时设置容量和扩容因子</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;(</span><span class="mi">16</span><span class="o">,</span> <span class="mf">0.75f</span><span class="o">);</span>
+</code></pre></div></div>
+<h2 id="线程安全问题">线程安全问题</h2>
+<p>  <code class="language-plaintext highlighter-rouge">ArrayList</code>和<code class="language-plaintext highlighter-rouge">HashMap</code>等集合类是非线程安全的，这意味着如果多个线程同时访问这些集合并且至少一个线程修改了集合，就可能导致不确定的结果，比如数据丢失、数据不一致等问题。为了在多线程环境中安全地使用集合，可以使用<code class="language-plaintext highlighter-rouge">Collections</code>工具类提供的<code class="language-plaintext highlighter-rouge">SynchronizedList</code>和<code class="language-plaintext highlighter-rouge">SynchronizedMap</code>方法来获取线程安全的集合：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">synchronizedList</span> <span class="o">=</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">synchronizedList</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">synchronizedMap</span> <span class="o">=</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">synchronizedMap</span><span class="o">(</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;());</span>
+</code></pre></div></div>
+<p>  这样就可以确保在多线程环境中对集合的操作是安全的。需要注意的是，虽然这些方法提供了线程安全的集合，但在高并发的情况下仍然需要谨慎处理，以避免出现性能问题。</p>
+
+<h1 id="其他">其他</h1>
+<h2 id="方法引用">方法引用</h2>
+<p>  展开<code class="language-plaintext highlighter-rouge">Integer[]::new</code>后：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">IntFunction</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">[]&gt;</span> <span class="n">generator</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">IntFunction</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">[]&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Integer</span><span class="o">[]</span> <span class="nf">apply</span><span class="o">(</span><span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">Integer</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="n">generator</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  在这里，<code class="language-plaintext highlighter-rouge">IntFunction&lt;Integer[]&gt;</code> 是一个函数式接口，它定义了一个<code class="language-plaintext highlighter-rouge">IntFunction&lt;Integer[]&gt;</code>的匿名实现，实现了<code class="language-plaintext highlighter-rouge">apply</code>方法来创建一个指定大小的<code class="language-plaintext highlighter-rouge">Integer</code>数组。然后，通过<code class="language-plaintext highlighter-rouge">toArray</code>方法将列表转换为该数组。<br />
+  通过lambda 表达式简化后变成：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">IntFunction</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">[]&gt;</span> <span class="n">generator</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">Integer</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+<span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="n">generator</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  这个 lambda 表达式接受一个整数参数 <code class="language-plaintext highlighter-rouge">size</code>，并返回一个新的 <code class="language-plaintext highlighter-rouge">Integer</code> 数组，长度为 <code class="language-plaintext highlighter-rouge">size</code>。<br />
+  通过方法引用再次简化后变成：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">IntFunction</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">[]&gt;</span> <span class="n">generator</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">[]::</span><span class="k">new</span><span class="o">;</span>
+<span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="n">generator</span><span class="o">);</span>
+</code></pre></div></div>
+<p>  <code class="language-plaintext highlighter-rouge">Integer[]::new</code> 表示一个构造函数引用，它接受一个整数参数（数组的长度）并返回一个 <code class="language-plaintext highlighter-rouge">Integer</code> 数组。这样，<code class="language-plaintext highlighter-rouge">toArray(Integer[]::new)</code> 将生成一个与 <code class="language-plaintext highlighter-rouge">list</code> 大小相同的 <code class="language-plaintext highlighter-rouge">Integer</code> 数组，并将 <code class="language-plaintext highlighter-rouge">list</code> 中的元素复制到这个数组中。</p>
+
+<h2 id="函数式接口">函数式接口</h2>
+<p>  函数式接口是Java中的一个概念，它是指只包含一个抽象方法的接口。函数式接口可以用作Lambda表达式的类型，从而支持函数式编程的特性。在Java中，函数式接口可以通过<code class="language-plaintext highlighter-rouge">@FunctionalInterface</code>注解来标识，确保接口只包含一个抽象方法。<br />
+  当使用函数式接口时，编译器会根据<strong>Lambda表达式</strong>或<strong>方法引用</strong>的上下文，将其<strong>转换为函数式接口的实</strong>例，并在需要时调用相应的方法。这些实例可以在运行时被JVM执行。<br />
+  因此，函数式接口的调用是在运行时由<strong>JVM执行</strong>的，<strong>编译器</strong>负责将<strong>Lambda表达式</strong>或<strong>方法引用</strong>转换为<strong>函数式接口</strong>的实例，以便在程序运行时进行调用。</p>
+
+<h3 id="方法引用-1"><strong>方法引用：</strong></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>引用类型</th>
+      <th>方法引用示例</th>
+      <th>对应调用示例</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>静态方法引用</td>
+      <td><code class="language-plaintext highlighter-rouge">Main::staticMethod</code></td>
+      <td><code class="language-plaintext highlighter-rouge">Main.staticMethod(...)</code></td>
+    </tr>
+    <tr>
+      <td>实例方法引用</td>
+      <td><code class="language-plaintext highlighter-rouge">main::instanceMethod</code></td>
+      <td><code class="language-plaintext highlighter-rouge">main.instanceMethod(...)</code></td>
+    </tr>
+    <tr>
+      <td>构造方法引用</td>
+      <td><code class="language-plaintext highlighter-rouge">Main::new</code></td>
+      <td><code class="language-plaintext highlighter-rouge">new Main(...)</code></td>
+    </tr>
+    <tr>
+      <td>数组构造方法引用</td>
+      <td><code class="language-plaintext highlighter-rouge">Main[]::new</code></td>
+      <td><code class="language-plaintext highlighter-rouge">new Main[?]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>  这些方法引用可以简化代码，使其更易读和易维护。</p>
+
+<h3 id="无参引用调用"><strong>无参引用调用：</strong></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>接口</th>
+      <th>代码</th>
+      <th>等效调用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>静态方法</td>
+      <td>Runnable</td>
+      <td><code class="language-plaintext highlighter-rouge">Runnable r=Main::staticMethod;r.run();</code></td>
+      <td><code class="language-plaintext highlighter-rouge">Main.staticMethod();</code></td>
+    </tr>
+    <tr>
+      <td>实例方法</td>
+      <td>Runnable</td>
+      <td><code class="language-plaintext highlighter-rouge">Runnable r=main::instanceMethod;r.run();</code></td>
+      <td><code class="language-plaintext highlighter-rouge">main.instanceMethod();</code></td>
+    </tr>
+    <tr>
+      <td>构造方法</td>
+      <td>Supplier</td>
+      <td><code class="language-plaintext highlighter-rouge">Supplier&lt;Main&gt; s=Main::new;s.get();</code></td>
+      <td><code class="language-plaintext highlighter-rouge">new Main();</code></td>
+    </tr>
+    <tr>
+      <td>数组</td>
+      <td>IntFunction</td>
+      <td><code class="language-plaintext highlighter-rouge">IntFunction&lt;Main[]&gt; g=Main[]::new;g.apply(5);</code></td>
+      <td><code class="language-plaintext highlighter-rouge">new Main[5];</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>  实例：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.IntFunction</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Supplier</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">staticMethod</span><span class="o">()</span> <span class="o">{</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"静态方法"</span><span class="o">);}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">instanceMethod</span><span class="o">()</span> <span class="o">{</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"实例方法"</span><span class="o">);}</span>
+    <span class="kd">public</span> <span class="nf">Main</span><span class="o">()</span> <span class="o">{</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"构造方法"</span><span class="o">);}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 静态方法引用</span>
+        <span class="nc">Runnable</span> <span class="n">r1</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="n">staticMethod</span><span class="o">;</span><span class="c1">//只能调用无参</span>
+        <span class="n">r1</span><span class="o">.</span><span class="na">run</span><span class="o">();</span><span class="c1">//Main.staticMethod()</span>
+        <span class="c1">// 实例方法引用</span>
+        <span class="nc">Main</span> <span class="n">main</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Main</span><span class="o">();</span>
+        <span class="nc">Runnable</span> <span class="n">r2</span> <span class="o">=</span> <span class="nl">main:</span><span class="o">:</span><span class="n">instanceMethod</span><span class="o">;</span><span class="c1">//只能调用无参</span>
+        <span class="n">r2</span><span class="o">.</span><span class="na">run</span><span class="o">();</span><span class="c1">//main.instanceMethod()</span>
+        <span class="c1">// 构造方法引用</span>
+        <span class="nc">Supplier</span><span class="o">&lt;</span><span class="nc">Main</span><span class="o">&gt;</span> <span class="n">supplier</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span><span class="c1">//只能调用无参</span>
+        <span class="nc">Main</span> <span class="n">main2</span> <span class="o">=</span> <span class="n">supplier</span><span class="o">.</span><span class="na">get</span><span class="o">();</span><span class="c1">//new Main()</span>
+        <span class="c1">// 数组构造方法引用</span>
+        <span class="nc">IntFunction</span><span class="o">&lt;</span><span class="nc">Main</span><span class="o">[]&gt;</span> <span class="n">generator</span> <span class="o">=</span> <span class="nc">Main</span><span class="o">[]::</span><span class="k">new</span><span class="o">;</span><span class="c1">//只能调用无参</span>
+        <span class="nc">Main</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span><span class="c1">//new Main[5]</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="带参引用调用方法"><strong>带参引用调用方法：</strong></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>接口</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>无参方法</td>
+      <td>Runnable</td>
+      <td><code class="language-plaintext highlighter-rouge">run()</code>调用</td>
+    </tr>
+    <tr>
+      <td>一个参数</td>
+      <td>Consumer<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code></td>
+      <td><code class="language-plaintext highlighter-rouge">.accept(T)</code>调用</td>
+    </tr>
+    <tr>
+      <td>两个参数</td>
+      <td>BiConsumer&lt;T,U&gt;</td>
+      <td><code class="language-plaintext highlighter-rouge">accept(T,U)</code>调用</td>
+    </tr>
+    <tr>
+      <td>更多个参数</td>
+      <td>自定义函数式接口，并使用<code class="language-plaintext highlighter-rouge">@FunctionalInterface</code></td>
+      <td>调用随便</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>  实例：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.BiConsumer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Consumer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Function</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">staticMethod</span><span class="o">(</span><span class="nc">Object</span> <span class="o">...</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"静态方法:"</span><span class="o">+</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">s</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 方法引用</span>
+        <span class="nc">Runnable</span> <span class="n">a</span><span class="o">=</span><span class="nl">Main:</span><span class="o">:</span><span class="n">staticMethod</span><span class="o">;</span>
+        <span class="n">a</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+        
+        <span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="n">staticMethod</span><span class="o">;</span>
+        <span class="n">c</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">);</span>
+        
+        <span class="nc">BiConsumer</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">b</span><span class="o">=</span><span class="nl">Main:</span><span class="o">:</span><span class="n">staticMethod</span><span class="o">;</span>
+        <span class="n">b</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="s">"123"</span><span class="o">,</span><span class="s">"123"</span><span class="o">);</span>
+        
+        <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">String</span><span class="o">,</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">t</span><span class="o">=</span><span class="nl">Main:</span><span class="o">:</span><span class="n">staticMethod</span><span class="o">;</span>
+        <span class="n">t</span><span class="o">.</span><span class="na">随便</span><span class="o">(</span><span class="s">"123"</span><span class="o">,</span><span class="s">"345"</span><span class="o">,</span><span class="s">"456"</span><span class="o">);</span>
+        
+        <span class="c1">// 柯里化（currying）的技巧，将一个多参数的方法转换为一系列单参数的方法。</span>
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Runnable</span><span class="o">&gt;</span> <span class="n">cr2</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">);</span>
+        <span class="n">cr2</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">run</span><span class="o">();</span>
+        
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;&gt;</span> <span class="n">cr3</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v3</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">,</span> <span class="n">v3</span><span class="o">);</span>
+        <span class="n">cr3</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">apply</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="s">"Consumer"</span><span class="o">);</span>
+        
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">cr</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">);</span>
+        <span class="n">cr</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">随便</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">interface</span> <span class="nc">自定义接口</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">U</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="n">随便</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">,</span> <span class="no">U</span> <span class="n">u</span><span class="o">,</span> <span class="no">V</span> <span class="n">v</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>  柯里化是一种函数式编程的技术，通过这种技巧可以将多参数函数转换为一系列接受单个参数的函数。</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">cr2</code>是一个<code class="language-plaintext highlighter-rouge">Function&lt;Integer, Runnable&gt;</code>，它接受一个整数参数，并返回一个<code class="language-plaintext highlighter-rouge">Runnable</code>，这个<code class="language-plaintext highlighter-rouge">Runnable</code>调用了<code class="language-plaintext highlighter-rouge">Main.staticMethod</code>方法。</li>
+  <li><code class="language-plaintext highlighter-rouge">cr3</code>是一个<code class="language-plaintext highlighter-rouge">Function&lt;Integer, Function&lt;Integer, Consumer&lt;String&gt;&gt;&gt;</code>，它接受两个整数参数，并返回一个<code class="language-plaintext highlighter-rouge">Consumer&lt;String&gt;</code>，这个<code class="language-plaintext highlighter-rouge">Consumer&lt;String&gt;</code>调用了<code class="language-plaintext highlighter-rouge">Main.staticMethod</code>方法。</li>
+  <li><code class="language-plaintext highlighter-rouge">cr</code>是一个<code class="language-plaintext highlighter-rouge">Function&lt;Integer, 自定义接口&lt;Integer, Integer, Integer&gt;&gt;</code>，它接受一个整数参数，并返回一个自定义接口的实例，这个自定义接口接受三个整数参数，并调用了<code class="language-plaintext highlighter-rouge">Main.staticMethod</code>方法。</li>
+</ol>
+
+<p>  通过柯里化，可以更灵活地使用多参数方法，将其转换为一系列单参数方法，使得代码更加模块化和易于理解。</p>
+
+<hr />
+
+<h3 id="带参引用调用构造方法"><strong>带参引用调用构造方法：</strong></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>接口</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>无参方法</td>
+      <td>Supplier<类名></类名></td>
+      <td><code class="language-plaintext highlighter-rouge">get()</code>调用</td>
+    </tr>
+    <tr>
+      <td>一个参数</td>
+      <td>Function&lt;T,类名&gt;</td>
+      <td><code class="language-plaintext highlighter-rouge">apply(T)</code>调用</td>
+    </tr>
+    <tr>
+      <td>两个参数</td>
+      <td>BiFunction&lt;T,U,类名&gt;</td>
+      <td><code class="language-plaintext highlighter-rouge">apply(T,U)</code>调用</td>
+    </tr>
+    <tr>
+      <td>更多个参数</td>
+      <td>自定义函数式接口，并使用<code class="language-plaintext highlighter-rouge">@FunctionalInterface</code></td>
+      <td>调用随便</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">Main</span><span class="o">(</span><span class="nc">Object</span> <span class="o">...</span><span class="na">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"构造方法："</span><span class="o">+</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">s</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 构造方法引用</span>
+        <span class="nc">Supplier</span><span class="o">&lt;</span><span class="nc">Main</span><span class="o">&gt;</span> <span class="n">supplier</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+        <span class="nc">Main</span> <span class="n">main1</span> <span class="o">=</span> <span class="n">supplier</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">constructor</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+        <span class="nc">Main</span> <span class="n">main2</span> <span class="o">=</span> <span class="n">constructor</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="s">"你好"</span><span class="o">);</span>
+
+        <span class="nc">BiFunction</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">constructor2</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+        <span class="nc">Main</span> <span class="n">main3</span> <span class="o">=</span> <span class="n">constructor2</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"你好"</span><span class="o">);</span>
+
+        <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">constructor3</span> <span class="o">=</span> <span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+        <span class="nc">Main</span> <span class="n">main4</span> <span class="o">=</span> <span class="n">constructor3</span><span class="o">.</span><span class="na">随便</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"你好"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="c1">//柯里化</span>
+        <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">,</span> <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;&gt;</span> <span class="n">cr4</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">,</span> <span class="n">v3</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">Main</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">,</span> <span class="n">v3</span><span class="o">,</span> <span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">);</span>
+        <span class="nc">Main</span> <span class="n">main5</span> <span class="o">=</span> <span class="n">cr4</span><span class="o">.</span><span class="na">随便</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"你好"</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="na">随便</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"你好"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">interface</span> <span class="nc">自定义接口</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">U</span><span class="o">,</span> <span class="no">V</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">R</span> <span class="n">随便</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">,</span> <span class="no">U</span> <span class="n">u</span><span class="o">,</span> <span class="no">V</span> <span class="n">v</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="展开一个mainnew">展开一个<code class="language-plaintext highlighter-rouge">Main::new;</code></h3>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">Main</span><span class="o">(</span><span class="nc">Object</span> <span class="o">...</span><span class="na">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"构造方法："</span><span class="o">+</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">s</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 方法引用</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f1</span><span class="o">=</span><span class="nl">Main:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+        <span class="c1">// Lambda</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f2</span> <span class="o">=</span> <span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">Main</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">};</span>
+        <span class="c1">// 匿名内部类</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="nc">Main</span> <span class="n">方法</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nf">Main</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+        <span class="c1">// 普通内部类</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f4</span> <span class="o">=</span><span class="k">new</span> <span class="nc">Main</span><span class="o">().</span><span class="na">new</span> <span class="no">A</span><span class="o">();</span>
+        <span class="c1">// 静态内部类</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f5</span> <span class="o">=</span><span class="k">new</span> <span class="nc">Main</span><span class="o">.</span><span class="na">B</span><span class="o">();</span>
+        <span class="c1">// 外部类</span>
+        <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="n">f6</span> <span class="o">=</span><span class="k">new</span> <span class="no">C</span><span class="o">();</span>
+
+        <span class="n">f1</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f1</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+        <span class="n">f2</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f2</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+        <span class="n">f3</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f3</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+        <span class="n">f4</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f4</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+        <span class="n">f5</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f5</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+        <span class="n">f6</span><span class="o">.</span><span class="na">方法</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">f6</span><span class="o">.</span><span class="na">getClass</span><span class="o">()));</span>
+    <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">A</span> <span class="kd">implements</span> <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="nc">Main</span> <span class="n">方法</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">Main</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">B</span> <span class="kd">implements</span> <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="nc">Main</span> <span class="n">方法</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">Main</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">C</span> <span class="kd">implements</span> <span class="n">接口</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Main</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Main</span> <span class="n">方法</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Main</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">interface</span> <span class="nc">接口</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">R</span> <span class="n">方法</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>  控制台：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">构造方法</span><span class="err">：</span><span class="o">[]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">Main</span><span class="err">$</span><span class="n">$Lambda</span><span class="err">$</span><span class="mi">14</span><span class="o">/</span><span class="mh">0x00000008000c0b40</span><span class="o">]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">Main</span><span class="err">$</span><span class="n">$Lambda</span><span class="err">$</span><span class="mi">15</span><span class="o">/</span><span class="mh">0x00000008000c0d80</span><span class="o">]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">Main</span><span class="err">$</span><span class="mi">1</span><span class="o">]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">Main</span><span class="n">$A</span><span class="o">]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">Main</span><span class="n">$B</span><span class="o">]</span>
+<span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">C</span><span class="o">]</span>
+</code></pre></div></div>
+<p>  从上到下，越来越“low“。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Java泛型</title><link href="https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B/" rel="alternate" type="text/html" title="Java泛型" /><published>2024-03-21T00:00:00+08:00</published><updated>2024-03-21T00:00:00+08:00</updated><id>https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B</id><content type="html" xml:base="https://acteds.github.io/2024/03/21/%E6%B3%9B%E5%9E%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>  java泛型笔记。</p>
 
 <h1 id="泛型">泛型</h1>
@@ -850,15 +2048,15 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   <strong>实际上<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code> 等同于 <code class="language-plaintext highlighter-rouge">&lt;? extends Object&gt;</code>，表示未知类型的通配符，表示可以匹配任何类型。</strong><br />
   那么有没有一个等同于<code class="language-plaintext highlighter-rouge">&lt;? super 最下子类</code>&gt;答案是没有的，因为这个最下子类并不是一个具体的东西，如果有，那么他也可以匹配任何类型，只能写null和最下子类，只能用Object读。功能基本和<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>重复了</p>
 
-<h2 id="总结">总结</h2>
+<h1 id="总结">总结</h1>
 
-<h3 id="说明">说明</h3>
+<h2 id="说明">说明</h2>
 
 <p>  泛型的继承关系<strong>可以</strong>把类向上转型，而泛型参数<strong>不能产生变化</strong>。<br />
   如果实例化时<strong>不定义泛型类型参数</strong>时，那么默认会使用<code class="language-plaintext highlighter-rouge">Object</code>作为泛型类型参数。<br />
   编译器如果能自动推断出泛型类型，可以省略定义后面的泛型类型。</p>
 
-<h3 id="定义">定义</h3>
+<h2 id="定义">定义</h2>
 
 <p>  定义泛型类时，在类名后面定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>，定义泛型方法时，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<br />
   泛型类定义的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code><strong>只能用于整个类的实例</strong>，而不能用于类的静态成员（静态字段、静态方法、静态内部类）。<br />
@@ -867,7 +2065,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   泛型类的<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>不能用于静态方法。静态方法同样可以变成泛型方法，使用同样的方法，在<strong>返回类型前面</strong>定义<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。<br />
   泛型还可以定义多种类型。如类型<code class="language-plaintext highlighter-rouge">&lt;T, K&gt;</code>，Java标准库的<code class="language-plaintext highlighter-rouge">Map&lt;K, V&gt;</code>就是使用两种泛型类型的例子。</p>
 
-<h3 id="擦拭法-1">擦拭法</h3>
+<h2 id="擦拭法-1">擦拭法</h2>
 
 <p>  擦拭法决定了泛型<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>：</p>
 <ul>
@@ -880,7 +2078,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p>  泛型方法要防止重复定义方法，例如：<code class="language-plaintext highlighter-rouge">public boolean equals(T obj)</code>。<br />
   一个类可以继承自一个泛型类，子类可以获取父类的泛型类型<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code>。</p>
 
-<h3 id="extendssuper">extends、super、？</h3>
+<h2 id="extendssuper">extends、super、？</h2>
 
 <p>  作为方法参数，<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>类型、<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>类型和<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>的区别在于：</p>
 <ul>
@@ -901,7 +2099,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   用<code class="language-plaintext highlighter-rouge">&lt;T extends Number&gt;</code>定义<strong>泛型类</strong>时表示<strong>使用时泛型类型限定为<code class="language-plaintext highlighter-rouge">Number</code>以及<code class="language-plaintext highlighter-rouge">Number</code>的子类。(泛型类型&lt;=上界)</strong><br />
   其实就是因为java<strong>向上提升安全，而向下转型不安全</strong></p>
 
-<h2 id="泛型和反射">泛型和反射</h2>
+<h1 id="泛型和反射">泛型和反射</h1>
 
 <p>  Java的部分反射API也是泛型。例如：<code class="language-plaintext highlighter-rouge">Class&lt;T&gt;</code>就是泛型：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// compile warning:</span>
@@ -2390,53 +3588,4 @@ su
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">font-family</span><span class="nd">:BlinkMacSystemFont</span><span class="o">,</span><span class="s1">"Segoe UI"</span><span class="o">,</span><span class="s1">"Roboto"</span><span class="o">,</span><span class="s1">"Oxygen"</span><span class="o">,</span><span class="s1">"Ubuntu"</span><span class="o">,</span><span class="s1">"Cantarell"</span><span class="o">,</span><span class="s1">"Fira Sans"</span><span class="o">,</span><span class="s1">"Droid Sans"</span><span class="o">,</span><span class="s1">"Helvetica Neue"</span><span class="o">,</span><span class="nt">sans-serif</span>
 </code></pre></div></div>
 <p>  而你又恰好安装了”Droid Sans”字体,那么就会使用”Droid Sans”字体.<br />
-  解决方法也很简单,卸载掉”Droid Sans”字体,或者通过css覆盖掉”font-family”.</p>]]></content><author><name>acteds</name></author><category term="Chrome" /><summary type="html"><![CDATA[Droid Sans字体的中文显示效果不佳]]></summary></entry><entry><title type="html">合并servlet-name-servlet.xml与applicationContext.xml</title><link href="https://acteds.github.io/2023/04/21/%E5%90%88%E5%B9%B6servlet-name-servlet.xml%E4%B8%8EapplicationContext.xml/" rel="alternate" type="text/html" title="合并servlet-name-servlet.xml与applicationContext.xml" /><published>2023-04-21T00:00:00+08:00</published><updated>2023-04-21T00:00:00+08:00</updated><id>https://acteds.github.io/2023/04/21/%E5%90%88%E5%B9%B6servlet-name-servlet.xml%E4%B8%8EapplicationContext.xml</id><content type="html" xml:base="https://acteds.github.io/2023/04/21/%E5%90%88%E5%B9%B6servlet-name-servlet.xml%E4%B8%8EapplicationContext.xml/"><![CDATA[<h2 id="引言">引言</h2>
-<p>  在Spring MVC中，可以将<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>所需的所有配置信息都包含在根<code class="language-plaintext highlighter-rouge">ApplicationContext</code>中，这样就不需要单独为<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>创建一个XML文件了。</p>
-
-<h2 id="详解">详解</h2>
-<p>  实际上，在使用Spring MVC时，<strong>建议</strong>将所有Bean定义和配置信息都放在<strong>一个</strong>名为<code class="language-plaintext highlighter-rouge">applicationContext.xml</code>的文件中，以便于管理和维护。然后，在<code class="language-plaintext highlighter-rouge">web.xml</code>文件中配置<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，并将其<code class="language-plaintext highlighter-rouge">contextConfigLocation</code>参数设置为<code class="language-plaintext highlighter-rouge">classpath:/applicationContext.xml</code>，这样就可以让<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>自动加载应用程序的所有Bean定义和配置信息了。<br />
-  总之，虽然需要在<code class="language-plaintext highlighter-rouge">web.xml</code>文件中配置<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>并指定其<code class="language-plaintext highlighter-rouge">contextConfigLocation</code>参数所需的XML文件，但是这个XML文件里面的<strong>所有内容</strong>都可以转移到根<code class="language-plaintext highlighter-rouge">ApplicationContext</code>中，以便于更好地管理和维护Spring应用程序。 <br />
-  下面是一个<code class="language-plaintext highlighter-rouge">web.xml</code>文件的配置，其中<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>的<code class="language-plaintext highlighter-rouge">contextConfigLocation</code>参数被设置为<code class="language-plaintext highlighter-rouge">classpath:/applicationContext.xml</code>：</p>
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span class="nt">&lt;web-app</span> <span class="na">xmlns=</span><span class="s">"http://java.sun.com/xml/ns/javaee"</span>
-         <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-         <span class="na">xsi:schemaLocation=</span><span class="s">"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"</span>
-         <span class="na">version=</span><span class="s">"3.0"</span><span class="nt">&gt;</span>
-    <span class="c">&lt;!-- 配置Spring MVC的DispatcherServlet --&gt;</span>
-    <span class="nt">&lt;servlet&gt;</span>
-        <span class="nt">&lt;servlet-name&gt;</span>myDispatcherServlet<span class="nt">&lt;/servlet-name&gt;</span>
-        <span class="nt">&lt;servlet-class&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="nt">&lt;/servlet-class&gt;</span>
-        <span class="nt">&lt;init-param&gt;</span>
-            <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
-            <span class="nt">&lt;param-value&gt;</span>classpath:/applicationContext.xml<span class="nt">&lt;/param-value&gt;</span>
-        <span class="nt">&lt;/init-param&gt;</span>
-        <span class="nt">&lt;load-on-startup&gt;</span>1<span class="nt">&lt;/load-on-startup&gt;</span>
-    <span class="nt">&lt;/servlet&gt;</span>
-    <span class="nt">&lt;servlet-mapping&gt;</span>
-        <span class="nt">&lt;servlet-name&gt;</span>myDispatcherServlet<span class="nt">&lt;/servlet-name&gt;</span>
-        <span class="nt">&lt;url-pattern&gt;</span>/<span class="nt">&lt;/url-pattern&gt;</span>
-    <span class="nt">&lt;/servlet-mapping&gt;</span>
-<span class="nt">&lt;/web-app&gt;</span>
-</code></pre></div></div>
-<p>  我们配置了一个名为<code class="language-plaintext highlighter-rouge">myDispatcherServlet</code>的<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，并将其<code class="language-plaintext highlighter-rouge">contextConfigLocation</code>参数设置为<code class="language-plaintext highlighter-rouge">classpath:/applicationContext.xml</code>。这意味着在应用程序启动时，<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>会自动加载位于类路径上的<code class="language-plaintext highlighter-rouge">applicationContext.xml</code>文件，并使用其中定义的Bean来处理所有的请求。同时，我们将<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>映射到了应用程序的根路径“/”，这意味着所有的请求都将由它来处理。<br />
-  重要的是要确保<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>的<code class="language-plaintext highlighter-rouge">contextConfigLocation</code>参数正确指向了包含所有Bean定义和配置信息的XML文件。</p>
-
-<p>  这个<code class="language-plaintext highlighter-rouge">web.xml</code>文件的配置已经在<code class="language-plaintext highlighter-rouge">servlet</code>中指定了<code class="language-plaintext highlighter-rouge">Servlet</code>上下文的位置，因此<strong>不需要</strong>再添加<code class="language-plaintext highlighter-rouge">&lt;context-param&gt;</code>元素来指定Spring应用程序上下文的位置。即不需要使用:</p>
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;context-param&gt;</span>
-    <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
-    <span class="nt">&lt;param-value&gt;</span>classpath:/applicationContext.xml<span class="nt">&lt;/param-value&gt;</span><span class="c">&lt;!--加载src目录下的applicationContext.xml文件--&gt;</span>
-<span class="nt">&lt;/context-param&gt;</span>
-</code></pre></div></div>
-<p>  当然,自动加载也不要再用:</p>
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;listener&gt;&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="nt">&lt;/listener-class&gt;&lt;/listener&gt;</span>
-</code></pre></div></div>
-<p>  该代码表示 Spring 将尝试从默认路径(如果定义了context-param就从你指定的xml读取) <code class="language-plaintext highlighter-rouge">/WEB-INF/applicationContext.xml</code> 中加载应用程序上下文配置，即使在<code class="language-plaintext highlighter-rouge">servlet</code> 的 <code class="language-plaintext highlighter-rouge">init-param</code> 中已经显式指定了另一个配置文件的路径。这是因为 <code class="language-plaintext highlighter-rouge">ContextLoaderListener</code> 将在应用程序启动时创建和初始化根应用程序上下文。<br />
-  另外，这个<code class="language-plaintext highlighter-rouge">web.xml</code>文件只适用于Spring MVC框架，如果同时使用其他的Spring组件或框架（如Spring Security），则可能需要在<code class="language-plaintext highlighter-rouge">web.xml</code>中添加其他的<code class="language-plaintext highlighter-rouge">&lt;context-param&gt;</code>元素来指定其他的上下文配置文件位置。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Spring配置文件的合并]]></summary></entry><entry><title type="html">Transactional注解无效</title><link href="https://acteds.github.io/2023/04/20/Transactional%E6%B3%A8%E8%A7%A3%E6%97%A0%E6%95%88/" rel="alternate" type="text/html" title="Transactional注解无效" /><published>2023-04-20T00:00:00+08:00</published><updated>2023-04-20T00:00:00+08:00</updated><id>https://acteds.github.io/2023/04/20/Transactional%E6%B3%A8%E8%A7%A3%E6%97%A0%E6%95%88</id><content type="html" xml:base="https://acteds.github.io/2023/04/20/Transactional%E6%B3%A8%E8%A7%A3%E6%97%A0%E6%95%88/"><![CDATA[<h2 id="引言">引言</h2>
-<p>  在使用<code class="language-plaintext highlighter-rouge">Transactional</code>注解方法时没有产生应有的效果,通过排除发现<code class="language-plaintext highlighter-rouge">Transactional</code>注解是无效状态.</p>
-
-<h2 id="详解">详解</h2>
-<p>  SSM架构下，Spring是一个容器，通过<code class="language-plaintext highlighter-rouge">applicationContext.xml</code>配置。<br />
-  SpringMVC算子容器，通过<code class="language-plaintext highlighter-rouge">spring-mvc.xml</code>配置。</p>
-
-<p>  当注解所在的类在<code class="language-plaintext highlighter-rouge">spring-mvc.xml</code>中扫描配置,而事务管理bean在<code class="language-plaintext highlighter-rouge">applicationContext.xml</code>中配置会导致子容器可以访问父容器中的bean，而父容器不能访问子容器的bean。所以父容器中定义的事务管理bean就不知道子容器中扫描配置内容。因此事务<code class="language-plaintext highlighter-rouge">@Transactional</code>注解无法正常使用。<br />
-  实际上，在使用Spring MVC时，建议将所有Bean定义和配置信息都放在一个名为<code class="language-plaintext highlighter-rouge">applicationContext.xml</code>的文件中，以便于管理和维护。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Spring的容器访问权限]]></summary></entry></feed>
+  解决方法也很简单,卸载掉”Droid Sans”字体,或者通过css覆盖掉”font-family”.</p>]]></content><author><name>acteds</name></author><category term="Chrome" /><summary type="html"><![CDATA[Droid Sans字体的中文显示效果不佳]]></summary></entry></feed>
