@@ -2,7 +2,8 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://acteds.github.io
+# url: https://acteds.github.io
+url:
 date_format: "ordinal"
 title: 个人博客
 subtitle: ""

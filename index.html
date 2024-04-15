@@ -6,9 +6,11 @@ comments: false
 ---
 
 {% assign assets_base_url = site.url %}
+<!-- 设置变量 assets_base_url 为站点 URL -->
 {% if site.cdn.jsdelivr.enabled %}
 {% assign assets_base_url = "https://cdn.jsdelivr.net/gh/" | append: site.repository | append: '@master' %}
 {% endif %}
+<!-- 如果启用了 CDN 加速，则将 assets_base_url 设置为 CDN URL -->
 <section class="banner">
     <div class="collection-head">
       <div class="container">
@@ -21,16 +23,19 @@ comments: false
                   <span class="octicon octicon-location"></span>
                   {{ site.location }}
                 </span>
+                <!-- 如果在移动设备上隐藏，则显示网站位置信息 -->
                 {% if site.organization %}
                 <span class="meta-info">
                   <span class="octicon octicon-organization"></span>
                   <a href="{{ site.organization_url }}" target="_blank">{{ site.organization }}</a>
                 </span>
                 {% endif %}
+                <!-- 如果有组织信息，则显示组织信息 -->
                 <span class="meta-info">
                   <span class="octicon octicon-mark-github"></span>
                   <a href="https://github.com/{{ site.github_username }}" target="_blank">{{ site.github_username }}</a>
                 </span>
+                <!-- 显示 GitHub 用户名 -->
               </div>
             </div>
           </div>
@@ -44,6 +49,7 @@ comments: false
     </div>
 </section>
 <!-- /.banner -->
+<!-- 网站横幅 -->
 <section class="container content">
     <div class="columns">
         <div class="column two-thirds" >
@@ -73,6 +79,7 @@ comments: false
               {% endif %}
               {% endif %}
               {% endfor %}
+              <!-- 循环遍历文章列表，并根据条件判断是否置顶显示 -->
 
               {% for post in paginator.posts %}
               {% if post.topmost != true %}
@@ -97,6 +104,7 @@ comments: false
               </li>
               {% endif %}
               {% endfor %}
+              <!-- 循环遍历文章列表，排除置顶文章，显示其余文章信息 -->
             </ol>
         </div>
         <div class="column one-third">
@@ -117,12 +125,14 @@ comments: false
         {% else %}
             <button disabled="disabled" href="javascript:;" class="btn btn-outline">&laquo;</button>
         {% endif %}
+        <!-- 如果有上一页，则显示上一页按钮，否则显示禁用的上一页按钮 -->
 
         {% if paginator.page == 1 %}
             <a href="javascript:;" class="active btn btn-outline">1</a>
         {% else %}
             <a href="{{ site.url }}/"  class="btn btn-outline">1</a>
         {% endif %}
+        <!-- 如果当前页为第一页，则显示激活的第一页按钮，否则显示第一页按钮 -->
 
         {% assign aroundSize = 2 %}
         {% assign midStartPage = paginator.page | minus: aroundSize %}
@@ -137,6 +147,7 @@ comments: false
         {% if paginator.page > tmpPage %}
           <button disabled="disabled" href="javascript:;" class="btn btn-outline">...</button>
         {% endif %}
+        <!-- 计算并显示中间页码，超出部分用省略号替代 -->
 
         {% for count in (midStartPage..midEndPage) %}
           {% if count == paginator.page %}
@@ -145,11 +156,13 @@ comments: false
             <a href="{{ site.url }}/page{{count}}"  class="btn btn-outline">{{count}}</a>
           {% endif %}
         {% endfor %}
+        <!-- 循环显示中间页码 -->
 
         {% assign tmpPage = paginator.page | plus: aroundSize | plus: 1 %}
         {% if paginator.total_pages > tmpPage %}
           <button disabled="disabled" href="javascript:;" class="btn btn-outline">...</button>
         {% endif %}
+        <!-- 如果还有更多页码未显示，则显示省略号 -->
 
         {% if paginator.total_pages > 1 %}
           {% if paginator.page == paginator.total_pages %}
@@ -158,14 +171,18 @@ comments: false
               <a href="{{ site.url }}/page{{paginator.total_pages}}"  class="btn btn-outline">{{paginator.total_pages}}</a>
           {% endif %}
         {% endif %}
+        <!-- 如果有多页，则显示最后一页按钮 -->
 
         {% if paginator.next_page %}
             <a href="{{ site.url }}/page{{paginator.next_page}}"  class="btn btn-outline">&raquo;</a>
         {% else %}
             <button disabled="disabled" href="javascript:;" class="btn btn-outline">&raquo;</button>
         {% endif %}
+        <!-- 如果有下一页，则显示下一页按钮，否则显示禁用的下一页按钮 -->
         </div>
     </div>
+    <!-- 分页 -->
     <!-- /pagination -->
 </section>
 <!-- /section.content -->
+<!-- 内容 -->
