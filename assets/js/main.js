@@ -39,18 +39,18 @@ document.addEventListener("DOMContentLoaded", function () {
     deleteRedundantEmptyTextNodes(br.parentNode);
     var nextElement = br.nextSibling;
     if (nextElement) {
-      if ( nextElement.nodeType === Node.TEXT_NODE ) {
-        var span = document.createElement("span");
-        span.classList.add("first-line-indent");
-        span.textContent = nextElement.nodeValue.trim();
-        nextElement.parentNode.insertBefore(span, nextElement);
-        nextElement.parentNode.removeChild(nextElement);
-      } else if (nextElement.nodeType === Node.ELEMENT_NODE) {
+      // if ( nextElement.nodeType === Node.TEXT_NODE ) {
+      //   var span = document.createElement("span");
+      //   span.classList.add("first-line-indent");
+      //   span.textContent = nextElement.nodeValue.trim();
+      //   nextElement.parentNode.insertBefore(span, nextElement);
+      //   nextElement.parentNode.removeChild(nextElement);
+      // } else if (nextElement.nodeType === Node.ELEMENT_NODE) {
         var span = document.createElement("span");
         span.innerHTML = "&emsp;&emsp;";/* 缩进2字符*/
         span.style.userSelect = "none";/* 被复制时不被选中*/
         nextElement.parentNode.insertBefore(span, nextElement);
-      }
+      // }
     }
   });
   /**
