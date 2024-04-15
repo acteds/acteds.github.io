@@ -175,8 +175,11 @@
 /*首行缩进*/
 .article-content p {
     text-indent: 2em;
+    /* 清除浮动 */
+    overflow: hidden;
 }
-.first-line-indent{
+.article-content p .first-line-indent {
     text-indent: 2em;
+    /* 浮动,让后面元素跟上 */
     float: left;
 }
