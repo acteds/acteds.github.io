@@ -172,3 +172,7 @@
         background: rgba(255, 255, 255, 0.2);
     }
 }
+/*首行缩进*/
+.article-content p {
+    text-indent: 2em;
+}
