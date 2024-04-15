@@ -32,3 +32,17 @@ jQuery(function() {
 
   toTop();
 });
+/* 为文章添加首行缩进 */
+document.addEventListener("DOMContentLoaded", function () {
+  var brElements = document.querySelectorAll("body > section.container.content > br")
+  brElements.forEach(function (br) {
+    var nextElement = br.nextSibling;
+    if (nextElement && nextElement.nodeType === Node.TEXT_NODE) {
+      var span = document.createElement("span");
+      classList.add("first-line-indent");
+      span.textContent = nextElement.nodeValue.trim();
+      nextElement.parentNode.insertBefore(span, nextElement);
+      nextElement.parentNode.removeChild(nextElement);
+    }
+  });
+});
