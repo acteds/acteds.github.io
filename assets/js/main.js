@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
     deleteRedundantEmptyTextNodes(br.parentNode);
     var nextElement = br.nextSibling;
     if (nextElement) {
+      /* 清除前面的空字符 */
+      if (nextElement.nodeName === "#text") {
+        nextElement.nodeValue = nextElement.nodeValue.trimStart();
+      }
       // if ( nextElement.nodeType === Node.TEXT_NODE ) {
       //   var span = document.createElement("span");
       //   span.classList.add("first-line-indent");
