@@ -18,6 +18,7 @@ keywords: Git, GitHub
 找到公钥文件(id_rsa.pub)，打开文件,复制内容  
 在GitHub上添加SSH keys(头像-Settings-SSH and GPG keys-New SSH key)，标题随便，key内填公钥内容。  
 * 验证是否成功：`ssh -T git@github.com`  
+
 若出现ssh: connect to host github.com port 22: Connection timed out  
 可以尝试修改SSH主机名：  
 在.ssh文件夹中新建config文件，无扩展名，并写入以下内容：  
