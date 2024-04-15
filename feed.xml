@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-15T17:07:17+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="加密与安全">加密与安全</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-15T17:23:31+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="加密与安全">加密与安全</h1>
 
 <h2 id="编码">编码</h2>
 
@@ -3113,6 +3113,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <h3 id="小结-1">小结</h3>
 
 <font color="red"><b>使用类似`<? extends Number>`通配符参与方法的形式参数时表示：</b></font>  
+
 - **调用：`<? extends Number> getFirst();`读，则必须至少用上界`Number`接收，也可以用`Number`的父类接收，比如`Object`，避免可能的向下转型。**
 - **对于`setFirst(<? extends Number> o)`写则，因为可能向下转型的原因被一刀切了，只有`null`值可以赋值给所有对象，才做为例外。(如果有下界倒是可以赋值下界或下界的子类，避免向下转型了)**
 - **方法被修饰的形式参数能够接收所有泛型类型为`Number`或`Number`子类的泛型类型。**
