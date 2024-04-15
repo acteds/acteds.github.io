@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-15T17:43:00+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="加密与安全">加密与安全</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-15T17:50:46+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="加密与安全">加密与安全</h1>
 
 <h2 id="编码">编码</h2>
 
@@ -3111,7 +3111,7 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
 <p><code class="language-plaintext highlighter-rouge">String</code>、<code class="language-plaintext highlighter-rouge">Object</code>都不符合<code class="language-plaintext highlighter-rouge">&lt;T extends Number&gt;</code>，它们不是<code class="language-plaintext highlighter-rouge">Number</code>类型或<code class="language-plaintext highlighter-rouge">Number</code>的子类。</p>
 
 <h3 id="小结-1">小结</h3>
-<p><strong>使用类似<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt;</code>通配符参与方法的形式参数时表示：</strong></p>
+<p>  <font color="red"><b>使用类似`&lt;? extends Number&gt;`通配符参与方法的形式参数时表示：</b></font></p>
 
 <ul>
   <li><strong>调用：<code class="language-plaintext highlighter-rouge">&lt;? extends Number&gt; getFirst();</code>读，则必须至少用上界<code class="language-plaintext highlighter-rouge">Number</code>接收，也可以用<code class="language-plaintext highlighter-rouge">Number</code>的父类接收，比如<code class="language-plaintext highlighter-rouge">Object</code>，避免可能的向下转型。</strong></li>
@@ -3119,211 +3119,214 @@ public void com.aotmd.SuperTest.test(java.lang.Number)
   <li><strong>方法被修饰的形式参数能够接收所有泛型类型为<code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Number</code>子类的泛型类型。</strong></li>
 </ul>
 
-<font color="red"><b>`<? extends 上界>`：传参类型<=上界，只能写`null`，读>=上界。</b></font>  
+<p>  <font color="red"><b>`&lt;? extends 上界&gt;`：传参类型&lt;=上界，只能写`null`，读&gt;=上界。</b></font></p>
 
-其实**不在方法参数**也能用`<? extends 上界>`，效果是相同的。  
-```java
-package com.aotmd;
+<p>其实<strong>不在方法参数</strong>也能用<code class="language-plaintext highlighter-rouge">&lt;? extends 上界&gt;</code>，效果是相同的。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
 
-public class Main {
-    public static void main(String[] args) {
-        A<? extends String> a=new A<>("123");
-        System.out.println(a);
-    }
-}
-class A <T>{
-    public T value;
-    public A(T value) {this.value = value;}
-    @Override public String toString() {return "A{value=" + value + '}'; }
-}
-```
-使用类似`<T extends Number>`定义**泛型类**时表示：  
-- **泛型类型限定为`Number`以及`Number`的子类。(泛型类型<=上界)**
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="no">A</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">a</span><span class="o">=</span><span class="k">new</span> <span class="no">A</span><span class="o">&lt;&gt;(</span><span class="s">"123"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">A</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;{</span>
+    <span class="kd">public</span> <span class="no">T</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">A</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span><span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;}</span>
+    <span class="nd">@Override</span> <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="s">"A{value="</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span> <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>使用类似<code class="language-plaintext highlighter-rouge">&lt;T extends Number&gt;</code>定义<strong>泛型类</strong>时表示：</p>
+<ul>
+  <li><strong>泛型类型限定为<code class="language-plaintext highlighter-rouge">Number</code>以及<code class="language-plaintext highlighter-rouge">Number</code>的子类。(泛型类型&lt;=上界)</strong></li>
+</ul>
 
-## super通配符在形式参数的作用
-之前说明泛型的继承关系：`Pair<Integer>`不是`Pair<Number>`的子类，他们之前没有什么关系。  
-考察下面的`set`方法：  
-```java
-void set(Pair<Integer> p, Integer first, Integer last) {
-    p.setFirst(first);
-    p.setLast(last);
-}
-```
-传入`Pair<Integer>`是允许的，而传入`Pair<Number>`是不允许的。  
-和`extends`通配符相反，这次，我们希望接受泛型类型为`Integer`或`Integer`父类的`Pair`类型。还是向上提升的问题，父类可以指向子类，所以写操作是安全的。同样的，向下转型不安全，因此禁止读取。  
+<h2 id="super通配符在形式参数的作用">super通配符在形式参数的作用</h2>
+<p>之前说明泛型的继承关系：<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>不是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>的子类，他们之前没有什么关系。<br />
+考察下面的<code class="language-plaintext highlighter-rouge">set</code>方法：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">first</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">p</span><span class="o">.</span><span class="na">setFirst</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
+    <span class="n">p</span><span class="o">.</span><span class="na">setLast</span><span class="o">(</span><span class="n">last</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>传入<code class="language-plaintext highlighter-rouge">Pair&lt;Integer&gt;</code>是允许的，而传入<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>是不允许的。<br />
+和<code class="language-plaintext highlighter-rouge">extends</code>通配符相反，这次，我们希望接受泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的<code class="language-plaintext highlighter-rouge">Pair</code>类型。还是向上提升的问题，父类可以指向子类，所以写操作是安全的。同样的，向下转型不安全，因此禁止读取。</p>
 
-使用`super`通配符来改写这个方法：  
-```java
-void set(Pair<? super Integer> p, Integer first, Integer last) {
-    p.setFirst(first);
-    p.setLast(last);
-}
-```
-`Pair<? super Integer>`表示，方法参数接受所有泛型类型为`Integer`或`Integer`父类的`Pair`类型。  
-下面的代码可以被正常编译：  
-```java
-public class Main {
-    public static void main(String[] args) {
-        Pair<Number> p1 = new Pair<>(12.3, 4.56);
-        Pair<Integer> p2 = new Pair<>(123, 456);
-        setSame(p1, 100);
-        setSame(p2, 200);
-        System.out.println(p1.getFirst() + ", " + p1.getLast());
-        System.out.println(p2.getFirst() + ", " + p2.getLast());
-    }
-    static void setSame(Pair<? super Integer> p, Integer n) {
-        p.setFirst(n);
-        p.setLast(n);
-    }
-}
-class Pair<T> {
-    private T first;
-    private T last;
-    public Pair(T first, T last) {
-        this.first = first;
-        this.last = last;
-    }
-    public T getFirst() {
-        return first;
-    }
-    public T getLast() {
-        return last;
-    }
-    public void setFirst(T first) {
-        this.first = first;
-    }
-    public void setLast(T last) {
-        this.last = last;
-    }
-}
-```
-`Pair<? super Integer>`的`setFirst()`方法签名实际上是：  
-```java
-void setFirst(? super Integer);
-```
-因此，可以安全地传入`Integer`类型。如果你传`Number`类型，不好意思，因为泛型有可能是`Integer`所以不可以，即：有可能造成`Number`转`Integer`了，即向下转型。所以你想写入，则最多用下界`Integer`写入，也可以用`Integer`的子类，避免可能的向下转型。  
-而`Pair<? super Integer>`的`getFirst()`方法，它的方法签名实际上是：  
+<p>使用<code class="language-plaintext highlighter-rouge">super</code>通配符来改写这个方法：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">set</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">first</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">p</span><span class="o">.</span><span class="na">setFirst</span><span class="o">(</span><span class="n">first</span><span class="o">);</span>
+    <span class="n">p</span><span class="o">.</span><span class="na">setLast</span><span class="o">(</span><span class="n">last</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">Pair&lt;? super Integer&gt;</code>表示，方法参数接受所有泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的<code class="language-plaintext highlighter-rouge">Pair</code>类型。<br />
+下面的代码可以被正常编译：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;&gt;(</span><span class="mf">12.3</span><span class="o">,</span> <span class="mf">4.56</span><span class="o">);</span>
+        <span class="nc">Pair</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Pair</span><span class="o">&lt;&gt;(</span><span class="mi">123</span><span class="o">,</span> <span class="mi">456</span><span class="o">);</span>
+        <span class="n">setSame</span><span class="o">(</span><span class="n">p1</span><span class="o">,</span> <span class="mi">100</span><span class="o">);</span>
+        <span class="n">setSame</span><span class="o">(</span><span class="n">p2</span><span class="o">,</span> <span class="mi">200</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">p1</span><span class="o">.</span><span class="na">getFirst</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">p1</span><span class="o">.</span><span class="na">getLast</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">p2</span><span class="o">.</span><span class="na">getFirst</span><span class="o">()</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">p2</span><span class="o">.</span><span class="na">getLast</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setSame</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">setFirst</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">setLast</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="no">T</span> <span class="n">first</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="no">T</span> <span class="n">last</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Pair</span><span class="o">(</span><span class="no">T</span> <span class="n">first</span><span class="o">,</span> <span class="no">T</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">first</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">last</span> <span class="o">=</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="no">T</span> <span class="nf">getFirst</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="no">T</span> <span class="nf">getLast</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setFirst</span><span class="o">(</span><span class="no">T</span> <span class="n">first</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">first</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLast</span><span class="o">(</span><span class="no">T</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">last</span> <span class="o">=</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">Pair&lt;? super Integer&gt;</code>的<code class="language-plaintext highlighter-rouge">setFirst()</code>方法签名实际上是：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">setFirst</span><span class="o">(?</span> <span class="kd">super</span> <span class="nc">Integer</span><span class="o">);</span>
+</code></pre></div></div>
+<p>因此，可以安全地传入<code class="language-plaintext highlighter-rouge">Integer</code>类型。如果你传<code class="language-plaintext highlighter-rouge">Number</code>类型，不好意思，因为泛型有可能是<code class="language-plaintext highlighter-rouge">Integer</code>所以不可以，即：有可能造成<code class="language-plaintext highlighter-rouge">Number</code>转<code class="language-plaintext highlighter-rouge">Integer</code>了，即向下转型。所以你想写入，则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入，也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能的向下转型。<br />
+而<code class="language-plaintext highlighter-rouge">Pair&lt;? super Integer&gt;</code>的<code class="language-plaintext highlighter-rouge">getFirst()</code>方法，它的方法签名实际上是：</p>
 
-```java
-? super Integer getFirst();
-```
-无法使用`Integer`类型来接收`getFirst()`的返回值，还是老样子，`Integer`可不是`Object`接收万物，也即可能的向下转型是不安全的：  
-```java
-Integer x = p.getFirst();
-```
-因为如果传入的实际类型是`Pair<Number>`，在上面的代码中编译器无法将`Number`类型转型为`Integer`，即向下转型。  
-唯一可以接收`getFirst()`方法返回值的是`Object`类型，因为它是所有类的父类，它能包容一切，除它自己外，所有对它的赋值都是向上提升，因此是安全的：  
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?</span> <span class="kd">super</span> <span class="nc">Integer</span> <span class="nf">getFirst</span><span class="o">();</span>
+</code></pre></div></div>
+<p>无法使用<code class="language-plaintext highlighter-rouge">Integer</code>类型来接收<code class="language-plaintext highlighter-rouge">getFirst()</code>的返回值，还是老样子，<code class="language-plaintext highlighter-rouge">Integer</code>可不是<code class="language-plaintext highlighter-rouge">Object</code>接收万物，也即可能的向下转型是不安全的：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
+</code></pre></div></div>
+<p>因为如果传入的实际类型是<code class="language-plaintext highlighter-rouge">Pair&lt;Number&gt;</code>，在上面的代码中编译器无法将<code class="language-plaintext highlighter-rouge">Number</code>类型转型为<code class="language-plaintext highlighter-rouge">Integer</code>，即向下转型。<br />
+唯一可以接收<code class="language-plaintext highlighter-rouge">getFirst()</code>方法返回值的是<code class="language-plaintext highlighter-rouge">Object</code>类型，因为它是所有类的父类，它能包容一切，除它自己外，所有对它的赋值都是向上提升，因此是安全的：</p>
 
-```java
-Object obj = p.getFirst();
-```
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
+</code></pre></div></div>
 
-<font color='red'><b>使用类似`<? super Integer>`通配符参与方法的形式参数时表示：</b></font>  
-- **调用：`<? super Integer> getFirst();`读，因为没有限定上界，那只能用`Object`接收，避免可能的向下转型。**
-- **对于`setFirst(<? super Integer> o)`写则，则最多用下界`Integer`写入，也可以用`Integer`的子类，避免可能向下转型。**
-- **方法修饰的形式参数能够接收所有泛型类型为`Integer`或`Integer`父类的泛型类型。**
+<p>  <font color="red"><b>使用类似`&lt;? super Integer&gt;`通配符参与方法的形式参数时表示：</b></font></p>
+<ul>
+  <li><strong>调用：<code class="language-plaintext highlighter-rouge">&lt;? super Integer&gt; getFirst();</code>读，因为没有限定上界，那只能用<code class="language-plaintext highlighter-rouge">Object</code>接收，避免可能的向下转型。</strong></li>
+  <li><strong>对于<code class="language-plaintext highlighter-rouge">setFirst(&lt;? super Integer&gt; o)</code>写则，则最多用下界<code class="language-plaintext highlighter-rouge">Integer</code>写入，也可以用<code class="language-plaintext highlighter-rouge">Integer</code>的子类，避免可能向下转型。</strong></li>
+  <li><strong>方法修饰的形式参数能够接收所有泛型类型为<code class="language-plaintext highlighter-rouge">Integer</code>或<code class="language-plaintext highlighter-rouge">Integer</code>父类的泛型类型。</strong></li>
+</ul>
 
-<font color='red'><b>`<? super 下界>`：传参类型>=下界，写<=下界，读只能`Object`。</b></font>  
+<p>  <font color="red"><b>`&lt;? super 下界&gt;`：传参类型&gt;=下界，写&lt;=下界，读只能`Object`。</b></font></p>
 
-其实不在方法参数也能用`<? super 下界>`。  
-```java
-package com.aotmd;
+<p>其实不在方法参数也能用<code class="language-plaintext highlighter-rouge">&lt;? super 下界&gt;</code>。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
 
-public class Main {
-    public static void main(String[] args) {
-        A<? super String> a=new A<>("123");
-        System.out.println(a);
-    }
-}
-class A <T>{
-    public T value;
-    public A(T value) {this.value = value;}
-    @Override public String toString() {return "A{value=" + value + '}'; }
-}
-```
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="no">A</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">a</span><span class="o">=</span><span class="k">new</span> <span class="no">A</span><span class="o">&lt;&gt;(</span><span class="s">"123"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">A</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;{</span>
+    <span class="kd">public</span> <span class="no">T</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">A</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span><span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;}</span>
+    <span class="nd">@Override</span> <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="s">"A{value="</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span> <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
-### 对比extends和super通配符在形式参数的作用
-对比`extends`和`super`，作为方法参数，`<? extends T>`类型和`<? super T>`类型的区别在于：  
-- <font color='red'><b>`<? extends T>`：传参类型<=`T`，只能写`null`，读>=`T`。</b></font>  
-- <font color='red'><b>`<? super T>`：  传参类型>=`T`，写<=`T`，读只能`Object`。</b></font>  
+<h3 id="对比extends和super通配符在形式参数的作用">对比extends和super通配符在形式参数的作用</h3>
+<p>对比<code class="language-plaintext highlighter-rouge">extends</code>和<code class="language-plaintext highlighter-rouge">super</code>，作为方法参数，<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>类型和<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>类型的区别在于：</p>
+<ul>
+  <li>
+    <font color="red"><b>`&lt;? extends T&gt;`：传参类型&lt;=`T`，只能写`null`，读&gt;=`T`。</b></font>
+  </li>
+  <li>
+    <font color="red"><b>`&lt;? super T&gt;`：  传参类型&gt;=`T`，写&lt;=`T`，读只能`Object`。</b></font>
+  </li>
+</ul>
 
-一个是允许读不允许写，另一个是允许写不允许读。  
-Java标准库的`Collections`类定义的`copy()`方法：  
+<p>一个是允许读不允许写，另一个是允许写不允许读。<br />
+Java标准库的<code class="language-plaintext highlighter-rouge">Collections</code>类定义的<code class="language-plaintext highlighter-rouge">copy()</code>方法：</p>
 
-```java
-public class Collections {
-    // 把src的每个元素复制到dest中：
-    public static <T> void copy(List<? super T> dest, List<? extends T> src) {
-        for (int i=0; i<src.size(); i++) {
-            T t = src.get(i);
-            dest.add(t);
-        }
-    }
-}
-```
-它的作用是把一个`List`的每个元素依次添加到另一个`List`中。它的第一个参数是`List<? super T>`，表示目标`List`，第二个参数`List<? extends T>`，表示要复制的`List`。我们可以简单地用`for`循环实现复制。在`for`循环中，对于类型`<? extends T>`的变量`src`可以安全的读，而对于类型`<? super T>`的变量`dest`可以安全的写。  
-这个`copy()`方法的定义就完美地展示了`extends`和`super`的意图：  
-- `copy()`方法内部不会读取`dest`，因为不能调用`dest.get()`来获取`T`的引用；
-- `copy()`方法内部也不会修改`src`，因为不能调用`src.add(T)`。
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Collections</span> <span class="o">{</span>
+    <span class="c1">// 把src的每个元素复制到dest中：</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">copy</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">dest</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">src</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">src</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="no">T</span> <span class="n">t</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+            <span class="n">dest</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>它的作用是把一个<code class="language-plaintext highlighter-rouge">List</code>的每个元素依次添加到另一个<code class="language-plaintext highlighter-rouge">List</code>中。它的第一个参数是<code class="language-plaintext highlighter-rouge">List&lt;? super T&gt;</code>，表示目标<code class="language-plaintext highlighter-rouge">List</code>，第二个参数<code class="language-plaintext highlighter-rouge">List&lt;? extends T&gt;</code>，表示要复制的<code class="language-plaintext highlighter-rouge">List</code>。我们可以简单地用<code class="language-plaintext highlighter-rouge">for</code>循环实现复制。在<code class="language-plaintext highlighter-rouge">for</code>循环中，对于类型<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>的变量<code class="language-plaintext highlighter-rouge">src</code>可以安全的读，而对于类型<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>的变量<code class="language-plaintext highlighter-rouge">dest</code>可以安全的写。<br />
+这个<code class="language-plaintext highlighter-rouge">copy()</code>方法的定义就完美地展示了<code class="language-plaintext highlighter-rouge">extends</code>和<code class="language-plaintext highlighter-rouge">super</code>的意图：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">copy()</code>方法内部不会读取<code class="language-plaintext highlighter-rouge">dest</code>，因为不能调用<code class="language-plaintext highlighter-rouge">dest.get()</code>来获取<code class="language-plaintext highlighter-rouge">T</code>的引用；</li>
+  <li><code class="language-plaintext highlighter-rouge">copy()</code>方法内部也不会修改<code class="language-plaintext highlighter-rouge">src</code>，因为不能调用<code class="language-plaintext highlighter-rouge">src.add(T)</code>。</li>
+</ul>
 
-```java
-List<Number> numList = new ArrayList<>();
-List<Integer> intList = new ArrayList<>();
-// copy List<Integer> to List<Number> ok：
-Collections.copy(numList, intList);
-```
-这两个 `T` 是**同一个类型**。在方法签名中，`<T>` 定义了方法级别的泛型类型参数，表示 `copy` 方法是一个泛型方法，它接受一个类型为 `T` 的参数。类型参数的推断是基于传入参数的类型来确定的，编译器会尝试推断出最具体的类型，然后将其用作所有相关类型参数的类型。如果无法推断出一个具体的类型，编译器将无法确定如何匹配类型参数，从而导致编译错误。  
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">numList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">intList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="c1">// copy List&lt;Integer&gt; to List&lt;Number&gt; ok：</span>
+<span class="nc">Collections</span><span class="o">.</span><span class="na">copy</span><span class="o">(</span><span class="n">numList</span><span class="o">,</span> <span class="n">intList</span><span class="o">);</span>
+</code></pre></div></div>
+<p>这两个 <code class="language-plaintext highlighter-rouge">T</code> 是<strong>同一个类型</strong>。在方法签名中，<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code> 定义了方法级别的泛型类型参数，表示 <code class="language-plaintext highlighter-rouge">copy</code> 方法是一个泛型方法，它接受一个类型为 <code class="language-plaintext highlighter-rouge">T</code> 的参数。类型参数的推断是基于传入参数的类型来确定的，编译器会尝试推断出最具体的类型，然后将其用作所有相关类型参数的类型。如果无法推断出一个具体的类型，编译器将无法确定如何匹配类型参数，从而导致编译错误。</p>
 
-使用前面的结论：  
+<p>使用前面的结论：</p>
 
-- **`<? extends T>`：`Integer`<=`T`，只能写`null`，读>=`T`。**  
-- **`<? super T>`：  `Number`>=`T`，写<=`T`，读只能`Object`。**  
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>：<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>，只能写<code class="language-plaintext highlighter-rouge">null</code>，读&gt;=<code class="language-plaintext highlighter-rouge">T</code>。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>：  <code class="language-plaintext highlighter-rouge">Number</code>&gt;=<code class="language-plaintext highlighter-rouge">T</code>，写&lt;=<code class="language-plaintext highlighter-rouge">T</code>，读只能<code class="language-plaintext highlighter-rouge">Object</code>。</strong></li>
+</ul>
 
-可以得出：`Integer`<=`T`<=`Number`。  
-在在这次调用中`T`的类型确定需要满足两个条件，即：  
+<p>可以得出：<code class="language-plaintext highlighter-rouge">Integer</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>&lt;=<code class="language-plaintext highlighter-rouge">Number</code>。<br />
+在在这次调用中<code class="language-plaintext highlighter-rouge">T</code>的类型确定需要满足两个条件，即：</p>
 
-- 因为`<? super T>`，所以`Number`是`T`或`T`的父类，也就是说`T`是`Number`或其子类
-- 因为`<? extends T>`，所以`Integer`是`T`或`T`的子类，也就是说`T`是`Integer`或其父类
+<ul>
+  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? super T&gt;</code>，所以<code class="language-plaintext highlighter-rouge">Number</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的父类，也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Number</code>或其子类</li>
+  <li>因为<code class="language-plaintext highlighter-rouge">&lt;? extends T&gt;</code>，所以<code class="language-plaintext highlighter-rouge">Integer</code>是<code class="language-plaintext highlighter-rouge">T</code>或<code class="language-plaintext highlighter-rouge">T</code>的子类，也就是说<code class="language-plaintext highlighter-rouge">T</code>是<code class="language-plaintext highlighter-rouge">Integer</code>或其父类</li>
+</ul>
 
-因此，`T` 可以被推断为 `Number`或`Integer`，从而实现了将 `Integer` 类型的列表复制到 `Number` 类型的列表的操作。这种根据实际类型推断泛型类型参数的过程称为类型推断。  
+<p>因此，<code class="language-plaintext highlighter-rouge">T</code> 可以被推断为 <code class="language-plaintext highlighter-rouge">Number</code>或<code class="language-plaintext highlighter-rouge">Integer</code>，从而实现了将 <code class="language-plaintext highlighter-rouge">Integer</code> 类型的列表复制到 <code class="language-plaintext highlighter-rouge">Number</code> 类型的列表的操作。这种根据实际类型推断泛型类型参数的过程称为类型推断。</p>
 
-这个`copy()`方法的另一个好处是可以安全地把一个`List<Integer>`添加到`List<Number>`，但是无法反过来添加：  
-```java
-List<Number> numList = new ArrayList<>();
-List<Integer> intList = new ArrayList<>();
-// ERROR: cannot copy List<Number> to List<Integer>:
-Collections.copy(intList, numList);
-```
-因为不存在`Number`<=`T`<=`Integer`这样的类型。  
+<p>这个<code class="language-plaintext highlighter-rouge">copy()</code>方法的另一个好处是可以安全地把一个<code class="language-plaintext highlighter-rouge">List&lt;Integer&gt;</code>添加到<code class="language-plaintext highlighter-rouge">List&lt;Number&gt;</code>，但是无法反过来添加：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Number</span><span class="o">&gt;</span> <span class="n">numList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">intList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="c1">// ERROR: cannot copy List&lt;Number&gt; to List&lt;Integer&gt;:</span>
+<span class="nc">Collections</span><span class="o">.</span><span class="na">copy</span><span class="o">(</span><span class="n">intList</span><span class="o">,</span> <span class="n">numList</span><span class="o">);</span>
+</code></pre></div></div>
+<p>因为不存在<code class="language-plaintext highlighter-rouge">Number</code>&lt;=<code class="language-plaintext highlighter-rouge">T</code>&lt;=<code class="language-plaintext highlighter-rouge">Integer</code>这样的类型。</p>
 
-而这些都是通过`super`和`extends`通配符，并由编译器强制检查来实现的。  
+<p>而这些都是通过<code class="language-plaintext highlighter-rouge">super</code>和<code class="language-plaintext highlighter-rouge">extends</code>通配符，并由编译器强制检查来实现的。</p>
 
-### 使用super在类限定T类型
+<h3 id="使用super在类限定t类型">使用super在类限定T类型</h3>
 
-前面说了可以使用`extends`通配符来限定`T`的类型：  
-```java
-public class Pair<T extends Number> {  }
-```
-将T限制为`Number`类型或`Number`的子类。  
-那么有没有`super`通配符来限定`T`的类型呢?我想到这样的代码：  
+<p>前面说了可以使用<code class="language-plaintext highlighter-rouge">extends</code>通配符来限定<code class="language-plaintext highlighter-rouge">T</code>的类型：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span> <span class="kd">extends</span> <span class="nc">Number</span><span class="o">&gt;</span> <span class="o">{</span>  <span class="o">}</span>
+</code></pre></div></div>
+<p>将T限制为<code class="language-plaintext highlighter-rouge">Number</code>类型或<code class="language-plaintext highlighter-rouge">Number</code>的子类。<br />
+那么有没有<code class="language-plaintext highlighter-rouge">super</code>通配符来限定<code class="language-plaintext highlighter-rouge">T</code>的类型呢?我想到这样的代码：</p>
 
-```java
-public class Pair<T super Number> {  }
-```
-将T限制为`Number`类型或`Number`的父类。  
-**不，java中没有实现在类中对下界进行限定**。  
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pair</span><span class="o">&lt;</span><span class="no">T</span> <span class="kd">super</span> <span class="nc">Number</span><span class="o">&gt;</span> <span class="o">{</span>  <span class="o">}</span>
+</code></pre></div></div>
+<p>将T限制为<code class="language-plaintext highlighter-rouge">Number</code>类型或<code class="language-plaintext highlighter-rouge">Number</code>的父类。<br />
+<strong>不，java中没有实现在类中对下界进行限定</strong>。</p>
 
-### 无限定通配符
+<h3 id="无限定通配符">无限定通配符</h3>
 
-Java的泛型还允许使用无限定通配符（Unbounded Wildcard Type），即只定义一个`?`：  
-```java
-void sample(Pair<?> p) {}
-```
-因为`<?>`通配符既没有`extends`，也没有`super`，因此：  
-- 不允许调用`set(T)`方法并传入引用（`null`除外）；
-- 不允许调用`T get()`方法并获取`T`引用（只能获取`Object`引用）。
+<p>Java的泛型还允许使用无限定通配符（Unbounded Wildcard Type），即只定义一个<code class="language-plaintext highlighter-rouge">?</code>：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">sample</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?&gt;</span> <span class="n">p</span><span class="o">)</span> <span class="o">{}</span>
+</code></pre></div></div>
+<p>因为<code class="language-plaintext highlighter-rouge">&lt;?&gt;</code>通配符既没有<code class="language-plaintext highlighter-rouge">extends</code>，也没有<code class="language-plaintext highlighter-rouge">super</code>，因此：</p>
+<ul>
+  <li>不允许调用<code class="language-plaintext highlighter-rouge">set(T)</code>方法并传入引用（<code class="language-plaintext highlighter-rouge">null</code>除外）；</li>
+  <li>不允许调用<code class="language-plaintext highlighter-rouge">T get()</code>方法并获取<code class="language-plaintext highlighter-rouge">T</code>引用（只能获取<code class="language-plaintext highlighter-rouge">Object</code>引用）。</li>
+</ul>
 
-也就是说：<font color='red'><b>`<?>`传参类型随便，只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font>
+<p>也就是说：<font color="red"><b>`&lt;?&gt;`传参类型随便，只能写`null`(因为无上界)，读只能`Object`(因为无下界)。</b></font></p>
 
 <p>换句话说，既不能读，也不能写，那只能做一些<code class="language-plaintext highlighter-rouge">null</code>判断：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isNull</span><span class="o">(</span><span class="nc">Pair</span><span class="o">&lt;?&gt;</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
