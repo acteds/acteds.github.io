@@ -176,3 +176,7 @@
 .article-content p {
     text-indent: 2em;
 }
+.first-line-indent{
+    text-indent: 2em;
+    float: left;
+}
