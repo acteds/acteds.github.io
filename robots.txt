@@ -1,1 +1,1 @@
-Sitemap: https://acteds.github.io/sitemap.xml
+Sitemap: /sitemap.xml
