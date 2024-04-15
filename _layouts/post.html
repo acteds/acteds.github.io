@@ -3,33 +3,40 @@ layout: default
 ---
 
 {% assign assets_base_url = site.url %}
+<!-- 设置变量 assets_base_url 为站点 URL -->
 {% if site.cdn.jsdelivr.enabled %}
 {% assign assets_base_url = "https://cdn.jsdelivr.net/gh/" | append: site.repository | append: '@master' %}
 {% endif %}
+<!-- 如果启用了 CDN 加速，则将 assets_base_url 设置为 CDN URL -->
 <section class="collection-head small geopattern" data-pattern-id="{{ page.title | truncate: 15, ''}}">
+<!-- 集合头部，包含页面标题 -->
 <div class="container">
   <div class="columns">
     <div class="column three-fourths">
       <div class="collection-title">
         <h1 class="collection-header">{{ page.title }}</h1>
+        <!-- 显示页面标题 -->
         <div class="collection-info">
           {% if page.date %}
           <span class="meta-info">
             <span class="octicon octicon-calendar"></span> {{ page.date | date: "%Y/%m/%d" }}
           </span>
           {% endif %}
+          <!-- 如果有日期，则显示日期信息 -->
           {% for cat in page.categories %}
           <span class="meta-info">
             <span class="octicon octicon-file-directory"></span>
             <a href="{{ site.url }}/categories/#{{ cat }}" title="{{ cat }}">{{ cat }}</a>
           </span>
           {% endfor %}
+          <!-- 循环显示分类信息 -->
           {% if site.components.word_count.enabled %}
           <span class="meta-info">
             <span class="octicon octicon-clock"></span>
             共 {{ page.content | strip_html | strip_newlines | remove: " " | size }} 字，约 {{ page.content | strip_html | strip_newlines | remove: " " | size | divided_by: 350 | plus: 1 }} 分钟
           </span>
           {% endif %}
+          <!-- 如果启用了字数统计组件，则显示字数信息 -->
         </div>
       </div>
     </div>
@@ -42,26 +49,37 @@ layout: default
 </div>
 </section>
 <!-- / .banner -->
+<!-- 页面标题栏 -->
 <section class="container content">
+  <!-- 内容区域 -->
 <div class="columns">
   <div class="column three-fourths" >
     {% include content-header-ad.html %}
+    <!-- 包含内容页顶部广告 -->
     <article class="article-content markdown-body">
     {{ content }}
+    <!-- 显示文章内容 -->
     {% include copyright.html %}
+    <!-- 包含版权信息 -->
     </article>
     <div class="share">
       {% include sns-share.html %}
+      <!-- 包含社交分享按钮 -->
     </div>
     {% include content-footer-ad.html %}
+    <!-- 包含内容页底部广告 -->
     <div class="comment">
       {% include comments.html %}
+      <!-- 包含评论区域 -->
     </div>
   </div>
   <div class="column one-fourth">
     {% include sidebar-search.html %}
+    <!-- 包含侧边栏搜索框 -->
     {% include sidebar-post-nav.html %}
+    <!-- 包含侧边栏文章导航 -->
     {% include sidebar-detail-ad.html %}
+    <!-- 包含侧边栏详细广告 -->
   </div>
 </div>
 </section>

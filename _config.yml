@@ -3,7 +3,10 @@
 # ---------------- #
 baseurl:
 # url: https://acteds.github.io
+# 改为相对地址
 url:
+#版权信息文本基地址
+copyright_base_url: https://acteds.github.io
 date_format: "ordinal"
 title: 个人博客
 subtitle: ""
