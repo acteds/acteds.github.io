@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-16T10:41:05+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-16T11:25:16+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Base64编码、URL编码、哈希算法、对称加密算法、口令加密算法、 密钥交换算法、 非对称加密算法、签名算法、数字证书。</p>
 
 <h1 id="加密与安全">加密与安全</h1>
@@ -2996,7 +2996,7 @@ JDK中源码:</p>
 当使用函数式接口时，编译器会根据<strong>Lambda表达式</strong>或<strong>方法引用</strong>的上下文，将其<strong>转换为函数式接口的实</strong>例，并在需要时调用相应的方法。这些实例可以在运行时被JVM执行。<br />
 因此，函数式接口的调用是在运行时由<strong>JVM执行</strong>的，<strong>编译器</strong>负责将<strong>Lambda表达式</strong>或<strong>方法引用</strong>转换为<strong>函数式接口</strong>的实例，以便在程序运行时进行调用。</p>
 
-<h3 id="方法引用-1"><strong>方法引用：</strong></h3>
+<h3 id="方法引用-1">方法引用：</h3>
 
 <table>
   <thead>
@@ -3032,7 +3032,7 @@ JDK中源码:</p>
 
 <p>这些方法引用可以简化代码，使其更易读和易维护。</p>
 
-<h3 id="无参引用调用"><strong>无参引用调用：</strong></h3>
+<h3 id="无参引用调用">无参引用调用：</h3>
 
 <table>
   <thead>
@@ -3099,7 +3099,7 @@ JDK中源码:</p>
 
 <hr />
 
-<h3 id="带参引用调用方法"><strong>带参引用调用方法：</strong></h3>
+<h3 id="带参引用调用方法">带参引用调用方法：</h3>
 
 <table>
   <thead>
@@ -3190,7 +3190,7 @@ JDK中源码:</p>
 
 <hr />
 
-<h3 id="带参引用调用构造方法"><strong>带参引用调用构造方法：</strong></h3>
+<h3 id="带参引用调用构造方法">带参引用调用构造方法：</h3>
 
 <table>
   <thead>
@@ -4539,7 +4539,7 @@ Java标准库的<code class="language-plaintext highlighter-rouge">Collections</
 <p>通过静态方法<code class="language-plaintext highlighter-rouge">Class.forName()</code>获取：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.lang.String"</span><span class="o">);</span>
 </code></pre></div></div>
-<h2 id="class实例基本信息"><strong>Class实例基本信息：</strong></h2>
+<h2 id="class实例基本信息">Class实例基本信息：</h2>
 
 <table>
   <thead>
@@ -4618,7 +4618,7 @@ Java标准库的<code class="language-plaintext highlighter-rouge">Collections</
   </tbody>
 </table>
 
-<h2 id="访问字段的方法"><strong>访问字段的方法</strong></h2>
+<h2 id="访问字段的方法">访问字段的方法</h2>
 
 <table>
   <thead>
@@ -4710,7 +4710,7 @@ Java标准库的<code class="language-plaintext highlighter-rouge">Collections</
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<h2 id="访问方法的方法"><strong>访问方法的方法</strong></h2>
+<h2 id="访问方法的方法">访问方法的方法</h2>
 
 <table>
   <thead>
@@ -5702,18 +5702,4 @@ su
 修改耗时:1888ms
 </code></pre></div></div>
 
-<p>去重结合节流可以有效的提示性能,节流主要起到收集作用,去重算法才是优化方向.</p>]]></content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html"><![CDATA[关于MutationObserver对象的性能测试]]></summary></entry><entry><title type="html">MySQL的驱动版本更替后日期返回值的变化</title><link href="/2023/05/17/MySQL%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%9B%BF%E5%90%8E%E6%97%A5%E6%9C%9F%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%8F%98%E5%8C%96/" rel="alternate" type="text/html" title="MySQL的驱动版本更替后日期返回值的变化" /><published>2023-05-17T00:00:00+08:00</published><updated>2023-05-17T00:00:00+08:00</updated><id>/2023/05/17/MySQL%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%9B%BF%E5%90%8E%E6%97%A5%E6%9C%9F%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%8F%98%E5%8C%96</id><content type="html" xml:base="/2023/05/17/MySQL%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC%E6%9B%B4%E6%9B%BF%E5%90%8E%E6%97%A5%E6%9C%9F%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%8F%98%E5%8C%96/"><![CDATA[<h2 id="引言">引言</h2>
-<p>MySQL的驱动版本从5.1.7升级到8.0.27后,对于数据库表字段类型为datetime的数据会封装为<strong>java.time.LocalDateTime</strong>类型,而不是旧的<strong>java.sql.Timestam</strong>类型。</p>
-
-<h2 id="详解">详解</h2>
-<p>因此不能再使用<strong>fmt:formatDate</strong>转换了<br />
-例如:</p>
-<div class="language-jsp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;fmt:formatDate </span><span class="na">pattern=</span><span class="s">"yyyy-MM-dd HH:mm:ss"</span><span class="na"> value=</span><span class="s">"</span><span class="si">${</span><span class="n">lastDate</span><span class="si">}</span><span class="s">"</span><span class="nt">/&gt;</span>
-</code></pre></div></div>
-<p>不想改变其他代码的话,可以直接使用下面代码:</p>
-<div class="language-jsp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>${lastDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}
-</code></pre></div></div>
-<p>需要注意的是,还需要将<strong>DateTimeFormatter</strong>导入</p>
-<div class="language-jsp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;%@ page </span><span class="na">import=</span><span class="s">"java.time.format.DateTimeFormatter"</span> <span class="nt">%&gt;</span>
-</code></pre></div></div>
-<p>当然,如果不想更改前端代码,则可以将<strong>java.time.LocalDateTime</strong>类型转换回旧的<strong>java.sql.Timestam</strong>类型。通过设置<strong>TypeHandler</strong>,可以对mybatis返回的类型进行处理。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[版本变更后返回值的变化]]></summary></entry></feed>
+<p>去重结合节流可以有效的提示性能,节流主要起到收集作用,去重算法才是优化方向.</p>]]></content><author><name>acteds</name></author><category term="JavaScript" /><summary type="html"><![CDATA[关于MutationObserver对象的性能测试]]></summary></entry></feed>
