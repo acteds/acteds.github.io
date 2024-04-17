@@ -1,4 +1,572 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-16T11:25:16+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-17T20:14:42+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+
+<p>代操作系统（Windows，macOS，Linux）都可以执行多任务。多任务就是同时运行多个任务。</p>
+
+<p><strong>进程</strong></p>
+
+<p>在计算机中，我们把一个任务称为一个进程，浏览器就是一个进程，视频播放器是另一个进程，类似的，音乐播放器和Word都是进程。</p>
+
+<p>某些进程内部还需要同时执行多个子任务。例如，我们在使用Word时，Word可以让我们一边打字，一边进行拼写检查，同时还可以在后台进行打印，我们把子任务称为线程。</p>
+
+<p>进程和线程的关系就是：一个进程可以包含一个或多个线程，但至少会有一个线程。</p>
+
+<pre><code class="language-ascii">                        ┌──────────┐
+                        │Process   │
+                        │┌────────┐│
+            ┌──────────┐││ Thread ││┌──────────┐
+            │Process   ││└────────┘││Process   │
+            │┌────────┐││┌────────┐││┌────────┐│
+┌──────────┐││ Thread ││││ Thread ││││ Thread ││
+│Process   ││└────────┘││└────────┘││└────────┘│
+│┌────────┐││┌────────┐││┌────────┐││┌────────┐│
+││ Thread ││││ Thread ││││ Thread ││││ Thread ││
+│└────────┘││└────────┘││└────────┘││└────────┘│
+└──────────┘└──────────┘└──────────┘└──────────┘
+┌──────────────────────────────────────────────┐
+│               Operating System               │
+└──────────────────────────────────────────────┘
+</code></pre>
+
+<p>操作系统调度的最小任务单位其实不是进程，而是线程。常用的Windows、Linux等操作系统都采用抢占式多任务，如何调度线程完全由操作系统决定，程序自己不能决定什么时候执行，以及执行多长时间。</p>
+
+<p>因为同一个应用程序，既可以有多个进程，也可以有多个线程，因此，实现多任务的方法，有以下几种：</p>
+
+<p>多进程模式（每个进程只有一个线程）：</p>
+
+<pre><code class="language-ascii">┌──────────┐ ┌──────────┐ ┌──────────┐
+│Process   │ │Process   │ │Process   │
+│┌────────┐│ │┌────────┐│ │┌────────┐│
+││ Thread ││ ││ Thread ││ ││ Thread ││
+│└────────┘│ │└────────┘│ │└────────┘│
+└──────────┘ └──────────┘ └──────────┘
+</code></pre>
+
+<p>多线程模式（一个进程有多个线程）：</p>
+
+<pre><code class="language-ascii">┌────────────────────┐
+│Process             │
+│┌────────┐┌────────┐│
+││ Thread ││ Thread ││
+│└────────┘└────────┘│
+│┌────────┐┌────────┐│
+││ Thread ││ Thread ││
+│└────────┘└────────┘│
+└────────────────────┘
+</code></pre>
+
+<p>多进程＋多线程模式（复杂度最高）：</p>
+
+<pre><code class="language-ascii">┌──────────┐┌──────────┐┌──────────┐
+│Process   ││Process   ││Process   │
+│┌────────┐││┌────────┐││┌────────┐│
+││ Thread ││││ Thread ││││ Thread ││
+│└────────┘││└────────┘││└────────┘│
+│┌────────┐││┌────────┐││┌────────┐│
+││ Thread ││││ Thread ││││ Thread ││
+│└────────┘││└────────┘││└────────┘│
+└──────────┘└──────────┘└──────────┘
+</code></pre>
+
+<p>进程和线程是包含关系，但是多任务既可以由多进程实现，也可以由单进程内的多线程实现，还可以混合多进程＋多线程。具体采用哪种方式，要考虑到进程和线程的特点。</p>
+
+<p>和多线程相比，多进程的缺点在于：</p>
+
+<ul>
+  <li>创建进程比创建线程开销大，尤其是在Windows系统上；</li>
+  <li>进程间通信比线程间通信要慢，因为线程间通信就是读写同一个变量，速度很快。</li>
+</ul>
+
+<p>而多进程的优点在于：</p>
+
+<p>多进程稳定性比多线程高，因为在多进程的情况下，一个进程崩溃不会影响其他进程，而在多线程的情况下，任何一个线程崩溃会直接导致整个进程崩溃。</p>
+
+<p><strong>多线程</strong></p>
+
+<p>Java语言内置了多线程支持：一个Java程序实际上是一个JVM进程，JVM进程用一个主线程来执行<code class="language-plaintext highlighter-rouge">main()</code>方法，在<code class="language-plaintext highlighter-rouge">main()</code>方法内部，我们又可以启动多个线程。此外，JVM还有负责垃圾回收的其他工作线程等。</p>
+
+<p>因此，对于大多数Java程序来说，我们说多任务，实际上是说如何使用多线程实现多任务。</p>
+
+<p>和单线程相比，多线程编程的特点在于：多线程经常需要读写共享数据，并且需要同步。例如，播放电影时，就必须由一个线程播放视频，另一个线程播放音频，两个线程需要协调运行，否则画面和声音就不同步。因此，多线程编程的复杂度高，调试更困难。</p>
+
+<p>Java多线程编程的特点又在于：</p>
+
+<ul>
+  <li>多线程模型是Java程序最基本的并发模型；</li>
+  <li>后续读写网络、数据库、Web开发等都依赖Java多线程模型。</li>
+</ul>
+
+<h2 id="创建新线程">创建新线程</h2>
+
+<p>Java语言内置了多线程支持。当Java程序启动的时候，实际上是启动了一个JVM进程，然后，JVM启动主线程来执行<code class="language-plaintext highlighter-rouge">main()</code>方法。在<code class="language-plaintext highlighter-rouge">main()</code>方法中，我们又可以启动其他线程。</p>
+
+<p>要创建一个新线程非常容易，我们需要实例化一个<code class="language-plaintext highlighter-rouge">Thread</code>实例，然后调用它的<code class="language-plaintext highlighter-rouge">start()</code>方法。</p>
+
+<p>但是这个线程启动后实际上什么也不做就立刻结束了。我们希望新线程能执行指定的代码，有以下几种方法：</p>
+
+<p>方法一：从<code class="language-plaintext highlighter-rouge">Thread</code>派生一个自定义类，然后覆写<code class="language-plaintext highlighter-rouge">run()</code>方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(){</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"匿名子类"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="n">t2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">start()</code>方法会在内部自动调用实例的<code class="language-plaintext highlighter-rouge">run()</code>方法。</p>
+
+<p>方法二：创建<code class="language-plaintext highlighter-rouge">Thread</code>实例时，传入一个<code class="language-plaintext highlighter-rouge">Runnable</code>实例，这种方法内部类会取不到当前Thread匿名类对象，可以通过<code class="language-plaintext highlighter-rouge">Thread.currentThread()</code>得到当前线程对象。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Runnable接口匿名类"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+</code></pre></div></div>
+
+<p>若外部<code class="language-plaintext highlighter-rouge">Thread</code>不是匿名的，则也可以在匿名内部类内通过<code class="language-plaintext highlighter-rouge">外部类名.this</code>来引用外部类的实例。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+</code></pre></div></div>
+
+<p>注意不能使用<code class="language-plaintext highlighter-rouge">t</code>，因为<code class="language-plaintext highlighter-rouge">t</code>现在还没有初始化（其实内部类代码运行的时候已经实例化了），但对编译器来说无法确定在这个时候<code class="language-plaintext highlighter-rouge">t</code>是否已经被正确初始化。因此，即使在实际运行时<code class="language-plaintext highlighter-rouge">t</code>已经被实例化了，编译器也会在编译时会认为<code class="language-plaintext highlighter-rouge">t</code>是一个未被初始化的变量，从而导致编译错误。</p>
+
+<p>可以使用lambda简化：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Runnable接口匿名类"</span><span class="o">));</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+</code></pre></div></div>
+
+<p>创建线程后的代码执行顺序：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法开始"</span><span class="o">);</span>
+<span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程开始"</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程结束"</span><span class="o">);</span>
+<span class="o">});</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法结束"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>只能肯定<code class="language-plaintext highlighter-rouge">main</code>线程先打印<code class="language-plaintext highlighter-rouge">main方法开始</code>，然后创建并启动了新线程，然后再打印。而新线程会在启动后与<code class="language-plaintext highlighter-rouge">main</code>线程并发运行，因此对于新线程启用后的打印语句顺序是<strong>不可预知</strong>的，调度由操作系统控制，<strong>程序本身无法确定线程的调度顺序</strong>。</p>
+
+<p>要模拟并发执行的效果，可以在线程中调用<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>，强迫<strong>当前线程</strong>暂停一段时间：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法开始"</span><span class="o">);</span>
+    <span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程开始"</span><span class="o">);</span>
+        <span class="n">sleep</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程结束"</span><span class="o">);</span>
+    <span class="o">});</span>
+    <span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+    <span class="n">sleep</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法结束"</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">sleep</span><span class="o">(</span><span class="kt">long</span> <span class="n">millis</span><span class="o">){</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">millis</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>要特别注意：直接调用<code class="language-plaintext highlighter-rouge">Thread</code>实例的<code class="language-plaintext highlighter-rouge">run()</code>方法是无效的。直接调用<code class="language-plaintext highlighter-rouge">run()</code>方法，相当于调用了一个普通的Java方法，当前线程并没有任何改变，也不会启动新线程。</p>
+
+<p><strong>必须</strong>调用<code class="language-plaintext highlighter-rouge">Thread</code>实例的<code class="language-plaintext highlighter-rouge">start()</code>方法才能<strong>启动新线程</strong>，如果查看<code class="language-plaintext highlighter-rouge">Thread</code>类的源代码，会看到<code class="language-plaintext highlighter-rouge">start()</code>方法内部调用了一个<code class="language-plaintext highlighter-rouge">private native void start0()</code>方法，<code class="language-plaintext highlighter-rouge">native</code>修饰符表示这个方法是由JVM虚拟机内部的C代码实现的，不是由Java代码实现的。</p>
+
+<p>可以通过<code class="language-plaintext highlighter-rouge">setPriority(int n)</code>对线程设定优先级，n的值范围是1~10, 默认值为5。</p>
+
+<p>JVM自动把1（低）~10（高）的优先级映射到操作系统实际优先级上（不同操作系统有不同的优先级数量）。优先级高的线程被操作系统调度的优先级较高，操作系统对高优先级线程可能调度更频繁，但决<strong>不能</strong>通过设置优先级来<strong>确保</strong>高优先级的线程<strong>一定会先执行</strong>。</p>
+
+<h2 id="线程的状态">线程的状态</h2>
+
+<p>在Java程序中，一个线程对象只能调用一次<code class="language-plaintext highlighter-rouge">start()</code>方法启动新线程，并在新线程中执行<code class="language-plaintext highlighter-rouge">run()</code>方法。一旦<code class="language-plaintext highlighter-rouge">run()</code>方法执行完毕，线程就结束了。因此，Java线程的状态有以下几种：</p>
+
+<ul>
+  <li>New：新创建的线程，尚未执行；</li>
+  <li>Runnable：运行中的线程，正在<strong>执行</strong><code class="language-plaintext highlighter-rouge">run()</code>方法的Java代码；</li>
+  <li>Blocked：运行中的线程，因为某些操作被<strong>阻塞</strong>而挂起；</li>
+  <li>Waiting：运行中的线程，因为某些操作在<strong>等待</strong>中；</li>
+  <li>Timed Waiting：运行中的线程，因为执行<code class="language-plaintext highlighter-rouge">sleep()</code>方法正在计时<strong>等待</strong>；</li>
+  <li>Terminated：线程已<strong>终止</strong>，因为<code class="language-plaintext highlighter-rouge">run()</code>方法执行完毕。</li>
+</ul>
+
+<p>用一个状态转移图表示如下：</p>
+
+<pre><code class="language-ascii">         ┌─────────────┐
+         │     New     │
+         └─────────────┘
+                │
+                ▼
+┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+ ┌─────────────┐ ┌─────────────┐
+││  Runnable   │ │   Blocked   ││
+ └─────────────┘ └─────────────┘
+│┌─────────────┐ ┌─────────────┐│
+ │   Waiting   │ │Timed Waiting│
+│└─────────────┘ └─────────────┘│
+ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+                │
+                ▼
+         ┌─────────────┐
+         │ Terminated  │
+         └─────────────┘
+</code></pre>
+
+<p>当线程启动后，它可以在<code class="language-plaintext highlighter-rouge">Runnable</code>、<code class="language-plaintext highlighter-rouge">Blocked</code>、<code class="language-plaintext highlighter-rouge">Waiting</code>和<code class="language-plaintext highlighter-rouge">Timed Waiting</code>这几个状态之间切换，直到最后变成<code class="language-plaintext highlighter-rouge">Terminated</code>状态，线程终止。</p>
+
+<p>线程终止的原因有：</p>
+
+<ul>
+  <li>线程正常终止：<code class="language-plaintext highlighter-rouge">run()</code>方法执行到<code class="language-plaintext highlighter-rouge">return</code>语句返回；</li>
+  <li>线程意外终止：<code class="language-plaintext highlighter-rouge">run()</code>方法因为未捕获的异常导致线程终止；</li>
+  <li>对某个线程的<code class="language-plaintext highlighter-rouge">Thread</code>实例调用<code class="language-plaintext highlighter-rouge">stop()</code>方法强制终止（强烈不推荐使用）。</li>
+</ul>
+
+<p>一个线程还可以等待另一个线程直到其运行结束。</p>
+
+<p>例如，<code class="language-plaintext highlighter-rouge">main</code>线程在启动<code class="language-plaintext highlighter-rouge">t</code>线程后，可以通过<code class="language-plaintext highlighter-rouge">t.join()</code>等待<code class="language-plaintext highlighter-rouge">t</code>线程结束后再继续运行：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法开始"</span><span class="o">);</span>
+<span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程开始"</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程结束"</span><span class="o">);</span>
+<span class="o">});</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+<span class="n">t</span><span class="o">.</span><span class="na">join</span><span class="o">();</span><span class="c1">//等待t线程结束</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"main方法结束"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>main方法开始
+线程开始
+线程结束
+main方法结束
+</code></pre></div></div>
+
+<p>如果<code class="language-plaintext highlighter-rouge">t</code>线程已经结束，对实例<code class="language-plaintext highlighter-rouge">t</code>调用<code class="language-plaintext highlighter-rouge">join()</code>会立刻返回。此外，<code class="language-plaintext highlighter-rouge">join(long)</code>的重载方法也可以指定一个等待时间，超过等待时间后就不再继续等待。</p>
+
+<p>在 Java 中，多线程中的阻塞状态和等待状态是两种不同的状态，它们之间有一些区别：</p>
+
+<ol>
+  <li>阻塞状态（Blocked）：
+    <ul>
+      <li>当线程在获取锁时被其他线程所占用，导致无法继续执行时，线程会进入阻塞状态。</li>
+      <li>线程进入阻塞状态是因为正在等待某个条件的发生，一旦条件满足，线程将会被唤醒并切换到就绪状态。</li>
+      <li>在阻塞状态下的线程<strong>仍然持有锁</strong>，只是无法继续执行而已。</li>
+    </ul>
+  </li>
+  <li>等待状态（Waiting）：
+    <ul>
+      <li>当线程调用 <code class="language-plaintext highlighter-rouge">Object.wait()</code>、<code class="language-plaintext highlighter-rouge">Thread.join()</code> 或 <code class="language-plaintext highlighter-rouge">LockSupport.park()</code> 等方法进入等待状态时，线程会进入等待状态。</li>
+      <li>等待状态下的线程会<strong>释放持有的锁</strong>，等待其他线程调用 <code class="language-plaintext highlighter-rouge">notify()</code>、<code class="language-plaintext highlighter-rouge">notifyAll()</code> 或被中断时才能被唤醒。</li>
+      <li>等待状态通常用于线程间的协调和通信，等待特定条件满足后再继续执行。</li>
+    </ul>
+  </li>
+</ol>
+
+<p>总的来说，阻塞状态是因为线程被其他原因无法继续执行所产生的状态，而等待状态则是线程主动等待某些条件满足才能继续执行的状态。在编写多线程程序时，理解和正确处理线程的阻塞和等待状态是非常重要的。</p>
+
+<h2 id="中断线程">中断线程</h2>
+
+<p>如果线程需要执行一个长时间任务，就可能需要能中断线程。中断线程就是<strong>其他线程</strong>给该线程发一个信号，该线程收到信号后结束执行<code class="language-plaintext highlighter-rouge">run()</code>方法，使得自身线程能<strong>立刻结束运行</strong>。</p>
+
+<p>假设从网络下载一个100M的文件，如果网速很慢，用户等得不耐烦，就可能在下载过程中点“取消”，这时，程序就需要中断下载线程的执行。</p>
+
+<p>中断一个线程非常简单，只需要在其他线程中对目标线程调用<code class="language-plaintext highlighter-rouge">interrupt()</code>方法，目标线程<strong>需要反复检测自身状态</strong>是否是interrupted状态，如果是，就立刻结束运行。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(){</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(!</span><span class="n">isInterrupted</span><span class="o">()){</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">sleep</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+                <span class="n">n</span><span class="o">++;</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"线程被中断，结束执行"</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"中断了，n="</span><span class="o">+</span><span class="n">n</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"开始"</span><span class="o">);</span>
+<span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程</span>
+<span class="k">try</span> <span class="o">{</span>
+    <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="n">t</span><span class="o">.</span><span class="na">interrupt</span><span class="o">();</span>
+<span class="n">t</span><span class="o">.</span><span class="na">join</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"结束"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>这段代码大概率会一直运行，且<code class="language-plaintext highlighter-rouge">!isInterrupted()</code>并不会起到中断作用，虽然调用<code class="language-plaintext highlighter-rouge">t.interrupt();</code>时，会改变<code class="language-plaintext highlighter-rouge">interrupted</code>的状态，使得<code class="language-plaintext highlighter-rouge">!isInterrupted()</code>为假。</p>
+
+<p>但主线程请求<code class="language-plaintext highlighter-rouge">t</code>线程中断时，<code class="language-plaintext highlighter-rouge">t</code>线程<strong>大概率</strong>是在运行<code class="language-plaintext highlighter-rouge">sleep(10)</code>，此时线程处在休眠状态，而<code class="language-plaintext highlighter-rouge">sleep(10)</code>在休眠过程中会检测线程是否出现中断请求，如果检测到了了，则会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>异常，并<strong>清除线程的中断状态</strong>，因此<code class="language-plaintext highlighter-rouge">while</code>循环不会结束。</p>
+
+<p>也有极小概率会正常终止，当主线程请求<code class="language-plaintext highlighter-rouge">t</code>线程中断时，如果<code class="language-plaintext highlighter-rouge">t</code>线程正运行在<code class="language-plaintext highlighter-rouge">n++;</code>则会在下次循环通过<code class="language-plaintext highlighter-rouge">!isInterrupted()</code>为假后结束运行。</p>
+
+<p>要让之前的代码正常退出，只需要在<code class="language-plaintext highlighter-rouge">catch</code>块中添加<code class="language-plaintext highlighter-rouge">break;</code>。结果如下：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>开始
+线程被中断，结束执行
+中断了，n=9
+结束
+</code></pre></div></div>
+
+<hr />
+
+<p>在Java中，调用<code class="language-plaintext highlighter-rouge">interrupt()</code>方法<strong>只是向目标线程发出中断请求</strong>，目标线程可以<strong>选择</strong>是否<strong>响应</strong>这个请求。目标线程可以通过<strong>检查中断状态</strong>并<strong>采取</strong>适当的<strong>措施</strong>来响应中断请求，也可以选择<strong>忽略</strong>中断请求继续执行。</p>
+
+<p>在处理<code class="language-plaintext highlighter-rouge">InterruptedException</code>时，也可以选择继续等待，或处理中断请求提前结束线程的执行，具体取决于应用程序的需求。</p>
+
+<p><code class="language-plaintext highlighter-rouge">InterruptedException</code>通常在以下情况下抛出：</p>
+
+<ol>
+  <li>
+    <p>当一个线程处于睡眠状态（通过调用<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>进入睡眠状态）时，另一个线程调用了该线程的<code class="language-plaintext highlighter-rouge">interrupt()</code>方法，这会导致处于睡眠状态的线程抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。</p>
+  </li>
+  <li>
+    <p>如果一个线程在调用<code class="language-plaintext highlighter-rouge">Object.wait()</code>、<code class="language-plaintext highlighter-rouge">Thread.join()</code>、<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>时被中断，则会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。这样线程在等待某些条件时，如果被中断就会提早终止。</p>
+  </li>
+</ol>
+
+<p>也就是说：当线程处于等待、睡眠状态或以其他方式被占用时，或者线程在活动之前或期间出现中断时会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>。</p>
+
+<p>还可以通过<code class="language-plaintext highlighter-rouge">Thread.currentThread.interrupt()</code>方法来<strong>重新设置当前线程的中断状态</strong>。这种方式可以在捕获<code class="language-plaintext highlighter-rouge">InterruptedException</code>异常后，手动设置线程的中断状态为<code class="language-plaintext highlighter-rouge">true</code>，以便在后续的循环条件中能够正确地退出循环。</p>
+
+<p><strong>实际上<code class="language-plaintext highlighter-rouge">interrupt()</code>是这么说的</strong>：</p>
+
+<p><code class="language-plaintext highlighter-rouge">interrupt()</code> 方法用于中断线程。除非当前线程是在中断自己，这种情况总是被允许的，否则会调用此线程的 <code class="language-plaintext highlighter-rouge">checkAccess</code> 方法，可能会导致抛出 <code class="language-plaintext highlighter-rouge">SecurityException</code>。</p>
+
+<p>如果线程被阻塞在 <code class="language-plaintext highlighter-rouge">Object</code> 类的 <code class="language-plaintext highlighter-rouge">wait()</code>、<code class="language-plaintext highlighter-rouge">wait(long)</code>、<code class="language-plaintext highlighter-rouge">wait(long, int)</code> 方法，或者 <code class="language-plaintext highlighter-rouge">Thread</code> 类的 <code class="language-plaintext highlighter-rouge">join()</code>、<code class="language-plaintext highlighter-rouge">join(long)</code>、<code class="language-plaintext highlighter-rouge">join(long, int)</code>、<code class="language-plaintext highlighter-rouge">sleep(long)</code>、<code class="language-plaintext highlighter-rouge">sleep(long, int)</code> 方法中，那么它的<strong>中断状态将被清除</strong>，并且会收到一个 <code class="language-plaintext highlighter-rouge">InterruptedException</code>。</p>
+
+<p>如果线程被阻塞在一个 <code class="language-plaintext highlighter-rouge">InterruptibleChannel</code> 的 I/O 操作上，那么该通道将被关闭，线程的<strong>中断状态将被设置</strong>，并且线程将收到一个 <code class="language-plaintext highlighter-rouge">java.nio.channels.ClosedByInterruptException</code>。</p>
+
+<p>如果线程被阻塞在一个 <code class="language-plaintext highlighter-rouge">Selector</code> 上，那么线程的<strong>中断状态将被设置</strong>，并且它将立即从选择操作中返回，可能返回一个非零值，就像调用了选择器的 <code class="language-plaintext highlighter-rouge">wakeup</code> 方法一样。</p>
+
+<p>如果以上情况<strong>都不适用</strong>，那么线程的<strong>中断状态将被设置</strong>。</p>
+
+<p>对一个非存活的线程进行中断操作可能没有任何效果。</p>
+
+<p>此外，文档还指出，在 JDK 参考实现中，对于一个非存活的线程进行中断操作仍然<strong>会记录中断请求</strong>，并通过 <code class="language-plaintext highlighter-rouge">interrupted()</code> 和 <code class="language-plaintext highlighter-rouge">isInterrupted()</code> 方法报告它。</p>
+
+<hr />
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span>  <span class="o">{</span>
+        <span class="nc">Thread</span> <span class="n">t1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()-&gt;{</span>
+            <span class="nc">Thread</span> <span class="n">t2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                <span class="c1">//判断中断状态</span>
+                <span class="k">while</span> <span class="o">(!</span><span class="nc">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">isInterrupted</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">n</span><span class="o">++;</span>
+                    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">n</span> <span class="o">+</span> <span class="s">" hello!"</span><span class="o">);</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2：休眠时检测到中断请求"</span><span class="o">);</span>
+                        <span class="k">try</span> <span class="o">{</span><span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span><span class="c1">//收拾东西</span>
+                            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2：走了！"</span><span class="o">);</span>
+                        <span class="o">}</span><span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">_</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2：别催了，马上走！"</span><span class="o">);</span>
+                        <span class="o">}</span>
+                        <span class="k">return</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2：运行时检测到中断请求"</span><span class="o">);</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2：走了！"</span><span class="o">);</span>
+            <span class="o">});</span>
+            <span class="n">t2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span><span class="c1">// 启动新线程t2</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">t2</span><span class="o">.</span><span class="na">join</span><span class="o">();</span> <span class="c1">// 等待t2线程结束</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t1：Main通知关门了!"</span><span class="o">);</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t1：t2，关门了，快走！"</span><span class="o">);</span>
+                <span class="n">t2</span><span class="o">.</span><span class="na">interrupt</span><span class="o">();</span><span class="c1">// 通知t2，中断请求</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="n">t2</span><span class="o">.</span><span class="na">join</span><span class="o">();</span><span class="c1">// 等待t2线程结束</span>
+                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e2</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t1：又被Main通知关门了!t2怎么还不走？"</span><span class="o">);</span>
+                    <span class="c1">//t2.join();</span>
+                    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t1：算了我不等了，我先走了"</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程t1</span>
+        <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1000</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Main：t1，关门了，快走！"</span><span class="o">);</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">interrupt</span><span class="o">();</span><span class="c1">// 通知t1，中断请求</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span><span class="c1">// 等1ms</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Main：t1，快点！"</span><span class="o">);</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">interrupt</span><span class="o">();</span><span class="c1">// 再次通知t1，中断请求</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">join</span><span class="o">();</span><span class="c1">// 等待t1，中断完成</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Main：已确认t1走了"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>控制台：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1 hello!
+2 hello!
+3 hello!
+4 hello!
+5 hello!
+6 hello!
+7 hello!
+8 hello!
+9 hello!
+10 hello!
+Main：t1，关门了，快走！
+t1：Main通知关门了!
+t1：t2，关门了，快走！
+t2：休眠时检测到中断请求
+Main：t1，快点！
+t1：又被Main通知关门了!t2怎么还不走？
+t1：算了我不等了，我先走了
+Main：已确认t1走了
+t2：走了！
+</code></pre></div></div>
+
+<p>假设代码执行没有消耗时间，<code class="language-plaintext highlighter-rouge">XXXXms</code>表示程序运行后的时间。</p>
+
+<p>0~1000ms：<code class="language-plaintext highlighter-rouge">t2</code>持续输出。</p>
+
+<p>1000ms：<code class="language-plaintext highlighter-rouge">main</code>线程通过调用<code class="language-plaintext highlighter-rouge">t1.interrupt()</code>从而通知<code class="language-plaintext highlighter-rouge">t1</code>线程中断，并等待<code class="language-plaintext highlighter-rouge">t1</code>。</p>
+
+<p>1000ms：而此时<code class="language-plaintext highlighter-rouge">t1</code>线程正在等待<code class="language-plaintext highlighter-rouge">t2</code>线程，收到中断请求后抛出异常，捕获异常后<code class="language-plaintext highlighter-rouge">t1</code>也对<code class="language-plaintext highlighter-rouge">t2</code>发出中断请求，并等待<code class="language-plaintext highlighter-rouge">t2</code>。</p>
+
+<p>1000ms：<code class="language-plaintext highlighter-rouge">t2</code>大概率在休眠时收到中断请求，然后抛出异常，磨蹭10ms后才真正走人。</p>
+
+<p>1000ms：而<code class="language-plaintext highlighter-rouge">main</code>线程在第一次请求<code class="language-plaintext highlighter-rouge">t1</code>中断后，间隔1ms，再次催促<code class="language-plaintext highlighter-rouge">t1</code>中断请求。</p>
+
+<p>1001ms：而此时<code class="language-plaintext highlighter-rouge">t1</code>线程还在等待<code class="language-plaintext highlighter-rouge">t2</code>线程，收到中断请求后，不再等待<code class="language-plaintext highlighter-rouge">t2</code>，也没有继续通知<code class="language-plaintext highlighter-rouge">t2</code>,直接结束了运行。</p>
+
+<p>1001ms：<code class="language-plaintext highlighter-rouge">main</code>线程已经得到<code class="language-plaintext highlighter-rouge">t1</code>线程执行完毕，结束了执行。</p>
+
+<p>1010ms：<code class="language-plaintext highlighter-rouge">t2</code>磨蹭10ms后才真正走人。</p>
+
+<p>另一个常用的中断线程的方法是设置标志位。我们通常会用一个<code class="language-plaintext highlighter-rouge">running</code>标志位来标识线程是否应该继续运行，在外部线程中，通过把<code class="language-plaintext highlighter-rouge">HelloThread.running</code>置为<code class="language-plaintext highlighter-rouge">false</code>，就可以让线程结束。其实和<code class="language-plaintext highlighter-rouge">interrupt()</code>方法是一样的，只是<code class="language-plaintext highlighter-rouge">interrupted</code>字段也会被其他方法检测到状态，比如<code class="language-plaintext highlighter-rouge">join()</code>、<code class="language-plaintext highlighter-rouge">sleep()</code>。如果使用自定义的标志位表示中断线程，则其他方法不会响应。</p>
+
+<p>错误写法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Thread</span> <span class="n">t1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(){</span>
+    <span class="kd">public</span> <span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">running</span><span class="o">=</span><span class="kc">true</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">running</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">n</span> <span class="o">++;</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">n</span> <span class="o">+</span> <span class="s">" hello!"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"end!"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="n">t1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程t1</span>
+<span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="n">t1</span><span class="o">.</span><span class="na">running</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span><span class="c1">// 通知t1，中断请求</span>
+<span class="n">t1</span><span class="o">.</span><span class="na">join</span><span class="o">();</span><span class="c1">// 等</span>
+</code></pre></div></div>
+
+<p>因为向上转型的原因，<code class="language-plaintext highlighter-rouge">Thread</code>不存在<code class="language-plaintext highlighter-rouge">running</code>这个字段，好的，我转回去可以吗，也不行，因为是匿名类。把<code class="language-plaintext highlighter-rouge">Thread</code>改成<code class="language-plaintext highlighter-rouge">var</code>倒是可以，<code class="language-plaintext highlighter-rouge">var t1 = new Thread(){...}</code>，不过不建议。</p>
+
+<p>同样的，如果是实现<code class="language-plaintext highlighter-rouge">Runnable</code>接口传入<code class="language-plaintext highlighter-rouge">Thread</code>构造方法，<code class="language-plaintext highlighter-rouge">Thread</code>当然不知道你定义了<code class="language-plaintext highlighter-rouge">running</code>这个字段，因为<code class="language-plaintext highlighter-rouge">Runnable</code>接口只规定了你有<code class="language-plaintext highlighter-rouge">run()</code>方法。因此只能写正常继承的类了：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span>  <span class="o">{</span>
+        <span class="no">T1</span> <span class="n">t1</span> <span class="o">=</span> <span class="k">new</span> <span class="no">T1</span><span class="o">();</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span> <span class="c1">// 启动新线程t1</span>
+        <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">running</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span><span class="c1">// 通知t1，中断请求</span>
+        <span class="n">t1</span><span class="o">.</span><span class="na">join</span><span class="o">();</span><span class="c1">// 等</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">T1</span> <span class="kd">extends</span> <span class="nc">Thread</span><span class="o">{</span>
+        <span class="kd">public</span> <span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">running</span><span class="o">=</span><span class="kc">true</span><span class="o">;</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">running</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">n</span> <span class="o">++;</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">n</span> <span class="o">+</span> <span class="s">" hello!"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"end!"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>控制台：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1 hello!
+end!
+</code></pre></div></div>
+
+<h2 id="volatile">volatile</h2>
+
+<p>注意到<code class="language-plaintext highlighter-rouge">T1</code>的标志位<code class="language-plaintext highlighter-rouge">boolean running</code>是一个线程间共享的变量。线程间共享变量需要使用<code class="language-plaintext highlighter-rouge">volatile</code>关键字标记，确保每个线程都能读取到更新后的变量值。</p>
+
+<p>为什么要对线程间共享的变量用关键字<code class="language-plaintext highlighter-rouge">volatile</code>声明？这涉及到Java的内存模型。在Java虚拟机中，变量的值保存在主内存中，但是，<strong>当线程访问变量时</strong>，它会先获取一个副本，并保存在自己的工作内存中。如果<strong>线程修改了变量的值</strong>，虚拟机会在<strong>某个时刻</strong>把修改后的值回写到主内存，但是，这个时间是<strong>不确定</strong>的！</p>
+
+<pre><code class="language-ascii">┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+           Main Memory
+│                               │
+   ┌───────┐┌───────┐┌───────┐
+│  │ var A ││ var B ││ var C │  │
+   └───────┘└───────┘└───────┘
+│     │ ▲               │ ▲     │
+ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─
+      │ │               │ │
+┌ ─ ─ ┼ ┼ ─ ─ ┐   ┌ ─ ─ ┼ ┼ ─ ─ ┐
+      ▼ │               ▼ │
+│  ┌───────┐  │   │  ┌───────┐  │
+   │ var A │         │ var C │
+│  └───────┘  │   │  └───────┘  │
+   Thread 1          Thread 2
+└ ─ ─ ─ ─ ─ ─ ┘   └ ─ ─ ─ ─ ─ ─ ┘
+</code></pre>
+
+<p>这会导致如果一个线程更新了某个变量，另一个线程读取的值<strong>可能</strong>还是<strong>更新前</strong>的。例如，主内存的变量<code class="language-plaintext highlighter-rouge">a = true</code>，线程1对主线程的<code class="language-plaintext highlighter-rouge">a</code>执行<code class="language-plaintext highlighter-rouge">a = false</code>时，它在此刻仅仅是把变量<code class="language-plaintext highlighter-rouge">a</code>的副本变成了<code class="language-plaintext highlighter-rouge">false</code>，主内存的变量<code class="language-plaintext highlighter-rouge">a</code>还是<code class="language-plaintext highlighter-rouge">true</code>，在JVM把修改后的<code class="language-plaintext highlighter-rouge">a</code>回写到主内存之前，其他线程读取到的<code class="language-plaintext highlighter-rouge">a</code>的值仍然是<code class="language-plaintext highlighter-rouge">true</code>，这就造成了多线程之间共享的变量不一致。</p>
+
+<p>因此，<code class="language-plaintext highlighter-rouge">volatile</code>关键字的目的是告诉虚拟机：</p>
+
+<ul>
+  <li>每次访问变量时，总是获取主内存的<strong>最新值</strong>；</li>
+  <li>每次修改变量后，<strong>立刻回写</strong>到主内存。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">volatile</code>关键字解决的是可见性问题：当一个<strong>线程</strong>修改了某个<strong>共享变量</strong>的值，其他线程能够<strong>立刻看到</strong>修改后的值。</p>
+
+<p>如果我们去掉<code class="language-plaintext highlighter-rouge">volatile</code>关键字，运行上述程序，发现效果和带<code class="language-plaintext highlighter-rouge">volatile</code>差不多，这是因为在x86的架构下，JVM回写主内存的速度非常快，但是，换成ARM的架构，就会有显著的延迟。</p>
+
+<p><strong>ABA问题</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">volatile</code>关键字可能会导致ABA问题，但不使用<code class="language-plaintext highlighter-rouge">volatile</code>关键字更容易导致ABA问题。</p>
+
+<p>ABA问题是指在多线程环境下，一个值从A变成了B，然后又变回A，在这个过程中可能会引发一些意料之外的问题。</p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">volatile</code>关键字修饰的变量可以确保多个线程能够正确地读取和修改该变量，但是它并不能解决ABA问题。例如，线程1读取一个<code class="language-plaintext highlighter-rouge">volatile</code>变量的值为A，然后线程2将其修改为B，最后线程2又将其修改回A，这个过程中线程1可能并不知道变量的值曾经变成过B，因为<code class="language-plaintext highlighter-rouge">volatile</code>只保证了可见性，并没有解决ABA问题。</p>
+
+<p>要解决ABA问题，可以使用<code class="language-plaintext highlighter-rouge">AtomicStampedReference</code>类或<code class="language-plaintext highlighter-rouge">AtomicMarkableReference</code>类，它们可以在引用的同时记录一个标记（stamp或mark），当引用发生变化时，标记也会相应地发生变化，从而避免了ABA问题。</p>
+
+<h2 id="守护线程">守护线程</h2>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Base64编码、URL编码、哈希算法、对称加密算法、口令加密算法、 密钥交换算法、 非对称加密算法、签名算法、数字证书。</p>
 
 <h1 id="加密与安全">加密与安全</h1>
