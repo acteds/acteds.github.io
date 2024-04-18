@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-18T19:51:19+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-18T21:50:27+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
 
 <p>代操作系统（Windows，macOS，Linux）都可以执行多任务。多任务就是同时运行多个任务。</p>
 
@@ -94,6 +94,109 @@
   <li>多线程模型是Java程序最基本的并发模型；</li>
   <li>后续读写网络、数据库、Web开发等都依赖Java多线程模型。</li>
 </ul>
+
+<p>线程类<code class="language-plaintext highlighter-rouge">Thread</code>常用的方法：</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">start()</code>：启动线程，使其处于可运行状态。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">run()</code>：线程的执行体，包含了线程要执行的代码。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.setDaemon(boolean on)</code>：设置线程为守护线程或用户线程。守护线程不会阻止程序的终止，当所有的用户线程结束时，守护线程会自动结束。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.isDaemon()</code>：判断线程是否为守护线程。</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">sleep(long millis)</code>：使当前线程休眠指定的时间，以毫秒为单位。在休眠期间，线程状态不会改变，不会释放已经持有的锁。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">join()</code>：等待线程终止。调用此方法的线程将会被阻塞，直到目标线程执行完成。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">interrupt()</code>：中断线程。通知目标线程应该中断，但实际中断操作由目标线程自行处理。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">isInterrupted()</code>：判断线程是否已经被中断。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">interrupted()</code>：判断当前线程是否已经被中断，并清除中断状态。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">yield()</code>：让出当前线程的执行权，使得其他具有相同优先级的线程有机会执行。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">setName(String name)</code>：设置线程的名称。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">getName()</code>：获取线程的名称。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">isAlive()</code>：判断线程是否处于活动状态（已启动但尚未终止）。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">setPriority(int priority)</code>：设置线程的优先级。优先级范围为1（最低）到10（最高）。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">getPriority()</code>：获取线程的优先级。</li>
+</ol>
+
+<p>这些方法可以帮助我们管理和控制线程的执行，使得多线程编程更加灵活和高效。</p>
+
+<p>锁的方法通常与<code class="language-plaintext highlighter-rouge">synchronized</code>关键字和<code class="language-plaintext highlighter-rouge">java.util.concurrent.locks</code>包中的锁对象相关联。以下是一些常用的锁方法：</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">synchronized</code>关键字：用于同步方法或同步块，可以实现对代码块的互斥访问。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">wait()</code>：在锁对象上等待，直到其他线程调用该对象的<code class="language-plaintext highlighter-rouge">notify()</code>或<code class="language-plaintext highlighter-rouge">notifyAll()</code>方法唤醒该线程。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">notify()</code>：唤醒在锁对象上等待的单个线程。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">notifyAll()</code>：唤醒在锁对象上等待的所有线程。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ReentrantLock</code>类：可重入锁，提供了更灵活的锁定机制，可以替代<code class="language-plaintext highlighter-rouge">synchronized</code>关键字。常用方法包括<code class="language-plaintext highlighter-rouge">lock()</code>、<code class="language-plaintext highlighter-rouge">unlock()</code>、<code class="language-plaintext highlighter-rouge">tryLock()</code>等。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Condition</code>接口：配合<code class="language-plaintext highlighter-rouge">ReentrantLock</code>使用，提供了类似<code class="language-plaintext highlighter-rouge">wait()</code>和<code class="language-plaintext highlighter-rouge">notify()</code>的功能，但更加灵活。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ReadWriteLock</code>接口：读写锁，提供了读锁和写锁，可以提高读操作的并发性能。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">StampedLock</code>类：提供了一种乐观读锁的机制，适用于读多写少的场景。</p>
+  </li>
+</ol>
+
+<p>这些方法和类可以帮助我们在多线程环境中实现对共享资源的安全访问和控制。</p>
+
+<p>静态方法：</p>
+
+<p>以下是一些<code class="language-plaintext highlighter-rouge">Thread</code>类中的常用静态方法：</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.currentThread()</code>：返回当前正在执行的线程对象。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.sleep(long millis)</code>：使当前线程休眠指定的毫秒数。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.yield()</code>：提示调度器当前线程愿意放弃当前对处理器的使用。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.interrupted()</code>：测试当前线程是否已经中断，并清除该线程的中断状态。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Thread.interrupt()</code>：中断当前线程。</p>
+  </li>
+</ol>
+
+<p>这些静态方法在多线程编程中经常被使用，用于控制线程的行为和状态。</p>
 
 <h2 id="创建新线程">创建新线程</h2>
 
@@ -344,7 +447,7 @@ main方法结束
 
 <p>在处理<code class="language-plaintext highlighter-rouge">InterruptedException</code>时，也可以选择继续等待，或处理中断请求提前结束线程的执行，具体取决于应用程序的需求。</p>
 
-<p><code class="language-plaintext highlighter-rouge">InterruptedException</code>通常在以下情况下抛出：</p>
+<p><strong><code class="language-plaintext highlighter-rouge">InterruptedException</code>通常在以下情况下抛出</strong>：</p>
 
 <ol>
   <li>
@@ -358,6 +461,10 @@ main方法结束
 <p>也就是说：当线程处于等待、睡眠状态或以其他方式被占用时，或者线程在活动之前或期间出现中断时会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>。</p>
 
 <p>还可以通过<code class="language-plaintext highlighter-rouge">Thread.currentThread.interrupt()</code>方法来<strong>重新设置当前线程的中断状态</strong>。这种方式可以在捕获<code class="language-plaintext highlighter-rouge">InterruptedException</code>异常后，手动设置线程的中断状态为<code class="language-plaintext highlighter-rouge">true</code>，以便在后续的循环条件中能够正确地退出循环。</p>
+
+<p>因此<strong>正在跑的线程不会响应别的线程发出的中断</strong>。<strong>只有<code class="language-plaintext highlighter-rouge">sleep/wait</code>状态的线程会响应<code class="language-plaintext highlighter-rouge">interrupt</code>。</strong>如果一个线程正在跑，别的线程给他发<code class="language-plaintext highlighter-rouge">interrupt</code>，它要继续跑到什么时候才会响应<code class="language-plaintext highlighter-rouge">interrupt</code>呢？得到自己调用<code class="language-plaintext highlighter-rouge">sleep/wait</code>的时候。</p>
+
+<p>如果你写了一个计算密集型任务，跑一次要10分钟，为了能及时响应别的线程发的<code class="language-plaintext highlighter-rouge">interrupt</code>，可以每跑几秒钟就<code class="language-plaintext highlighter-rouge">sleep(1)</code>一下，确保能及时被<code class="language-plaintext highlighter-rouge">interrupt</code>。</p>
 
 <p><strong>实际上<code class="language-plaintext highlighter-rouge">interrupt()</code>是这么说的</strong>：</p>
 
@@ -1219,7 +1326,214 @@ end!
 
 <p>如果不需要保证<code class="language-plaintext highlighter-rouge">first</code>和<code class="language-plaintext highlighter-rouge">last</code>的<strong>一致性</strong>，即<code class="language-plaintext highlighter-rouge">first</code>和<code class="language-plaintext highlighter-rouge">last</code>没有什么关系，那么不需要对这两个变量进行同步操作。同步的目的是为了<strong>保证程序逻辑正确</strong>。</p>
 
-<h2 id="死锁">死锁</h2>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<h2 id="死锁">死锁</h2>
+
+<p><strong>可重入锁</strong></p>
+
+<p>Java的线程锁是可重入的锁。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">dec</span><span class="o">(-</span><span class="n">n</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">n</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">dec</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="n">n</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>一旦线程执行到<code class="language-plaintext highlighter-rouge">add()</code>方法内部，说明它已经获取了当前实例的<code class="language-plaintext highlighter-rouge">this</code>锁。如果传入的<code class="language-plaintext highlighter-rouge">n &lt; 0</code>，将在<code class="language-plaintext highlighter-rouge">add()</code>方法内部调用<code class="language-plaintext highlighter-rouge">dec()</code>方法。由于<code class="language-plaintext highlighter-rouge">dec()</code>方法也需要获取<code class="language-plaintext highlighter-rouge">this</code>锁，那么对同一个线程，能否在获取到锁以后继续获取同一个锁？</p>
+
+<p>答案是肯定的。JVM允许同一个线程重复获取同一个锁，这种能被同一个线程反复获取的锁，就叫做可重入锁。</p>
+
+<p>由于Java的线程锁是可重入锁，所以，获取锁的时候，不但要判断是否是第一次获取，还要记录这是第几次获取。每获取一次锁，记录+1，每退出<code class="language-plaintext highlighter-rouge">synchronized</code>块，记录-1，减到0的时候，才会真正释放锁。</p>
+
+<p><strong>死锁</strong></p>
+
+<p>一个线程可以获取一个锁后，再继续获取另一个锁。例如：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">synchronized</span><span class="o">(</span><span class="n">lockA</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 获得lockA的锁</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">+=</span> <span class="n">m</span><span class="o">;</span>
+        <span class="kd">synchronized</span><span class="o">(</span><span class="n">lockB</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 获得lockB的锁</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">another</span> <span class="o">+=</span> <span class="n">m</span><span class="o">;</span>
+        <span class="o">}</span> <span class="c1">// 释放lockB的锁</span>
+    <span class="o">}</span> <span class="c1">// 释放lockA的锁</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">dec</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">synchronized</span><span class="o">(</span><span class="n">lockB</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 获得lockB的锁</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">another</span> <span class="o">-=</span> <span class="n">m</span><span class="o">;</span>
+        <span class="kd">synchronized</span><span class="o">(</span><span class="n">lockA</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 获得lockA的锁</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">-=</span> <span class="n">m</span><span class="o">;</span>
+        <span class="o">}</span> <span class="c1">// 释放lockA的锁</span>
+    <span class="o">}</span> <span class="c1">// 释放lockB的锁</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在获取多个锁的时候，不同线程获取多个不同对象的锁<strong>可能</strong>导致死锁。对于上述代码，线程1和线程2如果分别执行<code class="language-plaintext highlighter-rouge">add()</code>和<code class="language-plaintext highlighter-rouge">dec()</code>方法时：</p>
+
+<ul>
+  <li>线程1：进入<code class="language-plaintext highlighter-rouge">add()</code>，获得<code class="language-plaintext highlighter-rouge">lockA</code>；</li>
+  <li>线程2：进入<code class="language-plaintext highlighter-rouge">dec()</code>，获得<code class="language-plaintext highlighter-rouge">lockB</code>。</li>
+</ul>
+
+<p>随后：</p>
+
+<ul>
+  <li>线程1：准备获得<code class="language-plaintext highlighter-rouge">lockB</code>，失败，等待中；</li>
+  <li>线程2：准备获得<code class="language-plaintext highlighter-rouge">lockA</code>，失败，等待中。</li>
+</ul>
+
+<p>此时，两个线程各自持有不同的锁，然后各自试图获取对方手里的锁，造成了双方无限等待下去，这就是死锁。</p>
+
+<p>死锁发生后，没有任何机制能解除死锁，只能强制结束JVM进程。如何避免死锁呢？答案是：线程获取锁的顺序要一致。<strong>所有</strong>使用一组相同的锁的<strong>线程</strong>，获取锁的顺序要保持一致。顺序一致，只满足循环等待条件，而这并不能完全解决死锁问题。</p>
+
+<p>死锁是指两个或多个线程在执行过程中，因争夺资源而造成的一种僵局，若无外力作用，这些线程都将无法继续执行下去。死锁发生必须同时满足以下四个条件，称为死锁的必要条件：</p>
+
+<ol>
+  <li>
+    <p><strong>互斥条件（Mutual Exclusion）</strong>：一个资源每次只能被一个线程使用，即在一段时间内某资源只能被一个线程占用。如果此时有其他线程请求该资源，请求线程只能等待。</p>
+  </li>
+  <li>
+    <p><strong>请求与保持条件（Hold and Wait）</strong>：一个线程因请求资源而阻塞时，对已获得的资源保持不放。</p>
+  </li>
+  <li>
+    <p><strong>不可抢占条件（No Preemption）</strong>：已获得的资源在未使用完之前，不能被强行剥夺，只能由持有资源的线程自行释放。</p>
+  </li>
+  <li>
+    <p><strong>循环等待条件（Circular Wait）</strong>：若干线程之间形成一种头尾相接的循环等待资源关系。</p>
+  </li>
+</ol>
+
+<p>当以上四个条件同时满足时，就会导致死锁的发生。为了避免死锁，可以采用破坏这些条件的方法，如破坏循环等待条件、引入超时机制等。</p>
+
+<h2 id="wait和notify">wait和notify</h2>
+
+<p>在Java程序中，<code class="language-plaintext highlighter-rouge">synchronized</code>解决了多线程竞争的问题。例如，对于一个任务管理器，多个线程同时往队列中添加任务，可以用<code class="language-plaintext highlighter-rouge">synchronized</code>加锁：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">TaskQueue</span> <span class="o">{</span>
+    <span class="nc">Queue</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
+
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addTask</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="nc">String</span> <span class="nf">getTask</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">queue</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>但是<code class="language-plaintext highlighter-rouge">synchronized</code>并没有解决多线程协调的问题。</p>
+
+<p><code class="language-plaintext highlighter-rouge">getTask()</code>的<code class="language-plaintext highlighter-rouge">while()</code>循环永远不会退出，因为锁没有释放，其他线程根本无法调用<code class="language-plaintext highlighter-rouge">addTask()</code>。实际上代码应该实现以下效果：</p>
+
+<ul>
+  <li>线程1可以调用<code class="language-plaintext highlighter-rouge">addTask()</code>不断往队列中添加任务；</li>
+  <li>线程2可以调用<code class="language-plaintext highlighter-rouge">getTask()</code>从队列中获取任务。如果队列为空，则<code class="language-plaintext highlighter-rouge">getTask()</code>应该等待，直到队列中至少有一个任务时再返回。</li>
+</ul>
+
+<p>多线程协调运行的原则就是：当条件不满足时，线程进入等待状态；当条件满足时，线程被唤醒，继续执行任务。</p>
+
+<p>可以通过调用<code class="language-plaintext highlighter-rouge">wait()</code>方法让线程进入等待状态，调用<code class="language-plaintext highlighter-rouge">wait()</code>方法会一直等待到被其他线程唤醒后才会返回。必须在<code class="language-plaintext highlighter-rouge">synchronized</code>块中才能调用<code class="language-plaintext highlighter-rouge">wait()</code>方法，也只能在锁对象上调用<code class="language-plaintext highlighter-rouge">wait()</code>方法，因为<code class="language-plaintext highlighter-rouge">wait()</code>方法调用时，会<strong><em>释放</em>线程获得的锁</strong>，<code class="language-plaintext highlighter-rouge">wait()</code>方法返回后，线程又会重新<strong>试图获得锁</strong>。</p>
+
+<p>如何让等待的线程被重新唤醒，然后从<code class="language-plaintext highlighter-rouge">wait()</code>方法返回？答案是在相同的锁对象上调用<code class="language-plaintext highlighter-rouge">notify()</code>方法。那么代码修改如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+
+<span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.LinkedList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Queue</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">InterruptedException</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">q</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TaskQueue</span><span class="o">();</span>
+        <span class="c1">//启动5个获取任务</span>
+        <span class="kt">var</span> <span class="n">ts</span> <span class="o">=</span> <span class="n">getThreads</span><span class="o">(</span><span class="n">q</span><span class="o">);</span>
+        <span class="c1">//添加10个任务，每隔100ms</span>
+        <span class="kt">var</span> <span class="n">add</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="s">"添加任务: "</span> <span class="o">+</span> <span class="n">i</span><span class="o">);</span>
+                <span class="n">q</span><span class="o">.</span><span class="na">addTask</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+                <span class="k">try</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">_</span><span class="o">)</span> <span class="o">{}</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+        <span class="n">add</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">add</span><span class="o">.</span><span class="na">join</span><span class="o">();</span>
+        <span class="nc">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+        <span class="c1">//中断</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">var</span> <span class="n">t</span> <span class="o">:</span> <span class="n">ts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">t</span><span class="o">.</span><span class="na">interrupt</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Thread</span><span class="o">&gt;</span> <span class="nf">getThreads</span><span class="o">(</span><span class="nc">TaskQueue</span> <span class="n">q</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">ts</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Thread</span><span class="o">&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="na">getTask</span><span class="o">();</span>
+                        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"，线程："</span><span class="o">+</span><span class="nc">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">()+</span><span class="s">"，执行任务: "</span> <span class="o">+</span> <span class="n">s</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+            <span class="n">ts</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">ts</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">TaskQueue</span> <span class="o">{</span>
+    <span class="nc">Queue</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addTask</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">notifyAll</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="nc">String</span> <span class="nf">getTask</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">InterruptedException</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">wait</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">queue</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>使用<code class="language-plaintext highlighter-rouge">notifyAll()</code>会将唤醒<strong>所有</strong>当前正在<code class="language-plaintext highlighter-rouge">this</code>锁<strong>等待</strong>的线程，而<code class="language-plaintext highlighter-rouge">notify()</code>只会唤醒其中一个（具体哪个依赖操作系统，有一定的随机性）。通常来说，<code class="language-plaintext highlighter-rouge">notifyAll()</code>更安全，用<code class="language-plaintext highlighter-rouge">notify()</code>会<strong>只唤醒了一个线程</strong>，而其他线程可能永远等待下去醒不过来了。</p>
+
+<p><code class="language-plaintext highlighter-rouge">wait()</code>方法返回时需要重新获得<code class="language-plaintext highlighter-rouge">this</code>锁。假设有3个线程被唤醒，唤醒后，首先等待执行<code class="language-plaintext highlighter-rouge">addTask()</code>的线程结束此方法后，才能释放<code class="language-plaintext highlighter-rouge">this</code>锁，随后，这3个线程中只能有一个获取到<code class="language-plaintext highlighter-rouge">this</code>锁，<strong>剩下两个将等待锁释放后继续竞争锁</strong>，竞争成功后开始运行。</p>
+
+<p>如果在<code class="language-plaintext highlighter-rouge">getTask()</code>不是使用<code class="language-plaintext highlighter-rouge">while</code>而是使用<code class="language-plaintext highlighter-rouge">if</code>，则剩下的两个将依次得到锁后直接执行<code class="language-plaintext highlighter-rouge">queue.remove();</code>，而此时队列中已经没有东西了，则会抛出异常，终止此线程。</p>
+
+<p>是<code class="language-plaintext highlighter-rouge">while</code>的话,则剩下的两个依次得到锁后后会再次判断<code class="language-plaintext highlighter-rouge">queue.isEmpty()</code>，如果是则会继续等待。</p>
+
+<p>当然，如果改用<code class="language-plaintext highlighter-rouge">notify()</code>+<code class="language-plaintext highlighter-rouge">if</code>则不会出现问题,因为一次只唤醒一个线程:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">TaskQueue</span> <span class="o">{</span>
+    <span class="nc">Queue</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addTask</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">notify</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="nc">String</span> <span class="nf">getTask</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">InterruptedException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">wait</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">queue</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">加密与安全</title><link href="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/" rel="alternate" type="text/html" title="加密与安全" /><published>2024-04-14T00:00:00+08:00</published><updated>2024-04-14T00:00:00+08:00</updated><id>/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8</id><content type="html" xml:base="/2024/04/14/%E5%8A%A0%E5%AF%86%E4%B8%8E%E5%AE%89%E5%85%A8/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Base64编码、URL编码、哈希算法、对称加密算法、口令加密算法、 密钥交换算法、 非对称加密算法、签名算法、数字证书。</p>
 
 <h1 id="加密与安全">加密与安全</h1>
