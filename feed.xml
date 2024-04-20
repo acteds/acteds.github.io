@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-20T17:35:58+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-20T17:52:19+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
 
 <p>代操作系统（Windows，macOS，Linux）都可以执行多任务。多任务就是同时运行多个任务。</p>
 
@@ -89,7 +89,6 @@
 <p>和单线程相比，多线程编程的特点在于：多线程经常需要读写共享数据，并且需要同步。例如，播放电影时，就必须由一个线程播放视频，另一个线程播放音频，两个线程需要协调运行，否则画面和声音就不同步。因此，多线程编程的复杂度高，调试更困难。</p>
 
 <p>Java多线程编程的特点又在于：</p>
-
 <ul>
   <li>多线程模型是Java程序最基本的并发模型；</li>
   <li>后续读写网络、数据库、Web开发等都依赖Java多线程模型。</li>
@@ -98,46 +97,20 @@
 <p>线程类<code class="language-plaintext highlighter-rouge">Thread</code>常用的方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">start()</code>：启动线程，使其处于可运行状态。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">run()</code>：线程的执行体，包含了线程要执行的代码。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.setDaemon(boolean on)</code>：设置线程为守护线程或用户线程。守护线程不会阻止程序的终止，当所有的用户线程结束时，守护线程会自动结束。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">start()</code>：启动线程，使其处于可运行状态。</li>
+  <li><code class="language-plaintext highlighter-rouge">run()</code>：线程的执行体，包含了线程要执行的代码。</li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.setDaemon(boolean on)</code>：设置线程为守护线程或用户线程。守护线程不会阻止程序的终止，当所有的用户线程结束时，守护线程会自动结束。</li>
   <li><code class="language-plaintext highlighter-rouge">Thread.isDaemon()</code>：判断线程是否为守护线程。</li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">sleep(long millis)</code>：使当前线程休眠指定的时间，以毫秒为单位。在休眠期间，线程状态不会改变，不会释放已经持有的锁。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">join()</code>：等待线程终止。调用此方法的线程将会被阻塞，直到目标线程执行完成。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">interrupt()</code>：中断线程。通知目标线程应该中断，但实际中断操作由目标线程自行处理。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">isInterrupted()</code>：判断线程是否已经被中断。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">interrupted()</code>：判断当前线程是否已经被中断，并清除中断状态。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">yield()</code>：让出当前线程的执行权，使得其他具有相同优先级的线程有机会执行。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setName(String name)</code>：设置线程的名称。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getName()</code>：获取线程的名称。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">isAlive()</code>：判断线程是否处于活动状态（已启动但尚未终止）。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setPriority(int priority)</code>：设置线程的优先级。优先级范围为1（最低）到10（最高）。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">sleep(long millis)</code>：使当前线程休眠指定的时间，以毫秒为单位。在休眠期间，线程状态不会改变，不会释放已经持有的锁。</li>
+  <li><code class="language-plaintext highlighter-rouge">join()</code>：等待线程终止。调用此方法的线程将会被阻塞，直到目标线程执行完成。</li>
+  <li><code class="language-plaintext highlighter-rouge">interrupt()</code>：中断线程。通知目标线程应该中断，但实际中断操作由目标线程自行处理。</li>
+  <li><code class="language-plaintext highlighter-rouge">isInterrupted()</code>：判断线程是否已经被中断。</li>
+  <li><code class="language-plaintext highlighter-rouge">interrupted()</code>：判断当前线程是否已经被中断，并清除中断状态。</li>
+  <li><code class="language-plaintext highlighter-rouge">yield()</code>：让出当前线程的执行权，使得其他具有相同优先级的线程有机会执行。</li>
+  <li><code class="language-plaintext highlighter-rouge">setName(String name)</code>：设置线程的名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">getName()</code>：获取线程的名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">isAlive()</code>：判断线程是否处于活动状态（已启动但尚未终止）。</li>
+  <li><code class="language-plaintext highlighter-rouge">setPriority(int priority)</code>：设置线程的优先级。优先级范围为1（最低）到10（最高）。</li>
   <li><code class="language-plaintext highlighter-rouge">getPriority()</code>：获取线程的优先级。</li>
 </ol>
 
@@ -146,36 +119,16 @@
 <p>锁的方法通常与<code class="language-plaintext highlighter-rouge">synchronized</code>关键字和<code class="language-plaintext highlighter-rouge">java.util.concurrent.locks</code>包中的锁对象相关联。以下是一些常用的锁方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">synchronized</code>关键字：用于同步方法或同步块，可以实现对代码块的互斥访问。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">wait()</code>：在锁对象上等待，直到其他线程调用该对象的<code class="language-plaintext highlighter-rouge">notify()</code>或<code class="language-plaintext highlighter-rouge">notifyAll()</code>方法唤醒该线程。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void wait(long timeout)</code>：同<code class="language-plaintext highlighter-rouge">wait()</code>，但如果在指定时间内未收到通知，则当前线程会自动唤醒。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void wait(long timeout, int nanos)</code>：类似于<code class="language-plaintext highlighter-rouge">wait(long timeout)</code>方法，但还可以指定纳秒级别的超时时间。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">notify()</code>：唤醒在锁对象上等待的单个线程。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">notifyAll()</code>：唤醒在锁对象上等待的所有线程。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">ReentrantLock</code>类：可重入锁，提供了更灵活的锁定机制，可以替代<code class="language-plaintext highlighter-rouge">synchronized</code>关键字。常用方法包括<code class="language-plaintext highlighter-rouge">lock()</code>、<code class="language-plaintext highlighter-rouge">unlock()</code>、<code class="language-plaintext highlighter-rouge">tryLock()</code>等。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Condition</code>接口：配合<code class="language-plaintext highlighter-rouge">ReentrantLock</code>使用，提供了类似<code class="language-plaintext highlighter-rouge">wait()</code>和<code class="language-plaintext highlighter-rouge">notify()</code>的功能，但更加灵活。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">ReadWriteLock</code>接口：读写锁，提供了读锁和写锁，可以提高读操作的并发性能。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">StampedLock</code>类：提供了一种乐观读锁的机制，适用于读多写少的场景。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">synchronized</code>关键字：用于同步方法或同步块，可以实现对代码块的互斥访问。</li>
+  <li><code class="language-plaintext highlighter-rouge">wait()</code>：在锁对象上等待，直到其他线程调用该对象的<code class="language-plaintext highlighter-rouge">notify()</code>或<code class="language-plaintext highlighter-rouge">notifyAll()</code>方法唤醒该线程。</li>
+  <li><code class="language-plaintext highlighter-rouge">void wait(long timeout)</code>：同<code class="language-plaintext highlighter-rouge">wait()</code>，但如果在指定时间内未收到通知，则当前线程会自动唤醒。</li>
+  <li><code class="language-plaintext highlighter-rouge">void wait(long timeout, int nanos)</code>：类似于<code class="language-plaintext highlighter-rouge">wait(long timeout)</code>方法，但还可以指定纳秒级别的超时时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">notify()</code>：唤醒在锁对象上等待的单个线程。</li>
+  <li><code class="language-plaintext highlighter-rouge">notifyAll()</code>：唤醒在锁对象上等待的所有线程。</li>
+  <li><code class="language-plaintext highlighter-rouge">ReentrantLock</code>类：可重入锁，提供了更灵活的锁定机制，可以替代<code class="language-plaintext highlighter-rouge">synchronized</code>关键字。常用方法包括<code class="language-plaintext highlighter-rouge">lock()</code>、<code class="language-plaintext highlighter-rouge">unlock()</code>、<code class="language-plaintext highlighter-rouge">tryLock()</code>等。</li>
+  <li><code class="language-plaintext highlighter-rouge">Condition</code>接口：配合<code class="language-plaintext highlighter-rouge">ReentrantLock</code>使用，提供了类似<code class="language-plaintext highlighter-rouge">wait()</code>和<code class="language-plaintext highlighter-rouge">notify()</code>的功能，但更加灵活。</li>
+  <li><code class="language-plaintext highlighter-rouge">ReadWriteLock</code>接口：读写锁，提供了读锁和写锁，可以提高读操作的并发性能。</li>
+  <li><code class="language-plaintext highlighter-rouge">StampedLock</code>类：提供了一种乐观读锁的机制，适用于读多写少的场景。</li>
 </ol>
 
 <p>这些方法和类可以帮助我们在多线程环境中实现对共享资源的安全访问和控制。</p>
@@ -183,23 +136,12 @@
 <p>静态方法：</p>
 
 <p>以下是一些<code class="language-plaintext highlighter-rouge">Thread</code>类中的常用静态方法：</p>
-
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.currentThread()</code>：返回当前正在执行的线程对象。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.sleep(long millis)</code>：使当前线程休眠指定的毫秒数。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.yield()</code>：提示调度器当前线程愿意放弃当前对处理器的使用。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.interrupted()</code>：测试当前线程是否已经中断，并清除该线程的中断状态。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Thread.interrupt()</code>：中断当前线程。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.currentThread()</code>：返回当前正在执行的线程对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.sleep(long millis)</code>：使当前线程休眠指定的毫秒数。</li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.yield()</code>：提示调度器当前线程愿意放弃当前对处理器的使用。</li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.interrupted()</code>：测试当前线程是否已经中断，并清除该线程的中断状态。</li>
+  <li><code class="language-plaintext highlighter-rouge">Thread.interrupt()</code>：中断当前线程。</li>
 </ol>
 
 <p>这些静态方法在多线程编程中经常被使用，用于控制线程的行为和状态。</p>
@@ -456,12 +398,8 @@ main方法结束
 <p><strong><code class="language-plaintext highlighter-rouge">InterruptedException</code>通常在以下情况下抛出</strong>：</p>
 
 <ol>
-  <li>
-    <p>当一个线程处于睡眠状态（通过调用<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>进入睡眠状态）时，另一个线程调用了该线程的<code class="language-plaintext highlighter-rouge">interrupt()</code>方法，这会导致处于睡眠状态的线程抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。</p>
-  </li>
-  <li>
-    <p>如果一个线程在调用<code class="language-plaintext highlighter-rouge">Object.wait()</code>、<code class="language-plaintext highlighter-rouge">Thread.join()</code>、<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>时被中断，则会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。这样线程在等待某些条件时，如果被中断就会提早终止。</p>
-  </li>
+  <li>当一个线程处于睡眠状态（通过调用<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>进入睡眠状态）时，另一个线程调用了该线程的<code class="language-plaintext highlighter-rouge">interrupt()</code>方法，这会导致处于睡眠状态的线程抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。</li>
+  <li>如果一个线程在调用<code class="language-plaintext highlighter-rouge">Object.wait()</code>、<code class="language-plaintext highlighter-rouge">Thread.join()</code>、<code class="language-plaintext highlighter-rouge">Thread.sleep()</code>时被中断，则会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>，并且<strong>清除该线程的中断状态</strong>。这样线程在等待某些条件时，如果被中断就会提早终止。</li>
 </ol>
 
 <p>也就是说：当线程处于等待、睡眠状态或以其他方式被占用时，或者线程在活动之前或期间出现中断时会抛出<code class="language-plaintext highlighter-rouge">InterruptedException</code>。</p>
@@ -1544,21 +1482,11 @@ end!
 <p><strong>方法：</strong></p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">wait()</code>：在锁对象上等待，直到其他线程调用该对象的<code class="language-plaintext highlighter-rouge">notify()</code>或<code class="language-plaintext highlighter-rouge">notifyAll()</code>方法唤醒该线程。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void wait(long timeout)</code>：同<code class="language-plaintext highlighter-rouge">wait()</code>，但如果在指定时间内未收到通知，则当前线程会自动唤醒。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void wait(long timeout, int nanos)</code>：类似于<code class="language-plaintext highlighter-rouge">wait(long timeout)</code>方法，但还可以指定纳秒级别的超时时间。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">notify()</code>：唤醒在锁对象上等待的单个线程。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">notifyAll()</code>：唤醒在锁对象上等待的所有线程。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">wait()</code>：在锁对象上等待，直到其他线程调用该对象的<code class="language-plaintext highlighter-rouge">notify()</code>或<code class="language-plaintext highlighter-rouge">notifyAll()</code>方法唤醒该线程。</li>
+  <li><code class="language-plaintext highlighter-rouge">void wait(long timeout)</code>：同<code class="language-plaintext highlighter-rouge">wait()</code>，但如果在指定时间内未收到通知，则当前线程会自动唤醒。</li>
+  <li><code class="language-plaintext highlighter-rouge">void wait(long timeout, int nanos)</code>：类似于<code class="language-plaintext highlighter-rouge">wait(long timeout)</code>方法，但还可以指定纳秒级别的超时时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">notify()</code>：唤醒在锁对象上等待的单个线程。</li>
+  <li><code class="language-plaintext highlighter-rouge">notifyAll()</code>：唤醒在锁对象上等待的所有线程。</li>
 </ol>
 
 <h2 id="reentrantlock">ReentrantLock</h2>
@@ -2046,23 +1974,12 @@ end!
 <p><code class="language-plaintext highlighter-rouge">StampedLocks</code> 是可序列化的，但反序列化始终为初始解锁状态，因此对于远程锁定而言并不实用。</p>
 
 <p><strong><code class="language-plaintext highlighter-rouge">StampedLock</code>与<code class="language-plaintext highlighter-rouge">ReadWriteLock</code>不同的方法主要包括以下几种：</strong></p>
-
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">tryOptimisticRead()</code>：尝试获取乐观读锁，如果当前没有写锁被持有，则返回一个非零的标记，否则返回零。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">validate(long)</code>：验证乐观读锁的标记是否仍然有效，即是否有写操作发生。如果在获取乐观读锁后没有写操作，则返回true，否则返回false。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">tryConvertToWriteLock(long)</code>：尝试将乐观读锁转换为写锁。如果当前没有其他线程持有写锁，并且没有其他读锁存在，则可以成功转换，返回一个有效的写锁标记，否则返回零。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">tryConvertToReadLock(long)</code>：尝试将写锁转换为读锁。如果当前没有其他线程持有写锁，并且没有其他读锁存在，则可以成功转换，返回一个有效的读锁标记，否则返回零。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">tryConvertToOptimisticRead(long)</code>：尝试将写锁或读锁转换为乐观读锁。如果当前没有其他线程持有写锁，则可以成功转换，返回一个有效的乐观读锁标记，否则返回零。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">tryOptimisticRead()</code>：尝试获取乐观读锁，如果当前没有写锁被持有，则返回一个非零的标记，否则返回零。</li>
+  <li><code class="language-plaintext highlighter-rouge">validate(long)</code>：验证乐观读锁的标记是否仍然有效，即是否有写操作发生。如果在获取乐观读锁后没有写操作，则返回true，否则返回false。</li>
+  <li><code class="language-plaintext highlighter-rouge">tryConvertToWriteLock(long)</code>：尝试将乐观读锁转换为写锁。如果当前没有其他线程持有写锁，并且没有其他读锁存在，则可以成功转换，返回一个有效的写锁标记，否则返回零。</li>
+  <li><code class="language-plaintext highlighter-rouge">tryConvertToReadLock(long)</code>：尝试将写锁转换为读锁。如果当前没有其他线程持有写锁，并且没有其他读锁存在，则可以成功转换，返回一个有效的读锁标记，否则返回零。</li>
+  <li><code class="language-plaintext highlighter-rouge">tryConvertToOptimisticRead(long)</code>：尝试将写锁或读锁转换为乐观读锁。如果当前没有其他线程持有写锁，则可以成功转换，返回一个有效的乐观读锁标记，否则返回零。</li>
 </ol>
 
 <p><strong>测试：</strong></p>
@@ -2217,7 +2134,6 @@ end!
 <p><code class="language-plaintext highlighter-rouge">Semaphore</code>本质上就是一个信号计数器，用于限制同一时间的最大访问数量。</p>
 
 <p><code class="language-plaintext highlighter-rouge">Semaphore</code>类提供了以下几个常用的方法：</p>
-
 <ol>
   <li><code class="language-plaintext highlighter-rouge">acquire()</code>: 获取一个许可，如果没有许可可用，则阻塞直到有许可可用为止。</li>
   <li><code class="language-plaintext highlighter-rouge">release()</code>: 释放一个许可，将其返回给信号量。</li>
@@ -2815,23 +2731,12 @@ end!
 </code></pre></div></div>
 
 <p>一个<code class="language-plaintext highlighter-rouge">Future&lt;V&gt;</code>接口表示一个未来可能会返回的结果，即表示一个异步计算的结果。它定义了以下方法：</p>
-
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean cancel(boolean mayInterruptIfRunning)</code>：尝试取消任务的执行。如果任务已经完成、已经被取消或者由于某些原因不能取消，则此尝试将失败，返回 <code class="language-plaintext highlighter-rouge">false</code>。如果取消成功，并且任务尚未开始执行，则任务不应该运行。如果任务已经开始执行，则应该中断任务的执行。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean isCancelled()</code>：如果任务已经被取消，则返回 true。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean isDone()</code>：如果任务已经完成（无论是正常完成、取消还是由于执行过程中出现异常），则返回 true。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">V get()</code>：等待计算完成，然后返回其结果。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">V get(long timeout, TimeUnit unit)</code>：等待计算完成，最多等待给定的时间。如果在超时时间内计算完成，则返回结果；如果超时，则抛出 <code class="language-plaintext highlighter-rouge">TimeoutException</code>。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">boolean cancel(boolean mayInterruptIfRunning)</code>：尝试取消任务的执行。如果任务已经完成、已经被取消或者由于某些原因不能取消，则此尝试将失败，返回 <code class="language-plaintext highlighter-rouge">false</code>。如果取消成功，并且任务尚未开始执行，则任务不应该运行。如果任务已经开始执行，则应该中断任务的执行。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isCancelled()</code>：如果任务已经被取消，则返回 true。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isDone()</code>：如果任务已经完成（无论是正常完成、取消还是由于执行过程中出现异常），则返回 true。</li>
+  <li><code class="language-plaintext highlighter-rouge">V get()</code>：等待计算完成，然后返回其结果。</li>
+  <li><code class="language-plaintext highlighter-rouge">V get(long timeout, TimeUnit unit)</code>：等待计算完成，最多等待给定的时间。如果在超时时间内计算完成，则返回结果；如果超时，则抛出 <code class="language-plaintext highlighter-rouge">TimeoutException</code>。</li>
 </ol>
 
 <p><strong>单独使用：</strong></p>
