@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-20T22:18:34+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-20T22:31:55+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
 <p>操作系统（Windows，macOS，Linux）都可以执行多任务,多任务就是同时运行多个任务。</p>
 
 <p><strong>进程</strong>
@@ -1787,14 +1787,44 @@ Java 对于 <code class="language-plaintext highlighter-rouge">ReadWriteLock</co
 </code></pre></div></div>
 <p><code class="language-plaintext highlighter-rouge">BlockingQueue</code>的意思就是说，当一个线程调用这个<code class="language-plaintext highlighter-rouge">TaskQueue</code>的<code class="language-plaintext highlighter-rouge">getTask()</code>方法时，该方法内部可能会让线程变成等待状态，直到队列条件满足不为空，线程被唤醒后，<code class="language-plaintext highlighter-rouge">getTask()</code>方法才会返回。<br />
 因为<code class="language-plaintext highlighter-rouge">BlockingQueue</code>非常有用，所以不必自己编写，可以直接使用Java标准库的<code class="language-plaintext highlighter-rouge">java.util.concurrent</code>包提供的线程安全的集合：<code class="language-plaintext highlighter-rouge">ArrayBlockingQueue</code>。<br />
-除了<code class="language-plaintext highlighter-rouge">BlockingQueue</code>外，针对<code class="language-plaintext highlighter-rouge">List</code>、<code class="language-plaintext highlighter-rouge">Map</code>、<code class="language-plaintext highlighter-rouge">Set</code>、<code class="language-plaintext highlighter-rouge">Deque</code>等，<code class="language-plaintext highlighter-rouge">java.util.concurrent</code>包也提供了对应的并发集合类。我们归纳一下：<br />
-| interface | non-thread-safe         | thread-safe                              |
-| :——– | :———————- | :————————————— |
-| List      | ArrayList               | CopyOnWriteArrayList                     |
-| Map       | HashMap                 | ConcurrentHashMap                        |
-| Set       | HashSet / TreeSet       | CopyOnWriteArraySet                      |
-| Queue     | ArrayDeque / LinkedList | ArrayBlockingQueue / LinkedBlockingQueue |
-| Deque     | ArrayDeque / LinkedList | LinkedBlockingDeque                      |</p>
+除了<code class="language-plaintext highlighter-rouge">BlockingQueue</code>外，针对<code class="language-plaintext highlighter-rouge">List</code>、<code class="language-plaintext highlighter-rouge">Map</code>、<code class="language-plaintext highlighter-rouge">Set</code>、<code class="language-plaintext highlighter-rouge">Deque</code>等，<code class="language-plaintext highlighter-rouge">java.util.concurrent</code>包也提供了对应的并发集合类。我们归纳一下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">interface</th>
+      <th style="text-align: left">non-thread-safe</th>
+      <th style="text-align: left">thread-safe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">List</td>
+      <td style="text-align: left">ArrayList</td>
+      <td style="text-align: left">CopyOnWriteArrayList</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Map</td>
+      <td style="text-align: left">HashMap</td>
+      <td style="text-align: left">ConcurrentHashMap</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Set</td>
+      <td style="text-align: left">HashSet / TreeSet</td>
+      <td style="text-align: left">CopyOnWriteArraySet</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Queue</td>
+      <td style="text-align: left">ArrayDeque / LinkedList</td>
+      <td style="text-align: left">ArrayBlockingQueue / LinkedBlockingQueue</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Deque</td>
+      <td style="text-align: left">ArrayDeque / LinkedList</td>
+      <td style="text-align: left">LinkedBlockingDeque</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>使用这些并发集合与使用非线程安全的集合类完全相同。以<code class="language-plaintext highlighter-rouge">ConcurrentHashMap</code>为例：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">&lt;&gt;();</span>
