@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-20T22:31:55+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-21T08:28:07+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
 <p>操作系统（Windows，macOS，Linux）都可以执行多任务,多任务就是同时运行多个任务。</p>
 
-<p><strong>进程</strong>
+<p><strong>进程</strong><br />
 在计算机中，我们把一个任务称为一个进程，浏览器就是一个进程，视频播放器是另一个进程，类似的，音乐播放器和Word都是进程。<br />
 某些进程内部还需要同时执行多个子任务。例如，我们在使用Word时，Word可以让我们一边打字，一边进行拼写检查，同时还可以在后台进行打印，我们把子任务称为线程。<br />
 进程和线程的关系就是：一个进程可以包含一个或多个线程，但至少会有一个线程。</p>
