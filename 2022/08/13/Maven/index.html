@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Maven &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2022/08/13/Maven/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Maven"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="Maven"><meta name="og:description" content="Maven"><meta property="og:url" content="/2022/08/13/Maven/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2022-08-13"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Maven"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Maven</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2022/08/13 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 12521 字，约 36 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="maven">Maven</h1><p>Java项目需要确定引入哪些依赖包。例如，如果需要用到<a href="https://commons.apache.org/proper/commons-logging/">commons logging</a>，就必须把commons logging的jar包放入classpath。如果还需要<a href="https://logging.apache.org/log4j/">log4j</a>，就需要把log4j相关的jar包都放到classpath中。这些就是依赖包的管理。</p><p>要确定项目的目录结构。例如，<code class="language-plaintext highlighter-rouge">src</code>目录存放Java源码，<code class="language-plaintext highlighter-rouge">resources</code>目录存放配置文件，<code class="language-plaintext highlighter-rouge">bin</code>目录存放编译生成的<code class="language-plaintext highlighter-rouge">.class</code>文件。</p><p>还需要配置环境，例如JDK的版本，编译打包的流程，当前代码的版本号。</p><p>最后，除了使用Eclipse这样的IDE进行编译外，还必须能通过命令行工具进行编译，才能够让项目在一个独立的服务器上编译、测试、部署。</p><p>这些工作难度不大，但是非常琐碎且耗时。如果每一个项目都自己搞一套配置，肯定会一团糟。我们需要的是一个标准化的Java项目管理和构建工具。</p><p>Maven就是是专门为Java项目打造的管理和构建工具，它的主要功能有：</p><ul><li>提供了一套标准化的项目结构；</li><li>提供了一套标准化的构建流程（编译，测试，打包，发布……）；</li><li>提供了一套依赖管理机制。</li></ul><p>要安装Maven，可以从<a href="https://maven.apache.org/">Maven官网</a>下载最新的Maven 3.9.6，然后在本地解压。还可以把Maven根目录添加到环境变量PATH。</p><h2 id="maven项目结构">Maven项目结构</h2><p>一个使用Maven管理的普通的Java项目，它的目录结构默认如下：</p><pre><code class="language-ascii">a-maven-project
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   └── resources
+│   └── test
+│       ├── java
+│       └── resources
+└── target
+</code></pre><p>项目的根目录<code class="language-plaintext highlighter-rouge">a-maven-project</code>是项目名，它有一个项目描述文件<code class="language-plaintext highlighter-rouge">pom.xml</code>，存放Java源码的目录是<code class="language-plaintext highlighter-rouge">src/main/java</code>，存放资源文件的目录是<code class="language-plaintext highlighter-rouge">src/main/resources</code>，存放测试源码的目录是<code class="language-plaintext highlighter-rouge">src/test/java</code>，存放测试资源的目录是<code class="language-plaintext highlighter-rouge">src/test/resources</code>，最后，所有编译、打包生成的文件都放在<code class="language-plaintext highlighter-rouge">target</code>目录里。这些就是一个Maven项目的标准目录结构。</p><p>所有的目录结构都是约定好的标准结构<strong>，千万不要随意修改目录结构</strong>。使用标准结构不需要做任何配置，Maven就可以正常使用。</p><p>项目描述文件<code class="language-plaintext highlighter-rouge">pom.xml</code>，它的内容长得像下面：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+     <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+<span class="c">&lt;!-- 当前Maven工程的坐标 --&gt;</span>
+<span class="nt">&lt;groupId&gt;</span>com.xxx<span class="nt">&lt;/groupId&gt;</span>
+<span class="nt">&lt;artifactId&gt;</span>pro01-maven-java<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+<span class="c">&lt;!-- 当前Maven工程的打包方式，可选值有下面三种： --&gt;</span>
+<span class="c">&lt;!-- jar：表示这个工程是一个Java工程  --&gt;</span>
+<span class="c">&lt;!-- war：表示这个工程是一个Web工程 --&gt;</span>
+<span class="c">&lt;!-- pom：表示这个工程是“管理其他工程”的工程 --&gt;</span>
+<span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+
+<span class="nt">&lt;name&gt;</span>pro01-maven-java<span class="nt">&lt;/name&gt;</span>
+<span class="nt">&lt;url&gt;</span>https://maven.apache.org<span class="nt">&lt;/url&gt;</span>
+
+<span class="nt">&lt;properties&gt;</span>
+    <span class="c">&lt;!-- 工程构建过程中读取源码时使用的字符集 --&gt;</span>
+    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+
+<span class="c">&lt;!-- 当前工程所依赖的jar包 --&gt;</span>
+<span class="nt">&lt;dependencies&gt;</span>
+    <span class="c">&lt;!-- 使用dependency配置一个具体的依赖 --&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+
+        <span class="c">&lt;!-- 在dependency标签内使用具体的坐标依赖我们需要的一个jar包 --&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>4.12<span class="nt">&lt;/version&gt;</span>
+        <span class="c">&lt;!-- scope标签配置依赖的范围 --&gt;</span>
+        <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+
+<span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div><p>其中，<code class="language-plaintext highlighter-rouge">groupId</code>类似于Java的包名，通常是公司或组织名称，<code class="language-plaintext highlighter-rouge">artifactId</code>类似于Java的类名，通常是项目名称，再加上<code class="language-plaintext highlighter-rouge">version</code>，一个Maven工程就是由<code class="language-plaintext highlighter-rouge">groupId</code>，<code class="language-plaintext highlighter-rouge">artifactId</code>和<code class="language-plaintext highlighter-rouge">version</code>作为唯一标识。我们在引用其他第三方库的时候，也是通过这3个变量确定。例如，依赖<code class="language-plaintext highlighter-rouge">junit5</code>：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>junit-jupiter<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.10.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>使用<code class="language-plaintext highlighter-rouge">&lt;dependency&gt;</code>声明一个依赖后，Maven就会自动下载这个依赖包并把它放到classpath中。</p><p><strong>唯一ID</strong></p><p>对于某个依赖，Maven只需要3个变量即可唯一确定某个jar包：</p><ul><li>groupId：属于组织的名称，类似Java的包名；</li><li>artifactId：该jar包自身的名称，类似Java的类名；</li><li>version：该jar包的版本。</li></ul><p>通过上述3个变量，即可唯一确定某个jar包。Maven通过对jar包进行PGP签名确保任何一个jar包一经发布就无法修改。修改已发布jar包的唯一方法是发布一个新版本。</p><p>因此，某个jar包一旦被Maven下载过，即可永久地安全缓存在本地。</p><p>注：只有以<code class="language-plaintext highlighter-rouge">-SNAPSHOT</code>结尾的版本号会被Maven视为开发版本，开发版本每次都会重复下载，这种SNAPSHOT版本只能用于内部私有的Maven repo，公开发布的版本不允许出现SNAPSHOT。</p><p>后续在表示Maven依赖时，使用简写形式groupId:artifactId:version，例如：org.slf4j:slf4j-api:2.0.4。</p><p><strong>搜索</strong></p><p>如果我们要引用一个第三方组件，比如<code class="language-plaintext highlighter-rouge">okhttp</code>，如何确切地获得它的<code class="language-plaintext highlighter-rouge">groupId</code>、<code class="language-plaintext highlighter-rouge">artifactId</code>和<code class="language-plaintext highlighter-rouge">version</code>？方法是通过<a href="https://search.maven.org/">search.maven.org</a>或<a href="https://mvnrepository.com/">mvnrepository.com</a>搜索关键字，找到对应的组件后，直接复制。</p><h2 id="依赖管理">依赖管理</h2><p>如果项目依赖第三方的jar包，例如commons logging的jar包在哪下载？如果还希望依赖log4j，那么使用log4j需要哪些jar包？</p><p>类似的依赖还包括：JUnit，JavaMail，MySQL驱动等等，一个可行的方法是通过搜索引擎搜索到项目的官网，然后手动下载zip包，解压，放入classpath。但是，这个过程非常繁琐。</p><p>Maven解决了依赖管理问题。例如，我们的项目依赖<code class="language-plaintext highlighter-rouge">abc</code>这个jar包，而<code class="language-plaintext highlighter-rouge">abc</code>又依赖<code class="language-plaintext highlighter-rouge">xyz</code>这个jar包：</p><pre><code class="language-ascii">┌──────────────┐
+│Sample Project│
+└──────────────┘
+        │
+        ▼
+┌──────────────┐
+│     abc      │
+└──────────────┘
+        │
+        ▼
+┌──────────────┐
+│     xyz      │
+└──────────────┘
+</code></pre><p>当声明了<code class="language-plaintext highlighter-rouge">abc</code>的依赖时，Maven自动把<code class="language-plaintext highlighter-rouge">abc</code>和<code class="language-plaintext highlighter-rouge">xyz</code>都加入了我们的项目依赖，不需要自己去研究<code class="language-plaintext highlighter-rouge">abc</code>是否需要依赖<code class="language-plaintext highlighter-rouge">xyz</code>。</p><p>因此，Maven的第一个作用就是解决依赖管理。我们声明了自己的项目需要<code class="language-plaintext highlighter-rouge">abc</code>，Maven会自动导入<code class="language-plaintext highlighter-rouge">abc</code>的jar包，再判断出<code class="language-plaintext highlighter-rouge">abc</code>需要<code class="language-plaintext highlighter-rouge">xyz</code>，又会自动导入<code class="language-plaintext highlighter-rouge">xyz</code>的jar包，这样，最终我们的项目会依赖<code class="language-plaintext highlighter-rouge">abc</code>和<code class="language-plaintext highlighter-rouge">xyz</code>两个jar包。</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.4.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>当声明一个<code class="language-plaintext highlighter-rouge">spring-boot-starter-web</code>依赖时，Maven会自动解析并判断最终需要大概二三十个其他依赖：</p><pre><code class="language-ascii">spring-boot-starter-web
+  spring-boot-starter
+    spring-boot
+    sprint-boot-autoconfigure
+    spring-boot-starter-logging
+      logback-classic
+        logback-core
+        slf4j-api
+      jcl-over-slf4j
+        slf4j-api
+      jul-to-slf4j
+        slf4j-api
+      log4j-over-slf4j
+        slf4j-api
+    spring-core
+    snakeyaml
+  spring-boot-starter-tomcat
+    tomcat-embed-core
+    tomcat-embed-el
+    tomcat-embed-websocket
+      tomcat-embed-core
+  jackson-databind
+  ...
+</code></pre><p>如果自己去手动管理这些依赖是非常费时费力的，而且出错的概率很大。</p><h3 id="依赖关系">依赖关系</h3><p>Maven定义了几种依赖关系，分别是<code class="language-plaintext highlighter-rouge">compile</code>、<code class="language-plaintext highlighter-rouge">test</code>、<code class="language-plaintext highlighter-rouge">runtime</code>和<code class="language-plaintext highlighter-rouge">provided</code>：</p><table><thead><tr><th style="text-align: left">scope</th><th style="text-align: left">说明</th><th style="text-align: left">示例</th></tr></thead><tbody><tr><td style="text-align: left">compile</td><td style="text-align: left">编译与运行时都依赖，需要用到该jar包（默认）</td><td style="text-align: left">commons-logging</td></tr><tr><td style="text-align: left">test</td><td style="text-align: left">编译Test时需要用到该jar包</td><td style="text-align: left">junit</td></tr><tr><td style="text-align: left">runtime</td><td style="text-align: left">编译时不需要，但运行时需要用到</td><td style="text-align: left">mysql</td></tr><tr><td style="text-align: left">provided</td><td style="text-align: left">编译时需要用到，但运行时由JDK或某个服务器提供</td><td style="text-align: left">servlet-api</td></tr><tr><td style="text-align: left">system</td><td style="text-align: left">与provided类似，但jar由你自己定义（已弃用）</td><td style="text-align: left"> </td></tr><tr><td style="text-align: left">Import</td><td style="text-align: left">适用于pom文件中的<code class="language-plaintext highlighter-rouge">&lt;dependencyManagement&gt;</code>部分。表明指定的POM必须使用<code class="language-plaintext highlighter-rouge">&lt;dependencyManagement&gt;</code>部分的依赖。</td><td style="text-align: left"> </td></tr></tbody></table><p>其中，默认的<code class="language-plaintext highlighter-rouge">compile</code>是最常用的，Maven会把这种类型的依赖直接放入classpath。</p><p><code class="language-plaintext highlighter-rouge">test</code>依赖表示编译只在编译测试代码和运行测试的时候需要，应用的正常运行不需要此类依赖。典型的例子就是<code class="language-plaintext highlighter-rouge">JUnit</code>,它只有在编译测试代码及运行测试的时候才需要：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.3.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">runtime</code>依赖表示编译时不需要，但运行时需要。最典型的<code class="language-plaintext highlighter-rouge">runtime</code>依赖是JDBC驱动，项目主代码的编译只需要JDK提供的JDBC接口，只有在执行测试或者运行项目的时候才需要实现上述接口的具体JDBC驱动，例如MySQL驱动：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>mysql<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mysql-connector-java<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.1.48<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">provided</code>依赖表示编译时需要，但运行时不需要。最典型的<code class="language-plaintext highlighter-rouge">provided</code>依赖是Servlet API，编译的时候需要，但是运行时，Servlet服务器内置了相关的jar，所以运行期不需要：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>system系统范围与provided类似，不过你必须显式指定一个本地系统路径的JAR,此类依赖应该一直有效，Maven也不会去仓库中寻找它。使用system范围依赖时必须通过systemPath元素显式地指定依赖文件的路径。</p><p>通常用于告诉Maven有关由JDK或VM提供的依赖关系。因此，系统依赖关系对于解决对构件的依赖关系特别有用，这些构件现在由JDK提供，但以前作为单独的下载可用。典型的例子是JDBC标准扩展或Java身份验证和授权服务(JAAS)。</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.sql<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jdbc-stdext<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>system<span class="nt">&lt;/scope&gt;</span>
+    <span class="nt">&lt;systemPath&gt;</span>${java.home}/lib/rt.jar<span class="nt">&lt;/systemPath&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>Import范围只适用于pom文件中的<code class="language-plaintext highlighter-rouge">&lt;dependencyManagement&gt;</code>部分。表明指定的POM必须使用<code class="language-plaintext highlighter-rouge">&lt;dependencyManagement&gt;</code>部分的依赖。</p><p>例:父:pom文件继承</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;properties&gt;</span>
+    <span class="nt">&lt;banben&gt;</span>3.5.4<span class="nt">&lt;/banben&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+<span class="nt">&lt;dependencyManagement&gt;</span>
+    <span class="nt">&lt;dependencies&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.mybatis<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>mybatis<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>${banben}<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/dependencyManagement&gt;</span>
+</code></pre></div></div><p>子:</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;parent&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.msb<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>MavenDemo<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;relativePath&gt;</span>../MavenDemo/pom.xml<span class="nt">&lt;/relativePath&gt;</span>
+<span class="nt">&lt;/parent&gt;</span>
+<span class="nt">&lt;dependencies&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.mybatis<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>mybatis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</code></pre></div></div><h3 id="依赖排除">依赖排除</h3><p>导入junit并排除junit依赖的junit(实际上不存在)</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencies&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>4.13.2<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;exclusions&gt;</span>
+            <span class="nt">&lt;exclusion&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;/exclusion&gt;</span>
+        <span class="nt">&lt;/exclusions&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</code></pre></div></div><h2 id="maven镜像">Maven镜像</h2><p>Maven如何知道从何处下载所需的依赖？也就是相关的jar包？答案是Maven维护了一个中央仓库（<a href="https://repo1.maven.org/">repo1.maven.org</a>），所有第三方库将自身的jar以及相关信息上传至中央仓库，Maven就可以从中央仓库把所需依赖下载到本地。</p><p>Maven并不会每次都从中央仓库下载jar包。一个jar包一旦被下载过，就会被Maven自动缓存在本地目录（用户主目录的<code class="language-plaintext highlighter-rouge">.m2</code>目录），所以，除了第一次编译时因为下载需要时间会比较慢，后续过程因为有本地缓存，并不会重复下载相同的jar包。</p><p><strong>Maven镜像</strong></p><p>除了可以从Maven的中央仓库下载外，还可以从Maven的镜像仓库下载。如果访问Maven的中央仓库非常慢，可以选择一个速度较快的Maven的镜像仓库。Maven镜像仓库定期从中央仓库同步：</p><pre><code class="language-ascii">           slow    ┌───────────────────┐
+    ┌─────────────▶│Maven Central Repo.│
+    │              └───────────────────┘
+    │                        │
+    │                        │sync
+    │                        ▼
+┌───────┐  fast    ┌───────────────────┐
+│ User  │─────────▶│Maven Mirror Repo. │
+└───────┘          └───────────────────┘
+</code></pre><p>全局修改远程仓库地址：修改<code class="language-plaintext highlighter-rouge">settings.xml</code>文件，指定远程仓库，如阿里的：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;mirrors&gt;</span>
+    <span class="c">&lt;!-- mirror
+     | Specifies a repository mirror site to use instead of a given repository. The repository that
+     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+     |
+    &lt;mirror&gt;
+      &lt;id&gt;mirrorId&lt;/id&gt;
+      &lt;mirrorOf&gt;repositoryId&lt;/mirrorOf&gt;
+      &lt;name&gt;Human Readable Name for this Mirror.&lt;/name&gt;
+      &lt;url&gt;http://my.repository.com/repo/path&lt;/url&gt;
+    &lt;/mirror&gt;
+     --&gt;</span>
+    <span class="nt">&lt;mirror&gt;</span>
+        <span class="nt">&lt;id&gt;</span>alimaven<span class="nt">&lt;/id&gt;</span>
+        <span class="nt">&lt;mirrorOf&gt;</span>central<span class="nt">&lt;/mirrorOf&gt;</span>
+        <span class="nt">&lt;name&gt;</span>aliyun maven<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;url&gt;</span>http://maven.aliyun.com/nexus/content/repositories/central/<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/mirror&gt;</span>
+    <span class="c">&lt;!--     &lt;mirror&gt;
+      &lt;id&gt;maven-default-http-blocker&lt;/id&gt;
+      &lt;mirrorOf&gt;external:http:*&lt;/mirrorOf&gt;
+      &lt;name&gt;Pseudo repository to mirror external repositories initially using HTTP.&lt;/name&gt;
+      &lt;url&gt;http://0.0.0.0/&lt;/url&gt;
+      &lt;blocked&gt;true&lt;/blocked&gt;
+    &lt;/mirror&gt; --&gt;</span>
+<span class="nt">&lt;/mirrors&gt;</span>
+</code></pre></div></div><p>配置镜像仓库后，Maven的下载速度就会非常快。</p><p>IDEA自带的maven路径为：<code class="language-plaintext highlighter-rouge">~\plugins\maven\lib\maven3\conf\settings.xml</code>。</p><p>在单个pom.xml文件配置：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project&gt;</span>
+    <span class="c">&lt;!-- 阿里云maven仓库 --&gt;</span>
+    <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>public<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;name&gt;</span>aliyun nexus<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;url&gt;</span>https://maven.aliyun.com/repository/public<span class="nt">&lt;/url&gt;</span>
+            <span class="nt">&lt;releases&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/releases&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+    <span class="nt">&lt;/repositories&gt;</span>
+    <span class="nt">&lt;pluginRepositories&gt;</span>
+        <span class="nt">&lt;pluginRepository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>public<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;name&gt;</span>aliyun nexus<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;url&gt;</span>https://maven.aliyun.com/repository/public<span class="nt">&lt;/url&gt;</span>
+            <span class="nt">&lt;releases&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/releases&gt;</span>
+            <span class="nt">&lt;snapshots&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/snapshots&gt;</span>
+        <span class="nt">&lt;/pluginRepository&gt;</span>
+    <span class="nt">&lt;/pluginRepositories&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div><h2 id="命令行">命令行</h2><p>mvn dependency:tree 以树形列出依赖</p><p>mvn dependency:list 列出依赖</p><p><strong>命令行编译</strong></p><p>在命令中，进入到<code class="language-plaintext highlighter-rouge">pom.xml</code>所在目录，输入以下命令：</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mvn clean package
+</code></pre></div></div><p>如果一切顺利，即可在<code class="language-plaintext highlighter-rouge">target</code>目录下获得编译后自动打包的jar或war。</p><h2 id="资源拷贝插件">资源拷贝插件</h2><p>将非resources的xml也打包到class</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;build&gt;</span>
+    <span class="nt">&lt;resources&gt;</span>
+        <span class="nt">&lt;resource&gt;</span>
+            <span class="nt">&lt;directory&gt;</span>src/main/java<span class="nt">&lt;/directory&gt;</span>
+            <span class="nt">&lt;includes&gt;</span>
+                <span class="nt">&lt;include&gt;</span>**/*.xml<span class="nt">&lt;/include&gt;</span>
+            <span class="nt">&lt;/includes&gt;</span>
+        <span class="nt">&lt;/resource&gt;</span>
+        <span class="nt">&lt;resource&gt;</span>
+            <span class="nt">&lt;directory&gt;</span>src/main/resources<span class="nt">&lt;/directory&gt;</span>
+            <span class="nt">&lt;includes&gt;</span>
+                <span class="nt">&lt;include&gt;</span>**/*.xml<span class="nt">&lt;/include&gt;</span>
+                <span class="nt">&lt;include&gt;</span>**/*.properties<span class="nt">&lt;/include&gt;</span>
+            <span class="nt">&lt;/includes&gt;</span>
+        <span class="nt">&lt;/resource&gt;</span>
+    <span class="nt">&lt;/resources&gt;</span>
+<span class="nt">&lt;/build&gt;</span>
+</code></pre></div></div><h2 id="javawebmaven项目">JavaWebMaven项目</h2><p>不推荐：</p><p>创建时选择<code class="language-plaintext highlighter-rouge">org.apache.maven.archetypes:maven-archetype-webapp</code> 修改jdk版本,修改junit版本为4.12,清空<code class="language-plaintext highlighter-rouge">&lt;plugins&gt;</code>标签内默认插件,添加jetty或tomcat插件:</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- jetty插件 --&gt;</span>
+<span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.eclipse.jetty<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jetty-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>9.4.11.v20180605<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="c">&lt;!-- 热部署，每10s扫描一次 --&gt;</span>
+        <span class="nt">&lt;scanIntervalSeconds&gt;</span>10<span class="nt">&lt;/scanIntervalSeconds&gt;</span>
+        <span class="c">&lt;!-- 可指定当前项目的站点名 --&gt;</span>
+        <span class="nt">&lt;webApp&gt;</span>
+            <span class="nt">&lt;contextPath&gt;</span>/test<span class="nt">&lt;/contextPath&gt;</span>
+        <span class="nt">&lt;/webApp&gt;</span>
+        <span class="nt">&lt;httpConnector&gt;</span>
+            <span class="nt">&lt;port&gt;</span>8090<span class="nt">&lt;/port&gt;</span> <span class="c">&lt;!-- 端口号 --&gt;</span>
+        <span class="nt">&lt;/httpConnector&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+<span class="c">&lt;!-- Tomcat插件 --&gt;</span>
+<span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.tomcat.maven<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>tomcat7-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="c">&lt;!-- 此处为项目的上下文路径 --&gt;</span>
+        <span class="nt">&lt;path&gt;</span>/test<span class="nt">&lt;/path&gt;</span>
+        <span class="c">&lt;!--此处配置了访问的端口号 --&gt;</span>
+        <span class="nt">&lt;port&gt;</span>8081<span class="nt">&lt;/port&gt;</span>
+        <span class="c">&lt;!--字符集编码 --&gt;</span>
+        <span class="nt">&lt;uriEncoding&gt;</span>UTF-8<span class="nt">&lt;/uriEncoding&gt;</span>
+        <span class="c">&lt;!--服务器名称 --&gt;</span>
+        <span class="nt">&lt;server&gt;</span>tomcat7<span class="nt">&lt;/server&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></div></div><p>添加启动方式为Maven,启动命令为:jetty:run或tomcat7:run</p><p>推荐：直接新建Maven项目,不选择模板,通过项目结构添加web</p><h2 id="疑难杂症">疑难杂症</h2><h3 id="编译失败">编译失败</h3><div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>【ERROR】 不再支持源选项 1.5。请使用 1.6 或更高版本。
+【ERROR】 不再支持目标选项 1.5。请使用 1.6 或更高版本。
+</code></pre></div></div><p>这是因为没有配置jdk版本号，解决方法1:在pom文件中指定jdk版本</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;properties&gt;</span> 
+    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+    <span class="nt">&lt;maven.compiler.source&gt;</span>1.8<span class="nt">&lt;/maven.compiler.source&gt;</span>
+    <span class="nt">&lt;maven.compiler.target&gt;</span>1.8<span class="nt">&lt;/maven.compiler.target&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+</code></pre></div></div><p>解决方法2:直接在setting中指定</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;profiles&gt;</span>
+    <span class="nt">&lt;profile&gt;</span>
+        <span class="nt">&lt;id&gt;</span>JDK-1.8<span class="nt">&lt;/id&gt;</span>
+        <span class="nt">&lt;activation&gt;</span>
+            <span class="nt">&lt;activeByDefault&gt;</span>true<span class="nt">&lt;/activeByDefault&gt;</span>
+            <span class="nt">&lt;jdk&gt;</span>1.8<span class="nt">&lt;/jdk&gt;</span>
+        <span class="nt">&lt;/activation&gt;</span>
+        <span class="nt">&lt;properties&gt;</span>
+            <span class="nt">&lt;maven.compiler.source&gt;</span>1.8<span class="nt">&lt;/maven.compiler.source&gt;</span>
+            <span class="nt">&lt;maven.compiler.target&gt;</span>1.8<span class="nt">&lt;/maven.compiler.target&gt;</span>
+            <span class="nt">&lt;maven.compiler.compilerVersion&gt;</span>1.8<span class="nt">&lt;/maven.compiler.compilerVersion&gt;</span>
+        <span class="nt">&lt;/properties&gt;</span>
+    <span class="nt">&lt;/profile&gt;</span>
+<span class="nt">&lt;/profiles&gt;</span>
+</code></pre></div></div><h3 id="编码错误">编码错误</h3><p>没有使用UTF-8的格式，在pom.xml中添加：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;properties&gt;</span>
+    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+</code></pre></div></div><h3 id="修改本地仓库位置">修改本地仓库位置</h3><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">&lt;!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   |
+   | Default: ${user.home}/.m2/repository
+  &lt;localRepository&gt;/path/to/local/repo&lt;/localRepository&gt;
+  --&gt;</span>
+</code></pre></div></div><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2022/08/13/Maven/" target="_blank">https://acteds.github.io/2022/08/13/Maven/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1713750782', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
