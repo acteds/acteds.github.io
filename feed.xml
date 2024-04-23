@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-23T18:47:03+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="网络编程">网络编程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-23T19:03:51+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="网络编程">网络编程</h1>
 
 <p>常见服务和对应端口号</p>
 
@@ -234,7 +234,9 @@
 <span class="n">br</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
 </code></pre></div></div>
 
-<h2 id="socket概念">Socket概念</h2>
+<h2 id="tcp通信">TCP通信</h2>
+
+<h3 id="socket概念">Socket概念</h3>
 
 <p>一个Socket就是由IP地址和端口号（范围是0～65535）组成，可以把Socket简单理解为IP地址加端口号。端口号总是由操作系统分配，它是一个0～65535之间的数字，其中，小于1024的端口属于<strong>特权端口</strong>，需要管理员权限，大于1024的端口可以由任意用户的应用程序打开。</p>
 
@@ -252,21 +254,13 @@
 <p>创建<code class="language-plaintext highlighter-rouge">TCP Socket</code>需要的四个信息：</p>
 
 <ul>
-  <li>
-    <p>本地系统的<code class="language-plaintext highlighter-rouge">IP</code></p>
-  </li>
-  <li>
-    <p>本地应用程序使用的<code class="language-plaintext highlighter-rouge">TCP</code>端口号</p>
-  </li>
-  <li>
-    <p>远程系统的<code class="language-plaintext highlighter-rouge">IP</code></p>
-  </li>
-  <li>
-    <p>远程应用程序相应的<code class="language-plaintext highlighter-rouge">TCP</code>端口号</p>
-  </li>
+  <li>本地系统的<code class="language-plaintext highlighter-rouge">IP</code></li>
+  <li>本地应用程序使用的<code class="language-plaintext highlighter-rouge">TCP</code>端口号</li>
+  <li>远程系统的<code class="language-plaintext highlighter-rouge">IP</code></li>
+  <li>远程应用程序相应的<code class="language-plaintext highlighter-rouge">TCP</code>端口号</li>
 </ul>
 
-<h2 id="inetaddress类">InetAddress类</h2>
+<h3 id="inetaddress类">InetAddress类</h3>
 
 <p>要获取<code class="language-plaintext highlighter-rouge">InetAddress</code> 类实例，可以使用其静态方法：</p>
 
@@ -292,7 +286,7 @@
 
 <p>这些方法可用于获取主机名、IP 地址、测试主机的可达性等操作。</p>
 
-<h2 id="socket类">Socket类</h2>
+<h3 id="socket类">Socket类</h3>
 
 <p><strong>Socket类构造器</strong></p>
 
@@ -326,7 +320,7 @@
   <li><code class="language-plaintext highlighter-rouge">setTcpNoDelay(boolean on)</code>: 设置是否启用 Nagle 算法。</li>
 </ul>
 
-<h2 id="serversocket类">ServerSocket类</h2>
+<h3 id="serversocket类">ServerSocket类</h3>
 
 <p>ServerSocket类用于侦听一个客户端的Socket连接,如果没有连接,它将一直等待。</p>
 
@@ -369,7 +363,7 @@
 
 <p>这些方法可用于管理ServerSocket的状态并与客户端进行通信。</p>
 
-<h2 id="tcp使用示例">TCP使用示例</h2>
+<h3 id="tcp使用实例">TCP使用实例</h3>
 
 <p>服务端程序编写</p>
 
@@ -620,7 +614,7 @@
 
 <p>如果不调用<code class="language-plaintext highlighter-rouge">flush()</code>，很可能会发现，客户端和服务器都收不到数据，这并不是Java标准库的设计问题，而是以流的形式写入数据的时候，并不是一写入就立刻发送到网络，而是先写入内存缓冲区，直到缓冲区满了以后，才会一次性真正发送到网络，这样设计的目的是为了提高传输效率。如果缓冲区的数据很少，而又想强制把这些数据发送到网络，就必须调用<code class="language-plaintext highlighter-rouge">flush()</code>强制把缓冲区数据发送出去。</p>
 
-<h2 id="url与socket通信的区别">URL与Socket通信的区别</h2>
+<h3 id="url与socket通信的区别">URL与Socket通信的区别</h3>
 
 <p>利用<code class="language-plaintext highlighter-rouge">URL</code>进行通信与利用<code class="language-plaintext highlighter-rouge">socket</code>进行通信有许多相似之处。它们都是利用建立连接、获取流来进行通信。它们的区别在：</p>
 
@@ -641,39 +635,23 @@
 <p>其工作过程如下：</p>
 
 <ul>
-  <li>
-    <p>创建一个适当的要发送且注明收发人地址数据报；</p>
-  </li>
-  <li>
-    <p>为一个特定的应用程序建立一个传输端口来传送和接收数据包；</p>
-  </li>
-  <li>
-    <p>将数据报插入一个传输端口中进行传输；</p>
-  </li>
-  <li>
-    <p>等待接收来自于传输端口的一个数据报；</p>
-  </li>
-  <li>
-    <p>解码数据报以解开消息、接收者和其它信息；</p>
-  </li>
+  <li>创建一个适当的要发送且注明收发人地址数据报；</li>
+  <li>为一个特定的应用程序建立一个传输端口来传送和接收数据包；</li>
+  <li>将数据报插入一个传输端口中进行传输；</li>
+  <li>等待接收来自于传输端口的一个数据报；</li>
+  <li>解码数据报以解开消息、接收者和其它信息；</li>
 </ul>
 
-<h2 id="datagramsocket类">DatagramSocket类</h2>
+<h3 id="datagramsocket类">DatagramSocket类</h3>
 
 <p><code class="language-plaintext highlighter-rouge">DatagramSocket</code> 类是用于实现 UDP 协议的套接字。</p>
 
 <p>构造方法：</p>
 
 <ul>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DatagramSocket()</code>：通常用于客户端编程，它并没有特定监听的端囗，仅仅使用一个临时的。程序会让操作系统分配一个可用的端口。（使用这个构造方法时，系统会分配给他一个空闲的端口，但是也可以自己指定一个）</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DatagramSocket(int port)</code>：创建实例，并固定监听<code class="language-plaintext highlighter-rouge">Port</code>端口的报文。通常用于服务端</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DatagramSocket(int port,InetAddress localAddr)</code>：这是个非常有用的构建器，当一台机器拥有多于一个IP地址的时候，由它创建的实例仅仅接收来自<code class="language-plaintext highlighter-rouge">LocalAddr</code>的报文。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">DatagramSocket()</code>：通常用于客户端编程，它并没有特定监听的端囗，仅仅使用一个临时的。程序会让操作系统分配一个可用的端口。（使用这个构造方法时，系统会分配给他一个空闲的端口，但是也可以自己指定一个）</li>
+  <li><code class="language-plaintext highlighter-rouge">DatagramSocket(int port)</code>：创建实例，并固定监听<code class="language-plaintext highlighter-rouge">Port</code>端口的报文。通常用于服务端</li>
+  <li><code class="language-plaintext highlighter-rouge">DatagramSocket(int port,InetAddress localAddr)</code>：这是个非常有用的构建器，当一台机器拥有多于一个IP地址的时候，由它创建的实例仅仅接收来自<code class="language-plaintext highlighter-rouge">LocalAddr</code>的报文。</li>
 </ul>
 
 <p>方法：</p>
@@ -703,7 +681,7 @@
 
 <hr />
 
-<h2 id="datagrampacket类">DatagramPacket类</h2>
+<h3 id="datagrampacket类">DatagramPacket类</h3>
 
 <p><code class="language-plaintext highlighter-rouge">DatagramPacket</code> 类表示数据报包，它包含了要发送或接收的数据以及目标地址和端口号等信息。</p>
 
@@ -739,7 +717,7 @@
 
 <hr />
 
-<h2 id="udp使用实例">UDP使用实例</h2>
+<h3 id="udp使用实例">UDP使用实例</h3>
 
 <p>在服务器端，使用UDP也需要监听指定的端口。</p>
 
@@ -830,7 +808,7 @@
 <pre><code class="language-ascii">           ┌──────────┐    ┌──────────┐
            │PostOffice│    │PostOffice│     .───.
 ┌─────┐    ├──────────┤    ├──────────┤    (   ( )
-│═══ ░│───▶│ ┌─┐ ┌┐┌┐ │───▶│ ┌─┐ ┌┐┌┐ │───▶ `─┬─'
+│═══ ░│──▶│ ┌─┐ ┌┐┌┐  │──▶│ ┌─┐ ┌┐┌┐ │──▶ `─┬─'
 └─────┘    │ │░│ └┘└┘ │    │ │░│ └┘└┘ │       │
            └─┴─┴──────┘    └─┴─┴──────┘       │
 </code></pre>
@@ -842,7 +820,7 @@
 ┌───────┐    ├─────────┤    ├─────────┤    ├─────────┤    ┌───────┐
 │░░░░░░░│    │░░░░░░░░░│    │░░░░░░░░░│    │░░░░░░░░░│    │░░░░░░░│
 ├───────┤    ├─────────┤    ├─────────┤    ├─────────┤    ├───────┤
-│       │───▶│O ░░░░░░░│───▶│O ░░░░░░░│───▶│O ░░░░░░░│◀───│       │
+│       │──▶│O ░░░░░░░│───▶│O ░░░░░░░│───▶│O ░░░░░░░│◀──│       │
 └───────┘    └─────────┘    └─────────┘    └─────────┘    └───────┘
    MUA           MTA            MTA            MDA           MUA
 </code></pre>
@@ -914,36 +892,16 @@
 <p><code class="language-plaintext highlighter-rouge">Session</code>类是<code class="language-plaintext highlighter-rouge">JavaMail</code> API中表示邮件会话的类，它包含了创建和管理邮件的相关方法。以下是<code class="language-plaintext highlighter-rouge">Session</code>类的一些常用方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getSession(Properties props, Authenticator authenticator)</code>：静态方法，用于获取<code class="language-plaintext highlighter-rouge">Session</code>实例。需要传入<code class="language-plaintext highlighter-rouge">Properties</code>对象和<code class="language-plaintext highlighter-rouge">Authenticator</code>对象来配置会话属性和认证信息。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getTransport(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Transport</code>对象，用于发送邮件。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getStore(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Store</code>对象，用于接收邮件。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getDebug()</code>：获取调试模式的状态。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式的状态。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setProtocolForAddress(String type, String protocol)</code>：设置指定地址类型对应的协议。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setProvider(Provider provider)</code>：设置指定协议的提供者。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getProperty(String name)</code>：获取指定属性名的属性值。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setProperty(String name, String value)</code>：设置指定属性名的属性值。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">getDefaultInstance(Properties props, Authenticator authenticator)</code>：静态方法，获取默认的<code class="language-plaintext highlighter-rouge">Session</code>实例。</strong></p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">getSession(Properties props, Authenticator authenticator)</code>：静态方法，用于获取<code class="language-plaintext highlighter-rouge">Session</code>实例。需要传入<code class="language-plaintext highlighter-rouge">Properties</code>对象和<code class="language-plaintext highlighter-rouge">Authenticator</code>对象来配置会话属性和认证信息。</li>
+  <li><code class="language-plaintext highlighter-rouge">getTransport(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Transport</code>对象，用于发送邮件。</li>
+  <li><code class="language-plaintext highlighter-rouge">getStore(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Store</code>对象，用于接收邮件。</li>
+  <li><code class="language-plaintext highlighter-rouge">getDebug()</code>：获取调试模式的状态。</li>
+  <li><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式的状态。</li>
+  <li><code class="language-plaintext highlighter-rouge">setProtocolForAddress(String type, String protocol)</code>：设置指定地址类型对应的协议。</li>
+  <li><code class="language-plaintext highlighter-rouge">setProvider(Provider provider)</code>：设置指定协议的提供者。</li>
+  <li><code class="language-plaintext highlighter-rouge">getProperty(String name)</code>：获取指定属性名的属性值。</li>
+  <li><code class="language-plaintext highlighter-rouge">setProperty(String name, String value)</code>：设置指定属性名的属性值。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getDefaultInstance(Properties props, Authenticator authenticator)</code>：静态方法，获取默认的<code class="language-plaintext highlighter-rouge">Session</code>实例。</strong></li>
 </ol>
 
 <p>这些方法可以帮配置和管理邮件会话，以及创建<code class="language-plaintext highlighter-rouge">Transport</code>和<code class="language-plaintext highlighter-rouge">Store</code>对象来发送和接收邮件。</p>
@@ -1020,21 +978,11 @@
 <p><code class="language-plaintext highlighter-rouge">MimeMessage</code>是<code class="language-plaintext highlighter-rouge">Message</code>的实现类，用于创建多部分邮件消息。<code class="language-plaintext highlighter-rouge">MimeMessage</code>类提供了多个构造方法，主要用于创建不同类型的消息。以下是<code class="language-plaintext highlighter-rouge">MimeMessage</code>类的一些常用构造方法：</p>
 
 <ol>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">MimeMessage(Session session)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和输入流创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，从输入流中读取消息内容。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MimeMessage(MimeMessage source)</code>：使用另一个<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例创建新的<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，复制源消息的内容。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, byte[] content)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和字节数组创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，字节数组包含消息的原始内容。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is, InternetHeaders headers)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象、输入流和邮件头信息创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，用于处理邮件头和消息内容分开的情况。</p>
-  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">MimeMessage(Session session)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和输入流创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，从输入流中读取消息内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">MimeMessage(MimeMessage source)</code>：使用另一个<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例创建新的<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，复制源消息的内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, byte[] content)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和字节数组创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，字节数组包含消息的原始内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is, InternetHeaders headers)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象、输入流和邮件头信息创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，用于处理邮件头和消息内容分开的情况。</li>
 </ol>
 
 <hr />
@@ -1074,21 +1022,11 @@
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类用于表示<strong>电子邮件地址</strong>。它有几种不同的构造方法，可以根据需要选择使用：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
 </ol>
 
 <hr />
@@ -1096,33 +1034,15 @@
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类还提供了一些常用的方法，用于处理电子邮件地址的操作，例如：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">String getAddress()</code>：获取电子邮件地址的地址部分（不包括个人名称）。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">String getPersonal()</code>：获取电子邮件地址的个人名称部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void setAddress(String address)</code>：设置电子邮件地址的地址部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void setPersonal(String personal)</code>：设置电子邮件地址的个人名称部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">String getType()</code>：获取电子邮件地址的类型。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void setType(String type)</code>：设置电子邮件地址的类型。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean isGroup()</code>：检查该地址是否表示一个邮件组。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean isUnicodeSupported()</code>：检查是否支持 Unicode 编码。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">String toString()</code>：将 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 对象转换为字符串表示形式。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">String getAddress()</code>：获取电子邮件地址的地址部分（不包括个人名称）。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getPersonal()</code>：获取电子邮件地址的个人名称部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setAddress(String address)</code>：设置电子邮件地址的地址部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setPersonal(String personal)</code>：设置电子邮件地址的个人名称部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getType()</code>：获取电子邮件地址的类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setType(String type)</code>：设置电子邮件地址的类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isGroup()</code>：检查该地址是否表示一个邮件组。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isUnicodeSupported()</code>：检查是否支持 Unicode 编码。</li>
+  <li><code class="language-plaintext highlighter-rouge">String toString()</code>：将 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 对象转换为字符串表示形式。</li>
 </ol>
 
 <hr />
@@ -1130,45 +1050,19 @@
 <p><code class="language-plaintext highlighter-rouge">Transport</code> 类用于<strong>发送邮件消息</strong>。以下是 <code class="language-plaintext highlighter-rouge">Transport</code> 类的一些常用方法：</p>
 
 <ol>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">send(Message message)</code>：发送邮件消息。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">connect()</code>：连接到邮件服务器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">close()</code>：关闭连接。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">addConnectionListener(ConnectionListener listener)</code>：添加连接监听器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">removeConnectionListener(ConnectionListener listener)</code>：移除连接监听器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">addTransportListener(TransportListener listener)</code>：添加传输监听器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">removeTransportListener(TransportListener listener)</code>：移除传输监听器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">isConnected()</code>：检查是否已连接到邮件服务器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">isSSL()</code>：检查是否使用 SSL 连接。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">getURLName()</code>：获取连接的 URL 名称。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setURLName(URLName urlname)</code>：设置连接的 URL 名称。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式，用于输出调试信息。</p>
-  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">send(Message message)</code>：发送邮件消息。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">connect()</code>：连接到邮件服务器。</li>
+  <li><code class="language-plaintext highlighter-rouge">connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器。</li>
+  <li><code class="language-plaintext highlighter-rouge">close()</code>：关闭连接。</li>
+  <li><code class="language-plaintext highlighter-rouge">addConnectionListener(ConnectionListener listener)</code>：添加连接监听器。</li>
+  <li><code class="language-plaintext highlighter-rouge">removeConnectionListener(ConnectionListener listener)</code>：移除连接监听器。</li>
+  <li><code class="language-plaintext highlighter-rouge">addTransportListener(TransportListener listener)</code>：添加传输监听器。</li>
+  <li><code class="language-plaintext highlighter-rouge">removeTransportListener(TransportListener listener)</code>：移除传输监听器。</li>
+  <li><code class="language-plaintext highlighter-rouge">isConnected()</code>：检查是否已连接到邮件服务器。</li>
+  <li><code class="language-plaintext highlighter-rouge">isSSL()</code>：检查是否使用 SSL 连接。</li>
+  <li><code class="language-plaintext highlighter-rouge">getURLName()</code>：获取连接的 URL 名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">setURLName(URLName urlname)</code>：设置连接的 URL 名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式，用于输出调试信息。</li>
 </ol>
 
 <p>这些方法可以连接到邮件服务器并发送邮件消息。</p>
@@ -1199,7 +1093,7 @@
 
 <p>填入真实的地址，运行上述代码，可以在控制台看到<code class="language-plaintext highlighter-rouge">JavaMail</code>打印的调试信息：</p>
 
-<pre><code class="language-nohighlight">这是JavaMail打印的调试信息:
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>这是JavaMail打印的调试信息:
 DEBUG: setDebug: Jakarta Mail version 2.0.1
 DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Oracle]
 DEBUG SMTP: need username and password for authentication
@@ -1254,7 +1148,7 @@ DEBUG SMTP: message successfully delivered to mail server
 QUIT
 服务器响应221结束TCP连接:
 221 Bye
-</code></pre>
+</code></pre></div></div>
 
 <p>从上面的调试信息可以看出，SMTP协议是一个请求-响应协议，客户端总是发送命令，然后等待服务器响应。服务器响应总是以数字开头，后面的信息才是用于调试的文本。这些响应码已经被定义在<a href="https://www.iana.org/assignments/smtp-enhanced-status-codes/smtp-enhanced-status-codes.txt">SMTP协议</a>中了，查看具体的响应码就可以知道出错原因。</p>
 
@@ -1277,18 +1171,14 @@ QUIT
 <p><code class="language-plaintext highlighter-rouge">MimeMultipart</code> 是 <code class="language-plaintext highlighter-rouge">JavaMail</code> 中用于处理多部分 MIME 消息的类，<code class="language-plaintext highlighter-rouge">MimeMultipart</code> 类有多个构造方法，用于创建不同类型的多部分消息。以下是一些常用的构造方法：</p>
 
 <ol>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">MimeMultipart()</code>：创建一个空的多部分消息，默认使用混合 (<code class="language-plaintext highlighter-rouge">mixed</code>) 类型。</strong></p>
-  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">MimeMultipart()</code>：创建一个空的多部分消息，默认使用混合 (<code class="language-plaintext highlighter-rouge">mixed</code>) 类型。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">MimeMultipart(String subtype)</code>：根据指定的子类型创建一个空的多部分消息。常用的子类型包括 <code class="language-plaintext highlighter-rouge">related</code>（相关）、<code class="language-plaintext highlighter-rouge">alternative</code>（备选）、<code class="language-plaintext highlighter-rouge">mixed</code>（混合）等。例如：
     <ul>
       <li><code class="language-plaintext highlighter-rouge">MimeMultipart("related")</code>：创建一个相关类型的多部分消息。</li>
       <li><code class="language-plaintext highlighter-rouge">MimeMultipart("alternative")</code>：创建一个备选类型的多部分消息。</li>
     </ul>
   </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MimeMultipart(javax.mail.internet.ContentType contentType)</code>：根据指定的 <code class="language-plaintext highlighter-rouge">ContentType</code> 对象创建一个空的多部分消息。ContentType 对象可以包含主类型、子类型、参数等信息。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">MimeMultipart(javax.mail.internet.ContentType contentType)</code>：根据指定的 <code class="language-plaintext highlighter-rouge">ContentType</code> 对象创建一个空的多部分消息。ContentType 对象可以包含主类型、子类型、参数等信息。</li>
   <li><code class="language-plaintext highlighter-rouge">MimeMultipart(InputStream is)</code>：从输入流中读取内容，并根据读取的内容创建一个多部分消息。</li>
 </ol>
 
@@ -1332,9 +1222,7 @@ QUIT
   <li><strong><code class="language-plaintext highlighter-rouge">setFileName(String filename)</code>：设置文件名。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">setHeader(String name, String value)</code>：设置指定名称的头信息值。</li>
   <li><code class="language-plaintext highlighter-rouge">setText(String text)</code>：设置文本内容。</li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">updateHeaders()</code>：更新所有头信息。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">updateHeaders()</code>：更新所有头信息。</li>
   <li><code class="language-plaintext highlighter-rouge">addRecipient(Message.RecipientType type, Address address)</code>：添加接收者地址。</li>
   <li><code class="language-plaintext highlighter-rouge">getAllHeaders()</code>：获取所有头信息。</li>
   <li><code class="language-plaintext highlighter-rouge">getContentType()</code>：获取内容类型。</li>
@@ -1369,15 +1257,9 @@ QUIT
 <p><code class="language-plaintext highlighter-rouge">DataHandler</code> 的构造方法通常用于创建一个处理特定数据类型的数据处理程序对象。它有以下几个常用的构造方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DataHandler(Object obj, String mimeType)</code>：使用给定的对象和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于将 Java 对象转换为数据处理程序。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DataHandler(URL url)</code>：使用给定的 URL 创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理指向外部资源的 URL。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">DataHandler(DataSource dataSource)</code>：使用给定的数据源创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理数据源对象。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">DataHandler(Object obj, String mimeType)</code>：使用给定的对象和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于将 Java 对象转换为数据处理程序。</li>
+  <li><code class="language-plaintext highlighter-rouge">DataHandler(URL url)</code>：使用给定的 URL 创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理指向外部资源的 URL。</li>
+  <li><code class="language-plaintext highlighter-rouge">DataHandler(DataSource dataSource)</code>：使用给定的数据源创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理数据源对象。</li>
 </ol>
 
 <p>这些构造方法根据不同的数据类型和来源创建适当的数据处理程序对象，以便于在应用程序中处理和传输数据。</p>
@@ -1387,12 +1269,8 @@ QUIT
 <p><code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 的构造方法通常用于创建一个包含字节数组数据的数据源对象。它有以下两个常用的构造方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(byte[] data, String type)</code>：使用给定的字节数组和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(InputStream is, String type)</code>：使用给定的输入流和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(byte[] data, String type)</code>：使用给定的字节数组和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(InputStream is, String type)</code>：使用给定的输入流和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</li>
 </ol>
 
 <p>这些构造方法将字节数组或输入流与 MIME 类型关联起来，以便于处理和传输数据。</p>
@@ -1591,21 +1469,11 @@ QUIT
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类用于表示<strong>电子邮件地址</strong>。它有几种不同的构造方法，可以根据需要选择使用：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
 </ol>
 
 <hr />
