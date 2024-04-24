@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T12:55:21+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="网络编程">网络编程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T17:47:40+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<p>网络编程是指编写能够在计算机网络上进行通信的程序的过程。网络编程涉及使用各种协议和技术来实现不同类型的网络通信，例如传输文件、发送电子邮件、浏览网页等。在网络编程中，通常涉及两个或多个计算机之间的数据交换，这些计算机通过网络连接在一起。</p>
+
+<h1 id="网络编程">网络编程</h1>
 
 <p>常见服务和对应端口号</p>
 
@@ -49,199 +52,6 @@
   </tbody>
 </table>
 
-<h2 id="url类">URL类</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>构造方法</th>
-      <th>说明</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">public URL(String spec);</code></td>
-      <td><code class="language-plaintext highlighter-rouge">URL u1 =new URL("http://home.netscape.com/home/");</code></td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">public URL(URL context, String spec);</code></td>
-      <td><code class="language-plaintext highlighter-rouge">URL u2=new URL(u1, "welcome.html");</code></td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">public URL(String protocol, String host, String file);</code></td>
-      <td><code class="language-plaintext highlighter-rouge">URL u3=new URL("http", "www.sun.com",developers/index.html");</code></td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">public URL (String protocol, String host, int port, String file)</code></td>
-      <td><code class="language-plaintext highlighter-rouge">URL u4 = new URL("http", "www.sun.com", 80,"developers/index.html" );</code></td>
-    </tr>
-  </tbody>
-</table>
-
-<p><code class="language-plaintext highlighter-rouge">java.net.URL</code> 类提供了许多用于处理 URL 的方法。以下是一些常用方法：</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>方法</th>
-      <th>描述</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getProtocol()</code></td>
-      <td>获取 URL 的协议部分，例如 <code class="language-plaintext highlighter-rouge">http</code>、<code class="language-plaintext highlighter-rouge">https</code> 等。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getHost()</code></td>
-      <td>获取 URL 的主机名部分。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">int getPort()</code></td>
-      <td>获取 URL 的端口号部分。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getPath()</code></td>
-      <td>获取 URL 的路径部分。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getQuery()</code></td>
-      <td>获取 URL 的查询部分。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getFile()</code></td>
-      <td>获取 URL 的文件名部分。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">URLConnection openConnection()</code></td>
-      <td>打开与此 URL 的连接，并返回一个 URLConnection 对象。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">InputStream openStream()</code></td>
-      <td>打开与此 URL 的连接，并返回一个 InputStream 对象。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">boolean equals(Object obj)</code></td>
-      <td>比较此 URL 与指定对象是否相等。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String toString()</code></td>
-      <td>返回 URL 的字符串表示形式。</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="urlconnection抽象类">URLConnection抽象类</h2>
-
-<p><code class="language-plaintext highlighter-rouge">Uonnection</code>类支持<code class="language-plaintext highlighter-rouge">URL</code>连接的输入/输出流方式的通信,并可以获得<code class="language-plaintext highlighter-rouge">URL</code>对象资源的相关信息。它是所有应用程序和<code class="language-plaintext highlighter-rouge">URL</code>连接通信类的父类。可以用它来输出、输入对象所表示的Intenet上的资源。</p>
-
-<p>常用的方法：</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>方法</th>
-      <th>说明</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void connect()</code></td>
-      <td>打开与 URL 引用的资源的通信链接。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">Object getContent()</code></td>
-      <td>获取此 URLConnection 的内容。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getHeaderField(int n)</code></td>
-      <td>返回与此 URLConnection 的给定字段相关联的值。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">long getLastModified()</code></td>
-      <td>获取指定资源的最后修改日期。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">int getContentLength()</code></td>
-      <td>获取指定资源的内容长度。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getContentType()</code></td>
-      <td>获取指定资源的内容类型。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">InputStream getInputStream()</code></td>
-      <td>返回一个输入流，用于从连接到 URL 的资源读取数据。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">OutputStream getOutputStream()</code></td>
-      <td>返回一个输出流，用于将数据写入到与 URLConnection 关联的资源。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setDoOutput(boolean dooutput)</code></td>
-      <td>将 doOutput 字段的值设置为指定值。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setDoInput(boolean doinput)</code></td>
-      <td>将 doInput 字段的值设置为指定值。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setRequestMethod(String method)</code></td>
-      <td>设置请求方法。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setRequestProperty(String key, String value)</code></td>
-      <td>设置指定的请求头字段的值。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void addRequestProperty(String key, String value)</code></td>
-      <td>添加一个请求属性。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;String&gt;&gt; getHeaderFields()</code></td>
-      <td>返回与此 URLConnection 关联的请求头字段的映射。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">String getContentEncoding()</code></td>
-      <td>返回指定资源的内容编码。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">int getConnectTimeout()</code></td>
-      <td>返回与此 URLConnection 建立的连接的超时时间（以毫秒为单位）。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">int getReadTimeout()</code></td>
-      <td>返回从连接到 URLConnection 的资源的输入流读取数据的超时时间（以毫秒为单位）。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setConnectTimeout(int timeout)</code></td>
-      <td>设置与此 URLConnection 建立的连接的超时时间（以毫秒为单位）。</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">void setReadTimeout(int timeout)</code></td>
-      <td>设置从连接到 URLConnection 的资源的输入流读取数据的超时时间（以毫秒为单位）。</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>示例：将baidu内容重定向到Demo.txt</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">BufferedWriter</span> <span class="n">bw</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"Demo.txt"</span><span class="o">,</span> <span class="kc">true</span><span class="o">)));</span>
-<span class="no">URL</span> <span class="n">url2</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"https://www.baidu.com"</span><span class="o">);</span>
-<span class="nc">URLConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">url2</span><span class="o">.</span><span class="na">openConnection</span><span class="o">();</span>
-<span class="n">conn</span><span class="o">.</span><span class="na">setDoOutput</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-<span class="n">conn</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
-<span class="nc">String</span> <span class="n">nextLine</span><span class="o">;</span>
-<span class="nc">StringBuilder</span> <span class="n">sb</span><span class="o">=</span><span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
-<span class="nc">BufferedReader</span> <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
-<span class="k">while</span> <span class="o">((</span><span class="n">nextLine</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
-    <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">nextLine</span><span class="o">);</span>
-<span class="o">}</span>
-<span class="n">bw</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
-<span class="n">bw</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-<span class="n">br</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-</code></pre></div></div>
-
 <h2 id="tcp通信">TCP通信</h2>
 
 <h3 id="socket概念">Socket概念</h3>
@@ -270,58 +80,72 @@
 
 <h3 id="inetaddress类">InetAddress类</h3>
 
+<p><code class="language-plaintext highlighter-rouge">InetAddress</code> 类表示互联网协议 (IP) 地址。它提供了一种将 IP 地址和主机名之间进行转换的方法，以及创建原始套接字时所需的一些其他方法。<code class="language-plaintext highlighter-rouge">InetAddress</code> 类是用于网络编程的基础之一，可以用来确定主机的 IP 地址，或者将 IP 地址转换为主机名。</p>
+
 <p>要获取<code class="language-plaintext highlighter-rouge">InetAddress</code> 类实例，可以使用其静态方法：</p>
 
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">InetAddress getByAddress(byte[] addr)</code>：根据原始 IP 地址获取 InetAddress 实例。</li>
-  <li><code class="language-plaintext highlighter-rouge">InetAddress getByAddress(String host, byte[] addr)</code>：根据主机名和原始 IP 地址获取 InetAddress 实例。</li>
-  <li><code class="language-plaintext highlighter-rouge">InetAddress getByName(String host)</code>：根据主机名获取 InetAddress 实例。</li>
-  <li><code class="language-plaintext highlighter-rouge">InetAddress[] getAllByName(String host)</code>：根据主机名获取所有与之关联的 InetAddress 实例数组。</li>
-  <li><code class="language-plaintext highlighter-rouge">InetAddress getLocalHost()</code>：获取本地主机的 InetAddress 实例。</li>
-</ol>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress getByAddress(byte[] addr)</code>：根据原始 IP 地址获取 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress getByAddress(String host, byte[] addr)</code>：根据主机名和原始 IP 地址获取 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress getByName(String host)</code>：根据主机名获取 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress[] getAllByName(String host)</code>：根据主机名获取所有与之关联的 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例数组。</li>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress getLocalHost()</code>：获取本地主机的 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例。</li>
+</ul>
 
-<p>这些静态方法可用于创建 InetAddress 实例，以便与网络通信。</p>
+<p>这些静态方法可用于创建 <code class="language-plaintext highlighter-rouge">InetAddress</code> 实例，以便与网络通信。</p>
 
 <p><code class="language-plaintext highlighter-rouge">InetAddress</code> 类的常用方法包括：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">getHostName()</code>：获取主机名。</li>
   <li><code class="language-plaintext highlighter-rouge">getCanonicalHostName()</code>：获取主机的全限定域名。</li>
   <li><code class="language-plaintext highlighter-rouge">getHostAddress()</code>：获取主机的 IP 地址字符串。</li>
   <li><code class="language-plaintext highlighter-rouge">isReachable(int timeout)</code>：测试是否可以达到该主机，在指定的超时时间内。</li>
   <li><code class="language-plaintext highlighter-rouge">isReachable(NetworkInterface netif, int ttl, int timeout)</code>：测试是否可以达到该主机，使用指定的网络接口和生存时间（TTL）。</li>
-</ol>
+</ul>
 
 <p>这些方法可用于获取主机名、IP 地址、测试主机的可达性等操作。</p>
 
 <h3 id="socket类">Socket类</h3>
 
+<p><code class="language-plaintext highlighter-rouge">Socket</code> 类在 Java 网络编程中扮演着重要的角色，它用于实现网络中的两个端点之间的通信。一个 <code class="language-plaintext highlighter-rouge">Socket</code> 实例表示一个网络中的端点，它可以用于发送和接收数据。<code class="language-plaintext highlighter-rouge">Socket</code> 可以连接到远程主机的某个端口，以便与之通信，也可以监听本地端口，等待其他程序的连接请求。</p>
+
+<p>总的来说，<code class="language-plaintext highlighter-rouge">Socket</code> 的主要作用包括：</p>
+
+<ul>
+  <li><strong>建立连接：</strong> 客户端使用 <code class="language-plaintext highlighter-rouge">Socket</code> 来连接到服务器端的主机和端口，从而建立网络连接。</li>
+  <li><strong>发送和接收数据：</strong> 通过 <code class="language-plaintext highlighter-rouge">Socket</code> 实例，可以发送数据到连接的另一端，并从另一端接收数据。</li>
+  <li><strong>实现网络应用：</strong> <code class="language-plaintext highlighter-rouge">Socket</code> 是实现网络应用的基础，例如 Web 客户端、服务器、邮件客户端等。</li>
+</ul>
+
+<p>在 Java 中，<code class="language-plaintext highlighter-rouge">Socket</code> 类用于实现传输层的 TCP 协议，而 <code class="language-plaintext highlighter-rouge">ServerSocket</code> 则用于在服务器端监听和接受客户端连接请求。</p>
+
 <p><strong>Socket类构造器</strong></p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">Socket()</code>: 创建一个未连接的Socket对象。</li>
-  <li><code class="language-plaintext highlighter-rouge">Socket(InetAddress address, int port)</code>: 创建一个Socket对象，并将其连接到指定的远程地址和端口号。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Socket(InetAddress address, int port)</code>: 创建一个Socket对象，并将其连接到指定的远程地址和端口号。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">Socket(InetAddress address, int port, boolean stream)</code>: 创建一个Socket对象，并将其连接到指定的远程地址和端口号，指定是否使用流模式。</li>
   <li><code class="language-plaintext highlighter-rouge">Socket(InetAddress address, int port, InetAddress localAddr, int localPort)</code>: 创建一个Socket对象，并将其连接到指定的远程地址和端口号，并绑定到指定的本地地址和端口号。</li>
   <li><code class="language-plaintext highlighter-rouge">Socket(String host, int port)</code>: 创建一个Socket对象，并将其连接到指定的远程主机名和端口号。</li>
   <li><code class="language-plaintext highlighter-rouge">Socket(String host, int port, boolean stream)</code>: 创建一个Socket对象，并将其连接到指定的远程主机名和端口号，指定是否使用流模式。</li>
   <li><code class="language-plaintext highlighter-rouge">Socket(String host, int port, InetAddress localAddr, int localPort)</code>: 创建一个Socket对象，并将其连接到指定的远程主机名和端口号，并绑定到指定的本地地址和端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port)</code>: 创建一个ServerSocket对象，绑定到指定的端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port, int count)</code>: 创建一个ServerSocket对象，绑定到指定的端口号，并指定等待连接的队列长度。</li>
+  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port)</code>: 创建一个<code class="language-plaintext highlighter-rouge">ServerSocket</code>对象，绑定到指定的端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port, int count)</code>: 创建一个<code class="language-plaintext highlighter-rouge">ServerSocket</code>对象，绑定到指定的端口号，并指定等待连接的队列长度。</li>
 </ul>
 
 <p><strong>Socket的常用方法</strong></p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">connect(SocketAddress endpoint)</code>: 连接到指定的远程端点。</li>
-  <li><code class="language-plaintext highlighter-rouge">getInputStream()</code>: 返回此套接字的输入流。</li>
-  <li><code class="language-plaintext highlighter-rouge">getOutputStream()</code>: 返回此套接字的输出流。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getInputStream()</code>: 返回此套接字的输入流。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getOutputStream()</code>: 返回此套接字的输出流。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">close()</code>: 关闭套接字连接。</li>
   <li><code class="language-plaintext highlighter-rouge">isConnected()</code>: 返回套接字连接的状态。</li>
   <li><code class="language-plaintext highlighter-rouge">isClosed()</code>: 返回套接字是否已关闭。</li>
-  <li><code class="language-plaintext highlighter-rouge">getInetAddress()</code>: 获取远程连接的IP地址。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getInetAddress()</code>: 获取远程连接的IP地址。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">getLocalAddress()</code>: 获取本地连接的IP地址。</li>
-  <li><code class="language-plaintext highlighter-rouge">getPort()</code>: 获取远程连接的端口号。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getPort()</code>: 获取远程连接的端口号。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">getLocalPort()</code>: 获取本地连接的端口号。</li>
   <li><code class="language-plaintext highlighter-rouge">setSoTimeout(int timeout)</code>: 设置套接字的读取超时时间。</li>
   <li><code class="language-plaintext highlighter-rouge">setKeepAlive(boolean on)</code>: 设置套接字是否在空闲时保持连接。</li>
@@ -330,37 +154,30 @@
 
 <h3 id="serversocket类">ServerSocket类</h3>
 
-<p>ServerSocket类用于侦听一个客户端的Socket连接,如果没有连接,它将一直等待。</p>
+<p><code class="language-plaintext highlighter-rouge">ServerSocket</code> 类是 Java 网络编程中用于创建服务器端的类。通过 <code class="language-plaintext highlighter-rouge">ServerSocket</code>，可以监听指定的端口，等待客户端的连接请求，并在建立连接后与客户端进行通信。</p>
 
-<p><strong>ServerSocket构造器</strong></p>
+<p>一般来说，使用 <code class="language-plaintext highlighter-rouge">ServerSocket</code> 的基本流程如下：</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>构造方法</th>
-      <th>说明</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">ServerSocket(int port)</code></td>
-      <td>用指定的端口<code class="language-plaintext highlighter-rouge">port</code>来创建一个侦听<code class="language-plaintext highlighter-rouge">Socket</code></td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">ServerSocket(int port,int backlog)</code></td>
-      <td>加上一个用来改变连接队列长度的参数<code class="language-plaintext highlighter-rouge">backlog</code>.</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">ServerSocket(int port,int backlog,lnetAddress localAddr)</code></td>
-      <td>在机器存在多个<code class="language-plaintext highlighter-rouge">IP</code>地址的情况下,允许通过<code class="language-plaintext highlighter-rouge">localAddr</code>这个参数来指定侦听的<code class="language-plaintext highlighter-rouge">IP</code>地址。</td>
-    </tr>
-  </tbody>
-</table>
+<ol>
+  <li>创建一个 <code class="language-plaintext highlighter-rouge">ServerSocket</code> 实例，并指定服务器监听的端口。</li>
+  <li>调用 <code class="language-plaintext highlighter-rouge">ServerSocket</code> 的 <code class="language-plaintext highlighter-rouge">accept()</code> 方法，该方法会阻塞程序，直到有客户端连接请求到达。</li>
+  <li>一旦有连接请求到达，<code class="language-plaintext highlighter-rouge">accept()</code> 方法会返回一个 <code class="language-plaintext highlighter-rouge">Socket</code> 实例，代表与客户端的连接。</li>
+  <li>使用返回的 <code class="language-plaintext highlighter-rouge">Socket</code> 实例与客户端进行通信，可以发送和接收数据。</li>
+  <li>当通信结束后，关闭 <code class="language-plaintext highlighter-rouge">Socket</code> 实例，并继续等待下一个连接请求。</li>
+</ol>
 
-<p><strong>ServerSocket类的常用方法包括</strong></p>
+<p><strong>构造器：</strong></p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">accept()</code>: 监听并接受到此套接字的连接。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">ServerSocket(int port)</code>：用指定的端口<code class="language-plaintext highlighter-rouge">port</code>来创建一个侦听<code class="language-plaintext highlighter-rouge">Socket</code>。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port, int backlog)</code>：加上一个用来改变连接队列长度的参数<code class="language-plaintext highlighter-rouge">backlog</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">ServerSocket(int port, int backlog, InetAddress localAddr)</code>：在机器存在多个<code class="language-plaintext highlighter-rouge">IP</code>地址的情况下，允许通过<code class="language-plaintext highlighter-rouge">localAddr</code>这个参数来指定侦听的<code class="language-plaintext highlighter-rouge">IP</code>地址。</li>
+</ul>
+
+<p><strong>常用方法：</strong></p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">accept()</code>: 监听并接受到此套接字的连接。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">bind(SocketAddress endpoint)</code>: 将套接字绑定到特定的本地地址和端口。</li>
   <li><code class="language-plaintext highlighter-rouge">close()</code>: 关闭套接字。</li>
   <li><code class="language-plaintext highlighter-rouge">getInetAddress()</code>: 返回此套接字的本地地址。</li>
@@ -369,7 +186,7 @@
   <li><code class="language-plaintext highlighter-rouge">getSoTimeout()</code>: 获取通过<code class="language-plaintext highlighter-rouge">accept()</code>方法接受客户端连接的超时时间。</li>
 </ul>
 
-<p>这些方法可用于管理ServerSocket的状态并与客户端进行通信。</p>
+<p>这些方法可用于管理<code class="language-plaintext highlighter-rouge">ServerSocket</code>的状态并与客户端进行通信。</p>
 
 <h3 id="tcp使用实例">TCP使用实例</h3>
 
@@ -622,7 +439,7 @@
 
 <p>如果不调用<code class="language-plaintext highlighter-rouge">flush()</code>，很可能会发现，客户端和服务器都收不到数据，这并不是Java标准库的设计问题，而是以流的形式写入数据的时候，并不是一写入就立刻发送到网络，而是先写入内存缓冲区，直到缓冲区满了以后，才会一次性真正发送到网络，这样设计的目的是为了提高传输效率。如果缓冲区的数据很少，而又想强制把这些数据发送到网络，就必须调用<code class="language-plaintext highlighter-rouge">flush()</code>强制把缓冲区数据发送出去。</p>
 
-<h3 id="url与socket通信的区别">URL与Socket通信的区别</h3>
+<p><strong>URL与Socket通信的区别</strong></p>
 
 <p>利用<code class="language-plaintext highlighter-rouge">URL</code>进行通信与利用<code class="language-plaintext highlighter-rouge">socket</code>进行通信有许多相似之处。它们都是利用建立连接、获取流来进行通信。它们的区别在：</p>
 
@@ -658,16 +475,16 @@
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">DatagramSocket()</code>：通常用于客户端编程，它并没有特定监听的端囗，仅仅使用一个临时的。程序会让操作系统分配一个可用的端口。（使用这个构造方法时，系统会分配给他一个空闲的端口，但是也可以自己指定一个）</li>
-  <li><code class="language-plaintext highlighter-rouge">DatagramSocket(int port)</code>：创建实例，并固定监听<code class="language-plaintext highlighter-rouge">Port</code>端口的报文。通常用于服务端</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">DatagramSocket(int port)</code>：创建实例，并固定监听<code class="language-plaintext highlighter-rouge">Port</code>端口的报文。通常用于服务端</strong></li>
   <li><code class="language-plaintext highlighter-rouge">DatagramSocket(int port,InetAddress localAddr)</code>：这是个非常有用的构建器，当一台机器拥有多于一个IP地址的时候，由它创建的实例仅仅接收来自<code class="language-plaintext highlighter-rouge">LocalAddr</code>的报文。</li>
 </ul>
 
 <p>方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">void bind(SocketAddress addr)</code>：将套接字绑定到指定的本地地址和端口号。</li>
   <li><code class="language-plaintext highlighter-rouge">void close()</code>：关闭套接字。</li>
-  <li><code class="language-plaintext highlighter-rouge">void connect(InetAddress address, int port)</code>：将套接字连接到指定的远程主机和端口号。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void connect(InetAddress address, int port)</code>：将套接字连接到指定的远程主机和端口号。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">void disconnect()</code>：断开与远程主机的连接。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean getBroadcast()</code>：获取套接字的广播状态。</li>
   <li><code class="language-plaintext highlighter-rouge">Object getOption(int optID)</code>：获取套接字选项的当前值。</li>
@@ -678,14 +495,14 @@
   <li><code class="language-plaintext highlighter-rouge">SocketAddress getRemoteSocketAddress()</code>：获取套接字连接的远程地址。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean isBound()</code>：检查套接字是否绑定到本地地址。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean isConnected()</code>：检查套接字是否连接到远程主机。</li>
-  <li><code class="language-plaintext highlighter-rouge">void receive(DatagramPacket p)</code>：接收一个数据包。</li>
-  <li><code class="language-plaintext highlighter-rouge">void send(DatagramPacket p)</code>：发送一个数据包。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void receive(DatagramPacket p)</code>：接收一个数据包。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void send(DatagramPacket p)</code>：发送一个数据包。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">void setBroadcast(boolean on)</code>：设置套接字的广播状态。</li>
   <li><code class="language-plaintext highlighter-rouge">void setOption(int optID, Object value)</code>：设置套接字选项的值。</li>
-  <li><code class="language-plaintext highlighter-rouge">void setSoTimeout(int timeout)</code>：设置套接字的超时时间（接收数据时的超时时间）。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setSoTimeout(int timeout)</code>：设置套接字的超时时间（接收数据时的超时时间）。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">int getSoTimeout()</code>：获取套接字的超时时间。</li>
   <li><code class="language-plaintext highlighter-rouge">String toString()</code>：返回套接字的字符串表示形式。</li>
-</ol>
+</ul>
 
 <hr />
 
@@ -696,29 +513,40 @@
 <p>常用构造方法：</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length)</code>: 创建一个数据报包，用于发送长度为 <code class="language-plaintext highlighter-rouge">length</code> 的数据，数据存储在 <code class="language-plaintext highlighter-rouge">buf</code> 中。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length)</code>: 创建一个数据报包，用于发送长度为 <code class="language-plaintext highlighter-rouge">length</code> 的数据，数据存储在 <code class="language-plaintext highlighter-rouge">buf</code> 中。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length, InetAddress address, int port)</code>: 创建一个数据报包，用于发送长度为 <code class="language-plaintext highlighter-rouge">length</code> 的数据到指定的地址和端口。</li>
   <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int offset, int length)</code>: 创建一个数据报包，用于发送从 <code class="language-plaintext highlighter-rouge">buf</code> 的偏移量 <code class="language-plaintext highlighter-rouge">offset</code> 开始的 <code class="language-plaintext highlighter-rouge">length</code> 长度的数据。</li>
-  <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int offset, int length, InetAddress address, int port)</code>: 创建一个数据报包，用于发送从 <code class="language-plaintext highlighter-rouge">buf</code> 的偏移量 <code class="language-plaintext highlighter-rouge">offset</code> 开始的 <code class="language-plaintext highlighter-rouge">length</code> 长度的数据到指定的地址和端口。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int offset, int length, InetAddress address, int port)</code>: 创建一个数据报包，用于发送从 <code class="language-plaintext highlighter-rouge">buf</code> 的偏移量 <code class="language-plaintext highlighter-rouge">offset</code> 开始的 <code class="language-plaintext highlighter-rouge">length</code> 长度的数据到指定的地址和端口。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length, SocketAddress address)</code>: 创建一个数据报包，用于发送长度为 <code class="language-plaintext highlighter-rouge">length</code> 的数据到指定的地址和端口。</li>
   <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int offset, int length, SocketAddress address)</code>: 创建一个数据报包，用于发送从 <code class="language-plaintext highlighter-rouge">buf</code> 的偏移量 <code class="language-plaintext highlighter-rouge">offset</code> 开始的 <code class="language-plaintext highlighter-rouge">length</code> 长度的数据到指定的地址和端口。</li>
 </ul>
 
 <p>这些构造方法可以用于创建不同类型的数据报包，以便发送或接收数据。</p>
 
-<p><code class="language-plaintext highlighter-rouge">DatagramPacket</code> 类的常用方法包括：</p>
+<p>方法：</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">getData()</code>: 返回数据报包中的数据字节数组。</li>
-  <li><code class="language-plaintext highlighter-rouge">getLength()</code>: 返回数据报包中数据的长度。</li>
-  <li><code class="language-plaintext highlighter-rouge">getAddress()</code>: 返回数据报包的目标地址。</li>
-  <li><code class="language-plaintext highlighter-rouge">getPort()</code>: 返回数据报包的目标端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">setData(byte[] buf)</code>: 设置数据报包的数据字节数组。</li>
-  <li><code class="language-plaintext highlighter-rouge">setLength(int length)</code>: 设置数据报包的数据长度。</li>
-  <li><code class="language-plaintext highlighter-rouge">setAddress(InetAddress address)</code>: 设置数据报包的目标地址。</li>
-  <li><code class="language-plaintext highlighter-rouge">setPort(int port)</code>: 设置数据报包的目标端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">getSocketAddress()</code>: 返回数据报包的套接字地址。</li>
-  <li><code class="language-plaintext highlighter-rouge">setSocketAddress(SocketAddress address)</code>: 设置数据报包的套接字地址。</li>
+  <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length)</code>：使用指定的缓冲区和长度创建一个 DatagramPacket，用于接收数据。</li>
+  <li><code class="language-plaintext highlighter-rouge">DatagramPacket(byte[] buf, int length, InetAddress address, int port)</code>：使用指定的缓冲区、长度、远程主机地址和端口号创建一个 DatagramPacket，用于发送数据。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">byte[] getData()</code>：返回数据缓冲区。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setData(byte[] buf)</code>：设置数据缓冲区。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">int getLength()</code>：返回数据缓冲区的长度。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">void setLength(int length)</code>：设置数据缓冲区的长度。</li>
+  <li><code class="language-plaintext highlighter-rouge">InetAddress getAddress()</code>：返回远程主机的地址。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setAddress(InetAddress address)</code>：设置远程主机的地址。</li>
+  <li><code class="language-plaintext highlighter-rouge">int getPort()</code>：返回远程主机的端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setPort(int port)</code>：设置远程主机的端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">SocketAddress getSocketAddress()</code>：返回远程主机的地址和端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setSocketAddress(SocketAddress address)</code>：设置远程主机的地址和端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setData(byte[] buf, int offset, int length)</code>：设置数据缓冲区的一部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setData(ByteBuffer buf)</code>：设置数据缓冲区。</li>
+  <li><code class="language-plaintext highlighter-rouge">ByteBuffer getData()</code>：返回数据缓冲区。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">int getOffset()</code>：返回数据缓冲区的偏移量。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">void setOffset(int offset)</code>：设置数据缓冲区的偏移量。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setLength(int length, InetAddress address, int port)</code>：设置数据缓冲区的长度、远程主机地址和端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setAddress(InetAddress address, int port)</code>：设置远程主机的地址和端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">void setAddress(SocketAddress address)</code>：设置远程主机的地址和端口号。</li>
+  <li><code class="language-plaintext highlighter-rouge">SocketAddress getLocalSocketAddress()</code>：返回本地主机的地址和端口号。</li>
 </ul>
 
 <p>这些方法可以在数据报包中读取和设置数据，以及获取目标地址和端口号等信息。</p>
@@ -901,18 +729,18 @@
 
 <p><code class="language-plaintext highlighter-rouge">Session</code>类是<code class="language-plaintext highlighter-rouge">JavaMail</code> API中表示邮件会话的类，它包含了创建和管理邮件的相关方法。以下是<code class="language-plaintext highlighter-rouge">Session</code>类的一些常用方法：</p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">getSession(Properties props, Authenticator authenticator)</code>：静态方法，用于获取<code class="language-plaintext highlighter-rouge">Session</code>实例。需要传入<code class="language-plaintext highlighter-rouge">Properties</code>对象和<code class="language-plaintext highlighter-rouge">Authenticator</code>对象来配置会话属性和认证信息。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">getTransport(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Transport</code>对象，用于发送邮件。</li>
   <li><code class="language-plaintext highlighter-rouge">getStore(String protocol)</code>：获取指定协议的<code class="language-plaintext highlighter-rouge">Store</code>对象，用于接收邮件。</li>
   <li><code class="language-plaintext highlighter-rouge">getDebug()</code>：获取调试模式的状态。</li>
-  <li><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式的状态。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式的状态。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">setProtocolForAddress(String type, String protocol)</code>：设置指定地址类型对应的协议。</li>
   <li><code class="language-plaintext highlighter-rouge">setProvider(Provider provider)</code>：设置指定协议的提供者。</li>
   <li><code class="language-plaintext highlighter-rouge">getProperty(String name)</code>：获取指定属性名的属性值。</li>
   <li><code class="language-plaintext highlighter-rouge">setProperty(String name, String value)</code>：设置指定属性名的属性值。</li>
   <li><code class="language-plaintext highlighter-rouge">getDefaultInstance(Properties props, Authenticator authenticator)</code>：静态方法，获取默认的<code class="language-plaintext highlighter-rouge">Session</code>实例。</li>
-</ol>
+</ul>
 
 <p>这些方法可以帮配置和管理邮件会话，以及创建<code class="language-plaintext highlighter-rouge">Transport</code>和<code class="language-plaintext highlighter-rouge">Store</code>对象来发送和接收邮件。</p>
 
@@ -921,19 +749,26 @@
 <p><code class="language-plaintext highlighter-rouge">Session</code> 可以配置的一些常见属性包括：</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.host</code>: SMTP 服务器主机名。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.port</code>: SMTP 服务器端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.auth</code>: 指定是否需要进行用户认证，通常为 <code class="language-plaintext highlighter-rouge">"true"</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">mail.smtp.host</code>: SMTP 服务器主机名。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">mail.smtp.port</code>: SMTP 服务器端口号。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">mail.smtp.auth</code>: 指定是否需要进行用户认证，通常为 <code class="language-plaintext highlighter-rouge">"true"</code>。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">mail.smtp.starttls.enable</code>: 指定是否启用 STARTTLS 加密，通常为 <code class="language-plaintext highlighter-rouge">"true"</code>。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.socketFactory.class</code>: 指定用于创建 SMTP 套接字的 <code class="language-plaintext highlighter-rouge">SocketFactory</code> 类的名称。</li>
   <li><code class="language-plaintext highlighter-rouge">mail.smtp.socketFactory.fallback</code>: 指定是否在连接失败时回退到普通套接字，通常为 <code class="language-plaintext highlighter-rouge">"false"</code>。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.socketFactory.port</code>: 指定用于创建 SMTP 套接字的端口号。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.connectiontimeout</code>: 指定连接超时时间。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.timeout</code>: 指定读取超时时间。</li>
-  <li><code class="language-plaintext highlighter-rouge">mail.smtp.writetimeout</code>: 指定写入超时时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.socketFactory.port</code>: 指定用于创建 SMTP 套接字的端口号，通常与 <code class="language-plaintext highlighter-rouge">mail.smtp.port</code> 相同。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.connectiontimeout</code>: 设置连接超时时间，以毫秒为单位。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.timeout</code>: 设置读取超时时间，以毫秒为单位。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.writetimeout</code>: 设置写入超时时间，以毫秒为单位。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.from</code>：设置发件人地址。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.user</code>：设置 SMTP 认证的用户名。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.password</code>：设置 SMTP 认证的密码。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">mail.smtp.socketFactory.class</code>: 指定用于创建 SMTP 套接字的 <code class="language-plaintext highlighter-rouge">SocketFactory</code> 类的名称， 可以设置为 <code class="language-plaintext highlighter-rouge">javax.net.ssl.SSLSocketFactory</code>，用于创建 SSL 套接字。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">mail.smtp.ssl.enable</code>：指定是否启用 SSL 安全连接。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.ssl.trust</code>：指定信任的 SSL 服务器主机名列表。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.ssl.protocols</code>：指定使用的 SSL 协议列表。</li>
+  <li><code class="language-plaintext highlighter-rouge">mail.smtp.ssl.ciphersuites</code>：指定使用的 SSL 加密套件列表。</li>
 </ul>
 
-<p>这些属性可以用于配置 <code class="language-plaintext highlighter-rouge">Session</code> 实例，以控制邮件发送的行为和连接设置。</p>
+<p>中间的协议名改成对应的协议。这些属性可以用于配置 <code class="language-plaintext highlighter-rouge">Session</code> 实例，以控制邮件发送的行为和连接设置。</p>
 
 <hr />
 
@@ -987,20 +822,24 @@
 
 <p><code class="language-plaintext highlighter-rouge">MimeMessage</code>是<code class="language-plaintext highlighter-rouge">Message</code>的实现类，用于创建多部分邮件消息。<code class="language-plaintext highlighter-rouge">MimeMessage</code>类提供了多个构造方法，主要用于创建不同类型的消息。以下是<code class="language-plaintext highlighter-rouge">MimeMessage</code>类的一些常用构造方法：</p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">MimeMessage(Session session)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和输入流创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，从输入流中读取消息内容。</li>
   <li><code class="language-plaintext highlighter-rouge">MimeMessage(MimeMessage source)</code>：使用另一个<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例创建新的<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，复制源消息的内容。</li>
   <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, byte[] content)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象和字节数组创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，字节数组包含消息的原始内容。</li>
   <li><code class="language-plaintext highlighter-rouge">MimeMessage(Session session, InputStream is, InternetHeaders headers)</code>：使用指定的<code class="language-plaintext highlighter-rouge">Session</code>对象、输入流和邮件头信息创建<code class="language-plaintext highlighter-rouge">MimeMessage</code>实例，用于处理邮件头和消息内容分开的情况。</li>
-</ol>
+</ul>
 
 <hr />
 
 <p><code class="language-plaintext highlighter-rouge">MimeMessage</code>类提供了许多方法，用于<strong>设置和获取邮件消息的各种属性和内容</strong>。以下是<code class="language-plaintext highlighter-rouge">MimeMessage</code>类的一些常用方法：</p>
 
-<ol>
-  <li><strong><code class="language-plaintext highlighter-rouge">setSubject(String subject)</code>：设置邮件主题。</strong></li>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">setSubject(String subject)</code>：设置邮件的主题为指定的字符串。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">setSubject(String subject, String charset)</code>：设置邮件的主题为指定的字符串，并指定字符集。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">setSubject(MimeMessage.RecipientType type, String subject)</code>：设置邮件的特定类型（如收件人、抄送人、密送人）的主题。</li>
+  <li><code class="language-plaintext highlighter-rouge">setSubject(String subject, String charset, String encoding)</code>：设置邮件的主题为指定的字符串，并指定字符集和编码方式。</li>
+  <li><code class="language-plaintext highlighter-rouge">setSubject(String subject, String charset, String encoding, MimeUtility.EncodedWord.Encoder encoder)</code>：设置邮件的主题为指定的字符串，并指定字符集、编码方式和编码器。</li>
   <li><strong><code class="language-plaintext highlighter-rouge">setFrom(Address address)</code>：设置发件人地址。</strong></li>
   <li><strong><code class="language-plaintext highlighter-rouge">setRecipient(Message.RecipientType type, Address address)</code>：设置收件人、抄送人或密送人地址。</strong>
     <ul>
@@ -1010,7 +849,7 @@
     </ul>
   </li>
   <li><strong><code class="language-plaintext highlighter-rouge">setContent(Object content, String contentType)</code>：设置邮件内容和内容类型。内容可以是字符串、字节数组或<code class="language-plaintext highlighter-rouge">Multipart</code>对象。</strong></li>
-  <li><strong><code class="language-plaintext highlighter-rouge">setText(String text)</code>：设置纯文本邮件的内容。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">setText(String text)</code>：设置纯文本邮件的内容。可以指定第二个参数文字编码，还可以指定第三个参数设置消息的子类型html或plain：</strong></li>
   <li><code class="language-plaintext highlighter-rouge">setSentDate(Date date)</code>：设置邮件的发送日期。</li>
   <li><code class="language-plaintext highlighter-rouge">addHeader(String name, String value)</code>：添加邮件头。</li>
   <li><code class="language-plaintext highlighter-rouge">saveChanges()</code>：保存对邮件的更改。</li>
@@ -1023,7 +862,7 @@
   <li><code class="language-plaintext highlighter-rouge">getHeader(String name)</code>：根据名称获取邮件头的值。</li>
   <li><code class="language-plaintext highlighter-rouge">removeHeader(String name)</code>：移除指定名称的邮件头。</li>
   <li><code class="language-plaintext highlighter-rouge">getContentType()</code>：获取邮件内容类型。</li>
-</ol>
+</ul>
 
 <p>这些方法可以对邮件消息进行各种操作，包括设置和获取邮件的属性、内容，以及添加和移除邮件头等。</p>
 
@@ -1031,19 +870,19 @@
 
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类用于表示<strong>电子邮件地址</strong>。它有几种不同的构造方法，可以根据需要选择使用：</p>
 
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
   <li><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
-</ol>
+</ul>
 
 <hr />
 
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类还提供了一些常用的方法，用于处理电子邮件地址的操作，例如：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">String getAddress()</code>：获取电子邮件地址的地址部分（不包括个人名称）。</li>
   <li><code class="language-plaintext highlighter-rouge">String getPersonal()</code>：获取电子邮件地址的个人名称部分。</li>
   <li><code class="language-plaintext highlighter-rouge">void setAddress(String address)</code>：设置电子邮件地址的地址部分。</li>
@@ -1053,13 +892,13 @@
   <li><code class="language-plaintext highlighter-rouge">boolean isGroup()</code>：检查该地址是否表示一个邮件组。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean isUnicodeSupported()</code>：检查是否支持 Unicode 编码。</li>
   <li><code class="language-plaintext highlighter-rouge">String toString()</code>：将 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 对象转换为字符串表示形式。</li>
-</ol>
+</ul>
 
 <hr />
 
 <p><code class="language-plaintext highlighter-rouge">Transport</code> 类用于<strong>发送邮件消息</strong>。以下是 <code class="language-plaintext highlighter-rouge">Transport</code> 类的一些常用方法：</p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">send(Message message)</code>：发送邮件消息。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">connect()</code>：连接到邮件服务器。</li>
   <li><code class="language-plaintext highlighter-rouge">connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器。</li>
@@ -1073,7 +912,7 @@
   <li><code class="language-plaintext highlighter-rouge">getURLName()</code>：获取连接的 URL 名称。</li>
   <li><code class="language-plaintext highlighter-rouge">setURLName(URLName urlname)</code>：设置连接的 URL 名称。</li>
   <li><code class="language-plaintext highlighter-rouge">setDebug(boolean debug)</code>：设置调试模式，用于输出调试信息。</li>
-</ol>
+</ul>
 
 <p>这些方法可以连接到邮件服务器并发送邮件消息。</p>
 
@@ -1099,7 +938,7 @@
 <span class="nc">Transport</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
 </code></pre></div></div>
 
-<p>绝大多数邮件服务器要求发送方地址和登录用户名必须一致，否则发送将失败。</p>
+<p>绝大多数邮件服务器要求<strong>发送方地址和登录用户名必须一致</strong>，否则发送将失败。</p>
 
 <p>填入真实的地址，运行上述代码，可以在控制台看到<code class="language-plaintext highlighter-rouge">JavaMail</code>打印的调试信息：</p>
 
@@ -1180,7 +1019,7 @@ QUIT
 
 <p><code class="language-plaintext highlighter-rouge">MimeMultipart</code> 是 <code class="language-plaintext highlighter-rouge">JavaMail</code> 中用于处理多部分 MIME 消息的类，<code class="language-plaintext highlighter-rouge">MimeMultipart</code> 类有多个构造方法，用于创建不同类型的多部分消息。以下是一些常用的构造方法：</p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">MimeMultipart()</code>：创建一个空的多部分消息，默认使用混合 (<code class="language-plaintext highlighter-rouge">mixed</code>) 类型。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">MimeMultipart(String subtype)</code>：根据指定的子类型创建一个空的多部分消息。常用的子类型包括 <code class="language-plaintext highlighter-rouge">related</code>（相关）、<code class="language-plaintext highlighter-rouge">alternative</code>（备选）、<code class="language-plaintext highlighter-rouge">mixed</code>（混合）等。例如：
     <ul>
@@ -1190,13 +1029,13 @@ QUIT
   </li>
   <li><code class="language-plaintext highlighter-rouge">MimeMultipart(javax.mail.internet.ContentType contentType)</code>：根据指定的 <code class="language-plaintext highlighter-rouge">ContentType</code> 对象创建一个空的多部分消息。ContentType 对象可以包含主类型、子类型、参数等信息。</li>
   <li><code class="language-plaintext highlighter-rouge">MimeMultipart(InputStream is)</code>：从输入流中读取内容，并根据读取的内容创建一个多部分消息。</li>
-</ol>
+</ul>
 
 <p>这些构造方法提供了不同的方式来创建 <code class="language-plaintext highlighter-rouge">MimeMultipart</code> 对象，以满足不同场景下的需求。</p>
 
 <p><strong>常用方法包括：</strong></p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">addBodyPart(BodyPart part)</code>：将一个 <code class="language-plaintext highlighter-rouge">BodyPart</code> 对象添加到多部分消息中。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">removeBodyPart(int index)</code>：从多部分消息中移除指定索引位置的 <code class="language-plaintext highlighter-rouge">BodyPart</code> 对象。</li>
   <li><code class="language-plaintext highlighter-rouge">getBodyPart(int index)</code>：获取多部分消息中指定索引位置的 <code class="language-plaintext highlighter-rouge">BodyPart</code> 对象。</li>
@@ -1206,21 +1045,21 @@ QUIT
   <li><code class="language-plaintext highlighter-rouge">setPreamble(String preamble)</code>：设置消息的开头部分（preamble）。</li>
   <li><code class="language-plaintext highlighter-rouge">setEpilogue(String epilogue)</code>：设置消息的结尾部分（epilogue）。</li>
   <li><code class="language-plaintext highlighter-rouge">writeTo(OutputStream os)</code>：将多部分消息写入输出流中。</li>
-</ol>
+</ul>
 
 <hr />
 
 <p><code class="language-plaintext highlighter-rouge">MimeBodyPart</code> 类用于表示邮件的各个部分，包括正文、附件等。它的构造方法相对简单，通常使用默认构造方法创建对象，然后使用 <code class="language-plaintext highlighter-rouge">setContent</code> 等方法设置内容。以下是 <code class="language-plaintext highlighter-rouge">MimeBodyPart</code> 的构造方法：</p>
 
-<ol>
+<ul>
   <li><strong>默认构造方法：<code class="language-plaintext highlighter-rouge">MimeBodyPart()</code></strong></li>
   <li>使用输入流构造方法：<code class="language-plaintext highlighter-rouge">MimeBodyPart(InputStream is)</code></li>
   <li>使用 <code class="language-plaintext highlighter-rouge">DataSource</code> 对象构造方法：<code class="language-plaintext highlighter-rouge">MimeBodyPart(DataSource ds)</code></li>
-</ol>
+</ul>
 
 <p><code class="language-plaintext highlighter-rouge">MimeBodyPart</code> 类的方法如下：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">addHeader(String name, String value)</code>：添加指定名称和值的头信息。</li>
   <li><code class="language-plaintext highlighter-rouge">addHeaderLine(String line)</code>：添加包含完整头信息行的字符串。</li>
   <li><code class="language-plaintext highlighter-rouge">setContentID(String cid)</code>：设置内容 ID。</li>
@@ -1258,7 +1097,7 @@ QUIT
   <li><strong><code class="language-plaintext highlighter-rouge">setHeader(String name, String value)</code>：设置指定名称的头信息值。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">setText(String text)</code>：设置文本内容。</li>
   <li><code class="language-plaintext highlighter-rouge">setText(String text, String charset)</code>：设置文本内容和字符集。</li>
-</ol>
+</ul>
 
 <p>这些方法可以用于配置和操作 <code class="language-plaintext highlighter-rouge">MimeBodyPart</code> 对象的各种属性和内容。</p>
 
@@ -1266,11 +1105,11 @@ QUIT
 
 <p><code class="language-plaintext highlighter-rouge">DataHandler</code> 的构造方法通常用于创建一个处理特定数据类型的数据处理程序对象。它有以下几个常用的构造方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">DataHandler(Object obj, String mimeType)</code>：使用给定的对象和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于将 Java 对象转换为数据处理程序。</li>
   <li><code class="language-plaintext highlighter-rouge">DataHandler(URL url)</code>：使用给定的 URL 创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理指向外部资源的 URL。</li>
   <li><code class="language-plaintext highlighter-rouge">DataHandler(DataSource dataSource)</code>：使用给定的数据源创建一个 <code class="language-plaintext highlighter-rouge">DataHandler</code> 对象。这个构造方法通常用于处理数据源对象。</li>
-</ol>
+</ul>
 
 <p>这些构造方法根据不同的数据类型和来源创建适当的数据处理程序对象，以便于在应用程序中处理和传输数据。</p>
 
@@ -1278,10 +1117,10 @@ QUIT
 
 <p><code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 的构造方法通常用于创建一个包含字节数组数据的数据源对象。它有以下两个常用的构造方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(byte[] data, String type)</code>：使用给定的字节数组和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</li>
   <li><code class="language-plaintext highlighter-rouge">ByteArrayDataSource(InputStream is, String type)</code>：使用给定的输入流和 MIME 类型创建一个 <code class="language-plaintext highlighter-rouge">ByteArrayDataSource</code> 对象。</li>
-</ol>
+</ul>
 
 <p>这些构造方法将字节数组或输入流与 MIME 类型关联起来，以便于处理和传输数据。</p>
 
@@ -1364,7 +1203,7 @@ QUIT
 
 <p><code class="language-plaintext highlighter-rouge">setHeader</code> 方法用于设置邮件头的值，其参数为邮件头的名称和对应的值。常用的邮件头包括但不限于：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">From</code>：发件人地址。</li>
   <li><code class="language-plaintext highlighter-rouge">To</code>：收件人地址。</li>
   <li><code class="language-plaintext highlighter-rouge">Cc</code>：抄送地址。</li>
@@ -1378,7 +1217,7 @@ QUIT
   <li><code class="language-plaintext highlighter-rouge">Reply-To</code>：回复地址。</li>
   <li><code class="language-plaintext highlighter-rouge">Return-Path</code>：返回路径。</li>
   <li><code class="language-plaintext highlighter-rouge">Message-ID</code>：消息 ID。</li>
-</ol>
+</ul>
 
 <p>这些参数的设置可以根据邮件的需求和格式进行配置，以满足邮件发送的要求和格式规范。</p>
 
@@ -1478,13 +1317,13 @@ QUIT
 
 <p><code class="language-plaintext highlighter-rouge">InternetAddress</code> 类用于表示<strong>电子邮件地址</strong>。它有几种不同的构造方法，可以根据需要选择使用：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, boolean strict)</code>：使用给定的电子邮件地址字符串创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例，并指定是否启用严格模式。</li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal)</code>：使用给定的电子邮件地址字符串和个人名称创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
   <li><strong><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset)</code>：使用给定的电子邮件地址字符串、个人名称和字符集创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">InternetAddress(String address, String personal, String charset, boolean strict)</code>：使用给定的电子邮件地址字符串、个人名称、字符集和严格模式创建一个 <code class="language-plaintext highlighter-rouge">InternetAddress</code> 实例。</li>
-</ol>
+</ul>
 
 <hr />
 
@@ -1595,16 +1434,17 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 
 <p><code class="language-plaintext highlighter-rouge">URLName</code> 类构造方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">public URLName()</code>: 默认构造方法，创建一个空的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。</li>
   <li><code class="language-plaintext highlighter-rouge">public URLName(String url)</code>: 使用给定的 URL 字符串创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。该 URL 字符串应包含完整的 URL 信息，例如：”protocol://host:port/file”。</li>
   <li><strong><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file, String username, String password)</code>: 使用指定的协议、主机、端口、文件路径、用户名和密码创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。用于表示需要身份验证的 URL。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file)</code>: 使用指定的协议、主机、端口和文件路径创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，用户名和密码为空。通常用于表示不需要身份验证的 URL。</li>
   <li><code class="language-plaintext highlighter-rouge">public URLName(URLName url)</code>: 复制构造方法，创建一个新的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，其内容与给定的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象相同。</li>
-</ol>
+</ul>
 
 <p><code class="language-plaintext highlighter-rouge">URLName</code> 类中除了构造方法外还有一些常用的方法，例如：</p>
-<ol>
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">public String getProtocol()</code>: 返回 URL 的协议部分。</li>
   <li><code class="language-plaintext highlighter-rouge">public String getHost()</code>: 返回 URL 的主机部分。</li>
   <li><code class="language-plaintext highlighter-rouge">public int getPort()</code>: 返回 URL 的端口部分。</li>
@@ -1617,7 +1457,7 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
   <li><code class="language-plaintext highlighter-rouge">public void setFile(String file)</code>: 设置 URL 的文件路径部分。</li>
   <li><code class="language-plaintext highlighter-rouge">public void setUsername(String username)</code>: 设置 URL 的用户名部分。</li>
   <li><code class="language-plaintext highlighter-rouge">public void setPassword(String password)</code>: 设置 URL 的密码部分。</li>
-</ol>
+</ul>
 
 <hr />
 
@@ -1851,7 +1691,7 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 <h3 id="查看邮箱">查看邮箱</h3>
 
 <p><code class="language-plaintext highlighter-rouge">Store</code> 类表示邮件存储的抽象类，它提供了一组方法用于连接到邮件服务器并访问邮件。下面是一些常用的 <code class="language-plaintext highlighter-rouge">Store</code> 类的方法：</p>
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">void connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器，使用指定的用户名和密码进行身份验证。</li>
   <li><code class="language-plaintext highlighter-rouge">void connect()</code>：连接到之前设置的邮件服务器，使用之前设置的用户名和密码进行身份验证。</li>
   <li><code class="language-plaintext highlighter-rouge">Folder getDefaultFolder()</code>：获取默认文件夹，通常是收件箱。</li>
@@ -1862,13 +1702,13 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
   <li><code class="language-plaintext highlighter-rouge">boolean isConnected()</code>：检查是否已连接到邮件服务器。</li>
   <li><code class="language-plaintext highlighter-rouge">void addConnectionListener(ConnectionListener listener)</code>：添加连接监听器，以便在连接状态发生变化时接收通知。</li>
   <li><code class="language-plaintext highlighter-rouge">void removeConnectionListener(ConnectionListener listener)</code>：移除连接监听器。</li>
-</ol>
+</ul>
 
 <hr />
 
 <p><code class="language-plaintext highlighter-rouge">Folder</code> 类表示邮件文件夹，它提供了一组方法用于管理和操作邮件文件夹中的邮件。下面是一些常用的 <code class="language-plaintext highlighter-rouge">Folder</code> 类的方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">String getFullName()</code>：获取邮件文件夹的完整名称。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean exists()</code>：检查邮件文件夹是否存在。</li>
   <li><strong><code class="language-plaintext highlighter-rouge">void open(int mode)</code>：打开邮件文件夹，并指定打开模式（只读、读写等）。</strong></li>
@@ -1890,7 +1730,7 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
   <li><code class="language-plaintext highlighter-rouge">void removeMessageChangedListener(MessageChangedListener listener)</code>：移除邮件变化监听器。</li>
   <li><code class="language-plaintext highlighter-rouge">void addFolderListener(FolderListener listener)</code>：添加文件夹监听器。</li>
   <li><code class="language-plaintext highlighter-rouge">void removeFolderListener(FolderListener listener)</code>：移除文件夹监听器。</li>
-</ol>
+</ul>
 
 <hr />
 
@@ -2094,7 +1934,7 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 
 <p><code class="language-plaintext highlighter-rouge">Folder</code> 类的删除方法：</p>
 
-<ol>
+<ul>
   <li><strong><code class="language-plaintext highlighter-rouge">void open(int mode)</code>：打开邮件文件夹，并指定打开模式（只读、读写等）。</strong>
     <ul>
       <li><code class="language-plaintext highlighter-rouge">Folder.READ_ONLY</code>（值为 1）：只读模式，用于读取邮件但不能修改或删除邮件。</li>
@@ -2104,7 +1944,7 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
   <li><strong><code class="language-plaintext highlighter-rouge">void setFlags(Message[] msgs, Flags flag, boolean value)</code>：设置邮件的标志（例如，已读、已删除等）。</strong></li>
   <li><strong><code class="language-plaintext highlighter-rouge">Message[] expunge()</code>：清除标记为已删除的邮件，并返回已删除的邮件数组。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">void close(boolean expunge)</code>：关闭邮件文件夹，可选择是否删除已删除的邮件。</li>
-</ol>
+</ul>
 
 <hr />
 
@@ -2112,16 +1952,16 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 
 <p>构造方法：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">Flags flags = new Flags();</code>：创建一个空的 <code class="language-plaintext highlighter-rouge">Flags</code> 对象。</li>
-  <li><code class="language-plaintext highlighter-rouge">Flags flags = new Flags(Flags.Flag flag);</code>：创建一个包含指定标志的 <code class="language-plaintext highlighter-rouge">Flags</code> 对象。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Flags flags = new Flags(Flags.Flag flag);</code>：创建一个包含指定标志的 <code class="language-plaintext highlighter-rouge">Flags</code> 对象。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">Flags flags = new Flags(Flags flags);</code>：创建一个包含另一个 <code class="language-plaintext highlighter-rouge">Flags</code> 对象中所有标志的 <code class="language-plaintext highlighter-rouge">Flags</code> 对象。</li>
-</ol>
+</ul>
 
 <p>常用的方法：</p>
 
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">void add(Flags.Flag flag)</code>：添加指定的标志。</li>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">void add(Flags.Flag flag)</code>：添加指定的标志。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">void add(Flags flags)</code>：添加另一个 <code class="language-plaintext highlighter-rouge">Flags</code> 对象中的所有标志。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean contains(Flags.Flag flag)</code>：检查是否存在指定的标志。</li>
   <li><code class="language-plaintext highlighter-rouge">boolean containsAll(Flags flags)</code>：检查是否存在另一个 <code class="language-plaintext highlighter-rouge">Flags</code> 对象中的所有标志。</li>
@@ -2134,19 +1974,19 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
   <li><code class="language-plaintext highlighter-rouge">void set(Flags.Flag flag, boolean value)</code>：设置指定标志的状态。</li>
   <li><code class="language-plaintext highlighter-rouge">void setFlags(Flags.Flag[] flags, boolean value)</code>：设置指定一组标志的状态。</li>
   <li><code class="language-plaintext highlighter-rouge">void setUserFlags(Flags flags)</code>：设置用户定义的标志。</li>
-</ol>
+</ul>
 
 <p>以下是 <code class="language-plaintext highlighter-rouge">Flags</code> 类中定义的一些常量：</p>
 
-<ol>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.ANSWERED</code>：已回复标志，表示邮件已被回复。</li>
-  <li><code class="language-plaintext highlighter-rouge">Flags.Flag.DELETED</code>：已删除标志，表示邮件已被标记为删除。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Flags.Flag.DELETED</code>：已删除标志，表示邮件已被标记为删除。</strong></li>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.DRAFT</code>：草稿标志，表示邮件是草稿。</li>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.FLAGGED</code>：已标记标志，表示邮件已被标记。</li>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.RECENT</code>：最近标志，表示邮件是最近收到的。</li>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.SEEN</code>：已读标志，表示邮件已被阅读。</li>
   <li><code class="language-plaintext highlighter-rouge">Flags.Flag.USER</code>：用户标志，表示用户定义的标志。</li>
-</ol>
+</ul>
 
 <p>可以使用这些常量来创建 <code class="language-plaintext highlighter-rouge">Flags</code> 对象，并将其传递给 <code class="language-plaintext highlighter-rouge">Folder.setFlags()</code> 方法来设置邮件的标志。例如，要创建一个包含已读和已回复标志的 <code class="language-plaintext highlighter-rouge">Flags</code> 对象，可以使用以下代码：</p>
 
@@ -2217,10 +2057,10 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 
 <p>如果需要在使用 POP3 协议时删除邮件，可以考虑以下方法：</p>
 
-<ol>
+<ul>
   <li>在读取邮件时，将要删除的邮件标记为删除，但不执行 <code class="language-plaintext highlighter-rouge">expunge()</code> 操作。最后调用 <code class="language-plaintext highlighter-rouge">close(true)</code> 方法来执行实际的删除操作。</li>
   <li>使用其他支持邮件删除的协议，如 IMAP。IMAP 协议支持在服务器上直接删除邮件。</li>
-</ol>
+</ul>
 
 <p><strong>使用IMAP协议执行同样的代码：</strong></p>
 
@@ -2232,7 +2072,588 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 <span class="n">folder</span><span class="o">.</span><span class="na">close</span><span class="o">();</span> <span class="c1">// 关闭邮件文件夹</span>
 </code></pre></div></div>
 
-<p>正常删除。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="多线程">多线程</h1>
+<p>正常删除。</p>
+
+<h2 id="http协议">HTTP协议</h2>
+
+<p>HTTP是目前使用最广泛的Web应用程序使用的基础协议，例如，浏览器访问网站，手机App访问后台服务器，都是通过HTTP协议实现的。</p>
+
+<p>HTTP是HyperText Transfer Protocol的缩写，翻译为超文本传输协议，它是基于TCP协议之上的一种请求-响应协议。</p>
+
+<p>当浏览器希望访问某个网站时，浏览器和网站服务器之间首先建立TCP连接，且服务器总是使用<code class="language-plaintext highlighter-rouge">80</code>端口和加密端口<code class="language-plaintext highlighter-rouge">443</code>，然后，浏览器向服务器发送一个HTTP请求，服务器收到后，返回一个HTTP响应，并且在响应中包含了HTML的网页内容，这样，浏览器解析HTML后就可以给用户显示网页了。</p>
+
+<p>HTTP请求的格式是固定的，由HTTP Header和HTTP Body两部分构成。第一行总是请求方法 路径 HTTP版本，例如，<code class="language-plaintext highlighter-rouge">GET / HTTP/1.1</code>表示使用<code class="language-plaintext highlighter-rouge">GET</code>请求，路径是<code class="language-plaintext highlighter-rouge">/</code>，版本是<code class="language-plaintext highlighter-rouge">HTTP/1.1</code>。</p>
+
+<p>后续的每一行都是固定的<code class="language-plaintext highlighter-rouge">Header: Value</code>格式，即HTTP Header，服务器依靠某些特定的Header来识别客户端请求，例如：</p>
+
+<ul>
+  <li>Host：表示请求的域名，因为一台服务器上可能有多个网站，因此有必要依靠Host来识别请求是发给哪个网站的；</li>
+  <li>User-Agent：表示客户端自身标识信息，不同的浏览器有不同的标识，服务器依靠User-Agent判断客户端类型是IE还是Chrome，是Firefox还是一个Python爬虫；</li>
+  <li>Accept：表示客户端能处理的HTTP响应格式，<code class="language-plaintext highlighter-rouge">*/*</code>表示任意格式，<code class="language-plaintext highlighter-rouge">text/*</code>表示任意文本，<code class="language-plaintext highlighter-rouge">image/png</code>表示PNG格式的图片；</li>
+  <li>Accept-Language：表示客户端接收的语言，多种语言按优先级排序，服务器依靠该字段给用户返回特定语言的网页版本。</li>
+</ul>
+
+<p>如果是<code class="language-plaintext highlighter-rouge">GET</code>请求，那么该HTTP请求只有HTTP Header，没有HTTP Body。如果是<code class="language-plaintext highlighter-rouge">POST</code>请求，那么该HTTP请求带有Body，以一个空行分隔。一个典型的带Body的HTTP请求如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>POST /login HTTP/1.1
+Host: www.example.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 30
+
+username=hello&amp;password=123456
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">POST</code>请求通常要设置<code class="language-plaintext highlighter-rouge">Content-Type</code>表示Body的类型，<code class="language-plaintext highlighter-rouge">Content-Length</code>表示Body的长度，这样服务器就可以根据请求的Header和Body做出正确的响应。</p>
+
+<p>此外，<code class="language-plaintext highlighter-rouge">GET</code>请求的参数必须附加在URL上，并以URLEncode方式编码，例如：<code class="language-plaintext highlighter-rouge">http://www.example.com/?a=1&amp;b=K%26R</code>，参数分别是<code class="language-plaintext highlighter-rouge">a=1</code>和<code class="language-plaintext highlighter-rouge">b=K&amp;R</code>。因为URL的长度限制，<code class="language-plaintext highlighter-rouge">GET</code>请求的参数不能太多，而<code class="language-plaintext highlighter-rouge">POST</code>请求的参数就没有长度限制，因为<code class="language-plaintext highlighter-rouge">POST</code>请求的参数必须放到Body中。并且，<code class="language-plaintext highlighter-rouge">POST</code>请求的参数不一定是URL编码，可以按任意格式编码，只需要在<code class="language-plaintext highlighter-rouge">Content-Type</code>中正确设置即可。常见的发送JSON的<code class="language-plaintext highlighter-rouge">POST</code>请求如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>POST /login HTTP/1.1
+Content-Type: application/json
+Content-Length: 38
+
+{"username":"bob","password":"123456"}
+</code></pre></div></div>
+
+<p>HTTP响应也是由Header和Body两部分组成，一个典型的HTTP响应如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 133251
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;body&gt;
+&lt;h1&gt;Hello&lt;/h1&gt;
+...
+</code></pre></div></div>
+
+<p>响应的第一行总是<code class="language-plaintext highlighter-rouge">HTTP版本 响应代码 响应说明</code>，例如，<code class="language-plaintext highlighter-rouge">HTTP/1.1 200 OK</code>表示版本是<code class="language-plaintext highlighter-rouge">HTTP/1.1</code>，响应代码是<code class="language-plaintext highlighter-rouge">200</code>，响应说明是<code class="language-plaintext highlighter-rouge">OK</code>。客户端只依赖响应代码判断HTTP响应是否成功。HTTP有固定的响应代码：</p>
+
+<ul>
+  <li>1xx：表示一个提示性响应，例如101表示将切换协议，常见于<code class="language-plaintext highlighter-rouge">WebSocket</code>连接；</li>
+  <li>2xx：表示一个成功的响应，例如200表示成功，206表示只发送了部分内容；</li>
+  <li>3xx：表示一个重定向的响应，例如301表示永久重定向，303表示客户端应该按指定路径重新发送请求；</li>
+  <li>4xx：表示一个因为客户端问题导致的错误响应，例如400表示因为Content-Type等各种原因导致的无效请求，404表示指定的路径不存在；</li>
+  <li>5xx：表示一个因为服务器问题导致的错误响应，例如500表示服务器内部故障，503表示服务器暂时无法响应。</li>
+</ul>
+
+<p>当浏览器收到第一个HTTP响应后，它解析HTML后，又会发送一系列HTTP请求，例如，<code class="language-plaintext highlighter-rouge">GET /logo.jpg HTTP/1.1</code>请求一个图片，服务器响应图片请求后，会直接把二进制内容的图片发送给浏览器：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Content-Length: 18391
+
+????JFIFHH??XExifMM?i&amp;??X?...(二进制的JPEG图片)
+</code></pre></div></div>
+
+<p>因此，服务器总是被动地接收客户端的一个HTTP请求，然后响应它。客户端则根据需要发送若干个HTTP请求。</p>
+
+<p>对于最早期的HTTP/1.0协议，每次发送一个HTTP请求，客户端都需要先创建一个新的TCP连接，然后，收到服务器响应后，关闭这个TCP连接。由于建立TCP连接就比较耗时，因此，为了提高效率，HTTP/1.1协议允许在一个TCP连接中反复发送-响应，这样就能大大提高效率。</p>
+
+<p>因为HTTP协议是一个请求-响应协议，客户端在发送了一个HTTP请求后，必须等待服务器响应后，才能发送下一个请求，这样一来，如果某个响应太慢，它就会堵住后面的请求。</p>
+
+<p>所以，为了进一步提速，HTTP/2.0允许客户端在没有收到响应的时候，发送多个HTTP请求，服务器返回响应的时候，不一定按顺序返回，只要双方能识别出哪个响应对应哪个请求，就可以做到并行发送和接收。因此HTTP/2.0进一步提高了效率。</p>
+
+<hr />
+
+<p>URL（统一资源定位符）用于标识互联网上的资源位置，是 Web 中最常用的概念之一。它指定了资源的位置和访问方式。通常包含以下几个部分：</p>
+
+<ol>
+  <li><strong>协议（Protocol）</strong>：指定了访问资源所使用的协议，如 HTTP、HTTPS、FTP 等。</li>
+  <li><strong>主机名（Host）</strong>：指定了资源所在的主机或服务器的域名或 IP 地址。</li>
+  <li><strong>端口（Port）</strong>：指定了访问服务器的端口号。如果未指定，默认为协议的默认端口。</li>
+  <li><strong>路径（Path）</strong>：指定了服务器上资源的路径。</li>
+  <li><strong>查询字符串（Query String）</strong>：包含了向服务器传递的参数信息。</li>
+  <li><strong>片段标识符（Fragment Identifier）</strong>：指定了资源中的特定部分。</li>
+</ol>
+
+<p>例如，对于 URL <code class="language-plaintext highlighter-rouge">https://www.example.com:8080/index.html?query=example#section1</code>，协议为 HTTPS，主机名为 <code class="language-plaintext highlighter-rouge">www.example.com</code>，端口号为 <code class="language-plaintext highlighter-rouge">8080</code>，路径为 <code class="language-plaintext highlighter-rouge">/index.html</code>，查询字符串为 <code class="language-plaintext highlighter-rouge">query=example</code>，片段标识符为 <code class="language-plaintext highlighter-rouge">section1</code>。</p>
+
+<p>URL 在 Web 开发中广泛用于定位和访问 Web 页面、图像、视频等各种资源。</p>
+
+<p><strong>URL类构造方法</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">public URL(String spec);</code>：通过指定的字符串创建一个 URL 对象。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">URL</span> <span class="n">u1</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"http://home.netscape.com/home/"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">public URL(URL context, String spec);</code>：通过基于上下文 URL 和相对 URL 字符串创建一个 URL 对象。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">URL</span> <span class="n">u1</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"http://home.netscape.com/home/"</span><span class="o">);</span>
+<span class="no">URL</span> <span class="n">u2</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="n">u1</span><span class="o">,</span> <span class="s">"welcome.html"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">public URL(String protocol, String host, String file);</code>：通过指定协议、主机和文件路径创建一个 URL 对象。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">URL</span> <span class="n">u3</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"http"</span><span class="o">,</span> <span class="s">"www.sun.com"</span><span class="o">,</span> <span class="s">"developers/index.html"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">public URL(String protocol, String host, int port, String file);</code>：通过指定协议、主机、端口和文件路径创建一个 URL 对象。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">URL</span> <span class="n">u4</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"http"</span><span class="o">,</span> <span class="s">"www.sun.com"</span><span class="o">,</span> <span class="mi">80</span><span class="o">,</span> <span class="s">"developers/index.html"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>常用方法：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">String getProtocol()</code>: 获取 URL 的协议部分，例如 <code class="language-plaintext highlighter-rouge">http</code>、<code class="language-plaintext highlighter-rouge">https</code> 等。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getHost()</code>: 获取 URL 的主机名部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">int getPort()</code>: 获取 URL 的端口号部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getPath()</code>: 获取 URL 的路径部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getQuery()</code>: 获取 URL 的查询部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getFile()</code>: 获取 URL 的文件名部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">URLConnection openConnection()</code>: 打开与此 URL 的连接，并返回一个 <code class="language-plaintext highlighter-rouge">URLConnection</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">InputStream openStream()</code>: 打开与此 URL 的连接，并返回一个 <code class="language-plaintext highlighter-rouge">InputStream</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean equals(Object obj)</code>: 比较此 URL 与指定对象是否相等。</li>
+  <li><code class="language-plaintext highlighter-rouge">String toString()</code>: 返回 URL 的字符串表示形式。</li>
+</ul>
+
+<hr />
+
+<p><strong><code class="language-plaintext highlighter-rouge">URLConnection</code>抽象类</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">Uonnection</code>类支持<code class="language-plaintext highlighter-rouge">URL</code>连接的输入/输出流方式的通信,并可以获得<code class="language-plaintext highlighter-rouge">URL</code>对象资源的相关信息。它是所有应用程序和<code class="language-plaintext highlighter-rouge">URL</code>连接通信类的父类。可以用它来输出、输入对象所表示的Intenet上的资源。</p>
+
+<p>常用的方法：</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">void connect()</code>: 打开与 URL 引用的资源的通信链接。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">Object getContent()</code>: 获取此 URLConnection 的内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getHeaderField(int n)</code>: 返回与此 URLConnection 的给定字段相关联的值。</li>
+  <li><code class="language-plaintext highlighter-rouge">long getLastModified()</code>: 获取指定资源的最后修改日期。</li>
+  <li><code class="language-plaintext highlighter-rouge">int getContentLength()</code>: 获取指定资源的内容长度。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getContentType()</code>: 获取指定资源的内容类型。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">InputStream getInputStream()</code>: 返回一个输入流，用于从连接到 URL 的资源读取数据。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">OutputStream getOutputStream()</code>: 返回一个输出流，用于将数据写入到与 URLConnection 关联的资源。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setDoOutput(boolean dooutput)</code>: 将 doOutput 字段的值设置为指定值。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">void setDoInput(boolean doinput)</code>: 将 doInput 字段的值设置为指定值。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setRequestMethod(String method)</code>: 设置请求方法。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setRequestProperty(String key, String value)</code>: 设置指定的请求头字段的值。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">void addRequestProperty(String key, String value)</code>: 添加一个请求属性。</li>
+  <li><code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;String&gt;&gt; getHeaderFields()</code>: 返回与此 URLConnection 关联的请求头字段的映射。</li>
+  <li><code class="language-plaintext highlighter-rouge">String getContentEncoding()</code>: 返回指定资源的内容编码。</li>
+  <li><code class="language-plaintext highlighter-rouge">int getConnectTimeout()</code>: 返回与此 URLConnection 建立的连接的超时时间（以毫秒为单位）。</li>
+  <li><code class="language-plaintext highlighter-rouge">int getReadTimeout()</code>: 返回从连接到 URLConnection 的资源的输入流读取数据的超时时间（以毫秒为单位）。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setConnectTimeout(int timeout)</code>: 设置与此 URLConnection 建立的连接的超时时间（以毫秒为单位）。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">void setReadTimeout(int timeout)</code>: 设置从连接到 URLConnection 的资源的输入流读取数据的超时时间（以毫秒为单位）。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void setUseCaches(boolean usecaches)</code>: 如果连接上的 <code class="language-plaintext highlighter-rouge">UseCaches</code> 标志为 true，则允许该连接使用它可以使用的任何缓存。如果为 false，则忽略缓存。默认为true。</strong></li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpURLConnection</code> 是 <code class="language-plaintext highlighter-rouge">URLConnection</code> 的子类，提供了一些额外的方法，用于处理 HTTP 请求和响应。以下是 <code class="language-plaintext highlighter-rouge">HttpURLConnection</code> 比 <code class="language-plaintext highlighter-rouge">URLConnection</code> 多出的一些方法：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">getHeaderFieldKey(int n)</code>：返回指定索引处的响应头字段名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">getHeaderField(int n)</code>：返回指定索引处的响应头字段的值。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getHeaderFields()</code>：返回一个包含所有响应头字段的映射。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">getRequestMethod()</code>：返回此连接的请求方法。</li>
+  <li><code class="language-plaintext highlighter-rouge">setRequestMethod(String method)</code>：设置请求方法（如 GET、POST 等）。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">getResponseCode()</code>：获取 HTTP 响应代码。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">getResponseMessage()</code>：获取 HTTP 响应消息。</li>
+  <li><code class="language-plaintext highlighter-rouge">usingProxy()</code>：返回一个布尔值，指示是否通过代理进行连接。</li>
+  <li><code class="language-plaintext highlighter-rouge">disconnect()</code>：关闭连接并释放与该连接关联的所有系统资源。</li>
+</ul>
+
+<p>这些方法使得 <code class="language-plaintext highlighter-rouge">HttpURLConnection</code> 更适合处理 HTTP 请求和响应，而 <code class="language-plaintext highlighter-rouge">URLConnection</code> 则是更通用的类，可以处理不仅限于 HTTP 的多种协议。</p>
+
+<hr />
+
+<p>因为浏览器也是一种HTTP客户端，所以，客户端的HTTP编程，它的行为本质上和浏览器是一样的，即发送一个HTTP请求，接收服务器响应后，获得响应内容。只不过浏览器进一步把响应内容解析后渲染并展示给了用户，而使用Java进行HTTP客户端编程仅限于获得响应内容。</p>
+
+<p>示例：将<code class="language-plaintext highlighter-rouge">baidu</code>内容重定向到<code class="language-plaintext highlighter-rouge">Demo.txt</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">BufferedWriter</span> <span class="n">bw</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"Demo.txt"</span><span class="o">,</span> <span class="kc">true</span><span class="o">)));</span>
+<span class="no">URL</span> <span class="n">url2</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"https://www.baidu.com"</span><span class="o">);</span>
+<span class="nc">URLConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">url2</span><span class="o">.</span><span class="na">openConnection</span><span class="o">();</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setDoOutput</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+<span class="nc">String</span> <span class="n">nextLine</span><span class="o">;</span>
+<span class="nc">StringBuilder</span> <span class="n">sb</span><span class="o">=</span><span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+<span class="nc">BufferedReader</span> <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
+<span class="k">while</span> <span class="o">((</span><span class="n">nextLine</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
+    <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">nextLine</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="n">bw</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+<span class="n">bw</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<span class="n">br</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>详细点的：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">URL</span> <span class="n">url</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"https://www.baidu.com"</span><span class="o">);</span>
+<span class="nc">HttpURLConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="o">(</span><span class="nc">HttpURLConnection</span><span class="o">)</span> <span class="n">url</span><span class="o">.</span><span class="na">openConnection</span><span class="o">();</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setRequestMethod</span><span class="o">(</span><span class="s">"GET"</span><span class="o">);</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setUseCaches</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setConnectTimeout</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="c1">// 请求超时5秒</span>
+<span class="c1">// 设置HTTP头:</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setRequestProperty</span><span class="o">(</span><span class="s">"Accept"</span><span class="o">,</span> <span class="s">"*/*"</span><span class="o">);</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">setRequestProperty</span><span class="o">(</span><span class="s">"User-Agent"</span><span class="o">,</span> <span class="s">"Mozilla/5.0 (compatible; MSIE 11; Windows NT 5.1)"</span><span class="o">);</span>
+<span class="c1">// 连接并发送HTTP请求:</span>
+<span class="n">conn</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+<span class="c1">// 判断HTTP响应是否200:</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getResponseCode</span><span class="o">()</span> <span class="o">!=</span> <span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"bad response"</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="c1">// 获取所有响应Header:</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">getHeaderFields</span><span class="o">();</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+<span class="o">}</span>
+<span class="c1">// 获取响应内容:</span>
+<span class="nc">String</span> <span class="n">nextLine</span><span class="o">;</span>
+<span class="nc">StringBuilder</span> <span class="n">sb</span><span class="o">=</span><span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+<span class="nc">BufferedReader</span> <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
+<span class="k">while</span> <span class="o">((</span><span class="n">nextLine</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
+    <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">nextLine</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sb</span><span class="o">);</span>
+<span class="n">br</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>从<strong>Java 11</strong>开始，引入了新的<code class="language-plaintext highlighter-rouge">HttpClient</code>，它使用链式调用的API，能大大简化HTTP的处理。首先需要创建一个全局<code class="language-plaintext highlighter-rouge">HttpClient</code>实例，因为<code class="language-plaintext highlighter-rouge">HttpClient</code>内部使用线程池优化多个HTTP连接，可以复用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="nc">HttpClient</span> <span class="n">httpClient</span> <span class="o">=</span> <span class="nc">HttpClient</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="nc">HttpClient</span> <span class="n">httpClient</span> <span class="o">=</span> <span class="nc">HttpClient</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+<span class="nd">@Test</span>
+<span class="kt">void</span> <span class="nf">testNegative</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">URISyntaxException</span><span class="o">,</span> <span class="nc">InterruptedException</span> <span class="o">{</span>
+    <span class="nc">HttpRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="nc">HttpRequest</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">(</span><span class="k">new</span> <span class="no">URI</span><span class="o">(</span><span class="s">"https://www.baidu.com"</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"User-Agent"</span><span class="o">,</span><span class="s">"Mozilla/5.0 (compatible; MSIE 11; Windows NT 5.1)"</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Accept"</span><span class="o">,</span><span class="s">"*/*"</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">timeout</span><span class="o">(</span><span class="nc">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="mi">5</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">version</span><span class="o">(</span><span class="nc">HttpClient</span><span class="o">.</span><span class="na">Version</span><span class="o">.</span><span class="na">HTTP_2</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">GET</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="nc">HttpResponse</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">httpClient</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="nc">HttpResponse</span><span class="o">.</span><span class="na">BodyHandlers</span><span class="o">.</span><span class="na">ofString</span><span class="o">());</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">statusCode</span><span class="o">()!=</span><span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"bad response"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="c1">// 获取所有响应Header:</span>
+    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">headers</span><span class="o">().</span><span class="na">map</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果要获取图片这样的二进制内容，只需要把<code class="language-plaintext highlighter-rouge">HttpResponse.BodyHandlers.ofString()</code>换成<code class="language-plaintext highlighter-rouge">HttpResponse.BodyHandlers.ofByteArray()</code>，就可以获得一个<code class="language-plaintext highlighter-rouge">HttpResponse&lt;byte[]&gt;</code>对象。如果响应的内容很大，不希望一次性全部加载到内存，可以使用<code class="language-plaintext highlighter-rouge">HttpResponse.BodyHandlers.ofInputStream()</code>获取一个<code class="language-plaintext highlighter-rouge">InputStream</code>流。</p>
+
+<p>如果要使用<code class="language-plaintext highlighter-rouge">POST</code>请求，需要准备好发送的Body数据并正确设置<code class="language-plaintext highlighter-rouge">Content-Type</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"http://www.example.com/login"</span><span class="o">;</span>
+<span class="nc">String</span> <span class="n">body</span> <span class="o">=</span> <span class="s">"username=bob&amp;password=123456"</span><span class="o">;</span>
+<span class="nc">HttpRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="nc">HttpRequest</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">(</span><span class="k">new</span> <span class="no">URI</span><span class="o">(</span><span class="n">url</span><span class="o">))</span>
+    <span class="c1">// 设置Header:</span>
+    <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Accept"</span><span class="o">,</span> <span class="s">"*/*"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Content-Type"</span><span class="o">,</span> <span class="s">"application/x-www-form-urlencoded"</span><span class="o">)</span>
+    <span class="c1">// 设置超时:</span>
+    <span class="o">.</span><span class="na">timeout</span><span class="o">(</span><span class="nc">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="mi">5</span><span class="o">))</span>
+    <span class="c1">// 设置版本:</span>
+    <span class="o">.</span><span class="na">version</span><span class="o">(</span><span class="nc">Version</span><span class="o">.</span><span class="na">HTTP_2</span><span class="o">)</span>
+    <span class="c1">// 使用POST并设置Body:</span>
+    <span class="o">.</span><span class="na">POST</span><span class="o">(</span><span class="nc">BodyPublishers</span><span class="o">.</span><span class="na">ofString</span><span class="o">(</span><span class="n">body</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">)).</span><span class="na">build</span><span class="o">();</span>
+<span class="nc">HttpResponse</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">httpClient</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="nc">HttpResponse</span><span class="o">.</span><span class="na">BodyHandlers</span><span class="o">.</span><span class="na">ofString</span><span class="o">());</span>
+<span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">();</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpRequest</code> 类是 Java 11 中引入的，用于表示 HTTP 请求的类。以下是一些常用的 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 方法：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">builder(URI uri)</code>: 静态方法，返回一个新的 <code class="language-plaintext highlighter-rouge">HttpRequest.Builder</code> 对象，用于构建 HTTP 请求。</li>
+  <li><code class="language-plaintext highlighter-rouge">method()</code>: 返回 HTTP 请求方法，如 GET、POST、PUT 等。</li>
+  <li><code class="language-plaintext highlighter-rouge">uri()</code>: 返回请求的 URI。</li>
+  <li><code class="language-plaintext highlighter-rouge">headers()</code>: 返回请求头信息，以 <code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;String&gt;&gt;</code> 的形式表示。</li>
+  <li><code class="language-plaintext highlighter-rouge">bodyPublisher()</code>: 返回请求体的发布器（<code class="language-plaintext highlighter-rouge">BodyPublisher</code>），用于发送请求体数据。</li>
+  <li><code class="language-plaintext highlighter-rouge">version()</code>: 返回 HTTP 协议版本。</li>
+  <li><code class="language-plaintext highlighter-rouge">expectContinue()</code>: 返回一个布尔值，指示是否期望服务器在发送响应之前先发送一个 100 Continue 响应。</li>
+  <li><code class="language-plaintext highlighter-rouge">timeout()</code>: 返回超时时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">copy()</code>: 复制当前请求的副本。</li>
+  <li><code class="language-plaintext highlighter-rouge">toString()</code>: 将请求对象转换为字符串表示。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpRequest</code> 类中的静态方法通常用于创建 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 实例或处理 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 请求。以下是一些常用的静态方法：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">static HttpRequest.Builder newBuilder()</code>：创建一个新的 <code class="language-plaintext highlighter-rouge">HttpRequest.Builder</code> 实例，用于构建 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 对象。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">static HttpRequest.Builder newBuilder(URI uri)</code>：创建一个新的 <code class="language-plaintext highlighter-rouge">HttpRequest.Builder</code> 实例，并传入URI用于构建 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 对象。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">static HttpRequest.BodyPublishers ofByteArray(byte[] body)</code>：创建一个发布指定字节数组作为请求主体的 <code class="language-plaintext highlighter-rouge">HttpRequest.BodyPublisher</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">static HttpRequest.BodyPublishers ofInputStream(Supplier&lt;InputStream&gt; bodySupplier)</code>：创建一个发布从提供的 <code class="language-plaintext highlighter-rouge">InputStream</code> 读取数据作为请求主体的 <code class="language-plaintext highlighter-rouge">HttpRequest.BodyPublisher</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">static HttpRequest.BodyPublishers ofString(String body)</code>：创建一个发布指定字符串作为请求主体的 <code class="language-plaintext highlighter-rouge">HttpRequest.BodyPublisher</code> 实例。</li>
+  <li><code class="language-plaintext highlighter-rouge">static HttpRequest.BodyPublishers ofFile(Path file)</code>：创建一个发布指定文件内容作为请求主体的 <code class="language-plaintext highlighter-rouge">HttpRequest.BodyPublisher</code> 实例。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpRequest.Builder</code> 类用于构建 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 对象。以下是该类的方法：</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">GET()</code>：设置请求方法为 GET。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">POST(BodyPublisher bodyPublisher)</code>：设置请求方法为 POST，并指定请求体的发布器。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">PUT(BodyPublisher bodyPublisher)</code>：设置请求方法为 PUT，并指定请求体的发布器。</li>
+  <li><code class="language-plaintext highlighter-rouge">DELETE()</code>：设置请求方法为 DELETE。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">header(String name, String value)</code>：添加请求头。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">headers(Map&lt;String, List&lt;String&gt;&gt; headers)</code>：添加多个请求头。</li>
+  <li><code class="language-plaintext highlighter-rouge">method(String method)</code>：设置请求方法。</li>
+  <li><code class="language-plaintext highlighter-rouge">uri(URI uri)</code>：设置请求的 URI。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">version(HttpClient.Version version)</code>：设置 HTTP 协议版本。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">timeout(Duration duration)</code>：设置超时时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">expectContinue(boolean enable)</code>：设置是否期望服务器在发送响应之前先发送一个 100 Continue 响应。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">build()</code>：构建并返回 <code class="language-plaintext highlighter-rouge">HttpRequest</code> 对象。</strong></li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">URI</code> 类的构造方法如下：</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">URI(String uri)</code>：根据给定的 URI 字符串创建 <code class="language-plaintext highlighter-rouge">URI</code> 对象。该字符串必须符合 URI 的语法规则。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">URI(String scheme, String ssp, String fragment)</code></strong>：使用指定的方案、特定部分和片段创建 <code class="language-plaintext highlighter-rouge">URI</code> 对象。方案和特定部分之间用冒号分隔。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">URI(String scheme, String userInfo, String host, int port, String path, String query, String fragment)</code></strong>：使用指定的参数创建 <code class="language-plaintext highlighter-rouge">URI</code> 对象。参数包括方案、用户信息、主机、端口、路径、查询和片段。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">Duration</code> 类表示一段时间的持续时间，它提供了用于处理持续时间的方法。以下是 <code class="language-plaintext highlighter-rouge">Duration</code> 类的一些主要方法：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">static Duration between(Temporal startInclusive, Temporal endExclusive)</code>：返回两个时间点之间的持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Duration ofDays(long days)</code>：创建指定天数的持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Duration ofHours(long hours)</code>：创建指定小时数的持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Duration ofMinutes(long minutes)</code>：创建指定分钟数的持续时间。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">static Duration ofSeconds(long seconds)</code>：创建指定秒数的持续时间。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">static Duration ofMillis(long millis)</code>：创建指定毫秒数的持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Duration ofNanos(long nanos)</code>：创建指定纳秒数的持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toDays()</code>：获取持续时间的天数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toHours()</code>：获取持续时间的小时数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toMinutes()</code>：获取持续时间的分钟数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toSeconds()</code>：获取持续时间的秒数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toMillis()</code>：获取持续时间的毫秒数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">long toNanos()</code>：获取持续时间的纳秒数部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">Duration plus(Duration duration)</code>：将另一个持续时间添加到此持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">Duration minus(Duration duration)</code>：从此持续时间中减去另一个持续时间。</li>
+  <li><code class="language-plaintext highlighter-rouge">Duration multipliedBy(long multiplicand)</code>：将此持续时间乘以指定的数量。</li>
+  <li><code class="language-plaintext highlighter-rouge">Duration dividedBy(long divisor)</code>：将此持续时间除以指定的数量。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isNegative()</code>：检查持续时间是否为负数。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isZero()</code>：检查持续时间是否为零。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpClient.Version</code> 是一个枚举类，表示 HTTP 客户端支持的协议版本。它包含以下字段：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">HTTP_1_1</code>：表示 HTTP/1.1 协议版本。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">HTTP_2</code>：表示 HTTP/2 协议版本。</strong></li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">BodyPublishers</code> 类提供了以下静态方法来创建不同类型的 <code class="language-plaintext highlighter-rouge">BodyPublisher</code> 实例：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ofByteArray(byte[] body)</code>：将指定的字节数组作为请求主体发送。</li>
+  <li><code class="language-plaintext highlighter-rouge">ofByteArrays(Iterable&lt;byte[]&gt; bodies)</code>：按顺序将多个字节数组作为请求主体发送。</li>
+  <li><code class="language-plaintext highlighter-rouge">ofFile(Path file)</code>：将指定文件的内容作为请求主体发送。</li>
+  <li><code class="language-plaintext highlighter-rouge">ofInputStream(Supplier&lt;? extends InputStream&gt; streamSupplier)</code>：从提供的 <code class="language-plaintext highlighter-rouge">InputStream</code> 中发送请求主体。</li>
+  <li><code class="language-plaintext highlighter-rouge">ofString(String body)</code>：将指定的字符串作为请求主体发送。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">ofString(String body, Charset charset)</code>：将指定的字符串以指定的字符集编码作为请求主体发送。</strong></li>
+</ul>
+
+<p>这些方法提供了灵活的方式来创建不同类型的请求主体，并使其适应于不同的请求场景。</p>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpClient</code> 类提供了执行 HTTP 请求和处理 HTTP 响应的方法。以下是一些常用的方法：</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">send(HttpRequest request, BodyHandler&lt;T&gt; responseBodyHandler)</code>：发送 HTTP 请求并返回响</strong>应。<code class="language-plaintext highlighter-rouge">request</code> 参数是要发送的请求，<code class="language-plaintext highlighter-rouge">responseBodyHandler</code> 参数指定如何处理响应主体。</li>
+  <li><code class="language-plaintext highlighter-rouge">sendAsync(HttpRequest request, BodyHandler&lt;T&gt; responseBodyHandler)</code>：异步发送 HTTP 请求并返回 <code class="language-plaintext highlighter-rouge">CompletableFuture&lt;HttpResponse&lt;T&gt;&gt;</code>，可以在未来的某个时间点获取响应。</li>
+  <li><code class="language-plaintext highlighter-rouge">newBuilder()</code>：创建一个新的 <code class="language-plaintext highlighter-rouge">HttpClient.Builder</code> 实例，用于构建 <code class="language-plaintext highlighter-rouge">HttpClient</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">followRedirects()</code>：启用重定向（默认情况下启用）。</li>
+  <li><code class="language-plaintext highlighter-rouge">version()</code>：获取当前 <code class="language-plaintext highlighter-rouge">HttpClient</code> 实例使用的协议版本。</li>
+  <li><code class="language-plaintext highlighter-rouge">sslContext()</code>：获取当前 <code class="language-plaintext highlighter-rouge">HttpClient</code> 实例使用的 SSL 上下文。</li>
+  <li><code class="language-plaintext highlighter-rouge">proxy()</code>：获取当前 <code class="language-plaintext highlighter-rouge">HttpClient</code> 实例使用的代理。</li>
+  <li><code class="language-plaintext highlighter-rouge">authenticator()</code>：获取当前 <code class="language-plaintext highlighter-rouge">HttpClient</code> 实例使用的身份验证器。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpResponse</code> 类表示 HTTP 响应，并提供了访问响应状态、头信息和主体的方法。以下是一些常用的方法：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">statusCode()</code>：返回响应的状态码。</li>
+  <li><code class="language-plaintext highlighter-rouge">body()</code>：返回响应的主体作为 <code class="language-plaintext highlighter-rouge">HttpResponse.BodySubscriber</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">headers()</code>：返回包含响应头信息的 <code class="language-plaintext highlighter-rouge">Map</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">bodyHandler()</code>：返回用于处理响应主体的 <code class="language-plaintext highlighter-rouge">BodyHandler</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">version()</code>：返回 HTTP 版本。</li>
+  <li><code class="language-plaintext highlighter-rouge">uri()</code>：返回请求的 URI。</li>
+  <li><code class="language-plaintext highlighter-rouge">request()</code>：返回生成此响应的请求。</li>
+  <li><code class="language-plaintext highlighter-rouge">previousResponse()</code>：如果重定向发生，则返回之前的响应。</li>
+  <li><code class="language-plaintext highlighter-rouge">sslSession()</code>：返回 SSL 会话。</li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">HttpResponse.BodyHandlers</code> 类是一个工具类，提供了一些静态方法用于创建不同类型的 <code class="language-plaintext highlighter-rouge">BodyHandler</code> 实例，以便处理 HTTP 响应主体。以下是一些常用的静态方法：</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">ofString()</code>：返回一个 <code class="language-plaintext highlighter-rouge">BodyHandler</code>，用于将响应主体作为字符串处理。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">ofByteArray()</code>：返回一个 <code class="language-plaintext highlighter-rouge">BodyHandler</code>，用于将响应主体作为字节数组处理。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">ofInputStream()</code>：返回一个 <code class="language-plaintext highlighter-rouge">BodyHandler</code>，用于将响应主体作为输入流处理。</li>
+  <li><code class="language-plaintext highlighter-rouge">ofFile(Path file)</code>：返回一个 <code class="language-plaintext highlighter-rouge">BodyHandler</code>，用于将响应主体保存到指定文件。</li>
+</ul>
+
+<h2 id="rmi远程调用">RMI远程调用</h2>
+
+<p>Java的RMI远程调用是指，一个JVM中的代码可以通过网络实现远程调用另一个JVM的某个方法。RMI是Remote Method Invocation的缩写。</p>
+
+<p>提供服务的一方称之为服务器，而实现远程调用的一方称之为客户端。</p>
+
+<p>服务器会提供一个<code class="language-plaintext highlighter-rouge">WorldClock</code>服务，允许客户端获取指定时区的时间，即允许客户端调用下面的方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">LocalDateTime</span> <span class="nf">getLocalDateTime</span><span class="o">(</span><span class="nc">String</span> <span class="n">zoneId</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>要实现RMI，服务器和客户端必须共享同一个接口。定义一个<code class="language-plaintext highlighter-rouge">WorldClock</code>接口，代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">WorldClock</span> <span class="kd">extends</span> <span class="nc">Remote</span> <span class="o">{</span>
+    <span class="nc">LocalDateTime</span> <span class="nf">getLocalDateTime</span><span class="o">(</span><span class="nc">String</span> <span class="n">zoneId</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">RemoteException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Java的RMI规定此接口<strong>必须派生自<code class="language-plaintext highlighter-rouge">java.rmi.Remote</code></strong>，并在每个方法声明抛出<code class="language-plaintext highlighter-rouge">RemoteException</code>，因为远程方法调用缺乏本地调用的可靠性，远程调用总是存在失败的可能。</p>
+
+<p>下一步是编写服务器的实现类，因为客户端请求的调用方法<code class="language-plaintext highlighter-rouge">getLocalDateTime()</code>最终会通过这个实现类返回结果。实现类<code class="language-plaintext highlighter-rouge">WorldClockService</code>代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WorldClockService</span> <span class="kd">implements</span> <span class="nc">WorldClock</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">LocalDateTime</span> <span class="nf">getLocalDateTime</span><span class="o">(</span><span class="nc">String</span> <span class="n">zoneId</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">RemoteException</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">now</span><span class="o">(</span><span class="nc">ZoneId</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">zoneId</span><span class="o">)).</span><span class="na">withNano</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>现在，服务器端的服务相关代码就编写完毕。需要通过Java RMI提供的一系列底层支持接口，把上面编写的服务以RMI的形式暴露在网络上，客户端才能调用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Server</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">RemoteException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"create World clock remote service..."</span><span class="o">);</span>
+        <span class="c1">// 实例化一个WorldClock:</span>
+        <span class="nc">WorldClock</span> <span class="n">worldClock</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">WorldClockService</span><span class="o">();</span>
+        <span class="c1">// 将此服务转换为远程服务接口:</span>
+        <span class="nc">WorldClock</span> <span class="n">skeleton</span> <span class="o">=</span> <span class="o">(</span><span class="nc">WorldClock</span><span class="o">)</span> <span class="nc">UnicastRemoteObject</span><span class="o">.</span><span class="na">exportObject</span><span class="o">(</span><span class="n">worldClock</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span><span class="c1">// 第二个参数为0，表明任何合适的端口都可用来监听客户连接。</span>
+        <span class="c1">// 将RMI服务注册到1099端口:</span>
+        <span class="nc">Registry</span> <span class="n">registry</span> <span class="o">=</span> <span class="nc">LocateRegistry</span><span class="o">.</span><span class="na">createRegistry</span><span class="o">(</span><span class="mi">1099</span><span class="o">);</span>
+        <span class="c1">// 注册此服务，服务名为"WorldClock":</span>
+        <span class="n">registry</span><span class="o">.</span><span class="na">rebind</span><span class="o">(</span><span class="s">"WorldClock"</span><span class="o">,</span> <span class="n">skeleton</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>上述代码主要目的是通过RMI提供的相关类，将我们自己的<code class="language-plaintext highlighter-rouge">WorldClock</code>实例注册到RMI服务上。RMI的默认端口是<code class="language-plaintext highlighter-rouge">1099</code>，最后一步注册服务时通过<code class="language-plaintext highlighter-rouge">rebind()</code>指定服务名称为<code class="language-plaintext highlighter-rouge">"WorldClock"</code>。</p>
+
+<p>下一步就可以编写客户端代码。RMI要求服务器和客户端共享同一个接口，因此要把<code class="language-plaintext highlighter-rouge">WorldClock.java</code>这个接口文件复制到客户端，然后在客户端实现RMI调用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">RemoteException</span><span class="o">,</span> <span class="nc">NotBoundException</span> <span class="o">{</span>
+        <span class="c1">// 连接到服务器localhost，端口1099:</span>
+        <span class="nc">Registry</span> <span class="n">registry</span> <span class="o">=</span> <span class="nc">LocateRegistry</span><span class="o">.</span><span class="na">getRegistry</span><span class="o">(</span><span class="s">"localhost"</span><span class="o">,</span> <span class="mi">1099</span><span class="o">);</span>
+        <span class="c1">// 查找名称为"WorldClock"的服务并强制转型为WorldClock接口:</span>
+        <span class="nc">WorldClock</span> <span class="n">worldClock</span> <span class="o">=</span> <span class="o">(</span><span class="nc">WorldClock</span><span class="o">)</span> <span class="n">registry</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span><span class="s">"WorldClock"</span><span class="o">);</span>
+        <span class="c1">// 正常调用接口方法:</span>
+        <span class="nc">LocalDateTime</span> <span class="n">now</span> <span class="o">=</span> <span class="n">worldClock</span><span class="o">.</span><span class="na">getLocalDateTime</span><span class="o">(</span><span class="s">"Asia/Shanghai"</span><span class="o">);</span>
+        <span class="c1">// 打印调用结果:</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>先运行服务器，再运行客户端。从运行结果可知，因为客户端只有接口，并没有实现类，因此，客户端获得的接口方法返回值实际上是通过网络从服务器端获取的。</p>
+
+<p>对客户端来说，客户端持有的<code class="language-plaintext highlighter-rouge">WorldClock</code>接口实际上对应了一个“实现类”，它是由<code class="language-plaintext highlighter-rouge">Registry</code>内部动态生成的，并负责把方法调用通过网络传递到服务器端。而服务器端接收网络调用的服务并不是我们自己编写的<code class="language-plaintext highlighter-rouge">WorldClockService</code>，而是<code class="language-plaintext highlighter-rouge">Registry</code>自动生成的代码。</p>
+
+<p>把客户端的“实现类”称为<code class="language-plaintext highlighter-rouge">stub</code>，而服务器端的网络服务类称为<code class="language-plaintext highlighter-rouge">skeleton</code>，它会真正调用服务器端的<code class="language-plaintext highlighter-rouge">WorldClockService</code>，获取结果，然后把结果通过网络传递给客户端。整个过程由RMI底层负责实现序列化和反序列化：</p>
+
+<pre><code class="language-ascii">┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐         ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+  ┌─────────────┐                                 ┌─────────────┐
+│ │   Service   │ │         │                     │   Service   │ │
+  └─────────────┘                                 └─────────────┘
+│        ▲        │         │                            ▲        │
+         │                                               │
+│        │        │         │                            │        │
+  ┌─────────────┐   Network   ┌───────────────┐   ┌─────────────┐
+│ │ Client Stub ├─┼─────────┼&gt;│Server Skeleton│──&gt;│Service Impl │ │
+  └─────────────┘             └───────────────┘   └─────────────┘
+└ ─ ─ ─ ─ ─ ─ ─ ─ ┘         └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+</code></pre>
+
+<p>Java的RMI严重依赖序列化和反序列化，而这种情况下可能会造成严重的安全漏洞，因为Java的序列化和反序列化不但涉及到数据，还涉及到二进制的字节码，即使使用白名单机制也很难保证100%排除恶意构造的字节码。因此，使用RMI时，双方必须是内网互相信任的机器，不要把1099端口暴露在公网上作为对外服务。</p>
+
+<p>Java的RMI调用机制决定了双方必须是Java程序，其他语言很难调用Java的RMI。如果要使用不同语言进行RPC调用，可以选择更通用的协议，例如<a href="https://grpc.io/">gRPC</a>。</p>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">Remote</code>接口，用于标识那些方法可以从非本地虚拟机调用的接口。任何作为远程对象的对象必须直接或间接实现这个接口。</p>
+
+<p><code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类是用于导出远程对象的抽象类。它提供了导出远程对象所需的基本功能。在Java RMI中，远程对象必须继承自 <code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类或调用 <code class="language-plaintext highlighter-rouge">exportObject</code> 方法来导出对象，以便能够被远程客户端访问。</p>
+
+<p>实现类可以实现任意数量的远程接口，并且可以扩展其他远程实现类。RMI提供了一些便利类，远程对象实现可以扩展这些类以方便远程对象的创建。这些类包括<code class="language-plaintext highlighter-rouge">java.rmi.server.UnicastRemoteObject</code>和<code class="language-plaintext highlighter-rouge">java.rmi.activation.Activatable</code>。</p>
+
+<p><code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类的作用包括：</p>
+
+<ul>
+  <li>导出远程对象：通过继承 <code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类或调用 <code class="language-plaintext highlighter-rouge">exportObject</code> 方法，可以将一个普通的Java对象转换为远程对象，使其能够接收远程调用。</li>
+  <li>远程对象的生命周期管理：<code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类提供了一些方法用于管理远程对象的生命周期，如 <code class="language-plaintext highlighter-rouge">unexportObject</code> 方法用于取消导出远程对象。</li>
+  <li>RMI通信的基础支持：<code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类提供了与RMI通信相关的基础支持，如实现了 <code class="language-plaintext highlighter-rouge">Remote</code> 接口以标识远程对象，同时提供了一些内部实现用于处理远程调用。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 类包含以下重要的方法：</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">UnicastRemoteObject()</code>：构造一个新的 <code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">UnicastRemoteObject(int port)</code>：在指定端口上创建一个新的 <code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">UnicastRemoteObject(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf)</code>：在指定端口上创建一个新的 <code class="language-plaintext highlighter-rouge">UnicastRemoteObject</code> 对象，使用指定的客户端和服务器端套接字工厂。</li>
+  <li><code class="language-plaintext highlighter-rouge">static RemoteStub exportObject(Remote obj)</code>：导出远程对象并返回其 stub。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">static RemoteStub exportObject(Remote obj, int port)</code>：导出远程对象并返回其 stub，在指定端口上监听。参数 <code class="language-plaintext highlighter-rouge">obj</code> 是要导出的远程对象，参数 <code class="language-plaintext highlighter-rouge">port</code> 是要监听的端口号。如果端口号为 0，则系统会自动选择一个可用的端口。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">static boolean unexportObject(Remote obj, boolean force)</code>：取消导出远程对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Object toStub(Remote obj)</code>：返回远程对象的 stub。</li>
+</ol>
+
+<p>这些方法用于导出和管理远程对象，使其能够被远程客户端访问。</p>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">LocateRegistry</code> 类是 Java RMI 中用于定位远程注册表的工具类。它提供了一组静态方法，用于获取远程注册表的引用。<code class="language-plaintext highlighter-rouge">LocateRegistry</code> 类的方法包括：</p>
+
+<p><code class="language-plaintext highlighter-rouge">LocateRegistry</code> 类的方法包括：</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">static Registry getRegistry(String host, int port)</code>：返回指定主机和端口上的远程注册表引用。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">static Registry getRegistry(String host, int port, RMIClientSocketFactory csf)</code>：返回指定主机和端口上的远程注册表引用，并使用指定的客户端套接字工厂创建套接字连接。</li>
+  <li><code class="language-plaintext highlighter-rouge">static Registry getRegistry(String host, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf)</code>：返回指定主机和端口上的远程注册表引用，并使用指定的客户端套接字工厂和服务器套接字工厂创建套接字连接。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">static Registry createRegistry(int port)</code>：在本地主机上的指定端口上创建并返回远程注册表引用。</strong></li>
+</ul>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">Registry</code> 类是 Java RMI 中的一个类，用于提供远程对象的注册和查找服务。它允许远程客户端查找和访问在远程主机上注册的远程对象。</p>
+
+<p><code class="language-plaintext highlighter-rouge">Registry</code> 类的主要方法包括：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">void bind(String name, Remote obj)</code>：将指定的远程对象与指定的名称在此注册表中进行绑定。</li>
+  <li><code class="language-plaintext highlighter-rouge">void unbind(String name)</code>：从此注册表中移除指定名称的绑定。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Remote lookup(String name)</code>：返回指定名称绑定的远程对象的引用。</strong></li>
+  <li><strong><code class="language-plaintext highlighter-rouge">void rebind(String name, Remote obj)</code>：将指定的远程对象与指定的名称在此注册表中进行重新绑定。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">String[] list()</code>：返回此注册表中的所有绑定名称的数组。</li>
+</ul>
+
+<p>这些方法允许远程对象在注册表中注册、查找和解绑，从而实现了远程对象之间的通信和访问。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">多线程</title><link href="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html" title="多线程" /><published>2024-04-16T00:00:00+08:00</published><updated>2024-04-16T00:00:00+08:00</updated><id>/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B</id><content type="html" xml:base="/2024/04/16/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<p>多线程笔记，包括线程、中断、同步、死锁、等待、唤醒、ReentrantLock、ReadWriteLock、 StampedLock、Semaphore、线程池、 CompletableFuture异步执行、ForkJoin、ThreadLocal、虚拟线程。</p>
+
+<h1 id="多线程">多线程</h1>
 <p>操作系统（Windows，macOS，Linux）都可以执行多任务,多任务就是同时运行多个任务。</p>
 
 <p><strong>进程</strong></p>
