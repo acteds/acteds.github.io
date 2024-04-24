@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T12:47:06+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="网络编程">网络编程</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T12:55:21+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="网络编程">网络编程</h1>
 
 <p>常见服务和对应端口号</p>
 
@@ -847,6 +847,8 @@
 
 <p>SMTP协议是一个建立在TCP之上的协议，任何程序发送邮件都必须遵守SMTP协议。使用Java程序发送邮件时，无需关心SMTP协议的底层原理，只需要使用<code class="language-plaintext highlighter-rouge">JavaMail</code>这个标准API就可以直接发送邮件。</p>
 
+<p>注：若在web邮箱中设置了“保存到已发送”，使用客户端SMTP服务发信时，已发邮件也会自动同步到网页端“已发送”文件夹内。</p>
+
 <hr />
 
 <p>假设准备使用自己的邮件地址<code class="language-plaintext highlighter-rouge">me@example.com</code>给小明发送邮件，已知小明的邮件地址是<code class="language-plaintext highlighter-rouge">xiaoming@somewhere.com</code>，发送邮件前，首先要确定作为MTA的邮件服务器地址和端口号。邮件服务器地址通常是<code class="language-plaintext highlighter-rouge">smtp.example.com</code>，端口号由邮件服务商确定使用25、465还是587。以下是一些常用邮件服务商的SMTP信息：</p>
@@ -1579,67 +1581,42 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 
 <p>对于 Gmail 邮箱，还需要启用“Less secure app access”或生成应用密码。Gmail 强制使用加密连接，请确保使用正确的端口号以及启用 SSL/TLS 加密连接。</p>
 
+<p><strong>POP3与IMAP</strong></p>
+
+<p>POP3协议允许电子邮件客户端下载服务器上的邮件，但是在客户端的操作（如移动邮件、标记已读等），不会反馈到服务器上，比如通过客户端收取了邮箱中的3封邮件并移动到其他文件夹，邮箱服务器上的这些邮件是没有同时被移动的 。</p>
+
+<p>而IMAP提供webmail 与电子邮件客户端之间的双向通信，客户端的操作都会反馈到服务器上，对邮件进行的操作，服务器上的邮件也会做相应的动作。</p>
+
+<p>同时，<strong>IMAP</strong>像<strong>POP3</strong>那样提供了方便的邮件下载服务，让用户能进行离线阅读。<strong>IMAP</strong>提供的摘要浏览功能可以让你在阅读完所有的邮件到达时间、主题、发件人、大小等信息后才作出是否下载的决定。此外，<strong>IMAP</strong> 更好地支持了从多个不同设备中随时访问新邮件。</p>
+
+<p>总之，<strong>IMAP</strong> 整体上为用户带来更为便捷和可靠的体验。<strong>POP3</strong> 更易丢失邮件或多次下载相同的邮件，而 <strong>IMAP</strong> 通过邮件客户端与webmail 之间的双向同步功能很好地避免了这些问题。</p>
+
 <h3 id="登录邮箱">登录邮箱</h3>
 
 <p><code class="language-plaintext highlighter-rouge">URLName</code> 类构造方法：</p>
 
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public URLName()</code>: 默认构造方法，创建一个空的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public URLName(String url)</code>: 使用给定的 URL 字符串创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。该 URL 字符串应包含完整的 URL 信息，例如：”protocol://host:port/file”。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file, String username, String password)</code>: 使用指定的协议、主机、端口、文件路径、用户名和密码创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。用于表示需要身份验证的 URL。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file)</code>: 使用指定的协议、主机、端口和文件路径创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，用户名和密码为空。通常用于表示不需要身份验证的 URL。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public URLName(URLName url)</code>: 复制构造方法，创建一个新的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，其内容与给定的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象相同。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">public URLName()</code>: 默认构造方法，创建一个空的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">public URLName(String url)</code>: 使用给定的 URL 字符串创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。该 URL 字符串应包含完整的 URL 信息，例如：”protocol://host:port/file”。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file, String username, String password)</code>: 使用指定的协议、主机、端口、文件路径、用户名和密码创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象。用于表示需要身份验证的 URL。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">public URLName(String protocol, String host, int port, String file)</code>: 使用指定的协议、主机、端口和文件路径创建一个 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，用户名和密码为空。通常用于表示不需要身份验证的 URL。</li>
+  <li><code class="language-plaintext highlighter-rouge">public URLName(URLName url)</code>: 复制构造方法，创建一个新的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象，其内容与给定的 <code class="language-plaintext highlighter-rouge">URLName</code> 对象相同。</li>
 </ol>
 
 <p><code class="language-plaintext highlighter-rouge">URLName</code> 类中除了构造方法外还有一些常用的方法，例如：</p>
-
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public String getProtocol()</code>: 返回 URL 的协议部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public String getHost()</code>: 返回 URL 的主机部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public int getPort()</code>: 返回 URL 的端口部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public String getFile()</code>: 返回 URL 的文件路径部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public String getUsername()</code>: 返回 URL 的用户名部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public String getPassword()</code>: 返回 URL 的密码部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setProtocol(String protocol)</code>: 设置 URL 的协议部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setHost(String host)</code>: 设置 URL 的主机部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setPort(int port)</code>: 设置 URL 的端口部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setFile(String file)</code>: 设置 URL 的文件路径部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setUsername(String username)</code>: 设置 URL 的用户名部分。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">public void setPassword(String password)</code>: 设置 URL 的密码部分。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">public String getProtocol()</code>: 返回 URL 的协议部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public String getHost()</code>: 返回 URL 的主机部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public int getPort()</code>: 返回 URL 的端口部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public String getFile()</code>: 返回 URL 的文件路径部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public String getUsername()</code>: 返回 URL 的用户名部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public String getPassword()</code>: 返回 URL 的密码部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setProtocol(String protocol)</code>: 设置 URL 的协议部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setHost(String host)</code>: 设置 URL 的主机部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setPort(int port)</code>: 设置 URL 的端口部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setFile(String file)</code>: 设置 URL 的文件路径部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setUsername(String username)</code>: 设置 URL 的用户名部分。</li>
+  <li><code class="language-plaintext highlighter-rouge">public void setPassword(String password)</code>: 设置 URL 的密码部分。</li>
 </ol>
 
 <hr />
@@ -1874,38 +1851,17 @@ com.sun.mail.smtp.SMTPSendFailedException: 554 DT:SPM
 <h3 id="查看邮箱">查看邮箱</h3>
 
 <p><code class="language-plaintext highlighter-rouge">Store</code> 类表示邮件存储的抽象类，它提供了一组方法用于连接到邮件服务器并访问邮件。下面是一些常用的 <code class="language-plaintext highlighter-rouge">Store</code> 类的方法：</p>
-
 <ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器，使用指定的用户名和密码进行身份验证。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void connect()</code>：连接到之前设置的邮件服务器，使用之前设置的用户名和密码进行身份验证。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Folder getDefaultFolder()</code>：获取默认文件夹，通常是收件箱。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">Folder getFolder(String name)</code>：根据给定的文件夹名称获取文件夹对象。</strong></p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Folder[] getPersonalNamespaces()</code>：获取个人文件夹命名空间。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Folder[] getUserNamespaces(String user)</code>：获取给定用户的文件夹命名空间。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void close()</code>：关闭与邮件服务器的连接。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">boolean isConnected()</code>：检查是否已连接到邮件服务器。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void addConnectionListener(ConnectionListener listener)</code>：添加连接监听器，以便在连接状态发生变化时接收通知。</p>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">void removeConnectionListener(ConnectionListener listener)</code>：移除连接监听器。</p>
-  </li>
+  <li><code class="language-plaintext highlighter-rouge">void connect(String host, String user, String password)</code>：连接到指定主机的邮件服务器，使用指定的用户名和密码进行身份验证。</li>
+  <li><code class="language-plaintext highlighter-rouge">void connect()</code>：连接到之前设置的邮件服务器，使用之前设置的用户名和密码进行身份验证。</li>
+  <li><code class="language-plaintext highlighter-rouge">Folder getDefaultFolder()</code>：获取默认文件夹，通常是收件箱。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Folder getFolder(String name)</code>：根据给定的文件夹名称获取文件夹对象。</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">Folder[] getPersonalNamespaces()</code>：获取个人文件夹命名空间。</li>
+  <li><code class="language-plaintext highlighter-rouge">Folder[] getUserNamespaces(String user)</code>：获取给定用户的文件夹命名空间。</li>
+  <li><code class="language-plaintext highlighter-rouge">void close()</code>：关闭与邮件服务器的连接。</li>
+  <li><code class="language-plaintext highlighter-rouge">boolean isConnected()</code>：检查是否已连接到邮件服务器。</li>
+  <li><code class="language-plaintext highlighter-rouge">void addConnectionListener(ConnectionListener listener)</code>：添加连接监听器，以便在连接状态发生变化时接收通知。</li>
+  <li><code class="language-plaintext highlighter-rouge">void removeConnectionListener(ConnectionListener listener)</code>：移除连接监听器。</li>
 </ol>
 
 <hr />
