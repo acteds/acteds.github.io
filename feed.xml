@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T17:47:40+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-24T17:59:06+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>网络编程是指编写能够在计算机网络上进行通信的程序的过程。网络编程涉及使用各种协议和技术来实现不同类型的网络通信，例如传输文件、发送电子邮件、浏览网页等。在网络编程中，通常涉及两个或多个计算机之间的数据交换，这些计算机通过网络连接在一起。</p>
 
 <h1 id="网络编程">网络编程</h1>
@@ -6206,11 +6206,11 @@ End
 </ul>
 
 <p>这是因为JDK为了实现虚拟线程，已经对底层相关操作进行了修改，这样应用层的Java代码无需修改即可使用虚拟线程。无法自动切换的JavaScript语言需要用户手动调用<code class="language-plaintext highlighter-rouge">await</code>来实现异步操作：</p>
-<pre><code class="language-JavaScript">async function doWork() {
-    await readFile();
-    await sendNetworkData();
-}
-</code></pre>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">doWork</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="nx">readFile</span><span class="p">();</span>
+    <span class="k">await</span> <span class="nx">sendNetworkData</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
 <p>在虚拟线程中，如果绕过JDK的IO接口，直接通过JNI读写文件或网络是无法实现调度的。此外，在<code class="language-plaintext highlighter-rouge">synchronized</code>块内部也无法调度。</p>
 
 <p><strong>Java 19</strong>引入的虚拟线程是为了解决IO密集型任务的吞吐量，它可以高效通过少数线程去调度大量虚拟线程；</p>
@@ -11337,7 +11337,7 @@ Java提供的使用反射API读取<code class="language-plaintext highlighter-ro
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<h1 id="尝试在方法参数上实现-notnull-range">尝试在方法参数上实现 <strong>@NotNull @Range</strong></h1>
+<h1 id="尝试在方法参数上实现-notnull-range">尝试在方法参数上实现 @NotNull @Range</h1>
 
 <p>对于方法的形式参数，Java的反射机制并不能直接获取参数的值，毕竟只有在方法调用的时候才有值，因此失败了。如果需要在方法运行时对参数进行检查，可以使用面向切面编程（AOP）结合反射来实现。<br />
 不过对于对象的字段，可以直接通过反射获取字段的值，并进行判断。但要注意判断的时机需要另外的事件来触发。</p>
