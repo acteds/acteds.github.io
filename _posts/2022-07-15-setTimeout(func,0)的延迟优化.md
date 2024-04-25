@@ -7,8 +7,12 @@ keywords: JavaScript
 ---
 ## 引言  
 根据[MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/setTimeout#%E5%AE%9E%E9%99%85%E5%BB%B6%E6%97%B6%E6%AF%94%E8%AE%BE%E5%AE%9A%E5%80%BC%E6%9B%B4%E4%B9%85%E7%9A%84%E5%8E%9F%E5%9B%A0%EF%BC%9A%E6%9C%80%E5%B0%8F%E5%BB%B6%E8%BF%9F%E6%97%B6%E9%97%B4)所言，setTimeout函数的最小延迟>=4ms。  
+
 也[有人](https://dbaron.org/log/20100309-faster-timeouts)实现了延迟更小的异步方法：
+
 无参数setZeroTimeout():
+
+
 ```javascript
 // 闭包
 (function () {
@@ -104,7 +108,9 @@ keywords: JavaScript
 
 ### 不定参数的setZeroInterval()
 顺便拓展一下setInterval()  
+
 因为需要考虑取消执行，因此会需要处理多线程问题。
+
 ```javascript
 // 闭包
 (function () {
@@ -159,7 +165,9 @@ keywords: JavaScript
 })();
 ```
 性能测试：  
+
 单次测试：
+
 ```javascript
 {
     let count = 0;
