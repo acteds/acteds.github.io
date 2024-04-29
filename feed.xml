@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-27T07:59:51+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-29T23:18:02+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Lambda、方法引用、Stream。</p>
 
 <h1 id="函数式编程">函数式编程</h1>
@@ -72,36 +72,36 @@
 
 <h2 id="柯里化">柯里化</h2>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>package com.aotmd;
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
 
-import java.util.Arrays;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.BiConsumer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Consumer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Function</span><span class="o">;</span>
 
-public class Main {
-    public static void staticMethod(Object ... s) {
-        System.out.println("静态方法:"+ Arrays.toString(s));
-    }
-    public static void main(String[] args) {
-        // 柯里化（currying）的技巧，将一个多参数的方法转换为一系列单参数的方法。
-        Function<span class="nt">&lt;Integer</span><span class="err">,</span> <span class="err">Runnable</span><span class="nt">&gt;</span> cr2 =
-                (v1) -&gt; () -&gt; Main.staticMethod(v1);
-        cr2.apply(1).run();
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">staticMethod</span><span class="o">(</span><span class="nc">Object</span> <span class="o">...</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"静态方法:"</span><span class="o">+</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">s</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 柯里化（currying）的技巧，将一个多参数的方法转换为一系列单参数的方法。</span>
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Runnable</span><span class="o">&gt;</span> <span class="n">cr2</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">);</span>
+        <span class="n">cr2</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">run</span><span class="o">();</span>
         
-        Function<span class="nt">&lt;Integer</span><span class="err">,</span> <span class="err">Function&lt;Integer,</span> <span class="err">Consumer&lt;String</span><span class="nt">&gt;</span>&gt;&gt; cr3 =
-                (v1) -&gt; (v2) -&gt; (v3) -&gt; Main.staticMethod(v1, v2, v3);
-        cr3.apply(1).apply(2).accept("Consumer");
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Consumer</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;&gt;</span> <span class="n">cr3</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v3</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">,</span> <span class="n">v3</span><span class="o">);</span>
+        <span class="n">cr3</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">apply</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="s">"Consumer"</span><span class="o">);</span>
         
-        Function<span class="nt">&lt;Integer</span><span class="err">,</span> <span class="err">自定义接口&lt;Integer,</span> <span class="err">Integer,</span> <span class="err">Integer</span><span class="nt">&gt;</span>&gt; cr =
-                (v1) -&gt; (v4, v5, v6) -&gt; Main.staticMethod(v1, v4, v5, v6);
-        cr.apply(1).随便(3, 4, 5);
-    }
-}
-@FunctionalInterface
-interface 自定义接口<span class="nt">&lt;T</span><span class="err">,</span> <span class="err">U,</span> <span class="err">V</span><span class="nt">&gt;</span> {
-    void 随便(T t, U u, V v);
-}
+        <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="n">自定义接口</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">cr</span> <span class="o">=</span>
+                <span class="o">(</span><span class="n">v1</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="nc">Main</span><span class="o">.</span><span class="na">staticMethod</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v4</span><span class="o">,</span> <span class="n">v5</span><span class="o">,</span> <span class="n">v6</span><span class="o">);</span>
+        <span class="n">cr</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">随便</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">interface</span> <span class="nc">自定义接口</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">U</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="n">随便</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">,</span> <span class="no">U</span> <span class="n">u</span><span class="o">,</span> <span class="no">V</span> <span class="n">v</span><span class="o">);</span>
+<span class="o">}</span>
 </code></pre></div></div>
 
 <p>柯里化是一种函数式编程的技术，通过这种技巧可以将<strong>多参数函数</strong>转换为一系列接受<strong>单个参数的函数</strong>。在柯里化中，每个函数只接受一个参数，并返回一个接受下一个参数的函数，直到接受完所有参数后返回最终结果。</p>
