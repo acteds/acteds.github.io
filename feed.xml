@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-04-29T23:18:02+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-01T20:18:16+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Lambda、方法引用、Stream。</p>
 
 <h1 id="函数式编程">函数式编程</h1>
@@ -310,7 +310,94 @@
   </tbody>
 </table>
 
-<p>这些方法引用可以简化代码，使其更易读和易维护。</p>
+<p>方法引用，是指如果某个方法签名和单方法接口签名恰好一致，就可以直接传入方法引用。 在这里，方法签名只看参数类型和返回类型，<strong>不看方法名称</strong>，也不看类的继承关系。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">[]</span> <span class="o">{</span> <span class="s">"Apple"</span><span class="o">,</span> <span class="s">"Orange"</span><span class="o">,</span> <span class="s">"Banana"</span><span class="o">,</span> <span class="s">"Lemon"</span> <span class="o">};</span>
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="nl">String:</span><span class="o">:</span><span class="n">compareTo</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">array</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>对于<code class="language-plaintext highlighter-rouge">String.compareTo()</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">String</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="nc">String</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这个方法的签名只有一个参数，为什么和<code class="language-plaintext highlighter-rouge">int compare(T t, T t)</code>能匹配呢？</p>
+
+<p>因为使用<code class="language-plaintext highlighter-rouge">类名::实例方法</code>这样的方法引用，则会有一个<strong>隐含</strong>的<code class="language-plaintext highlighter-rouge">this</code>参数，<code class="language-plaintext highlighter-rouge">String</code>类的<code class="language-plaintext highlighter-rouge">compareTo()</code>方法在实际调用的时候，<strong>第一个隐含参数总是传入<code class="language-plaintext highlighter-rouge">this</code></strong>，相当于静态方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="nc">String</span> <span class="k">this</span><span class="o">,</span> <span class="nc">String</span> <span class="n">o</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>所以，<code class="language-plaintext highlighter-rouge">String.compareTo()</code>方法也可作为方法引用传入。</p>
+
+<p><code class="language-plaintext highlighter-rouge">类名::实例方法</code>这种方法引用形式，实际上是一种语法糖，它可以理解为对<code class="language-plaintext highlighter-rouge">实例::实例方法</code>的一种特殊情况。</p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">类名::实例方法</code>方法引用，实例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">instanceMethod</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="s">"123"</span><span class="o">;</span>
+    <span class="o">}</span>
+   <span class="kd">static</span> <span class="nc">String</span> <span class="nf">call</span><span class="o">(</span><span class="no">I</span> <span class="n">i</span><span class="o">){</span>
+        <span class="k">return</span>  <span class="n">i</span><span class="o">.</span><span class="na">func</span><span class="o">(</span><span class="k">new</span> <span class="nc">Main</span><span class="o">());</span>
+   <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Main</span><span class="o">.</span><span class="na">call</span><span class="o">(</span><span class="nl">Main:</span><span class="o">:</span><span class="n">instanceMethod</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">I</span><span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">func</span><span class="o">(</span><span class="nc">Main</span> <span class="n">a</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这种方法引用需要一个接收者参数，因此<code class="language-plaintext highlighter-rouge">I</code>接口的<code class="language-plaintext highlighter-rouge">func</code>方法需要接收一个<code class="language-plaintext highlighter-rouge">Main</code>类型的参数。</p>
+
+<p>有点类似通过反射的形式调用方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">instanceMethod</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="s">"123"</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="nc">String</span> <span class="nf">ref</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">c</span><span class="o">,</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">NoSuchMethodException</span><span class="o">,</span> <span class="nc">InvocationTargetException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">c</span><span class="o">.</span><span class="na">getDeclaredMethod</span><span class="o">(</span><span class="n">name</span><span class="o">).</span><span class="na">invoke</span><span class="o">(</span><span class="k">new</span> <span class="nc">Main</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">NoSuchMethodException</span><span class="o">,</span> <span class="nc">InvocationTargetException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Main</span><span class="o">.</span><span class="na">ref</span><span class="o">(</span><span class="nc">Main</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="s">"instanceMethod"</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>使用<code class="language-plaintext highlighter-rouge">实例::实例方法</code>方法引用，则没有隐含参数：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">instanceMethod</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="s">"123"</span><span class="o">;</span>
+    <span class="o">}</span>
+   <span class="kd">static</span> <span class="nc">String</span> <span class="nf">call</span><span class="o">(</span><span class="no">I</span> <span class="n">i</span><span class="o">){</span>
+        <span class="k">return</span>  <span class="n">i</span><span class="o">.</span><span class="na">func</span><span class="o">();</span>
+   <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Main</span> <span class="n">main</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Main</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Main</span><span class="o">.</span><span class="na">call</span><span class="o">(</span><span class="nl">main:</span><span class="o">:</span><span class="n">instanceMethod</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">I</span><span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">func</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这种方法引用不需要接收者参数，因为实例本身已经确定了。</p>
 
 <h3 id="无参引用调用">无参引用调用</h3>
 
@@ -318,7 +405,7 @@
   <thead>
     <tr>
       <th>类型</th>
-      <th>接口</th>
+      <th>常用接口</th>
       <th>代码</th>
       <th>等效调用</th>
     </tr>
@@ -399,7 +486,7 @@
     <tr>
       <td>一个参数</td>
       <td>Consumer<code class="language-plaintext highlighter-rouge">&lt;T&gt;</code></td>
-      <td><code class="language-plaintext highlighter-rouge">.accept(T)</code>调用</td>
+      <td><code class="language-plaintext highlighter-rouge">accept(T)</code>调用</td>
     </tr>
     <tr>
       <td>两个参数</td>
@@ -595,7 +682,1292 @@
 <span class="n">构造方法</span><span class="err">：</span><span class="o">[</span><span class="kd">class</span> <span class="nc">com</span><span class="o">.</span><span class="na">aotmd</span><span class="o">.</span><span class="na">C</span><span class="o">]</span>
 </code></pre></div></div>
 
-<p>从上到下，越来越易懂。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<p>从上到下，越来越易懂。</p>
+
+<h2 id="stream">Stream</h2>
+
+<p>Java从8开始，不但引入了Lambda表达式，还引入了一个全新的<strong>流式</strong>API：Stream API。它位于<code class="language-plaintext highlighter-rouge">java.util.stream</code>包中。</p>
+
+<p>这个<code class="language-plaintext highlighter-rouge">Stream</code>不同于<code class="language-plaintext highlighter-rouge">java.io</code>的<code class="language-plaintext highlighter-rouge">InputStream</code>和<code class="language-plaintext highlighter-rouge">OutputStream</code>，它代表的是<strong>任意</strong>Java对象的序列。两者对比如下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left"><code class="language-plaintext highlighter-rouge">java.io</code></th>
+      <th><code class="language-plaintext highlighter-rouge">java.util.stream</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">存储</td>
+      <td style="text-align: left">顺序读写的<code class="language-plaintext highlighter-rouge">byte</code>或<code class="language-plaintext highlighter-rouge">char</code></td>
+      <td>顺序输出的任意Java对象实例</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">用途</td>
+      <td style="text-align: left">序列化至文件或网络</td>
+      <td>内存计算／业务逻辑</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这个<code class="language-plaintext highlighter-rouge">Stream</code>和<code class="language-plaintext highlighter-rouge">List</code>也不一样，<code class="language-plaintext highlighter-rouge">List</code>存储的每个元素都是已经存储在内存中的某个Java对象，而<code class="language-plaintext highlighter-rouge">Stream</code>输出的元素可能并没有预先存储在内存中，而是<strong>实时计算</strong>出来的。<code class="language-plaintext highlighter-rouge">List</code>的用途是操作一组已存在的Java对象，而<code class="language-plaintext highlighter-rouge">Stream</code>实现的是<strong>惰性计算</strong>，两者对比如下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left"><code class="language-plaintext highlighter-rouge">java.util.List</code></th>
+      <th><code class="language-plaintext highlighter-rouge">java.util.stream</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">元素</td>
+      <td style="text-align: left">已分配并存储在内存</td>
+      <td>可能未分配，实时计算</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">用途</td>
+      <td style="text-align: left">操作一组已存在的Java对象</td>
+      <td>惰性计算</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>如果要表示一个全体自然数的集合，显然，用<code class="language-plaintext highlighter-rouge">List</code>是不可能写出来的，因为自然数是无限的，内存再大也没法放到<code class="language-plaintext highlighter-rouge">List</code>中。但是，用<code class="language-plaintext highlighter-rouge">Stream</code>可以做到：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">naturals</span> <span class="o">=</span> <span class="n">createNaturalStream</span><span class="o">();</span> <span class="c1">// 全体自然数</span>
+</code></pre></div></div>
+
+<p>先不考虑<code class="language-plaintext highlighter-rouge">createNaturalStream()</code>方法是如何实现。</p>
+
+<p>可以对每个自然数做一个平方，这样就把这个<code class="language-plaintext highlighter-rouge">Stream</code>转换成了另一个<code class="language-plaintext highlighter-rouge">Stream</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">naturals</span> <span class="o">=</span> <span class="n">createNaturalStream</span><span class="o">();</span> <span class="c1">// 全体自然数</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">streamNxN</span> <span class="o">=</span> <span class="n">naturals</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span><span class="o">.</span><span class="na">multiply</span><span class="o">(</span><span class="n">n</span><span class="o">));</span> <span class="c1">// 全体自然数的平方</span>
+</code></pre></div></div>
+
+<p>因为这个<code class="language-plaintext highlighter-rouge">streamNxN</code>也有无限多个元素，要打印它，必须首先把无限多个元素变成有限个元素，可以用<code class="language-plaintext highlighter-rouge">limit()</code>方法截取前100个元素，最后用<code class="language-plaintext highlighter-rouge">forEach()</code>处理每个元素，这样，就打印出了前100个自然数的平方：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">naturals</span> <span class="o">=</span> <span class="n">createNaturalStream</span><span class="o">();</span>
+<span class="n">naturals</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span><span class="o">.</span><span class="na">multiply</span><span class="o">(</span><span class="n">n</span><span class="o">))</span> <span class="c1">// 1, 4, 9, 16, 25...</span>
+        <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>它可以“存储”有限个或无限个元素。这里的存储打了个引号，是因为元素有可能已经全部存储在内存中，也有可能是根据需要实时计算出来的。</p>
+
+<p><code class="language-plaintext highlighter-rouge">Stream</code>的另一个特点是，一个<code class="language-plaintext highlighter-rouge">Stream</code>可以轻易地转换为另一个<code class="language-plaintext highlighter-rouge">Stream</code>，而不是修改原<code class="language-plaintext highlighter-rouge">Stream</code>本身。</p>
+
+<p>最后，真正的计算通常发生在最后结果的获取，也就是惰性计算。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">naturals</span> <span class="o">=</span> <span class="n">createNaturalStream</span><span class="o">();</span> <span class="c1">// 不计算</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">naturals</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">BigInteger:</span><span class="o">:</span><span class="n">multiply</span><span class="o">);</span> <span class="c1">// 不计算</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span> <span class="c1">// 不计算</span>
+<span class="n">s3</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span> <span class="c1">// 计算</span>
+</code></pre></div></div>
+
+<p>惰性计算的特点是：一个<code class="language-plaintext highlighter-rouge">Stream</code>转换为另一个<code class="language-plaintext highlighter-rouge">Stream</code>时，实际上只存储了转换规则，并没有任何计算发生。</p>
+
+<p>例如，创建一个全体自然数的<code class="language-plaintext highlighter-rouge">Stream</code>，不会进行计算，把它转换为上述<code class="language-plaintext highlighter-rouge">s2</code>这个<code class="language-plaintext highlighter-rouge">Stream</code>，也不会进行计算。再把<code class="language-plaintext highlighter-rouge">s2</code>这个无限<code class="language-plaintext highlighter-rouge">Stream</code>转换为<code class="language-plaintext highlighter-rouge">s3</code>这个有限的<code class="language-plaintext highlighter-rouge">Stream</code>，也不会进行计算。只有最后，调用<code class="language-plaintext highlighter-rouge">forEach</code>确实需要<code class="language-plaintext highlighter-rouge">Stream</code>输出的元素时，才进行计算。</p>
+
+<p>通常把<code class="language-plaintext highlighter-rouge">Stream</code>的操作写成链式操作，代码更简洁：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">createNaturalStream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">BigInteger:</span><span class="o">:</span><span class="n">multiply</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>因此，Stream API的基本用法就是：创建一个<code class="language-plaintext highlighter-rouge">Stream</code>，然后做若干次转换，最后调用一个求值方法获取真正计算的结果：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">createNaturalStream</span><span class="o">()</span> <span class="c1">// 创建Stream</span>
+             <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="c1">// 任意个转换</span>
+             <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="o">)</span> <span class="c1">// 任意个转换</span>
+             <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span> <span class="c1">// 任意个转换</span>
+             <span class="o">.</span><span class="na">sum</span><span class="o">();</span> <span class="c1">// 最终计算结果</span>
+</code></pre></div></div>
+
+<h3 id="创建stream">创建<code class="language-plaintext highlighter-rouge">Stream</code></h3>
+
+<p>要使用<code class="language-plaintext highlighter-rouge">Stream</code>，就必须先创建它，创建<code class="language-plaintext highlighter-rouge">Stream</code>有很多种方法。</p>
+
+<h4 id="streamof"><code class="language-plaintext highlighter-rouge">Stream.of</code></h4>
+
+<p>创建<code class="language-plaintext highlighter-rouge">Stream</code>最简单的方式是直接用<code class="language-plaintext highlighter-rouge">Stream.of()</code>静态方法，传入可变参数即创建了一个能输出确定元素的<code class="language-plaintext highlighter-rouge">Stream</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">,</span> <span class="s">"D"</span><span class="o">);</span>
+<span class="c1">// forEach()方法相当于内部循环调用，</span>
+<span class="c1">// 可传入符合Consumer接口的void accept(T t)的方法引用：</span>
+<span class="n">stream</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h4 id="基于数组或集合">基于数组或集合</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">{</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">};</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">stream1</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">array</span><span class="o">);</span>
+<span class="n">stream1</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"X"</span><span class="o">,</span> <span class="s">"Y"</span><span class="o">,</span> <span class="s">"Z"</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">stream2</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">();</span>
+<span class="n">stream2</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>把数组变成<code class="language-plaintext highlighter-rouge">Stream</code>使用<code class="language-plaintext highlighter-rouge">Arrays.stream()</code>方法。对于<code class="language-plaintext highlighter-rouge">Collection</code>（<code class="language-plaintext highlighter-rouge">List</code>、<code class="language-plaintext highlighter-rouge">Set</code>、<code class="language-plaintext highlighter-rouge">Queue</code>等），直接调用<code class="language-plaintext highlighter-rouge">stream()</code>方法就可以获得<code class="language-plaintext highlighter-rouge">Stream</code>。</p>
+
+<p>上述创建<code class="language-plaintext highlighter-rouge">Stream</code>的方法都是把一个现有的序列变为<code class="language-plaintext highlighter-rouge">Stream</code>，它的元素是固定的。</p>
+
+<h4 id="streamiterate"><code class="language-plaintext highlighter-rouge">Stream.iterate</code></h4>
+
+<p>创建<code class="language-plaintext highlighter-rouge">Stream</code>还可以通过<code class="language-plaintext highlighter-rouge">Stream.generate()</code>方法，它需要传入一个<code class="language-plaintext highlighter-rouge">Supplier</code>接口对象：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="nc">Supplier</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">sp</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>基于<code class="language-plaintext highlighter-rouge">Supplier</code>创建的<code class="language-plaintext highlighter-rouge">Stream</code>会不断调用<code class="language-plaintext highlighter-rouge">Supplier.get()</code>方法来不断产生下一个元素，这种<code class="language-plaintext highlighter-rouge">Stream</code>保存的不是元素，而是算法，它可以用来表示<strong>无限序列</strong>。</p>
+
+<p>例如，编写一个能不断生成自然数的<code class="language-plaintext highlighter-rouge">Supplier</code>，它的代码非常简单，每次调用<code class="language-plaintext highlighter-rouge">get()</code>方法，就生成下一个自然数：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">natual</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="nc">Supplier</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">n</span><span class="o">++;</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="c1">// 注意：无限序列必须先变成有限序列再打印:</span>
+<span class="n">natual</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">20</span><span class="o">).</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>不过它并不能代表所有自然数，因为<code class="language-plaintext highlighter-rouge">long</code>是有极限的,最大<code class="language-plaintext highlighter-rouge">2^63-1</code>。如果用<code class="language-plaintext highlighter-rouge">List</code>表示，即便在<code class="language-plaintext highlighter-rouge">int</code>范围内，也会占用巨大的内存，而<code class="language-plaintext highlighter-rouge">Stream</code>几乎不占用空间，因为每个元素都是实时计算出来的，用的时候再算。</p>
+
+<p>对于<strong>无限序列</strong>，如果直接调用<code class="language-plaintext highlighter-rouge">forEach()</code>或者<code class="language-plaintext highlighter-rouge">count()</code>这些最终求值操作，会进入死循环，因为永远无法计算完这个序列，所以正确的方法是先把无限序列变成有限序列，例如，用<strong><code class="language-plaintext highlighter-rouge">limit()</code></strong>方法可以截取前面若干个元素，这样就变成了一个有限序列，对这个有限序列调用<code class="language-plaintext highlighter-rouge">forEach()</code>或者<code class="language-plaintext highlighter-rouge">count()</code>操作就没有问题。</p>
+
+<p><code class="language-plaintext highlighter-rouge">BigInteger</code>虽然没有极限，但<code class="language-plaintext highlighter-rouge">limit</code>方法只能传入<code class="language-plaintext highlighter-rouge">long</code>型，因此改成<code class="language-plaintext highlighter-rouge">BigInteger</code>，也没用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">BigInteger</span><span class="o">&gt;</span> <span class="n">natual</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="nc">Supplier</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">BigInteger</span> <span class="n">n</span> <span class="o">=</span> <span class="nc">BigInteger</span><span class="o">.</span><span class="na">ZERO</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">BigInteger</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">BigInteger</span> <span class="n">result</span> <span class="o">=</span> <span class="n">n</span><span class="o">;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">BigInteger</span><span class="o">.</span><span class="na">ONE</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">natual</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">20</span><span class="o">).</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h4 id="streamiterate-1"><code class="language-plaintext highlighter-rouge">Stream.iterate</code></h4>
+
+<p><code class="language-plaintext highlighter-rouge">Stream.iterate()</code>方法的方法签名如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Stream</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">iterate</span><span class="o">(</span><span class="no">T</span> <span class="n">seed</span><span class="o">,</span> <span class="nc">UnaryOperator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">f</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>其中：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">T</code>：流中元素的类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">seed</code>：初始值，即流的第一个元素。</li>
+  <li><code class="language-plaintext highlighter-rouge">f</code>：生成流中后续元素的函数，它接受一个参数（前一个元素）并返回一个结果（下一个元素）。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">Stream.iterate()</code>方法会生成一个无限长度的流，从初始值开始，根据指定的函数生成后续的元素。要使这种流变为有限流，通常需要使用<code class="language-plaintext highlighter-rouge">limit()</code>方法来限制流的长度。</p>
+
+<p><code class="language-plaintext highlighter-rouge">UnaryOperator&lt;T&gt;</code>的方法签名如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UnaryOperator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">T</span><span class="o">&gt;</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>而<code class="language-plaintext highlighter-rouge">Function&lt;T, R&gt;</code>是这样的：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">R</span> <span class="nf">apply</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>因此<code class="language-plaintext highlighter-rouge">UnaryOperator&lt;T&gt;</code>，实际上就是这这样的：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UnaryOperator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">T</span> <span class="nf">apply</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>示例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">iterate</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>斐波那契：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">.</span><span class="na">iterate</span><span class="o">(</span><span class="k">new</span> <span class="kt">long</span><span class="o">[]{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">1</span><span class="o">},</span> <span class="n">f</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="kt">long</span><span class="o">[]{</span><span class="n">f</span><span class="o">[</span><span class="mi">1</span><span class="o">],</span> <span class="n">f</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">+</span> <span class="n">f</span><span class="o">[</span><span class="mi">1</span><span class="o">]})</span>
+        <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">mapToLong</span><span class="o">(</span><span class="n">f</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">[</span><span class="mi">0</span><span class="o">])</span>
+        <span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">s</span> <span class="o">+</span> <span class="s">" "</span><span class="o">));</span>
+</code></pre></div></div>
+
+<h4 id="其他方法">其他方法</h4>
+
+<p>创建<code class="language-plaintext highlighter-rouge">Stream</code>的第三种方法是通过一些API提供的接口，直接获得<code class="language-plaintext highlighter-rouge">Stream</code>。</p>
+
+<p>例如，<code class="language-plaintext highlighter-rouge">Files</code>类的<code class="language-plaintext highlighter-rouge">lines()</code>方法可以把一个文件变成一个<code class="language-plaintext highlighter-rouge">Stream</code>，每个元素代表文件的一行内容：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span> <span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">lines</span> <span class="o">=</span> <span class="nc">Files</span><span class="o">.</span><span class="na">lines</span><span class="o">(</span><span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"1.xml"</span><span class="o">)))</span> <span class="o">{</span>
+    <span class="n">lines</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>此方法对于按行遍历文本文件十分有用。</p>
+
+<p>正则表达式的<code class="language-plaintext highlighter-rouge">Pattern</code>对象有一个<code class="language-plaintext highlighter-rouge">splitAsStream()</code>方法，可以直接把一个长字符串分割成<code class="language-plaintext highlighter-rouge">Stream</code>序列而不是数组：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span><span class="na">compile</span><span class="o">(</span><span class="s">"\\s+"</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">splitAsStream</span><span class="o">(</span><span class="s">"The quick brown fox jumps over the lazy dog"</span><span class="o">);</span>
+<span class="n">s</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h4 id="基本类型">基本类型</h4>
+
+<p>因为Java的泛型不支持基本类型，所以无法用<code class="language-plaintext highlighter-rouge">Stream&lt;int&gt;</code>这样的类型，会发生编译错误。为了保存<code class="language-plaintext highlighter-rouge">int</code>，只能使用<code class="language-plaintext highlighter-rouge">Stream&lt;Integer&gt;</code>，但这样会产生频繁的装箱、拆箱操作。为了提高效率，Java标准库提供了<code class="language-plaintext highlighter-rouge">IntStream</code>、<code class="language-plaintext highlighter-rouge">LongStream</code>和<code class="language-plaintext highlighter-rouge">DoubleStream</code>这三种使用基本类型的<code class="language-plaintext highlighter-rouge">Stream</code>，它们的使用方法和泛型<code class="language-plaintext highlighter-rouge">Stream</code>没有大的区别，设计这三个<code class="language-plaintext highlighter-rouge">Stream</code>的目的是提高运行效率：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 将int[]数组变为IntStream:</span>
+<span class="nc">IntStream</span> <span class="n">is</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="k">new</span> <span class="kt">int</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span> <span class="o">});</span>
+<span class="c1">// 将Stream&lt;String&gt;转换为LongStream:</span>
+<span class="nc">LongStream</span> <span class="n">ls</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"1"</span><span class="o">,</span> <span class="s">"2"</span><span class="o">,</span> <span class="s">"3"</span><span class="o">).</span><span class="na">stream</span><span class="o">().</span><span class="na">mapToLong</span><span class="o">(</span><span class="nl">Long:</span><span class="o">:</span><span class="n">parseLong</span><span class="o">);</span>
+
+<span class="n">is</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<span class="n">ls</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="map方法"><code class="language-plaintext highlighter-rouge">map</code>方法</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Stream.map()</code>是<code class="language-plaintext highlighter-rouge">Stream</code>最常用的一个转换方法，它<strong>把一个<code class="language-plaintext highlighter-rouge">Stream</code>转换为另一个<code class="language-plaintext highlighter-rouge">Stream</code></strong>。</p>
+
+<p><code class="language-plaintext highlighter-rouge">map</code>操作，就是把一种操作运算，映射到一个序列的<strong>每一个元素上</strong>。例如，对<code class="language-plaintext highlighter-rouge">x</code>计算它的平方，可以使用函数<code class="language-plaintext highlighter-rouge">f(x) = x * x</code>。我们把这个函数映射到一个序列1，2，3，4，5上，就得到了另一个序列1，4，9，16，25。传入的方法需符合<code class="language-plaintext highlighter-rouge">Function</code>接口</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="o">);</span>
+<span class="n">s2</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="filter方法"><code class="language-plaintext highlighter-rouge">Filter</code>方法</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Stream.filter()</code>是<code class="language-plaintext highlighter-rouge">Stream</code>的另一个常用<strong>转换</strong>方法。</p>
+
+<p><code class="language-plaintext highlighter-rouge">filter()</code>操作，就是对一个<code class="language-plaintext highlighter-rouge">Stream</code>的所有元素进行判断，不满足条件的就被“滤掉”了，剩下的满足条件的元素就构成了一个新的<code class="language-plaintext highlighter-rouge">Stream</code>。</p>
+
+<p><code class="language-plaintext highlighter-rouge">filter()</code>方法接收的对象是<code class="language-plaintext highlighter-rouge">Predicate</code>接口对象，它定义了一个<code class="language-plaintext highlighter-rouge">test()</code>方法，负责判断元素是否符合条件：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Predicate</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 判断元素t是否符合条件:</span>
+    <span class="kt">boolean</span> <span class="nf">test</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>示例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">IntStream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="nl">Main:</span><span class="o">:</span><span class="n">singular</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">singular</span><span class="o">(</span><span class="kt">int</span> <span class="n">t</span><span class="o">){</span>
+        <span class="k">return</span>  <span class="n">t</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>对对象操作：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">&gt;</span> <span class="n">persons</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小明"</span><span class="o">,</span> <span class="mi">88</span><span class="o">),</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小黑"</span><span class="o">,</span> <span class="mi">62</span><span class="o">),</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小白"</span><span class="o">,</span> <span class="mi">45</span><span class="o">),</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小黄"</span><span class="o">,</span> <span class="mi">78</span><span class="o">),</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小红"</span><span class="o">,</span> <span class="mi">99</span><span class="o">),</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"小林"</span><span class="o">,</span> <span class="mi">58</span><span class="o">));</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">filter</span><span class="o">(</span>
+                <span class="n">person</span> <span class="o">-&gt;</span> <span class="n">person</span><span class="o">.</span><span class="na">score</span> <span class="o">&gt;=</span> <span class="mi">60</span>
+            <span class="o">).</span><span class="na">map</span><span class="o">(</span>
+                <span class="n">person</span> <span class="o">-&gt;</span> <span class="n">person</span><span class="o">.</span><span class="na">name</span>
+            <span class="o">).</span><span class="na">forEach</span><span class="o">(</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span>
+            <span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">score</span><span class="o">;</span>
+
+    <span class="nc">Person</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">score</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">score</span> <span class="o">=</span> <span class="n">score</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="reduce方法"><code class="language-plaintext highlighter-rouge">reduce</code>方法</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Stream.reduce()</code>是<code class="language-plaintext highlighter-rouge">Stream</code>的一个聚合方法，可以把一个<code class="language-plaintext highlighter-rouge">Stream</code>的所有元素按照聚合函数聚合成一个结果。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">reduce</span><span class="o">(</span><span class="mi">0</span><span class="o">,(</span><span class="n">acc</span><span class="o">,</span> <span class="n">n</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">n</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sum</span><span class="o">);</span> <span class="c1">// 45</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">reduce</code>的参数<code class="language-plaintext highlighter-rouge">identity</code>表示初始值。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">T</span> <span class="nf">reduce</span><span class="o">(</span><span class="no">T</span> <span class="n">identity</span><span class="o">,</span> <span class="nc">BinaryOperator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">accumulator</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">BinaryOperator</code>接口，定义了一个<code class="language-plaintext highlighter-rouge">apply()</code>方法，负责把上次累加的结果和本次的元素 进行运算，并返回累加的结果：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BinaryOperator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// Bi操作：两个输入，一个输出</span>
+    <span class="no">T</span> <span class="nf">apply</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">,</span> <span class="no">T</span> <span class="n">u</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>换成普通形式：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span><span class="o">[]</span> <span class="n">a</span><span class="o">={</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">};</span>
+<span class="kt">int</span> <span class="n">acc</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">n</span> <span class="o">:</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">acc</span><span class="o">=</span><span class="n">acc</span> <span class="o">+</span> <span class="n">n</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="n">acc</span><span class="o">;</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sum</span><span class="o">);</span> <span class="c1">// 45</span>
+</code></pre></div></div>
+
+<p>如果去掉初始值<code class="language-plaintext highlighter-rouge">identity</code>，会得到一个<code class="language-plaintext highlighter-rouge">Optional&lt;Integer&gt;</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">sum</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">reduce</span><span class="o">((</span><span class="n">acc</span><span class="o">,</span> <span class="n">n</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">n</span><span class="o">);</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">sum</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sum</span><span class="o">.</span><span class="na">get</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>因为<code class="language-plaintext highlighter-rouge">Stream</code>的元素有可能是0个，这样就没法调用<code class="language-plaintext highlighter-rouge">reduce()</code>的聚合函数了，因此会返回<code class="language-plaintext highlighter-rouge">Optional</code>对象，需要进一步判断结果是否存在。</p>
+
+<p>注意：计算求积时，初始值必须设置为<code class="language-plaintext highlighter-rouge">1</code>。</p>
+
+<p>将配置文件的每一行配置通过<code class="language-plaintext highlighter-rouge">map()</code>和<code class="language-plaintext highlighter-rouge">reduce()</code>操作聚合成一个<code class="language-plaintext highlighter-rouge">Map&lt;String, String&gt;</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">props</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"profile=native"</span><span class="o">,</span> <span class="s">"debug=true"</span><span class="o">,</span> <span class="s">"logging=warn"</span><span class="o">,</span> <span class="s">"interval=500"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+        <span class="c1">// 把k=v转换为Map[k]=v:</span>
+        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">kv</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">String</span><span class="o">[]</span> <span class="n">ss</span> <span class="o">=</span> <span class="n">kv</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">"="</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">ss</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="n">ss</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span><span class="c1">//Java8 及以下版本:Collections.singletonMap(ss[0], ss[1]);</span>
+        <span class="o">})</span>
+        <span class="c1">// 把所有Map聚合到一个Map:</span>
+        <span class="o">.</span><span class="na">reduce</span><span class="o">(</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;(),</span> <span class="o">(</span><span class="n">m</span><span class="o">,</span> <span class="n">kv</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">m</span><span class="o">.</span><span class="na">putAll</span><span class="o">(</span><span class="n">kv</span><span class="o">);</span>
+            <span class="k">return</span> <span class="n">m</span><span class="o">;</span>
+        <span class="o">});</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>一些<code class="language-plaintext highlighter-rouge">reduce</code>的特例：</p>
+
+<p><code class="language-plaintext highlighter-rouge">min(Comparator&lt;? super T&gt; comparator)</code>：返回流中的最小元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">minElement</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">min</span><span class="o">((</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">b</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>等于：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">minElement</span> <span class="o">=</span> <span class="n">integerStream</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">compareTo</span><span class="o">);</span>
+<span class="n">minElement</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">minElement2</span> <span class="o">=</span> <span class="n">integerStream2</span><span class="o">.</span><span class="na">reduce</span><span class="o">(</span>
+        <span class="nc">BinaryOperator</span><span class="o">.</span><span class="na">minBy</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">compareTo</span><span class="o">)</span>
+<span class="o">);</span>
+<span class="n">minElement2</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">max(Comparator&lt;? super T&gt; comparator)</code>：返回流中的最大元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maxElement</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">max</span><span class="o">((</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">b</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>等于：（把之前的代码里的<code class="language-plaintext highlighter-rouge">min</code>换成<code class="language-plaintext highlighter-rouge">max</code>就行了）</p>
+
+<hr />
+
+<p>针对<code class="language-plaintext highlighter-rouge">IntStream</code>、<code class="language-plaintext highlighter-rouge">LongStream</code>和<code class="language-plaintext highlighter-rouge">DoubleStream</code>，还额外提供了以下聚合方法：</p>
+
+<p><code class="language-plaintext highlighter-rouge">sum()</code>：返回流中元素的和。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">intStream</span><span class="o">.</span><span class="na">sum</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>等于：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">IntStream</span> <span class="n">integerStream</span> <span class="o">=</span> <span class="nc">IntStream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">sum1</span> <span class="o">=</span> <span class="n">integerStream</span><span class="o">.</span><span class="na">sum</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sum1</span><span class="o">);</span>
+
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">sum2</span> <span class="o">=</span> <span class="n">integerStream2</span><span class="o">.</span><span class="na">reduce</span><span class="o">(</span>
+        <span class="mi">0</span><span class="o">,</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">sum</span>
+<span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sum2</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">average()</code>：返回流中元素的平均值。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">OptionalDouble</span> <span class="n">average</span> <span class="o">=</span> <span class="n">doubleStream</span><span class="o">.</span><span class="na">average</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="collect方法"><code class="language-plaintext highlighter-rouge">collect</code>方法</h3>
+
+<p>等于：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">IntStream</span> <span class="n">integerStream</span> <span class="o">=</span> <span class="nc">IntStream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="nc">OptionalDouble</span> <span class="n">average1</span> <span class="o">=</span> <span class="n">integerStream</span><span class="o">.</span><span class="na">average</span><span class="o">();</span>
+<span class="n">average1</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="kt">long</span><span class="o">[]</span> <span class="n">average</span> <span class="o">=</span> <span class="n">integerStream2</span><span class="o">.</span><span class="na">collect</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="kt">long</span><span class="o">[</span><span class="mi">2</span><span class="o">],</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]++;</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">rr</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+        <span class="o">});</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">average</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">/</span> <span class="n">average</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
+</code></pre></div></div>
+
+<p>这段代码使用了 <code class="language-plaintext highlighter-rouge">collect</code> 方法来计算整数流的平均值。具体来说，它创建了一个 <code class="language-plaintext highlighter-rouge">long</code> 数组，数组的第一个元素用于存储流中的元素数量，第二个元素用于存储流中所有元素的总和。然后使用三个参数的 <code class="language-plaintext highlighter-rouge">collect</code> 方法来对流进行归约操作，将每个元素的值累加到总和中，并且每处理一个元素，计数器加1。最后，通过将总和除以元素数量得到平均值，并将结果转换为 <code class="language-plaintext highlighter-rouge">double</code> 类型进行打印。具体解释：</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">() -&gt; new long[2]</code>：创建一个新的 <code class="language-plaintext highlighter-rouge">long</code> 数组作为收集器的初始值，数组的第一个元素表示元素数量，第二个元素表示元素总和。</li>
+  <li><code class="language-plaintext highlighter-rouge">(ll, i) -&gt; { ll[0]++; ll[1] += i; }</code>：累加器函数，用于处理流中的每个元素。对于每个元素，将计数器加1，并将元素的值累加到总和中。</li>
+  <li><code class="language-plaintext highlighter-rouge">(ll, rr) -&gt; { ll[0] += rr[0]; ll[1] += rr[1]; }</code>：组合器函数，用于将两个部分结果合并为一个结果。在<strong>并行流</strong>的情况下，可能会有多个部分结果需要<strong>合并</strong>。</li>
+  <li>最终得到的 <code class="language-plaintext highlighter-rouge">long[]</code> 数组中，第一个元素表示元素数量，第二个元素表示元素总和。通过将总和除以元素数量，得到平均值。</li>
+</ol>
+
+<p>定义：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="no">R</span> <span class="nf">collect</span><span class="o">(</span><span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">supplier</span><span class="o">,</span>
+              <span class="nc">BiConsumer</span><span class="o">&lt;</span><span class="no">R</span><span class="o">,</span> <span class="o">?</span> <span class="kd">super</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">accumulator</span><span class="o">,</span>
+              <span class="nc">BiConsumer</span><span class="o">&lt;</span><span class="no">R</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">combiner</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">collect</code>方法是一个终结操作，用于对流的元素执行可变的归约操作。可变的归约是指归约的结果是一个可变的结果容器，比如一个<code class="language-plaintext highlighter-rouge">ArrayList</code>，在归约过程中通过更新结果的状态来包含元素，而不是通过替换结果来包含元素。</p>
+
+<p>在<strong>并行流</strong>的情况下，<code class="language-plaintext highlighter-rouge">collect</code>操作可以进行并行化，而不需要额外的同步。</p>
+
+<p><code class="language-plaintext highlighter-rouge">collect</code>方法的参数包括：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">supplier</code>：一个函数，用于创建一个新的可变结果容器。对于并行执行，这个函数可能会被多次调用，并且必须每次返回一个新的值。</li>
+  <li><code class="language-plaintext highlighter-rouge">accumulator</code>：一个关联的、无副作用、无状态的函数，用于将一个元素合并到结果容器中。</li>
+  <li><code class="language-plaintext highlighter-rouge">combiner</code>：一个关联的、无副作用、无状态的函数，用于<strong>合并两个部分结果容器</strong>。这个函数必须与累加器函数兼容，它的作用是将第二个结果容器中的元素合并到第一个结果容器中。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">collect</code>方法的返回值是归约的结果。</p>
+
+<p>JDK 中有许多现有类，其签名非常适合与方法引用一起用作的 <code class="language-plaintext highlighter-rouge">collect()</code>参数。例如，以下内容会将字符串累积成一个 <code class="language-plaintext highlighter-rouge">ArrayList</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">asList</span> <span class="o">=</span> <span class="n">stringStream</span>
+     <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nl">ArrayList:</span><span class="o">:</span><span class="k">new</span><span class="o">,</span> <span class="nl">ArrayList:</span><span class="o">:</span><span class="n">add</span><span class="o">,</span><span class="nl">ArrayList:</span><span class="o">:</span><span class="n">addAll</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>以下将获取字符串流并将它们连接成一个字符串：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">concat</span> <span class="o">=</span> <span class="n">stringStream</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nl">StringBuilder:</span><span class="o">:</span><span class="k">new</span><span class="o">,</span> 
+             <span class="nl">StringBuilder:</span><span class="o">:</span><span class="n">append</span><span class="o">,</span>
+             <span class="nl">StringBuilder:</span><span class="o">:</span><span class="n">append</span>
+            <span class="o">).</span><span class="na">toString</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>测试并行合并：无并行：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="kt">long</span><span class="o">[]</span> <span class="n">average</span> <span class="o">=</span> <span class="n">integerStream2</span><span class="o">.</span><span class="na">collect</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="kt">long</span><span class="o">[</span><span class="mi">2</span><span class="o">],</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]++;</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">rr</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"合并操作"</span><span class="o">);</span><span class="c1">//无输出</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+        <span class="o">});</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">average</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">/</span> <span class="n">average</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
+</code></pre></div></div>
+
+<p>有并行：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">integerStream2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span>
+<span class="kt">long</span><span class="o">[]</span> <span class="n">average</span> <span class="o">=</span> <span class="n">integerStream2</span><span class="o">.</span><span class="na">parallel</span><span class="o">().</span><span class="na">collect</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="kt">long</span><span class="o">[</span><span class="mi">2</span><span class="o">],</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]++;</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="o">(</span><span class="n">ll</span><span class="o">,</span> <span class="n">rr</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"合并操作"</span><span class="o">);</span><span class="c1">//输出八次</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+            <span class="n">ll</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rr</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+        <span class="o">});</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">average</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">/</span> <span class="n">average</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
+</code></pre></div></div>
+
+<p>正常。</p>
+
+<h3 id="区分转换与聚合">区分转换与聚合</h3>
+
+<p><code class="language-plaintext highlighter-rouge">map()</code>、<code class="language-plaintext highlighter-rouge">filter()</code>、<code class="language-plaintext highlighter-rouge">reduce()</code>。这些操作对<code class="language-plaintext highlighter-rouge">Stream</code>来说可以分为两类，一类是转换操作，即把一个<code class="language-plaintext highlighter-rouge">Stream</code>转换为另一个<code class="language-plaintext highlighter-rouge">Stream</code>，例如<code class="language-plaintext highlighter-rouge">map()</code>和<code class="language-plaintext highlighter-rouge">filter()</code>，另一类是聚合操作，即对<code class="language-plaintext highlighter-rouge">Stream</code>的每个元素进行计算，得到一个确定的结果，例如<code class="language-plaintext highlighter-rouge">reduce()</code>。</p>
+
+<p>区分这两种操作是非常重要的，因为对于<code class="language-plaintext highlighter-rouge">Stream</code>来说，对其进行转换操作并不会触发任何计算。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="nc">Supplier</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">n</span><span class="o">++;</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"得到参数："</span><span class="o">+</span><span class="n">n</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s4</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s4</span><span class="o">);</span> <span class="c1">// 除此外，无其他输出</span>
+</code></pre></div></div>
+
+<p>转换操作只是保存了转换规则，无论对一个<code class="language-plaintext highlighter-rouge">Stream</code>转换多少次，都不会有任何实际计算发生。</p>
+
+<p>而聚合操作则不一样，聚合操作会立刻促使<code class="language-plaintext highlighter-rouge">Stream</code>输出它的每一个元素，并依次纳入计算，以获得最终结果。所以，对一个<code class="language-plaintext highlighter-rouge">Stream</code>进行聚合操作，会触发一系列连锁反应。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="nc">Supplier</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">n</span><span class="o">++;</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"得到参数："</span><span class="o">+</span><span class="n">n</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Long</span><span class="o">&gt;</span> <span class="n">s4</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+<span class="n">s4</span><span class="o">.</span><span class="na">reduce</span><span class="o">(</span><span class="mi">0L</span><span class="o">,</span> <span class="nl">Long:</span><span class="o">:</span><span class="n">sum</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>控制台：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>得到参数：1
+得到参数：2
+得到参数：3
+得到参数：4
+得到参数：5
+得到参数：6
+得到参数：7
+得到参数：8
+得到参数：9
+得到参数：10
+</code></pre></div></div>
+
+<p>聚合操作是真正需要从<code class="language-plaintext highlighter-rouge">Stream</code>请求数据的，对一个<code class="language-plaintext highlighter-rouge">Stream</code>做聚合计算后，结果就不是一个<code class="language-plaintext highlighter-rouge">Stream</code>，而是一个其他的Java对象。</p>
+
+<h3 id="转换为其他类型">转换为其他类型</h3>
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.toList())</code>：将流中的元素收集到一个<code class="language-plaintext highlighter-rouge">List</code>中。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.toSet())</code>：将流中的元素收集到一个<code class="language-plaintext highlighter-rouge">Set</code>中。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toSet</span><span class="o">());</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.joining(delimiter))</code>：将流中的元素拼接成一个字符串。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">", "</span><span class="o">));</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">toArray()</code> 是 <code class="language-plaintext highlighter-rouge">Stream</code> 类中的一个聚合方法，用于将流中的元素收集到一个数组中。该方法没有参数，返回一个包含流中所有元素的数组，语法如下：<code class="language-plaintext highlighter-rouge">Object[] toArray();</code>。</p>
+
+<p>如果要将流中的元素收集到特定类型的数组中，可以使用带有 <code class="language-plaintext highlighter-rouge">IntFunction&lt;A[]&gt; generator</code> 参数的重载方法 <code class="language-plaintext highlighter-rouge">toArray(IntFunction&lt;A[]&gt; generator)</code>，其中 <code class="language-plaintext highlighter-rouge">generator</code> 是一个数组生成器函数，用于创建指定类型的数组。例如，如果要将流中的元素收集到一个 <code class="language-plaintext highlighter-rouge">String</code> 数组中，可以这样使用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">String</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.toMap(keyMapper, valueMapper))</code>：将流中的元素收集到一个<code class="language-plaintext highlighter-rouge">Map</code>中，可以指定key和value的映射关系。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"apple"</span><span class="o">,</span> <span class="s">"banana"</span><span class="o">,</span> <span class="s">"cherry"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toMap</span><span class="o">(</span><span class="nl">String:</span><span class="o">:</span><span class="n">length</span><span class="o">,</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span><span class="c1">//{5=apple, 6=banana, 6=cherry}，注意到键的唯一性。</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>示例1：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">)</span>
+<span class="nc">Integer</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">Integer</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">array</span><span class="o">));</span>
+
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">)</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">collect</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">collect</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>示例2：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">[]{</span><span class="s">" 2019-12-31 "</span><span class="o">,</span> <span class="s">"2020 - 01-09 "</span><span class="o">,</span> <span class="s">"2020- 05 - 01 "</span><span class="o">,</span> <span class="s">"2022 - 02 - 01"</span><span class="o">,</span> <span class="s">" 2025-01 -01"</span><span class="o">};</span>
+<span class="nc">LocalDate</span><span class="o">[]</span> <span class="n">array2</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">array</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s">"\\s"</span><span class="o">,</span> <span class="s">""</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">LocalDate:</span><span class="o">:</span><span class="n">parse</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">LocalDate</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+
+<span class="k">for</span> <span class="o">(</span><span class="nc">LocalDate</span> <span class="n">localDate</span> <span class="o">:</span> <span class="n">array2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">localDate</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="其他聚合方法">其他聚合方法</h3>
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.groupingBy(classifier))</code>：根据指定的<strong>分类器</strong>对流中的元素进行<strong>分组</strong>。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"apple"</span><span class="o">,</span> <span class="s">"banana"</span><span class="o">,</span> <span class="s">"cherry"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">groupedByLength</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+    	<span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span><span class="nl">String:</span><span class="o">:</span><span class="n">length</span><span class="o">)</span>
+	<span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">groupedByLength</span><span class="o">);</span><span class="c1">//{5=[apple], 6=[banana, cherry]}</span>
+</code></pre></div></div>
+
+<p>还可以指定聚合的类型：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="s">"Banana"</span><span class="o">,</span> <span class="s">"Blackberry"</span><span class="o">,</span> <span class="s">"Coconut"</span><span class="o">,</span> <span class="s">"Avocado"</span><span class="o">,</span> <span class="s">"Cherry"</span><span class="o">,</span> <span class="s">"Apricots"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+    <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+        <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span> 
+        <span class="nc">Collectors</span><span class="o">.</span><span class="na">toSet</span><span class="o">()</span>
+    <span class="o">)</span>
+<span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">groups</span><span class="o">);</span><span class="c1">//{A=[Apple, Avocado, Apricots], B=[Banana, Blackberry], C=[Coconut, Cherry]}</span>
+</code></pre></div></div>
+
+<p>分组输出使用<code class="language-plaintext highlighter-rouge">Collectors.groupingBy()</code>，它需要提供两个函数：一个是分组的key，这里使用<code class="language-plaintext highlighter-rouge">s -&gt; s.substring(0, 1)</code>，表示只要首字母相同的<code class="language-plaintext highlighter-rouge">String</code>分到一组，第二个是分组的value，这里直接使用<code class="language-plaintext highlighter-rouge">Collectors.toSet()</code>，表示输出为<code class="language-plaintext highlighter-rouge">Set</code>。</p>
+
+<p>还支持嵌套分组：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Address</span><span class="o">[]</span> <span class="n">addresses</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Address</span><span class="o">[]{</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"湖南省"</span><span class="o">,</span> <span class="s">"长沙市"</span><span class="o">,</span> <span class="s">"岳麓区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"湖南省"</span><span class="o">,</span> <span class="s">"长沙市"</span><span class="o">,</span> <span class="s">"雨花区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"湖南省"</span><span class="o">,</span> <span class="s">"永州市"</span><span class="o">,</span> <span class="s">"零陵区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"湖南省"</span><span class="o">,</span> <span class="s">"永州市"</span><span class="o">,</span> <span class="s">"冷水滩区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"江苏省"</span><span class="o">,</span> <span class="s">"南京市"</span><span class="o">,</span> <span class="s">"建邺区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"江苏省"</span><span class="o">,</span> <span class="s">"南京市"</span><span class="o">,</span> <span class="s">"秦淮区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"江苏省"</span><span class="o">,</span> <span class="s">"苏州市"</span><span class="o">,</span> <span class="s">"吴江区"</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">Address</span><span class="o">(</span><span class="s">"江苏省"</span><span class="o">,</span> <span class="s">"苏州市"</span><span class="o">,</span> <span class="s">"姑苏区"</span><span class="o">),</span>
+        <span class="o">};</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Address</span><span class="o">&gt;&gt;&gt;</span> <span class="n">addressGrouping</span> <span class="o">=</span>
+                <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">addresses</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">collect</span><span class="o">(</span>
+                        <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+                                <span class="nl">Address:</span><span class="o">:</span><span class="n">province</span><span class="o">,</span>
+                                <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+                                        <span class="nl">Address:</span><span class="o">:</span><span class="n">city</span>
+                                <span class="o">)</span>
+                        <span class="o">)</span>
+
+                <span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">addressGrouping</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">replaceAll</span><span class="o">(</span><span class="s">"="</span><span class="o">,</span><span class="s">":"</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Address</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">province</span><span class="o">,</span><span class="n">city</span><span class="o">,</span><span class="n">district</span><span class="o">;</span>
+
+    <span class="nc">Address</span><span class="o">(</span><span class="nc">String</span> <span class="n">province</span><span class="o">,</span> <span class="nc">String</span> <span class="n">city</span><span class="o">,</span> <span class="nc">String</span> <span class="n">district</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">province</span> <span class="o">=</span> <span class="n">province</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">city</span> <span class="o">=</span> <span class="n">city</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">district</span> <span class="o">=</span> <span class="n">district</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">province</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">province</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">city</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">city</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">district</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">district</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"{province=\"%s\", city=\"%s\", district=\"%s\"}"</span><span class="o">,</span> <span class="n">province</span><span class="o">,</span> <span class="n">city</span><span class="o">,</span> <span class="n">district</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>控制台：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="err">江苏省:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">苏州市:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"江苏省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"苏州市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"吴江区"</span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"江苏省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"苏州市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"姑苏区"</span><span class="p">}</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="err">南京市:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"江苏省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"南京市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"建邺区"</span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"江苏省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"南京市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"秦淮区"</span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="err">湖南省:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">长沙市:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"湖南省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"长沙市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"岳麓区"</span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"湖南省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"长沙市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"雨花区"</span><span class="p">}</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="err">永州市:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"湖南省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"永州市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"零陵区"</span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="err">province:</span><span class="w"> </span><span class="s2">"湖南省"</span><span class="p">,</span><span class="w"> </span><span class="err">city:</span><span class="w"> </span><span class="s2">"永州市"</span><span class="p">,</span><span class="w"> </span><span class="err">district:</span><span class="w"> </span><span class="s2">"冷水滩区"</span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">collect(Collectors.partitioningBy(predicate))</code>：根据指定的<strong>条件</strong>对流中的元素进行<strong>分区</strong>，将满足条件的元素放入一个分区，不满足条件的放入另一个分区。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"apple"</span><span class="o">,</span> <span class="s">"banana"</span><span class="o">,</span> <span class="s">"cherry"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">partitioned</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"a"</span><span class="o">)));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">partitioned</span><span class="o">);</span><span class="c1">//{false=[banana, cherry], true=[apple]}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">anyMatch(Predicate&lt;? super T&gt; predicate)</code>：判断流中<strong>是否存在</strong>满足指定条件的元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="kt">boolean</span> <span class="n">anyMatch</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">anyMatch</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">anyMatch</span><span class="o">);</span><span class="c1">//true，因为流中有偶数元素。</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">allMatch(Predicate&lt;? super T&gt; predicate)</code>：判断流中的<strong>所有元素</strong>是否<strong>都满足</strong>指定条件。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="kt">boolean</span> <span class="n">allMatch</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">allMatch</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">allMatch</span><span class="o">);</span><span class="c1">//true，因为流中所有元素都大于0。</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">noneMatch(Predicate&lt;? super T&gt; predicate)</code>：判断流中是否<strong>不存在</strong>满足指定条件的元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="kt">boolean</span> <span class="n">noneMatch</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">noneMatch</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">noneMatch</span><span class="o">);</span><span class="c1">//true，因为流中所有元素都不小于0。</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">forEach()</code>，可以循环处理<code class="language-plaintext highlighter-rouge">Stream</code>的每个元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">,</span> <span class="s">"D"</span><span class="o">);</span>
+<span class="n">stream</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="其他转换操作">其他转换操作</h3>
+
+<p>排序<code class="language-plaintext highlighter-rouge">sorted()</code>方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Orange"</span><span class="o">,</span> <span class="s">"apple"</span><span class="o">,</span> <span class="s">"Banana"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">sorted</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>此方法要求<code class="language-plaintext highlighter-rouge">Stream</code>的每个元素必须实现<code class="language-plaintext highlighter-rouge">Comparable</code>接口。如果要自定义排序，传入指定的<code class="language-plaintext highlighter-rouge">Comparator</code>即可：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Orange"</span><span class="o">,</span> <span class="s">"apple"</span><span class="o">,</span> <span class="s">"Banana"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">sorted</span><span class="o">(</span><span class="nl">String:</span><span class="o">:</span><span class="n">compareToIgnoreCase</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>去重，可以直接用<code class="language-plaintext highlighter-rouge">distinct()</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"A"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"D"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">distinct</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span> <span class="c1">// [A, B, C, D]</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>截取操作常用于把一个无限的<code class="language-plaintext highlighter-rouge">Stream</code>转换成有限的<code class="language-plaintext highlighter-rouge">Stream</code>，<code class="language-plaintext highlighter-rouge">skip()</code>用于跳过当前<code class="language-plaintext highlighter-rouge">Stream</code>的前N个元素，<code class="language-plaintext highlighter-rouge">limit()</code>用于截取当前<code class="language-plaintext highlighter-rouge">Stream</code>最多前N个元素：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">,</span> <span class="s">"D"</span><span class="o">,</span> <span class="s">"E"</span><span class="o">,</span> <span class="s">"F"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">skip</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span> <span class="c1">// 跳过A, B</span>
+    <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="c1">// 截取C, D, E</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span> <span class="c1">// [C, D, E]</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>合并，将两个<code class="language-plaintext highlighter-rouge">Stream</code>合并为一个<code class="language-plaintext highlighter-rouge">Stream</code>可以使用<code class="language-plaintext highlighter-rouge">Stream</code>的静态方法<code class="language-plaintext highlighter-rouge">concat()</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">).</span><span class="na">stream</span><span class="o">();</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s2</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"D"</span><span class="o">,</span> <span class="s">"E"</span><span class="o">).</span><span class="na">stream</span><span class="o">();</span>
+<span class="c1">// 合并:</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">()));</span> <span class="c1">// [A, B, C, D, E]</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>如果<code class="language-plaintext highlighter-rouge">Stream</code>的元素是集合：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
+        <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">),</span>
+        <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">),</span>
+        <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>而我们希望把上述<code class="language-plaintext highlighter-rouge">Stream</code>转换为<code class="language-plaintext highlighter-rouge">Stream&lt;Integer&gt;</code>，就可以使用<code class="language-plaintext highlighter-rouge">flatMap()</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">i</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">list</span> <span class="o">-&gt;</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">());</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">flatMap()</code>，是指把<code class="language-plaintext highlighter-rouge">Stream</code>的每个元素（这里是<code class="language-plaintext highlighter-rouge">List</code>）映射为<code class="language-plaintext highlighter-rouge">Stream</code>，然后合并成一个新的<code class="language-plaintext highlighter-rouge">Stream</code>。</p>
+
+<hr />
+
+<p>并行，把一个普通<code class="language-plaintext highlighter-rouge">Stream</code>转换为可以并行处理的<code class="language-plaintext highlighter-rouge">Stream</code>非常简单，只需要用<code class="language-plaintext highlighter-rouge">parallel()</code>进行转换：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="o">...</span>
+<span class="nc">String</span><span class="o">[]</span> <span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">parallel</span><span class="o">()</span> <span class="c1">// 变成一个可以并行处理的Stream</span>
+                   <span class="o">.</span><span class="na">sorted</span><span class="o">()</span> <span class="c1">// 可以进行并行排序</span>
+                   <span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">String</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>经过<code class="language-plaintext highlighter-rouge">parallel()</code>转换后的<code class="language-plaintext highlighter-rouge">Stream</code>只要可能，就会对后续操作进行并行处理。不需要编写任何多线程代码就可以享受到并行处理带来的执行效率的提升。</p>
+
+<p>也可以通过<code class="language-plaintext highlighter-rouge">parallelStream()</code><strong>直接创建一个并行流</strong>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">parallelStream</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="s">"b"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">).</span><span class="na">parallelStream</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="特殊的方法">特殊的方法</h3>
+
+<p>调试方法：<code class="language-plaintext highlighter-rouge">peek(Consumer&lt;? super T&gt; action)</code>：对流中的每个元素执行操作，并返回一个新的流。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+   <span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">peeked</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+                                <span class="o">.</span><span class="na">peek</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>此方法需要在流真正计算的时候才会运行，即后面需要接聚合方法。</p>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">findFirst()</code>：返回流中的第一个元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">first</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">findFirst</span><span class="o">();</span>
+<span class="n">first</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span><span class="c1">//1，因为流中的第一个元素是1。</span>
+</code></pre></div></div>
+
+<p>不会遍历流，只会取第一个：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">first</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">peek</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">)</span><span class="c1">//1</span>
+        <span class="o">.</span><span class="na">findFirst</span><span class="o">();</span>
+<span class="n">first</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span><span class="c1">//1</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">findAny()</code>：返回流中的任意一个元素。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">any</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">findAny</span><span class="o">();</span>
+<span class="n">any</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span><span class="c1">//输出结果为任意一个流中的元素。</span>
+</code></pre></div></div>
+
+<p>不会遍历流，只会取一个：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">any</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">peek</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">)</span><span class="c1">//输出结果为任意一个流中的元素。</span>
+        <span class="o">.</span><span class="na">findAny</span><span class="o">();</span>
+<span class="n">any</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span><span class="c1">//与peek相同</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">count()</code>：返回流中元素的数量。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">count</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">peek</code>可能无输出，即可能不会遍历流，但还是会关闭流</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">stream</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">();</span>
+<span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="o">.</span><span class="na">peek</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">)</span><span class="c1">//无输出</span>
+        <span class="o">.</span><span class="na">count</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">count</span><span class="o">);</span><span class="c1">//5</span>
+</code></pre></div></div>
+
+<p>在调用 <code class="language-plaintext highlighter-rouge">count</code> 操作时。如果流源（如 <code class="language-plaintext highlighter-rouge">List</code>）已知其包含的元素数量，并且管道中的中间操作不改变元素数量（即它们是非破坏性的），则可以直接从源头计算数量，而无需实际遍历流或评估中间操作。</p>
+
+<p><code class="language-plaintext highlighter-rouge">list</code> 的大小是已知的，而 <code class="language-plaintext highlighter-rouge">peek</code> 操作是非破坏性的（它只是简单地打印元素）。因此，流实现可以直接使用 <code class="language-plaintext highlighter-rouge">List</code> 的大小来确定计数，而无需实际打印元素或评估 <code class="language-plaintext highlighter-rouge">peek</code> 操作。</p>
+
+<p>这种优化对于在不完全处理流的情况下确定计数很有用。然而，重要的是要注意，它依赖于特定的条件（已知大小，非破坏性的中间操作），并不总是适用。</p>
+
+<p>依然会消耗流：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">stream</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">();</span>
+<span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="o">.</span><span class="na">peek</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">)</span><span class="c1">//无输出</span>
+        <span class="o">.</span><span class="na">count</span><span class="o">();</span>
+<span class="n">stream</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span><span class="c1">//异常：流已关闭</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">count</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="collectors的方法"><code class="language-plaintext highlighter-rouge">Collectors</code>的方法</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Collectors</code> 类提供了许多静态工厂方法，用于创建各种收集器，可以用于将流中的元素收集到不同类型的集合中，或进行分组、分区等操作。</p>
+
+<h4 id="基本收集器">基本收集器</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">toList()</code>：将流中的元素收集到一个 <code class="language-plaintext highlighter-rouge">List</code> 中。</li>
+  <li><code class="language-plaintext highlighter-rouge">toSet()</code>：将流中的元素收集到一个 <code class="language-plaintext highlighter-rouge">Set</code> 中。</li>
+  <li><code class="language-plaintext highlighter-rouge">toMap(keyMapper, valueMapper, mergeFunction)</code>：将流中的元素收集到一个 <code class="language-plaintext highlighter-rouge">Map</code> 中，可以指定 key 和 value 的映射关系，并使用指定的合并函数在收集过程中处理相同的键值对。</li>
+  <li><code class="language-plaintext highlighter-rouge">toConcurrentMap(keyMapper, valueMapper)</code>：将流中的元素收集到一个并发 <code class="language-plaintext highlighter-rouge">Map</code> 中，可以指定 key 和 value 的映射关系。</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">toConcurrentMap(keyMapper, valueMapper, mergeFunction)</code>：将流中的元素收集到一个并发 <code class="language-plaintext highlighter-rouge">Map</code> 中，可以指定 key 和 value 的映射关系，并使用指定的合并函数在收集过程中处理相同的键值对，在合并函数中，如果遇到相同的键，则将旧值与新值用 “</td>
+          <td>” 连接起来。</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">joining()</code>：将流中的元素连接成一个字符串。</li>
+  <li><code class="language-plaintext highlighter-rouge">joining(delimiter)</code>：将流中的元素连接成一个字符串，使用指定的分隔符。</li>
+  <li><code class="language-plaintext highlighter-rouge">joining(delimiter, prefix, suffix)</code>：将流中的元素连接成一个字符串，使用指定的分隔符、前缀和后缀。</li>
+</ul>
+
+<hr />
+
+<h4 id="汇总统计收集器">汇总统计收集器</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">counting()</code>：计算流中元素的数量，返回一个 <code class="language-plaintext highlighter-rouge">long</code> 值。</li>
+  <li><code class="language-plaintext highlighter-rouge">summarizingInt()</code>, <code class="language-plaintext highlighter-rouge">summarizingLong()</code>, <code class="language-plaintext highlighter-rouge">summarizingDouble()</code>：对流中的元素进行汇总统计，返回一个包含 count、sum、min、average、max 等统计信息的 <code class="language-plaintext highlighter-rouge">IntSummaryStatistics</code>、<code class="language-plaintext highlighter-rouge">LongSummaryStatistics</code> 或 <code class="language-plaintext highlighter-rouge">DoubleSummaryStatistics</code> 对象。</li>
+  <li><code class="language-plaintext highlighter-rouge">averagingInt()</code>, <code class="language-plaintext highlighter-rouge">averagingLong()</code>, <code class="language-plaintext highlighter-rouge">averagingDouble()</code>：平均值，返回一个 <code class="language-plaintext highlighter-rouge">double</code> 值。</li>
+  <li><code class="language-plaintext highlighter-rouge">summingInt()</code>，<code class="language-plaintext highlighter-rouge">summingLong()</code>，<code class="language-plaintext highlighter-rouge">summingDouble()</code>：求和。</li>
+</ul>
+
+<hr />
+
+<h4 id="最大最小值收集器">最大最小值收集器</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">maxBy(comparator)</code>：根据指定的比较器找到流中的最大元素。</li>
+  <li><code class="language-plaintext highlighter-rouge">minBy(comparator)</code>：根据指定的比较器找到流中的最小元素。</li>
+</ul>
+
+<hr />
+
+<h4 id="分组和分区收集器">分组和分区收集器</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">groupingBy(classifier)</code>：根据指定的分类器对流中的元素进行分组。</li>
+  <li><code class="language-plaintext highlighter-rouge">groupingBy(classifier, downstream)</code>：根据指定的分类器对流中的元素进行分组，并将结果传递给另一个收集器进行进一步的收集。</li>
+  <li><code class="language-plaintext highlighter-rouge">groupingBy(classifier, supplier, downstream)</code>：根据指定的分类器对流中的元素进行分组，并使用指定的供应商提供 Map 初始容量，并将结果传递给另一个收集器进行进一步的收集。</li>
+  <li><code class="language-plaintext highlighter-rouge">groupingByConcurrent(classifier)</code>：根据指定的分类器对流中的元素进行分组，并将结果放入一个并发 <code class="language-plaintext highlighter-rouge">Map</code> 中。</li>
+  <li><code class="language-plaintext highlighter-rouge">groupingByConcurrent(classifier, downstream)</code>：根据指定的分类器对流中的元素进行分组，并将结果传递给另一个收集器进行进一步的收集，最终放入一个并发 <code class="language-plaintext highlighter-rouge">Map</code> 中。</li>
+  <li><code class="language-plaintext highlighter-rouge">groupingByConcurrent(classifier, supplier, downstream)</code>：根据指定的分类器对流中的元素进行分组，并使用指定的供应商提供 Map 初始容量，并将结果传递给另一个收集器进行进一步的收集，最终放入一个并发 <code class="language-plaintext highlighter-rouge">Map</code> 中。</li>
+  <li><code class="language-plaintext highlighter-rouge">partitioningBy(predicate)</code>：根据指定的条件对流中的元素进行分区。</li>
+  <li><code class="language-plaintext highlighter-rouge">partitioningBy(predicate, downstream)</code>：根据指定的条件对流中的元素进行分区，并将结果传递给另一个收集器进行进一步的收集。</li>
+</ul>
+
+<hr />
+
+<h4 id="其他收集器">其他收集器</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">reducing(op)</code>：使用累加器函数递归地将流中的元素进行归约操作。</li>
+  <li><code class="language-plaintext highlighter-rouge">reducing(identity, op)</code>：使用给定的初始值和累加器函数递归地将流中的元素进行归约操作。</li>
+  <li><code class="language-plaintext highlighter-rouge">reducing(mapper, op)</code>：使用映射函数对流中的元素进行归约操作。</li>
+  <li><code class="language-plaintext highlighter-rouge">mapping(mapper, downstream)</code>：对流中的元素进行映射，并将结果传递给另一个收集器进行进一步的收集。</li>
+  <li><code class="language-plaintext highlighter-rouge">collectingAndThen(downstream, finisher)</code>：对收集器的结果应用一个转换函数。</li>
+  <li><code class="language-plaintext highlighter-rouge">filtering(predicate, downstream)</code>：根据指定的条件对流中的元素进行过滤，并将结果传递给另一个收集器进行进一步的收集。</li>
+  <li><code class="language-plaintext highlighter-rouge">flatMapping(mapper, downstream)</code>：对流中的元素进行扁平化映射，并将结果传递给另一个收集器进行进一步的收集。</li>
+  <li><code class="language-plaintext highlighter-rouge">teeing(first, second, merger)</code>：对流中的元素应用两个收集器，然后使用提供的合并器对两个结果进行合并。</li>
+</ul>
+
+<p>这些方法提供了丰富的功能，可以灵活地处理流中的元素，进行分组、分区、汇总统计等操作，使得流式编程更加便捷和高效。</p>
+
+<h4 id="示例">示例</h4>
+
+<p>这里给出上述方法的一些示例代码：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">numbers</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">,</span> <span class="mi">10</span><span class="o">);</span>
+
+<span class="c1">// counting()，'collect(counting())' 可被替换为 'count()'</span>
+<span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">counting</span><span class="o">());</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Count: "</span> <span class="o">+</span> <span class="n">count</span><span class="o">);</span>
+
+<span class="c1">// summarizingInt()，count，sum，min，average，max</span>
+<span class="nc">IntSummaryStatistics</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">summarizingInt</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">intValue</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Summarizing statistics: "</span> <span class="o">+</span> <span class="n">stats</span><span class="o">);</span>
+
+<span class="c1">// averagingInt()，同average</span>
+<span class="kt">double</span> <span class="n">average</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">averagingInt</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">intValue</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Average: "</span> <span class="o">+</span> <span class="n">average</span><span class="o">);</span>
+
+<span class="c1">// reducing(),'collect(reducing())' 可被替换为 'reduce()'</span>
+<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">reducing</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="nl">Integer:</span><span class="o">:</span><span class="n">sum</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Sum: "</span> <span class="o">+</span> <span class="n">sum</span><span class="o">);</span>
+
+<span class="c1">// collectingAndThen()，</span>
+<span class="nc">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">String:</span><span class="o">:</span><span class="n">valueOf</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">collectingAndThen</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">", "</span><span class="o">),</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="s">"["</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">"]"</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Result: "</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>
+
+
+<span class="c1">// toMap(keyMapper, valueMapper, mergeFunction)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toMap</span><span class="o">(</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="n">num</span><span class="o">,</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="s">"value"</span> <span class="o">+</span> <span class="n">num</span><span class="o">,</span>
+        <span class="o">(</span><span class="n">existing</span><span class="o">,</span> <span class="n">replacement</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">existing</span> <span class="o">+</span> <span class="s">"|"</span> <span class="o">+</span> <span class="n">replacement</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Map: "</span> <span class="o">+</span> <span class="n">map</span><span class="o">);</span>
+
+<span class="c1">// toConcurrentMap(keyMapper, valueMapper)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">concurrentMap1</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toConcurrentMap</span><span class="o">(</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="n">num</span><span class="o">,</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="s">"value"</span> <span class="o">+</span> <span class="n">num</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Concurrent map: "</span> <span class="o">+</span> <span class="n">concurrentMap1</span><span class="o">);</span>
+
+<span class="c1">// toConcurrentMap(keyMapper, valueMapper, mergeFunction)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">concurrentMap</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toConcurrentMap</span><span class="o">(</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="n">num</span><span class="o">,</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="s">"value"</span> <span class="o">+</span> <span class="n">num</span><span class="o">,</span>
+        <span class="c1">//在合并函数中，如果遇到相同的键，则将旧值与新值用 "|" 连接起来。</span>
+        <span class="o">(</span><span class="n">existing</span><span class="o">,</span> <span class="n">replacement</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">existing</span> <span class="o">+</span> <span class="s">"|"</span> <span class="o">+</span> <span class="n">replacement</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Concurrent map: "</span> <span class="o">+</span> <span class="n">concurrentMap</span><span class="o">);</span>
+
+<span class="c1">// mapping(mapper, downstream)，'collect(mapping())' 可被替换为 'map().collect()'</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">mappedList</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">mapping</span><span class="o">(</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="s">"value"</span> <span class="o">+</span> <span class="n">num</span><span class="o">,</span>
+        <span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">()));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Mapped list: "</span> <span class="o">+</span> <span class="n">mappedList</span><span class="o">);</span>
+
+<span class="c1">// filtering(predicate, downstream)，同filter</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">filteredMap</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">filtering</span><span class="o">(</span>
+        <span class="n">num</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span>
+        <span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">()));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Filtered map: "</span> <span class="o">+</span> <span class="n">filteredMap</span><span class="o">);</span>
+
+<span class="c1">// flatMapping(mapper, downstream)，同flat</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">nestedList</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span>
+    <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">),</span>
+    <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">),</span>
+    <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span>
+<span class="o">);</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">flattenedList</span> <span class="o">=</span> <span class="n">nestedList</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">flatMapping</span><span class="o">(</span>
+        <span class="nl">List:</span><span class="o">:</span><span class="n">stream</span><span class="o">,</span>
+        <span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">()));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Flattened list: "</span> <span class="o">+</span> <span class="n">flattenedList</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>联合使用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.math.BigDecimal</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Collectors</span><span class="o">;</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+
+        <span class="nc">Product</span> <span class="n">prod1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Product</span><span class="o">(</span><span class="mi">1L</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"15.5"</span><span class="o">),</span> <span class="s">"面包"</span><span class="o">,</span> <span class="s">"零食"</span><span class="o">);</span>
+        <span class="nc">Product</span> <span class="n">prod2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Product</span><span class="o">(</span><span class="mi">2L</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"20"</span><span class="o">),</span> <span class="s">"饼干"</span><span class="o">,</span> <span class="s">"零食"</span><span class="o">);</span>
+        <span class="nc">Product</span> <span class="n">prod3</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Product</span><span class="o">(</span><span class="mi">3L</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"30"</span><span class="o">),</span> <span class="s">"月饼"</span><span class="o">,</span> <span class="s">"零食"</span><span class="o">);</span>
+        <span class="nc">Product</span> <span class="n">prod4</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Product</span><span class="o">(</span><span class="mi">4L</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"10"</span><span class="o">),</span> <span class="s">"青岛啤酒"</span><span class="o">,</span> <span class="s">"啤酒"</span><span class="o">);</span>
+        <span class="nc">Product</span> <span class="n">prod5</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Product</span><span class="o">(</span><span class="mi">5L</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"15"</span><span class="o">),</span> <span class="s">"百威啤酒"</span><span class="o">,</span> <span class="s">"啤酒"</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Product</span><span class="o">&gt;</span> <span class="n">prodList</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">prod1</span><span class="o">,</span><span class="n">prod2</span><span class="o">,</span><span class="n">prod3</span><span class="o">,</span><span class="n">prod4</span><span class="o">,</span><span class="n">prod5</span><span class="o">);</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Long</span><span class="o">&gt;</span> <span class="n">prodMap</span> <span class="o">=</span> <span class="n">prodList</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+            <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+                <span class="nl">Product:</span><span class="o">:</span><span class="n">getCategory</span><span class="o">,</span>
+                <span class="c1">//求总数</span>
+                <span class="nc">Collectors</span><span class="o">.</span><span class="na">counting</span><span class="o">()</span>
+            <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">prodMap</span><span class="o">);</span>
+
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">prodMap2</span> <span class="o">=</span> <span class="n">prodList</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+            <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+                <span class="nl">Product:</span><span class="o">:</span><span class="n">getCategory</span><span class="o">,</span>
+                <span class="c1">//求和</span>
+                <span class="nc">Collectors</span><span class="o">.</span><span class="na">summingInt</span><span class="o">(</span>
+                    <span class="nl">Product:</span><span class="o">:</span><span class="n">getNum</span>
+                <span class="o">)</span>
+            <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">prodMap2</span><span class="o">);</span>
+
+        <span class="cm">/*把收集器的结果转换为另一种类型,String表示Category，Product表示每个分组中num属性最大的Product对象。*/</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Product</span><span class="o">&gt;</span> <span class="n">prodMap3</span> <span class="o">=</span> <span class="n">prodList</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+            <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span><span class="c1">//按Category分组</span>
+                <span class="nl">Product:</span><span class="o">:</span><span class="n">getCategory</span><span class="o">,</span>
+                <span class="nc">Collectors</span><span class="o">.</span><span class="na">collectingAndThen</span><span class="o">(</span><span class="c1">//对结果进行转换</span>
+                    <span class="nc">Collectors</span><span class="o">.</span><span class="na">maxBy</span><span class="o">(</span><span class="c1">//对每个分组中的元素取num属性最大的Product对象。</span>
+                        <span class="nc">Comparator</span><span class="o">.</span><span class="na">comparingInt</span><span class="o">(</span><span class="nl">Product:</span><span class="o">:</span><span class="n">getNum</span><span class="o">)</span>
+                    <span class="o">),</span>
+                    <span class="c1">//这一步并没有直接得到最大的Product对象，而是得到了一个Optional&lt;Product&gt;对象</span>
+                    <span class="c1">// ，因为有可能某个分组为空，所以需要用Optional来包装结果。</span>
+                    <span class="nl">Optional:</span><span class="o">:</span><span class="n">get</span>
+                <span class="o">)</span>
+            <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">prodMap3</span><span class="o">);</span>
+
+        <span class="cm">/*联合其他收集器*/</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">prodMap4</span> <span class="o">=</span> <span class="n">prodList</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span>
+            <span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span>
+                <span class="nl">Product:</span><span class="o">:</span><span class="n">getCategory</span><span class="o">,</span>
+                <span class="nc">Collectors</span><span class="o">.</span><span class="na">mapping</span><span class="o">(</span>
+                    <span class="cm">/*只取name，并放入set去重*/</span>
+                    <span class="nl">Product:</span><span class="o">:</span><span class="n">getName</span><span class="o">,</span>
+                    <span class="nc">Collectors</span><span class="o">.</span><span class="na">toSet</span><span class="o">()</span>
+                <span class="o">)</span>
+            <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">prodMap4</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Product</span><span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Integer</span> <span class="n">num</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">BigDecimal</span> <span class="n">price</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">category</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Integer</span> <span class="nf">getNum</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">BigDecimal</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">price</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCategory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">category</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nc">Product</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">,</span> <span class="nc">Integer</span> <span class="n">num</span><span class="o">,</span> <span class="nc">BigDecimal</span> <span class="n">price</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">String</span> <span class="n">category</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">num</span> <span class="o">=</span> <span class="n">num</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">category</span> <span class="o">=</span> <span class="n">category</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Product{id=%d, num=%d, price=%s, name='%s', category='%s'}"</span><span class="o">,</span> <span class="n">id</span><span class="o">,</span> <span class="n">num</span><span class="o">,</span> <span class="n">price</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">category</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>说明一下比较复杂的</p>
+
+<p><code class="language-plaintext highlighter-rouge">prodMap3</code>：</p>
+
+<p>按照<code class="language-plaintext highlighter-rouge">Product</code>对象的<code class="language-plaintext highlighter-rouge">Category</code>属性进行分组，并且对每个分组中的元素取<code class="language-plaintext highlighter-rouge">num</code>属性最大的<code class="language-plaintext highlighter-rouge">Product</code>对象。</p>
+
+<p>具体来说，代码的执行步骤如下：</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">prodList.stream()</code>：将<code class="language-plaintext highlighter-rouge">prodList</code>转换为一个<code class="language-plaintext highlighter-rouge">Stream</code>流。</li>
+  <li><code class="language-plaintext highlighter-rouge">Collectors.groupingBy(Product::getCategory)</code>：使用<code class="language-plaintext highlighter-rouge">Collectors.groupingBy</code>方法按照<code class="language-plaintext highlighter-rouge">Product</code>对象的<code class="language-plaintext highlighter-rouge">Category</code>属性进行分组，得到一个<code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;Product&gt;&gt;</code>，其中<code class="language-plaintext highlighter-rouge">String</code>表示<code class="language-plaintext highlighter-rouge">Category</code>，<code class="language-plaintext highlighter-rouge">List&lt;Product&gt;</code>表示属于该<code class="language-plaintext highlighter-rouge">Category</code>的所有<code class="language-plaintext highlighter-rouge">Product</code>对象列表。</li>
+  <li><code class="language-plaintext highlighter-rouge">Collectors.maxBy(Comparator.comparingInt(Product::getNum))</code>：使用<code class="language-plaintext highlighter-rouge">Collectors.maxBy</code>方法和<code class="language-plaintext highlighter-rouge">Comparator.comparingInt</code>方法找出每个分组中<code class="language-plaintext highlighter-rouge">num</code>属性最大的<code class="language-plaintext highlighter-rouge">Product</code>对象。这一步并没有直接得到最大的<code class="language-plaintext highlighter-rouge">Product</code>对象，而是得到了一个<code class="language-plaintext highlighter-rouge">Optional&lt;Product&gt;</code>对象，因为有可能某个分组为空，所以需要用<code class="language-plaintext highlighter-rouge">Optional</code>来包装结果。</li>
+  <li><code class="language-plaintext highlighter-rouge">Collectors.collectingAndThen(..., Optional::get)</code>：使用<code class="language-plaintext highlighter-rouge">Collectors.collectingAndThen</code>方法对上一步得到的<code class="language-plaintext highlighter-rouge">Optional&lt;Product&gt;</code>对象进行处理，通过<code class="language-plaintext highlighter-rouge">Optional::get</code>方法获取其中的<code class="language-plaintext highlighter-rouge">Product</code>对象。这样就得到了每个分组中<code class="language-plaintext highlighter-rouge">num</code>属性最大的<code class="language-plaintext highlighter-rouge">Product</code>对象。</li>
+  <li>最终，整个表达式将返回一个<code class="language-plaintext highlighter-rouge">Map&lt;String, Product&gt;</code>，其中<code class="language-plaintext highlighter-rouge">String</code>表示<code class="language-plaintext highlighter-rouge">Category</code>，<code class="language-plaintext highlighter-rouge">Product</code>表示每个分组中<code class="language-plaintext highlighter-rouge">num</code>属性最大的<code class="language-plaintext highlighter-rouge">Product</code>对象。</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">prodMap4</code>：</p>
+
+<p>按照 <code class="language-plaintext highlighter-rouge">Product</code> 对象的 <code class="language-plaintext highlighter-rouge">Category</code> 属性进行分组，并且将每个分组中的 <code class="language-plaintext highlighter-rouge">Product</code> 对象的 <code class="language-plaintext highlighter-rouge">Name</code> 属性收集到一个 <code class="language-plaintext highlighter-rouge">Set</code> 中。</p>
+
+<p>具体来说，代码的执行步骤如下：</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">prodList.stream()</code>：将 <code class="language-plaintext highlighter-rouge">prodList</code> 转换为一个 <code class="language-plaintext highlighter-rouge">Stream</code> 流。</li>
+  <li><code class="language-plaintext highlighter-rouge">Collectors.groupingBy(Product::getCategory)</code>：使用 <code class="language-plaintext highlighter-rouge">Collectors.groupingBy</code> 方法按照 <code class="language-plaintext highlighter-rouge">Product</code> 对象的 <code class="language-plaintext highlighter-rouge">Category</code> 属性进行分组，得到一个 <code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;Product&gt;&gt;</code>，其中 <code class="language-plaintext highlighter-rouge">String</code> 表示 <code class="language-plaintext highlighter-rouge">Category</code>，<code class="language-plaintext highlighter-rouge">List&lt;Product&gt;</code> 表示属于该 <code class="language-plaintext highlighter-rouge">Category</code> 的所有 <code class="language-plaintext highlighter-rouge">Product</code> 对象列表。</li>
+  <li><code class="language-plaintext highlighter-rouge">Collectors.mapping(Product::getName, Collectors.toSet())</code>：使用 <code class="language-plaintext highlighter-rouge">Collectors.mapping</code> 方法将每个分组中的 <code class="language-plaintext highlighter-rouge">Product</code> 对象转换为其 <code class="language-plaintext highlighter-rouge">Name</code> 属性，并将结果收集到一个 <code class="language-plaintext highlighter-rouge">Set</code> 中。这样就得到了一个 <code class="language-plaintext highlighter-rouge">Map&lt;String, Set&lt;String&gt;&gt;</code>，其中 <code class="language-plaintext highlighter-rouge">String</code> 表示 <code class="language-plaintext highlighter-rouge">Category</code>，<code class="language-plaintext highlighter-rouge">Set&lt;String&gt;</code> 表示每个分组中的 <code class="language-plaintext highlighter-rouge">Name</code> 属性集合。</li>
+  <li>最终，整个表达式将返回一个 <code class="language-plaintext highlighter-rouge">Map&lt;String, Set&lt;String&gt;&gt;</code>，其中 <code class="language-plaintext highlighter-rouge">String</code> 表示 <code class="language-plaintext highlighter-rouge">Category</code>，<code class="language-plaintext highlighter-rouge">Set&lt;String&gt;</code> 表示每个分组中的 <code class="language-plaintext highlighter-rouge">Name</code> 属性集合。</li>
+</ol>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">网络编程</title><link href="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="网络编程" /><published>2024-04-23T00:00:00+08:00</published><updated>2024-04-23T00:00:00+08:00</updated><id>/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/23/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>TCP、UDP、Email、HTTP、RMI。</p>
 
 <h1 id="网络编程">网络编程</h1>
