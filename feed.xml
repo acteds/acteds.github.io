@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-02T22:13:09+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-02T22:21:24+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
 <p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p>
 
 <h1 id="设计模式">设计模式</h1>
@@ -696,7 +696,7 @@
 
 <hr />
 
-<p><strong>双重检查</strong></p>
+<h5 id="双重检查">双重检查</h5>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -728,7 +728,7 @@
 
 <hr />
 
-<p><strong>通过内部类实现</strong></p>
+<h5 id="通过内部类实现">通过内部类实现</h5>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{}</span>
@@ -749,6 +749,8 @@
 <p>这样第一次调用<code class="language-plaintext highlighter-rouge">getInstance</code>的时候，JVM能够保证<code class="language-plaintext highlighter-rouge">INSTANCE</code>只被创建一次，并且会保证把赋值给<code class="language-plaintext highlighter-rouge">INSTANCE</code>的内存初始化完毕。此外该方法也只会在第一次调用的时候使用互斥机制。</p>
 
 <p><code class="language-plaintext highlighter-rouge">INSTANCE</code> 是在第一次加载 <code class="language-plaintext highlighter-rouge">SingletonContainer</code> 类时被创建的，而 <code class="language-plaintext highlighter-rouge">SingletonContainer</code> 类则在调用 <code class="language-plaintext highlighter-rouge">getInstance</code> 方法的时候才会被加载，因此也实现了延迟加载。</p>
+
+<hr />
 
 <p>要防止通过<strong>反射强行调用私有构造方法</strong>，可以在构造方法添加代码：</p>
 
@@ -775,7 +777,7 @@
 
 <hr />
 
-<h4 id="序列化破坏单例"><strong>序列化破坏单例</strong></h4>
+<h4 id="序列化破坏单例">序列化破坏单例</h4>
 
 <p>单例对象创建好之后，有时需要将对象序列化然后写入磁盘，在需要时从磁盘中读取对象并加载至内存，反序列化后的对象会重新分配内存，如果序列化的目标对象恰好是单例对象，就会破坏单例模式。</p>
 
@@ -827,7 +829,7 @@
 
 <p>在 Java 的序列化中，当对象被序列化时，如果类中定义了 <code class="language-plaintext highlighter-rouge">readResolve</code> 方法，并且该方法返回一个对象，那么在反序列化时<strong>会调用该方法来获取对象</strong>，而<strong>不是通过从流中反序列化创建一个新的对象</strong>。</p>
 
-<p>这意味着 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法可以用来控制反序列化过程中返回的对象，<strong>可以在方法中返回任何想要的对象，而不受反序列化的影响</strong>。如果一个类写了 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法，并且在方法中返回了特定的对象，那么反序列化过程<strong>就会返回这个方法中指定的对象</strong>，而<strong>不会</strong>从文件中重新构造对象。也因此这会忽略保存在文件的全部序列化数据！示例：</p>
+<p>这意味着 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法可以用来控制反序列化过程中返回的对象，<strong>可以在方法中返回任何想要的对象，而不受反序列化的影响</strong>。如果一个类写了 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法，并且在方法中返回了特定的对象，那么反序列化过程<strong>就会返回这个方法中指定的对象</strong>，而<strong>不会</strong>从文件中重新构造对象。示例：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
     <span class="nd">@Test</span>
@@ -979,9 +981,9 @@
 
 <hr />
 
-<p><strong>使用枚举</strong></p>
+<h4 id="使用枚举">使用枚举</h4>
 
-<p>Java保证枚举类的每个枚举都是单例，所以我们只需要编写一个只有一个枚举的类即可：</p>
+<p>Java保证枚举类的每个枚举都是单例，所以只需要编写一个只有一个枚举的类即可：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="nc">World</span> <span class="o">{</span>
     <span class="c1">// 唯一枚举:</span>
