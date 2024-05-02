@@ -1,0 +1,719 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>设计模式 &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="设计模式"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。"><meta name="og:description" content="引言设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。"><meta property="og:url" content="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2024-05-02"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="设计模式"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">设计模式</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2024/05/02 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 22638 字，约 65 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p><h1 id="设计模式">设计模式</h1><p>软件开发要实现可维护、可扩展，就必须尽量复用代码，并且降低代码的耦合度。设计模式主要是基于OOP编程提炼的，23个常用模式分为创建型模式、结构型模式和行为型模式三类，基于以下几个原则：</p><p><strong>开闭原则</strong></p><p>软件应该对扩展开放，而对修改关闭。在增加新功能的时候，能不改代码就尽量不要改，如果只增加代码就完成了新功能，那是最好的。</p><p><strong>单一职责原则</strong></p><p>一个类只负责一项职责。针对一个类，其承担的职责越多，被复用的可能性就越小。如果类承担的职责很多，就意味着这些职责耦合在了一起。</p><p><strong>里氏替换原则</strong></p><p>如果调用一个父类的方法可以成功，那么替换成子类调用也应该完全可以运行。</p><p><strong>接口隔离原则</strong></p><ul><li>客户需要什么样的接口，就提供什么样的接口，不需要的就删除掉；</li><li>类之间的依赖关系应建立在最小的接口上。也就是说，接口中的方法要尽量的少，接口功能要尽量的细分。</li></ul><p><strong>依赖倒置原则</strong></p><p>依赖倒转原则就是要依赖于抽象，不要依赖于实现。高层模块不依赖于底层模块，二者都依赖其抽象；抽象不依赖于细节，细节应该依赖抽象。</p><p>也就是说应当使用接口和抽象类进行变量类型声明、参数类型声明、方法返还类型说明，以及数据类型的转换等，而不是用具体类。<strong>一个具体类应当只实现接口和抽象类中声明过的方法，而不要给出多余的方法</strong>。特例：对象的创建过程是违背“开—闭”原则以及依赖倒转原则的，但通过工厂模式，能很好地解决对象创建过程中的依赖倒转问题。</p><p><strong>迪米特法则</strong></p><p>又称为最少知识原则，<strong>一个软件实体应当尽可能少地与其他实体发生相互作用。</strong></p><p>如果两个对象之间不必彼此直接通信，那么这两个对象就不应当发生任何直接的相互作用。如果其中的一个对象需要调用另一个对象的某一个方法的话，可以通过第三者转发这个调用。</p><p>在类的划分上，应当尽量创建松耦合的类，类之间的耦合度越低，就越有利于复用，一个处在松耦合中的类一旦被修改，不会对关联的类造成太大波及；</p><p>在类的结构设计上，每一个类都应当尽量降低其成员变量和成员函数的访问权限；只要有可能，一个类型应当设计成不变类；在对其他类的引用上，一个对象对其他对象的引用应当降到最低。</p><p><strong>组合/聚合复用原则</strong></p><p>简单的说是，尽量使用对象的组合/聚合，而不是继承来达到复用的目的。</p><p>组合和聚合都是对象建模中关联关系的一种。聚合表示整体与部分的关系，表示“含有”，整体由部分组合而成，部分可以脱离整体作为一个独立的个体存在。组合则是一种更强的聚合，部分组成整体，而且不可分割，部分不能脱离整体而单独存在。</p><p>组合/聚合和继承是实现代码复用的两种基本途径，在设计过程中尽量使用组合/聚合，而不是继承。因为继承使得基类与子类有较强的耦合性，通常情况下基类的内部细节对子类来说是可见的，这样基类的实现细节会暴露给子类，破坏了系统的封装性。</p><p>开闭原则是所有面向对象原则的核心；里式替换原则是实现开闭原则的重要方式之一；依赖倒置原则是系统抽象化的具体实现，其是面向对象设计的主要实现机制之一；接口隔离原则要求接口的方法尽量少，接口尽量细化；迪米特法则降低系统的耦合度，其使得一个模块的修改尽量少的影响其他模块，扩展会相对容易；尽量使用组合/聚合而不是继承达到代码复用的目的。</p><h2 id="创建型模式">创建型模式</h2><p>创建型模式关注点是如何创建对象，其核心思想是要把对象的创建和使用相分离，这样使得两者能相对独立地变换。</p><p>创建型模式包括：</p><ul><li>工厂方法：Factory Method</li><li>抽象工厂：Abstract Factory</li><li>建造者：Builder</li><li>原型：Prototype</li><li>单例：Singleton</li></ul><h3 id="工厂方法">工厂方法</h3><blockquote><p>定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method使一个类的实例化延迟到其子类。</p></blockquote><p>工厂方法即Factory Method，是一种对象创建型模式。</p><p>工厂方法的目的是使得<strong>创建对象</strong>和<strong>使用对象</strong>是<strong>分离</strong>的，并且客户端<strong>总是引用抽象工厂和抽象产品</strong>：</p><pre><code class="language-ascii">┌─────────────┐      ┌─────────────┐
+│   Product   │      │   Factory   │
+└─────────────┘      └─────────────┘
+       ▲                    ▲
+       │                    │
+┌─────────────┐      ┌─────────────┐
+│ ProductImpl │&lt;─ ─ ─│ FactoryImpl │
+└─────────────┘      └─────────────┘
+</code></pre><p>实现一个解析<code class="language-plaintext highlighter-rouge">字符串</code>为<code class="language-plaintext highlighter-rouge">Number</code>的<code class="language-plaintext highlighter-rouge">Factory</code>，可以定义如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">NumberFactory</span> <span class="o">{</span>
+    <span class="nc">Number</span> <span class="nf">parse</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>有了工厂接口，再编写一个工厂的实现类：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NumberFactoryImpl</span> <span class="kd">implements</span> <span class="nc">NumberFactory</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Number</span> <span class="nf">parse</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">BigDecimal</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>产品接口是<code class="language-plaintext highlighter-rouge">Number</code>，<code class="language-plaintext highlighter-rouge">NumberFactoryImpl</code>返回的实际产品是<code class="language-plaintext highlighter-rouge">BigDecimal</code>。</p><p>通常会在接口<code class="language-plaintext highlighter-rouge">Factory</code>中再定义一个静态方法<code class="language-plaintext highlighter-rouge">getFactory()</code>来返回真正的子类（在 <strong>Java 8</strong> 中，接口可以包含静态方法）：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">NumberFactory</span> <span class="o">{</span>
+    <span class="c1">// 创建方法:</span>
+    <span class="nc">Number</span> <span class="nf">parse</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">);</span>
+    <span class="c1">// 获取工厂实例:</span>
+    <span class="kd">static</span> <span class="nc">NumberFactory</span> <span class="nf">getFactory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">impl</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="nc">NumberFactory</span> <span class="n">impl</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NumberFactoryImpl</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在客户端中，只需要和工厂接口<code class="language-plaintext highlighter-rouge">NumberFactory</code>以及抽象产品<code class="language-plaintext highlighter-rouge">Number</code>打交道：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">NumberFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="nc">NumberFactory</span><span class="o">.</span><span class="na">getFactory</span><span class="o">();</span>
+<span class="nc">Number</span> <span class="n">result</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"123.456"</span><span class="o">);</span>
+</code></pre></div></div><p>调用方可以完全忽略真正的工厂<code class="language-plaintext highlighter-rouge">NumberFactoryImpl</code>和实际的产品<code class="language-plaintext highlighter-rouge">BigDecimal</code>，这样做的好处是允许创建产品的代码独立地变换，而不会影响到调用方。</p><hr /><p>实际上，大多数情况下并不需要抽象工厂，而是通过静态方法直接返回产品，即：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NumberFactory</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Number</span> <span class="nf">parse</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">BigDecimal</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>这种简化的使用静态方法创建产品的方式称为静态工厂方法（Static Factory Method）。静态工厂方法广泛地应用在Java标准库中。例如：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">Integer</code>既是产品又是静态工厂。它提供了静态方法<code class="language-plaintext highlighter-rouge">valueOf()</code>来创建<code class="language-plaintext highlighter-rouge">Integer</code>。那么这种方式和直接写<code class="language-plaintext highlighter-rouge">new Integer(100)</code>有何区别呢？</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Integer</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Integer</span> <span class="nf">valueOf</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="nc">IntegerCache</span><span class="o">.</span><span class="na">low</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="nc">IntegerCache</span><span class="o">.</span><span class="na">high</span><span class="o">)</span>
+            <span class="k">return</span> <span class="nc">IntegerCache</span><span class="o">.</span><span class="na">cache</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="o">(-</span><span class="nc">IntegerCache</span><span class="o">.</span><span class="na">low</span><span class="o">)];</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Integer</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>它的好处在于，<code class="language-plaintext highlighter-rouge">valueOf()</code>内部可能会使用<code class="language-plaintext highlighter-rouge">new</code>创建一个新的<code class="language-plaintext highlighter-rouge">Integer</code>实例，但也可能直接返回一个缓存的<code class="language-plaintext highlighter-rouge">Integer</code>实例。对于调用方来说，没必要知道<code class="language-plaintext highlighter-rouge">Integer</code>创建的细节。</p><p>工厂方法可以隐藏创建产品的细节，且不一定每次都会真正创建产品，完全可以返回缓存的产品，从而提升速度并减少内存消耗。</p><p>如果调用方直接使用<code class="language-plaintext highlighter-rouge">Integer n = new Integer(100)</code>，那么就失去了使用缓存优化的可能性。</p><hr /><p>经常使用的另一个静态工厂方法是<code class="language-plaintext highlighter-rouge">List.of()</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"A"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"C"</span><span class="o">);</span>
+</code></pre></div></div><p>这个静态工厂方法接收可变参数，然后返回<code class="language-plaintext highlighter-rouge">List</code>接口。需要注意的是，调用方获取的产品总是<code class="language-plaintext highlighter-rouge">List</code>接口，而且并不关心它的实际类型。</p><p>即使调用方知道<code class="language-plaintext highlighter-rouge">List</code>产品的实际类型是<code class="language-plaintext highlighter-rouge">java.util.ImmutableCollections$ListN</code>，也不要去强制转型为子类，因为静态工厂方法<code class="language-plaintext highlighter-rouge">List.of()</code>保证返回<code class="language-plaintext highlighter-rouge">List</code>，但也完全可以修改为返回<code class="language-plaintext highlighter-rouge">java.util.ArrayList</code>。这就是里氏替换原则：返回实现接口的任意子类都可以满足该方法的要求，且不影响调用方。</p><p>总是引用接口而非实现类，能允许变换子类而不影响调用方，即尽可能面向抽象编程。</p><hr /><p>和<code class="language-plaintext highlighter-rouge">List.of()</code>类似，使用<code class="language-plaintext highlighter-rouge">MessageDigest</code>时，为了创建某个摘要算法，总是使用静态工厂方法<code class="language-plaintext highlighter-rouge">getInstance(String)</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">MessageDigest</span> <span class="n">md5</span> <span class="o">=</span> <span class="nc">MessageDigest</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"MD5"</span><span class="o">);</span>
+<span class="nc">MessageDigest</span> <span class="n">sha1</span> <span class="o">=</span> <span class="nc">MessageDigest</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"SHA-1"</span><span class="o">);</span>
+</code></pre></div></div><p>调用方通过产品名称获得产品实例，不但调用简单，而且获得的引用仍然是<code class="language-plaintext highlighter-rouge">MessageDigest</code>这个抽象类。</p><h3 id="抽象工厂">抽象工厂</h3><blockquote><p>提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。</p></blockquote><p>抽象工厂模式（Abstract Factory）是一个比较复杂的创建型模式。</p><p>抽象工厂模式和工厂方法不太一样，它要解决的问题比较复杂，不但工厂是抽象的，产品是抽象的，而且有多个产品需要创建，因此，这个抽象工厂会对应到多个实际工厂，每个实际工厂负责创建多个实际产品：</p><pre><code class="language-ascii">                                ┌────────┐
+                             ─ &gt;│ProductA│
+┌────────┐    ┌─────────┐   │   └────────┘
+│ Client │─ ─&gt;│ Factory │─ ─
+└────────┘    └─────────┘   │   ┌────────┐
+                   ▲         ─ &gt;│ProductB│
+           ┌───────┴───────┐    └────────┘
+           │               │
+      ┌─────────┐     ┌─────────┐
+      │Factory1 │     │Factory2 │
+      └─────────┘     └─────────┘
+           │   ┌─────────┐ │   ┌─────────┐
+            ─ &gt;│ProductA1│  ─ &gt;│ProductA2│
+           │   └─────────┘ │   └─────────┘
+               ┌─────────┐     ┌─────────┐
+           └ ─&gt;│ProductB1│ └ ─&gt;│ProductB2│
+               └─────────┘     └─────────┘
+</code></pre><p>这种模式有点类似于多个供应商负责提供一系列类型的产品。</p><p>假设希望为用户提供一个可以买荤素菜的环境，定义接口：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">();</span>
+    <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div><p>定义好了抽象工厂（<code class="language-plaintext highlighter-rouge">ImeatAndVegetarianFactory</code>）以及两个抽象产品（<code class="language-plaintext highlighter-rouge">IMeat</code>和<code class="language-plaintext highlighter-rouge">IVegetarian</code>）。假设环境可以是超市也可以是菜市场，先写菜市场：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*菜市场*/</span>
+<span class="kd">class</span> <span class="nc">MeatDishesFromTheWetMarketImpl</span> <span class="kd">implements</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"菜市场的荤菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">VegetarianDishesInTheWetMarketImpl</span> <span class="kd">implements</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"菜市场的素菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">MarketFactoryImpl</span> <span class="kd">implements</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MeatDishesFromTheWetMarketImpl</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">VegetarianDishesInTheWetMarketImpl</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>然后就可以使用了：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">meatAndVegetarianFactory</span> <span class="n">f</span><span class="o">=</span><span class="k">new</span> <span class="nc">MarketFactoryImpl</span><span class="o">();</span><span class="c1">//菜市场</span>
+<span class="nc">IMeat</span> <span class="nc">IMeat</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyMeatDishes</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IMeat</span><span class="o">.</span><span class="na">getMeatName</span><span class="o">());</span><span class="c1">//菜市场的荤菜</span>
+<span class="nc">IVegetarian</span> <span class="nc">IVegetarian</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyVegetarianDishes</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IVegetarian</span><span class="o">.</span><span class="na">getVegetarianName</span><span class="o">());</span><span class="c1">//菜市场的素菜</span>
+</code></pre></div></div><p>看起来似乎也没什么作用。</p><p>再写超市：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MeatDishesFromTheWetSupermarket</span> <span class="kd">implements</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"超市的荤菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">VegetarianDishesInTheWetSupermarket</span> <span class="kd">implements</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"超市的素菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">SupermarketImpl</span> <span class="kd">implements</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MeatDishesFromTheWetSupermarket</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">VegetarianDishesInTheWetSupermarket</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>要使用，则只需要改动一下初始化的工厂就行了：即把<code class="language-plaintext highlighter-rouge">new MarketFactoryImpl();</code>改成<code class="language-plaintext highlighter-rouge">new SupermarketImpl();</code>。这下作用比较明显了。</p><p>还可以把这行也隐藏起来，这样用户就完全不会接触到具体实现了：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">ImeatAndVegetarianFactory</span> <span class="n">f</span><span class="o">=</span> <span class="nc">ImeatAndVegetarianFactory</span><span class="o">.</span><span class="na">createFactory</span><span class="o">(</span><span class="s">"超市"</span><span class="o">);</span>
+        <span class="nc">IMeat</span> <span class="nc">IMeat</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyMeatDishes</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IMeat</span><span class="o">.</span><span class="na">getMeatName</span><span class="o">());</span>
+        <span class="nc">IVegetarian</span> <span class="nc">IVegetarian</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyVegetarianDishes</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IVegetarian</span><span class="o">.</span><span class="na">getVegetarianName</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">();</span>
+    <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">();</span>
+    <span class="kd">static</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="nf">createFactory</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"超市"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">SupermarketImpl</span><span class="o">();</span>
+        <span class="o">}</span><span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"菜市场"</span><span class="o">)){</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">MarketFactoryImpl</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"未定义"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>抽象工厂模式是为了让创建工厂和一组产品与使用相分离，并可以随时切换到另一个工厂以及另一组产品；</p><p>抽象工厂模式实现的关键点是定义工厂接口和产品接口，但如何实现工厂与产品本身需要留给具体的子类实现，客户端只和抽象工厂与抽象产品打交道。</p><hr /><p>完整代码：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">test</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="o">;</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">ImeatAndVegetarianFactory</span> <span class="n">f</span><span class="o">=</span> <span class="nc">ImeatAndVegetarianFactory</span><span class="o">.</span><span class="na">createFactory</span><span class="o">(</span><span class="s">"超市"</span><span class="o">);</span>
+        <span class="n">test</span><span class="o">(</span><span class="n">f</span><span class="o">);</span>
+        <span class="n">f</span><span class="o">=</span><span class="nc">ImeatAndVegetarianFactory</span><span class="o">.</span><span class="na">createFactory</span><span class="o">(</span><span class="s">"菜市场"</span><span class="o">);</span>
+        <span class="n">test</span><span class="o">(</span><span class="n">f</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(</span><span class="nc">ImeatAndVegetarianFactory</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">IMeat</span> <span class="nc">IMeat</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyMeatDishes</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IMeat</span><span class="o">.</span><span class="na">getMeatName</span><span class="o">());</span>
+        <span class="nc">IVegetarian</span> <span class="nc">IVegetarian</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="na">buyVegetarianDishes</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IVegetarian</span><span class="o">.</span><span class="na">getVegetarianName</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">();</span>
+    <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">();</span>
+    <span class="kd">static</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="nf">createFactory</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"超市"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">SupermarketImpl</span><span class="o">();</span>
+        <span class="o">}</span><span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"菜市场"</span><span class="o">)){</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">MarketFactoryImpl</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"未定义"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="cm">/*菜市场*/</span>
+<span class="kd">class</span> <span class="nc">MeatDishesFromTheWetMarketImpl</span> <span class="kd">implements</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"菜市场的荤菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">VegetarianDishesInTheWetMarketImpl</span> <span class="kd">implements</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"菜市场的素菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">MarketFactoryImpl</span> <span class="kd">implements</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MeatDishesFromTheWetMarketImpl</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">VegetarianDishesInTheWetMarketImpl</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="cm">/*超市*/</span>
+<span class="kd">class</span> <span class="nc">MeatDishesFromTheWetSupermarket</span> <span class="kd">implements</span> <span class="nc">IMeat</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getMeatName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"超市的荤菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">VegetarianDishesInTheWetSupermarket</span> <span class="kd">implements</span> <span class="nc">IVegetarian</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getVegetarianName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"超市的素菜"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">SupermarketImpl</span> <span class="kd">implements</span> <span class="nc">ImeatAndVegetarianFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IMeat</span> <span class="nf">buyMeatDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MeatDishesFromTheWetSupermarket</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">IVegetarian</span> <span class="nf">buyVegetarianDishes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">VegetarianDishesInTheWetSupermarket</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><h3 id="生成器">生成器</h3><blockquote><p>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</p></blockquote><p>生成器模式/建造者模式（Builder）是使用多个“小型”工厂来最终创建出一个完整对象。</p><p>使用Builder是因为创建这个对象的步骤比较多，每个步骤都需要一个零部件，最终组合成一个完整的对象。</p><p>以Markdown转HTML为例，直接编写一个完整的转换器比较困难，但如果针对类似下面的一行文本：</p><div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh"># this is a heading</span>
+</code></pre></div></div><p>转换成HTML就很简单：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;h1&gt;</span>this is a heading<span class="nt">&lt;/h1&gt;</span>
+</code></pre></div></div><p>因此，把Markdown转HTML看作一行一行的转换，每一行根据语法，使用不同的转换器：</p><ul><li>如果以<code class="language-plaintext highlighter-rouge">#</code>开头，使用<code class="language-plaintext highlighter-rouge">HeadingBuilder</code>转换；</li><li>如果以<code class="language-plaintext highlighter-rouge">&gt;</code>开头，使用<code class="language-plaintext highlighter-rouge">QuoteBuilder</code>转换；</li><li>如果以<code class="language-plaintext highlighter-rouge">---</code>开头，使用<code class="language-plaintext highlighter-rouge">HrBuilder</code>转换；</li><li>其余使用<code class="language-plaintext highlighter-rouge">ParagraphBuilder</code>转换。</li></ul><p>这个<code class="language-plaintext highlighter-rouge">HtmlBuilder</code>写出来如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">HtmlBuilder</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">HeadingBuilder</span> <span class="n">headingBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HeadingBuilder</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nc">HrBuilder</span> <span class="n">hrBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HrBuilder</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nc">ParagraphBuilder</span> <span class="n">paragraphBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ParagraphBuilder</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nc">QuoteBuilder</span> <span class="n">quoteBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">QuoteBuilder</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toHtml</span><span class="o">(</span><span class="nc">String</span> <span class="n">markdown</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">StringBuilder</span> <span class="n">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+        <span class="nc">String</span> <span class="o">[]</span><span class="n">s</span><span class="o">=</span><span class="n">markdown</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">"\\s"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">line</span> <span class="o">:</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"#"</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">buffer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">headingBuilder</span><span class="o">.</span><span class="na">buildHeading</span><span class="o">(</span><span class="n">line</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">'\n'</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"&gt;"</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">buffer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">quoteBuilder</span><span class="o">.</span><span class="na">buildQuote</span><span class="o">(</span><span class="n">line</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">'\n'</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"---"</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">buffer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">hrBuilder</span><span class="o">.</span><span class="na">buildHr</span><span class="o">(</span><span class="n">line</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">'\n'</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">buffer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">paragraphBuilder</span><span class="o">.</span><span class="na">buildParagraph</span><span class="o">(</span><span class="n">line</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">'\n'</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">HtmlBuilder</code>并不是一次性把整个Markdown转换为HTML，而是一行一行转换，并且，它自己并不会将某一行转换为特定的HTML，而是根据特性把每一行都“委托”给一个<code class="language-plaintext highlighter-rouge">XxxBuilder</code>去转换，最后，把所有转换的结果组合起来，返回给客户端。</p><p>这样一来，只需要针对每一种类型编写不同的Builder。例如，针对以<code class="language-plaintext highlighter-rouge">#</code>开头的行，需要<code class="language-plaintext highlighter-rouge">HeadingBuilder</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">HeadingBuilder</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">buildHeading</span><span class="o">(</span><span class="nc">String</span> <span class="n">line</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">==</span> <span class="sc">'#'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">n</span><span class="o">++;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"&lt;h%d&gt;%s&lt;/h%d&gt;"</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">line</span><span class="o">.</span><span class="na">trim</span><span class="o">(),</span> <span class="n">n</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>可见，使用Builder模式时，适用于创建的对象比较复杂，最好一步一步创建出“零件”，最后再装配起来。</p><p><code class="language-plaintext highlighter-rouge">JavaMail</code>的<code class="language-plaintext highlighter-rouge">MimeMessage</code>就可以看作是一个Builder模式，只不过Builder和最终产品合二为一，都是<code class="language-plaintext highlighter-rouge">MimeMessage</code>。</p><p>很多时候，可以简化Builder模式，以链式调用的方式来创建对象。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">StringBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+<span class="n">builder</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"123"</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"456"</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"789"</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">url</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</code></pre></div></div><p>生成器模式旨在通过一步一步构建复杂对象来创建对象。在使用 <code class="language-plaintext highlighter-rouge">JavaBean</code> 的 <code class="language-plaintext highlighter-rouge">set</code> 方法构建 <code class="language-plaintext highlighter-rouge">JavaBean</code> 时，虽然没有明确的构建步骤，但通过设置各个属性来构建对象的过程与生成器模式中逐步构建对象的思想相似。因此，可以将使用 <code class="language-plaintext highlighter-rouge">JavaBean</code> 的 <code class="language-plaintext highlighter-rouge">set</code> 方法构建 <code class="language-plaintext highlighter-rouge">JavaBean</code> 视为一种类似生成器模式的实现方式。</p><p><code class="language-plaintext highlighter-rouge">lombok</code>有个<code class="language-plaintext highlighter-rouge">@Builder</code> 可以使对象实现 builder 功能:</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="no">A</span> <span class="n">build</span> <span class="o">=</span> <span class="no">A</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">a</span><span class="o">(</span><span class="s">"1"</span><span class="o">).</span><span class="na">b</span><span class="o">(</span><span class="s">"2"</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">build</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="nd">@ToString</span>
+<span class="nd">@Builder</span>
+<span class="kd">class</span> <span class="nc">A</span><span class="o">{</span>
+    <span class="nc">String</span> <span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>生成的代码：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">A</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">a</span><span class="o">;</span>
+    <span class="nc">String</span> <span class="n">b</span><span class="o">;</span>
+    <span class="no">A</span><span class="o">(</span><span class="nc">String</span> <span class="n">a</span><span class="o">,</span> <span class="nc">String</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">ABuilder</span> <span class="nf">builder</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ABuilder</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"A(a="</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">a</span> <span class="o">+</span> <span class="s">", b="</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">b</span> <span class="o">+</span> <span class="s">")"</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ABuilder</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">a</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">b</span><span class="o">;</span>
+
+        <span class="nc">ABuilder</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="nc">ABuilder</span> <span class="nf">a</span><span class="o">(</span><span class="nc">String</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="nc">ABuilder</span> <span class="nf">b</span><span class="o">(</span><span class="nc">String</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="no">A</span> <span class="nf">build</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">A</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">a</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">b</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s">"A.ABuilder(a="</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">a</span> <span class="o">+</span> <span class="s">", b="</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">b</span> <span class="o">+</span> <span class="s">")"</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>内部生成器的<code class="language-plaintext highlighter-rouge">toString</code>会自动生成：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="no">A</span><span class="o">.</span><span class="na">ABuilder</span> <span class="n">b</span> <span class="o">=</span> <span class="no">A</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">a</span><span class="o">(</span><span class="s">"1"</span><span class="o">).</span><span class="na">b</span><span class="o">(</span><span class="s">"2"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">b</span><span class="o">);</span><span class="c1">//A.ABuilder(a=1, b=2)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@Builder</span>
+<span class="kd">class</span> <span class="nc">A</span><span class="o">{</span>
+    <span class="nc">String</span> <span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><h3 id="原型">原型</h3><blockquote><p>用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。</p></blockquote><p>原型模式，即Prototype，是指创建新对象的时候，根据现有的一个原型来创建。</p><p>我们举个例子：如果我们已经有了一个<code class="language-plaintext highlighter-rouge">String[]</code>数组，想再创建一个一模一样的<code class="language-plaintext highlighter-rouge">String[]</code>数组，怎么写？</p><p>实际上创建过程很简单，就是把现有数组的元素复制到新数组。如果我们把这个创建过程封装一下，就成了原型模式。用代码实现如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 原型:</span>
+<span class="nc">String</span><span class="o">[]</span> <span class="n">original</span> <span class="o">=</span> <span class="o">{</span> <span class="s">"Apple"</span><span class="o">,</span> <span class="s">"Pear"</span><span class="o">,</span> <span class="s">"Banana"</span> <span class="o">};</span>
+<span class="c1">// 新对象:</span>
+<span class="nc">String</span><span class="o">[]</span> <span class="n">copy</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">original</span><span class="o">,</span> <span class="n">original</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</code></pre></div></div><p>对于普通类，如何实现原型拷贝？Java的<code class="language-plaintext highlighter-rouge">Object</code>提供了一个<code class="language-plaintext highlighter-rouge">clone()</code>方法，它的意图就是复制一个新的对象出来，需要实现一个<code class="language-plaintext highlighter-rouge">Cloneable</code>接口来标识一个对象是“可复制”的：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Student</span> <span class="kd">implements</span> <span class="nc">Cloneable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">score</span><span class="o">;</span>
+
+    <span class="c1">// 复制新对象并返回:</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">clone</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Student</span> <span class="n">std</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Student</span><span class="o">();</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">id</span><span class="o">;</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">score</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">score</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>使用的时候，因为<code class="language-plaintext highlighter-rouge">clone()</code>的方法签名是定义在<code class="language-plaintext highlighter-rouge">Object</code>中，返回类型也是<code class="language-plaintext highlighter-rouge">Object</code>，所以要强制转型，比较麻烦。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Student</span> <span class="n">student</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Student</span><span class="o">();</span>
+<span class="nc">Object</span> <span class="n">clone</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">);</span><span class="c1">//test.Student@6f4a47c7</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">clone</span><span class="o">);</span><span class="c1">//test.Student@ae13544</span>
+</code></pre></div></div><p>实际上，使用原型模式更好的方式是定义一个<code class="language-plaintext highlighter-rouge">copy()</code>方法，返回明确的类型：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Student</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">score</span><span class="o">;</span>
+
+    <span class="c1">// 复制新对象并返回:</span>
+    <span class="kd">public</span> <span class="nc">Student</span> <span class="nf">copy</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Student</span> <span class="n">std</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Student</span><span class="o">();</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">id</span><span class="o">;</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+        <span class="n">std</span><span class="o">.</span><span class="na">score</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">score</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>原型模式应用不是很广泛，因为很多实例会持有类似文件、Socket这样的资源，而这些资源是无法复制给另一个对象共享的，只有存储简单类型的“值”对象可以复制。</p><h3 id="单例">单例</h3><blockquote><p>保证一个类仅有一个实例，并提供一个访问它的全局访问点。</p></blockquote><p>单例模式（Singleton）的目的是为了保证在一个进程中，某个类有且仅有一个实例。</p><p>因为这个类只有一个实例，因此，自然不能让调用方使用<code class="language-plaintext highlighter-rouge">new ClassName()</code>来创建实例了。所以，单例的构造方法必须是<code class="language-plaintext highlighter-rouge">private</code>，这样就防止了调用方自己创建实例。然后可以对外提供一个静态方法，返回一个固定的实例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+    <span class="c1">// 静态字段引用唯一实例:</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+
+    <span class="c1">// 通过静态方法返回实例:</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// private构造方法保证外部无法实例化:</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{}</span>
+<span class="o">}</span>
+</code></pre></div></div><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span><span class="c1">//相同实例</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span><span class="c1">//相同实例</span>
+</code></pre></div></div><p>或者直接把静态变量设置为<code class="language-plaintext highlighter-rouge">public</code>。</p><p>单例模式的实现方式很简单：</p><ol><li>只有<code class="language-plaintext highlighter-rouge">private</code>构造方法，确保外部无法实例化；</li><li>通过<code class="language-plaintext highlighter-rouge">private static</code>变量持有唯一实例，保证全局唯一性；</li><li>通过<code class="language-plaintext highlighter-rouge">public static</code>方法返回此唯一实例，使外部调用方能获取到实例。</li></ol><p>Java标准库有一些类就是单例，例如<code class="language-plaintext highlighter-rouge">Runtime</code>这个类：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Runtime</span> <span class="n">runtime</span> <span class="o">=</span> <span class="nc">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">();</span>
+</code></pre></div></div><h4 id="延迟加载">延迟加载</h4><p>即在调用方第一次调用<code class="language-plaintext highlighter-rouge">getInstance()</code>时才初始化全局唯一实例，类似这样：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="no">INSTANCE</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>但这种写法在多线程中是错误的，必须对整个方法进行加锁，但加锁会严重影响并发性能，得不偿失。</p><hr /><p><strong>双重检查</strong></p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="no">INSTANCE</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">synchronized</span> <span class="o">(</span><span class="nc">Singleton</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="no">INSTANCE</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>上述描述似乎已经解决了我们面临的所有问题，但实际上，从 JVM 的角度讲，这些代码仍然可能发生错误。</p><p>对于 JVM 而言，它执行的是一个个 Java 指令。在 Java 指令中创建对象和赋值操作是分开进行的，也就是说<code class="language-plaintext highlighter-rouge">INSTANCE= new Singleton();</code>语句是分两步执行的。但是 JVM 并不保证这两个操作的先后顺序，即指令重排，也就是说有可能 JVM 会为新的 <code class="language-plaintext highlighter-rouge">Singleton</code> 实例分配空间，然后直接赋值给 <code class="language-plaintext highlighter-rouge">instance</code> 成员，然后再去初始化这个 <code class="language-plaintext highlighter-rouge">Singleton</code> 实例。这样就使出错成为了可能。</p><p>不过在<strong>JDK 5</strong>以及更高版本扩展了<code class="language-plaintext highlighter-rouge">volatile</code>的语义，以便系统将不允许<code class="language-plaintext highlighter-rouge">volatile</code>的写相对于任何之前的读或写重新排序，并且<code class="language-plaintext highlighter-rouge">volatile</code>的读也不能相对于任何后续的读或写重新排序。</p><p>因此，<strong>为<code class="language-plaintext highlighter-rouge">INSTANCE</code>变量添加<code class="language-plaintext highlighter-rouge">volatile</code>就修复了这个问题</strong>。</p><p>另外，如果<code class="language-plaintext highlighter-rouge">INSTANCE</code>变量是一个不可变对象，则也不用加<code class="language-plaintext highlighter-rouge">volatile</code>，就如同<code class="language-plaintext highlighter-rouge">int</code>和<code class="language-plaintext highlighter-rouge">float</code>一样，他们的赋值操作是原子的。（<a href="http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html">参见</a>）</p><hr /><p><strong>通过内部类实现</strong></p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">SingletonContainer</span><span class="o">{</span>
+        <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 静态内部类只有在被使用时才会装载，静态属性只会在第一次装载时初始化
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="nc">SingletonContainer</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>JVM内部的机制能够保证当一个类被加载的时候，这个类的加载过程是线程互斥的。</p><p>这样第一次调用<code class="language-plaintext highlighter-rouge">getInstance</code>的时候，JVM能够保证<code class="language-plaintext highlighter-rouge">INSTANCE</code>只被创建一次，并且会保证把赋值给<code class="language-plaintext highlighter-rouge">INSTANCE</code>的内存初始化完毕。此外该方法也只会在第一次调用的时候使用互斥机制。</p><p><code class="language-plaintext highlighter-rouge">INSTANCE</code> 是在第一次加载 <code class="language-plaintext highlighter-rouge">SingletonContainer</code> 类时被创建的，而 <code class="language-plaintext highlighter-rouge">SingletonContainer</code> 类则在调用 <code class="language-plaintext highlighter-rouge">getInstance</code> 方法的时候才会被加载，因此也实现了延迟加载。</p><p>要防止通过<strong>反射强行调用私有构造方法</strong>，可以在构造方法添加代码：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nc">SingletonContainer</span><span class="o">.</span><span class="na">INSTANCE</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"!"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>反射测试：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Constructor</span><span class="o">&lt;</span><span class="nc">Singleton</span><span class="o">&gt;</span> <span class="n">declaredConstructor</span> <span class="o">=</span> <span class="nc">Singleton</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredConstructor</span><span class="o">();</span>
+<span class="n">declaredConstructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">Singleton</span> <span class="n">singleton</span> <span class="o">=</span> <span class="n">declaredConstructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span><span class="c1">//java.lang.RuntimeException: !</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">singleton</span><span class="o">);</span>
+</code></pre></div></div><p>正常调用：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span><span class="c1">//test.Singleton@ae13544</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span><span class="c1">//test.Singleton@ae13544</span>
+</code></pre></div></div><hr /><h4 id="序列化破坏单例"><strong>序列化破坏单例</strong></h4><p>单例对象创建好之后，有时需要将对象序列化然后写入磁盘，在需要时从磁盘中读取对象并加载至内存，反序列化后的对象会重新分配内存，如果序列化的目标对象恰好是单例对象，就会破坏单例模式。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span><span class="nc">ClassNotFoundException</span> <span class="o">{</span>
+        <span class="nc">Singleton</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileOutputStream</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectOutputStream</span> <span class="n">oos</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="n">f</span><span class="o">)){</span>
+                <span class="n">oos</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">Singleton</span> <span class="n">s2</span><span class="o">;</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileInputStream</span> <span class="n">fis</span><span class="o">=</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectInputStream</span> <span class="n">ois</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="n">fis</span><span class="o">)){</span>
+                <span class="n">s2</span><span class="o">=</span> <span class="o">(</span><span class="nc">Singleton</span><span class="o">)</span> <span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span><span class="c1">//test.Singleton@7494f96a</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s2</span><span class="o">);</span><span class="c1">//test.Singleton@37883b97</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>添加一个<code class="language-plaintext highlighter-rouge">readResolve()</code>,就能保证反序列化是同一个实例了</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="nf">readResolve</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在 Java 的序列化中，当对象被序列化时，如果类中定义了 <code class="language-plaintext highlighter-rouge">readResolve</code> 方法，并且该方法返回一个对象，那么在反序列化时<strong>会调用该方法来获取对象</strong>，而<strong>不是通过从流中反序列化创建一个新的对象</strong>。</p><p>这意味着 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法可以用来控制反序列化过程中返回的对象，<strong>可以在方法中返回任何想要的对象，而不受反序列化的影响</strong>。如果一个类写了 <code class="language-plaintext highlighter-rouge">readResolve()</code> 方法，并且在方法中返回了特定的对象，那么反序列化过程<strong>就会返回这个方法中指定的对象</strong>，而<strong>不会</strong>从文件中重新构造对象。也因此这会忽略保存在文件的全部序列化数据！示例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">Singleton</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="n">s1</span><span class="o">.</span><span class="na">name</span><span class="o">=</span><span class="s">"序列化前"</span><span class="o">;</span>
+
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileOutputStream</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectOutputStream</span> <span class="n">oos</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="n">f</span><span class="o">)){</span>
+                <span class="n">oos</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span><span class="c1">//test.Singleton@561b6512</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">.</span><span class="na">name</span><span class="o">);</span><span class="c1">//序列化前</span>
+
+    <span class="o">}</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test2</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span><span class="nc">ClassNotFoundException</span> <span class="o">{</span>
+        <span class="nc">Singleton</span> <span class="n">s2</span><span class="o">;</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileInputStream</span> <span class="n">fis</span><span class="o">=</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectInputStream</span> <span class="n">ois</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="n">fis</span><span class="o">)){</span>
+                <span class="n">s2</span><span class="o">=</span> <span class="o">(</span><span class="nc">Singleton</span><span class="o">)</span> <span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s2</span><span class="o">);</span><span class="c1">//test.Singleton@c86b9e3</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s2</span><span class="o">.</span><span class="na">name</span><span class="o">);</span><span class="c1">//null</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="nf">readResolve</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>先运行<code class="language-plaintext highlighter-rouge">test1()</code>,然后等JVM关闭后重新运行<code class="language-plaintext highlighter-rouge">test2()</code>,模拟序列化的实际运用场景，这个场景下内存地址肯定不一样，但后设置的<code class="language-plaintext highlighter-rouge">name</code>值也丢了。</p><p>实际上，<code class="language-plaintext highlighter-rouge">readResolve()</code> 方法的作用是控制对象的反序列化过程，可以用来确保反序列化后的对象符合特定的要求，或者实现单例模式等。</p><hr /><p>那么我们保存的<code class="language-plaintext highlighter-rouge">s.obj</code>序列化文件就这么废了吗？也不一定，<strong>序列化仅涉及对象的状态（即实例变量）</strong>，不包括类的方法。序列化的主要目的是保存对象的状态，以便在稍后可以将其完全恢复为原始状态。把<code class="language-plaintext highlighter-rouge">readResolve()</code> 方法注释掉不就好了。</p><p>示例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">Singleton</span> <span class="n">s1</span> <span class="o">=</span> <span class="nc">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="n">s1</span><span class="o">.</span><span class="na">name</span><span class="o">=</span><span class="s">"序列化前"</span><span class="o">;</span>
+
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileOutputStream</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectOutputStream</span> <span class="n">oos</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="n">f</span><span class="o">)){</span>
+                <span class="n">oos</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span><span class="c1">//Singleton{name='序列化前'}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s1</span><span class="o">.</span><span class="na">name</span><span class="o">);</span><span class="c1">//序列化前</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nc">Object</span> <span class="nf">readResolve</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Singleton{name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>运行<code class="language-plaintext highlighter-rouge">test1()</code>生成<code class="language-plaintext highlighter-rouge">s.obj</code>。删除<code class="language-plaintext highlighter-rouge">readResolve</code>，<code class="language-plaintext highlighter-rouge">运行test2()</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test2</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span><span class="nc">ClassNotFoundException</span> <span class="o">{</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileInputStream</span> <span class="n">fis</span><span class="o">=</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectInputStream</span> <span class="n">ois</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="n">fis</span><span class="o">)){</span>
+                <span class="nc">Object</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">);</span><span class="c1">//Singleton{name='序列化前'}</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(((</span><span class="nc">Singleton</span><span class="o">)</span> <span class="n">x</span><span class="o">).</span><span class="na">name</span><span class="o">);</span><span class="c1">//序列化前</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Singleton{name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>正常恢复，没有问题，那么试试删除<code class="language-plaintext highlighter-rouge">public String toString()</code>，提示：</p><div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java.io.InvalidClassException: test.Singleton; local class incompatible: stream classdesc serialVersionUID = 5155019565252345970, local class serialVersionUID = -6864115338217441473
+</code></pre></div></div><p>改动太大了，改变了<code class="language-plaintext highlighter-rouge">serialVersionUID</code>，那么显示的在类里指定：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Singleton</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="mi">5155019565252345970L</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Singleton</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>再运行<code class="language-plaintext highlighter-rouge">test2()</code>,正常反序列化，只是这次<code class="language-plaintext highlighter-rouge">toString</code>没有了：</p><div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test.Singleton@79d8407f
+序列化前
+</code></pre></div></div><p>实际上，非重写的方法可以随便添加修改删除，而重写的方法不能动，动了就会导致<code class="language-plaintext highlighter-rouge">serialVersionUID</code>编号。（显示指定<code class="language-plaintext highlighter-rouge">serialVersionUID</code>编号就好了）</p><hr /><p><strong>使用枚举</strong></p><p>Java保证枚举类的每个枚举都是单例，所以我们只需要编写一个只有一个枚举的类即可：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="nc">World</span> <span class="o">{</span>
+    <span class="c1">// 唯一枚举:</span>
+	<span class="no">INSTANCE</span><span class="o">;</span>
+
+	<span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"world"</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>枚举类也完全可以像其他类那样定义自己的字段、方法，这样上面这个<code class="language-plaintext highlighter-rouge">World</code>类在调用方看来就可以这么用：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+</code></pre></div></div><p>使用枚举实现Singleton也避免了即序列化和反序列化会绕过普通类的<code class="language-plaintext highlighter-rouge">private</code>构造方法从而创建出多个实例，而枚举类就没有这个问题。</p><p>枚举在序列化和反序列化过程中<strong>会丢失枚举常量中的普通字段的值</strong>。这是因为枚举在序列化时只保留了枚举常量的名称，并没有保存其他字段的状态。在反序列化时，只会根据枚举常量的名称重新构建枚举常量，而普通字段的值需要在程序中重新设置。即：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">"序列化前"</span><span class="o">);</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileOutputStream</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectOutputStream</span> <span class="n">oos</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="n">f</span><span class="o">)){</span>
+                <span class="n">oos</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span><span class="c1">//World{name='序列化前'}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span><span class="c1">//序列化前</span>
+    <span class="o">}</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test2</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span><span class="nc">ClassNotFoundException</span> <span class="o">{</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileInputStream</span> <span class="n">fis</span><span class="o">=</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectInputStream</span> <span class="n">ois</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="n">fis</span><span class="o">)){</span>
+                <span class="nc">World</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="nc">World</span><span class="o">)</span> <span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">);</span><span class="c1">//World{name='null'}</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span><span class="c1">//null</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span>
+
+<span class="o">}</span>
+<span class="kd">enum</span> <span class="nc">World</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="c1">// 唯一枚举:</span>
+    <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"World{name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>用有参构造器设置就好了，虽然并没有改变问题的根本，也是个曲线的好办法。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileOutputStream</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectOutputStream</span> <span class="n">oos</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="n">f</span><span class="o">)){</span>
+                <span class="n">oos</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span><span class="c1">//World{name='序列化前'}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">World</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span><span class="c1">//序列化前</span>
+
+    <span class="o">}</span>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">test2</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span><span class="nc">ClassNotFoundException</span> <span class="o">{</span>
+        <span class="k">try</span><span class="o">(</span><span class="nc">FileInputStream</span> <span class="n">fis</span><span class="o">=</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"s.obj"</span><span class="o">)){</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">ObjectInputStream</span> <span class="n">ois</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="n">fis</span><span class="o">)){</span>
+                <span class="nc">World</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="nc">World</span><span class="o">)</span> <span class="n">ois</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">);</span><span class="c1">//World{name='null'}</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span><span class="c1">//null</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">enum</span> <span class="nc">World</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="c1">// 唯一枚举:</span>
+    <span class="no">INSTANCE</span><span class="o">(</span><span class="s">"序列化前"</span><span class="o">);</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nc">World</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"World{name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>而枚举天然就不能使用反射调用：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Constructor</span><span class="o">&lt;</span><span class="nc">World</span><span class="o">&gt;</span> <span class="n">declaredConstructor</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">declaredConstructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">World</span> <span class="n">world</span> <span class="o">=</span> <span class="n">declaredConstructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"test"</span><span class="o">);</span><span class="c1">//java.lang.NoSuchMethodException: test.World.&lt;init&gt;(java.lang.String)</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">world</span><span class="o">);</span>
+</code></pre></div></div><p>找不到指定类型的构造方法，看看<code class="language-plaintext highlighter-rouge">java.lang.Enum</code>的源码，只有：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">protected</span> <span class="nf">Enum</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">ordinal</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">ordinal</span> <span class="o">=</span> <span class="n">ordinal</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>唯一构造函数。程序员无法调用此构造函数。它供编译器发出的代码使用，以响应枚举类型声明。形参:</p><ul><li><code class="language-plaintext highlighter-rouge">name</code> – - 此枚举常量的名称，它是用于声明它的标识符。</li><li><code class="language-plaintext highlighter-rouge">ordinal</code> – - 此枚举常量的序数（它在枚举声明中的位置，其中初始常量的序数为零）</li></ul><p>那么改成这样：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Constructor</span><span class="o">&lt;</span><span class="nc">World</span><span class="o">&gt;</span> <span class="n">declaredConstructor</span> <span class="o">=</span> <span class="nc">World</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">declaredConstructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">World</span> <span class="n">world</span> <span class="o">=</span> <span class="n">declaredConstructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"枚举名"</span><span class="o">,</span><span class="mi">1</span><span class="o">,</span><span class="s">"test"</span><span class="o">);</span><span class="c1">//java.lang.IllegalArgumentException: Cannot reflectively create enum objects</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">world</span><span class="o">);</span>
+</code></pre></div></div><p>异常位置：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CallerSensitive</span>
+<span class="nd">@ForceInline</span> <span class="c1">// to ensure Reflection.getCallerClass optimization</span>
+<span class="kd">public</span> <span class="no">T</span> <span class="nf">newInstance</span><span class="o">(</span><span class="nc">Object</span> <span class="o">...</span> <span class="n">initargs</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="nc">InstantiationException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span><span class="o">,</span>
+           <span class="nc">IllegalArgumentException</span><span class="o">,</span> <span class="nc">InvocationTargetException</span>
+<span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">override</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">caller</span> <span class="o">=</span> <span class="nc">Reflection</span><span class="o">.</span><span class="na">getCallerClass</span><span class="o">();</span>
+        <span class="n">checkAccess</span><span class="o">(</span><span class="n">caller</span><span class="o">,</span> <span class="n">clazz</span><span class="o">,</span> <span class="n">clazz</span><span class="o">,</span> <span class="n">modifiers</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">((</span><span class="n">clazz</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()</span> <span class="o">&amp;</span> <span class="nc">Modifier</span><span class="o">.</span><span class="na">ENUM</span><span class="o">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"Cannot reflectively create enum objects"</span><span class="o">);</span>
+    <span class="nc">ConstructorAccessor</span> <span class="n">ca</span> <span class="o">=</span> <span class="n">constructorAccessor</span><span class="o">;</span>   <span class="c1">// read volatile</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">ca</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ca</span> <span class="o">=</span> <span class="n">acquireConstructorAccessor</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+    <span class="no">T</span> <span class="n">inst</span> <span class="o">=</span> <span class="o">(</span><span class="no">T</span><span class="o">)</span> <span class="n">ca</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">initargs</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">inst</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><hr /><p>什么时候应该用Singleton呢？实际上，很多程序，尤其是Web程序，大部分服务类都应该被视作Singleton，如果全部按Singleton的写法写，会非常麻烦，所以，通常是通过约定让框架（例如Spring）来实例化这些类，保证只有一个实例，调用方自觉通过框架获取实例而不是<code class="language-plaintext highlighter-rouge">new</code>操作符：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span> <span class="c1">// 表示一个单例组件</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyService</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>因此，除非确有必要，否则Singleton模式一般以“约定”为主，不会刻意实现它。</p><h2 id="结构型模式">结构型模式</h2><h2 id="行为型模式">行为型模式</h2><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" target="_blank">https://acteds.github.io/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1714659192', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
