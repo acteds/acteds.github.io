@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-06T14:05:29+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-06T20:09:37+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
 <p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p>
 
 <h1 id="设计模式">设计模式</h1>
@@ -6878,6 +6878,7 @@ Content-Length: 18391
 
 <p>这些静态方法在多线程编程中经常被使用，用于控制线程的行为和状态。</p>
 <h2 id="创建新线程">创建新线程</h2>
+
 <p>Java语言内置了多线程支持。当Java程序启动的时候，实际上是启动了一个JVM进程，然后，JVM启动主线程来执行<code class="language-plaintext highlighter-rouge">main()</code>方法。在<code class="language-plaintext highlighter-rouge">main()</code>方法中，又可以启动其他线程。</p>
 
 <p>要创建一个新线程非常容易，实例化一个<code class="language-plaintext highlighter-rouge">Thread</code>实例，然后调用它的<code class="language-plaintext highlighter-rouge">start()</code>方法。</p>
@@ -6975,6 +6976,7 @@ Content-Length: 18391
 </code></pre>
 <p>当线程启动后，它可以在<code class="language-plaintext highlighter-rouge">Runnable</code>、<code class="language-plaintext highlighter-rouge">Blocked</code>、<code class="language-plaintext highlighter-rouge">Waiting</code>和<code class="language-plaintext highlighter-rouge">Timed Waiting</code>这几个状态之间切换，直到最后变成<code class="language-plaintext highlighter-rouge">Terminated</code>状态，线程终止。<br />
 线程终止的原因有：</p>
+
 <ul>
   <li>线程正常终止：<code class="language-plaintext highlighter-rouge">run()</code>方法执行到<code class="language-plaintext highlighter-rouge">return</code>语句返回；</li>
   <li>线程意外终止：<code class="language-plaintext highlighter-rouge">run()</code>方法因为未捕获的异常导致线程终止；</li>
@@ -12245,7 +12247,7 @@ key=画画,value = 小强
 </ul>
 
 <p>Java集合的设计有几个特点：一是实现了接口和实现类相分离，例如，有序表的接口是<code class="language-plaintext highlighter-rouge">List</code>，具体的实现类有<code class="language-plaintext highlighter-rouge">ArrayList</code>，<code class="language-plaintext highlighter-rouge">LinkedList</code>等，二是支持泛型，我们可以限制在一个集合中只能放入同一种数据类型的元素，例如：</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(); // 只能放入String类型
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span> <span class="c1">// 只能放入String类型</span>
 </code></pre></div></div>
 <p>最后，Java访问集合总是通过统一的方式——迭代器（Iterator）来实现，它最明显的好处在于无需知道集合内部元素是按什么方式存储的。</p>
 
@@ -12337,6 +12339,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 <p>迭代器<code class="language-plaintext highlighter-rouge">Iterator</code>本身也是一个对象，但它是由<code class="language-plaintext highlighter-rouge">List</code>的<strong>实例</strong>调用<code class="language-plaintext highlighter-rouge">iterator()</code>方法的时候创建的。<code class="language-plaintext highlighter-rouge">Iterator</code>对象知道如何遍历一个<code class="language-plaintext highlighter-rouge">List</code>，并且不同的<code class="language-plaintext highlighter-rouge">List</code>类型，返回的<code class="language-plaintext highlighter-rouge">Iterator</code>对象实现也是不同的，但<strong>总是</strong>具有<strong>最高</strong>的访问效率。</p>
 
 <p><code class="language-plaintext highlighter-rouge">Iterator</code>对象有两个方法：</p>
+
 <ul>
   <li><code class="language-plaintext highlighter-rouge">boolean hasNext()</code>判断是否有下一个元素</li>
   <li><code class="language-plaintext highlighter-rouge">E next()</code>返回下一个元素。</li>
@@ -12629,6 +12632,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 </code></pre></div></div>
 <h2 id="扩容">扩容</h2>
 <p><code class="language-plaintext highlighter-rouge">HashMap</code>初始化时<strong>默认</strong>的<strong>数组大小</strong>为16，任何<code class="language-plaintext highlighter-rouge">key</code>，无论它的<code class="language-plaintext highlighter-rouge">hashCode()</code>有多大，都可以简单地通过：</p>
+
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span> <span class="mh">0xf</span><span class="o">;</span> <span class="c1">// 0xf = 15</span>
 </code></pre></div></div>
 <p>把索引确定在0～15，即永远不会超出数组范围，上述算法只是一种最简单的实现。</p>
@@ -12664,6 +12668,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 </code></pre></div></div>
 <h2 id="线程安全问题">线程安全问题</h2>
 <p><code class="language-plaintext highlighter-rouge">ArrayList</code>和<code class="language-plaintext highlighter-rouge">HashMap</code>等集合类是非线程安全的，这意味着如果多个线程同时访问这些集合并且至少一个线程修改了集合，就可能导致不确定的结果，比如数据丢失、数据不一致等问题。为了在多线程环境中安全地使用集合，可以使用<code class="language-plaintext highlighter-rouge">Collections</code>工具类提供的<code class="language-plaintext highlighter-rouge">SynchronizedList</code>和<code class="language-plaintext highlighter-rouge">SynchronizedMap</code>方法来获取线程安全的集合：</p>
+
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">synchronizedList</span> <span class="o">=</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">synchronizedList</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span>
 <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">synchronizedMap</span> <span class="o">=</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">synchronizedMap</span><span class="o">(</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;());</span>
 </code></pre></div></div>
@@ -12748,7 +12753,9 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 <span class="o">}</span>
 </code></pre></div></div>
 <p><code class="language-plaintext highlighter-rouge">Comparator</code>接口要求实现一个比较方法，它负责比较传入的两个元素<code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">b</code>，如果<code class="language-plaintext highlighter-rouge">a&lt;b</code>，则返回负数，通常是<code class="language-plaintext highlighter-rouge">-1</code>，如果<code class="language-plaintext highlighter-rouge">a==b</code>，则返回<code class="language-plaintext highlighter-rouge">0</code>，如果<code class="language-plaintext highlighter-rouge">a&gt;b</code>，则返回正数，通常是<code class="language-plaintext highlighter-rouge">1</code>。<code class="language-plaintext highlighter-rouge">TreeMap</code>内部根据比较结果对Key进行排序。</p>
+
 <h1 id="properties">Properties</h1>
+
 <p>在编写应用程序的时候，经常需要读写配置文件。例如，用户的设置：</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 上次最后打开的文件:</span>
 <span class="n">last_open_file</span><span class="o">=</span><span class="sr">/data/</span><span class="n">hello</span><span class="p">.</span><span class="nf">txt</span>
@@ -12763,10 +12770,10 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 
 <p>用<code class="language-plaintext highlighter-rouge">Properties</code>读取配置文件非常简单。Java默认配置文件以<code class="language-plaintext highlighter-rouge">.properties</code>为扩展名，每行以<code class="language-plaintext highlighter-rouge">key=value</code>表示，以<code class="language-plaintext highlighter-rouge">#</code>号开头的是注释。以下是一个典型的配置文件：</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># setting.properties</span>
-
-<span class="n">last_open_file</span><span class="o">=</span><span class="sr">/data/</span><span class="n">hello</span><span class="p">.</span><span class="nf">txt</span>
-<span class="n">auto_save_interval</span><span class="o">=</span><span class="mi">60</span>
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># setting.properties
+</span>
+<span class="py">last_open_file</span><span class="p">=</span><span class="s">/data/hello.txt</span>
+<span class="py">auto_save_interval</span><span class="p">=</span><span class="s">60</span>
 </code></pre></div></div>
 <p>可以从文件系统读取这个<code class="language-plaintext highlighter-rouge">.properties</code>文件：</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">f</span> <span class="o">=</span> <span class="s">"src/com/aotmd/text.properties"</span><span class="o">;</span>
@@ -12920,6 +12927,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 <span class="o">}</span>
 </code></pre></div></div>
 <p><code class="language-plaintext highlighter-rouge">Set</code>接口并不保证有序，而<code class="language-plaintext highlighter-rouge">SortedSet</code>接口则保证元素是有序的：</p>
+
 <ul>
   <li><code class="language-plaintext highlighter-rouge">HashSet</code>是<strong>无序</strong>的，因为它实现了<code class="language-plaintext highlighter-rouge">Set</code>接口，并没有实现<code class="language-plaintext highlighter-rouge">SortedSet</code>接口；</li>
   <li><code class="language-plaintext highlighter-rouge">TreeSet</code>是<strong>有序</strong>的，因为它实现了<code class="language-plaintext highlighter-rouge">SortedSet</code>接口。</li>
@@ -13363,6 +13371,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 <p><strong>不可变集合</strong></p>
 
 <p><code class="language-plaintext highlighter-rouge">Collections</code>还提供了一组方法把可变集合封装成不可变集合：</p>
+
 <ul>
   <li>封装成不可变List：<code class="language-plaintext highlighter-rouge">List&lt;T&gt; unmodifiableList(List&lt;? extends T&gt; list)</code></li>
   <li>封装成不可变Set：<code class="language-plaintext highlighter-rouge">Set&lt;T&gt; unmodifiableSet(Set&lt;? extends T&gt; set)</code></li>
@@ -13374,6 +13383,7 @@ HEAD ──&gt;│ A │ ●─┼──&gt;│ B │ ●─┼──&gt;│ C �
 <p><strong>线程安全集合</strong></p>
 
 <p><code class="language-plaintext highlighter-rouge">Collections</code>还提供了一组方法，可以把线程不安全的集合变为线程安全的集合：</p>
+
 <ul>
   <li>变为线程安全的List：<code class="language-plaintext highlighter-rouge">List&lt;T&gt; synchronizedList(List&lt;T&gt; list)</code></li>
   <li>变为线程安全的Set：<code class="language-plaintext highlighter-rouge">Set&lt;T&gt; synchronizedSet(Set&lt;T&gt; s)</code></li>
