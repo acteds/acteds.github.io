@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-06T20:09:37+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-07T22:05:52+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
 <p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p>
 
 <h1 id="设计模式">设计模式</h1>
 
-<p>软件开发要实现可维护、可扩展，就必须尽量复用代码，并且降低代码的耦合度。设计模式主要是基于OOP编程提炼的，23个常用模式分为创建型模式、结构型模式和行为型模式三类，基于以下几个原则：</p>
+<p>软件开发要实现可维护、可扩展，就必须尽量复用代码，并且降低代码的耦合度。设计模式主要是基于OOP编程提炼的。23个常用模式分为创建型模式、结构型模式和行为型模式三类，基于以下几个原则：</p>
 
 <p><strong>开闭原则</strong></p>
 
@@ -134,12 +134,14 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>这种简化的使用静态方法创建产品的方式称为静态工厂方法（Static Factory Method）。静态工厂方法广泛地应用在Java标准库中。例如：</p>
+<p>这种简化的使用静态方法创建产品的方式称为静态工厂方法（Static Factory Method）。</p>
+
+<p>静态工厂方法广泛地应用在Java标准库中。例如：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">Integer</code>既是产品又是静态工厂。它提供了静态方法<code class="language-plaintext highlighter-rouge">valueOf()</code>来创建<code class="language-plaintext highlighter-rouge">Integer</code>。那么这种方式和直接写<code class="language-plaintext highlighter-rouge">new Integer(100)</code>有何区别呢？</p>
+<p><code class="language-plaintext highlighter-rouge">Integer</code>既是产品又是静态工厂，它提供了静态方法<code class="language-plaintext highlighter-rouge">valueOf()</code>来创建<code class="language-plaintext highlighter-rouge">Integer</code>。</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Integer</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Integer</span> <span class="nf">valueOf</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
@@ -151,9 +153,9 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>它的好处在于，<code class="language-plaintext highlighter-rouge">valueOf()</code>内部可能会使用<code class="language-plaintext highlighter-rouge">new</code>创建一个新的<code class="language-plaintext highlighter-rouge">Integer</code>实例，但也可能直接返回一个缓存的<code class="language-plaintext highlighter-rouge">Integer</code>实例。对于调用方来说，没必要知道<code class="language-plaintext highlighter-rouge">Integer</code>创建的细节。</p>
+<p><code class="language-plaintext highlighter-rouge">valueOf()</code>内部可能会使用<code class="language-plaintext highlighter-rouge">new</code>创建一个新的<code class="language-plaintext highlighter-rouge">Integer</code>实例，但也可能直接返回一个缓存的<code class="language-plaintext highlighter-rouge">Integer</code>实例。对于调用方来说，没必要知道<code class="language-plaintext highlighter-rouge">Integer</code>创建的细节。</p>
 
-<p>工厂方法可以隐藏创建产品的细节，且不一定每次都会真正创建产品，完全可以返回缓存的产品，从而提升速度并减少内存消耗。</p>
+<p>工厂方法可以<strong>隐藏创建产品的细节</strong>，且不一定每次都会真正创建产品，完全可以返回缓存的产品，从而提升速度并减少内存消耗。</p>
 
 <p>如果调用方直接使用<code class="language-plaintext highlighter-rouge">Integer n = new Integer(100)</code>，那么就失去了使用缓存优化的可能性。</p>
 
@@ -188,7 +190,7 @@
 
 <p>抽象工厂模式（Abstract Factory）是一个比较复杂的创建型模式。</p>
 
-<p>抽象工厂模式和工厂方法不太一样，它要解决的问题比较复杂，不但工厂是抽象的，产品是抽象的，而且有多个产品需要创建，因此，这个抽象工厂会对应到多个实际工厂，每个实际工厂负责创建多个实际产品：</p>
+<p>抽象工厂模式和工厂方法不太一样，它要解决的问题比较复杂，工厂是抽象的，产品也是抽象的，而且有多个产品需要创建，因此，这个抽象工厂会对应到多个实际工厂，每个实际工厂负责创建多个实际产品：</p>
 
 <pre><code class="language-ascii">                                ┌────────┐
                              ─ &gt;│ProductA│
@@ -225,7 +227,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>定义好了抽象工厂（<code class="language-plaintext highlighter-rouge">ImeatAndVegetarianFactory</code>）以及两个抽象产品（<code class="language-plaintext highlighter-rouge">IMeat</code>和<code class="language-plaintext highlighter-rouge">IVegetarian</code>）。假设环境可以是超市也可以是菜市场，先写菜市场：</p>
+<p>定义了抽象工厂（<code class="language-plaintext highlighter-rouge">ImeatAndVegetarianFactory</code>）以及两个抽象产品（<code class="language-plaintext highlighter-rouge">IMeat</code>和<code class="language-plaintext highlighter-rouge">IVegetarian</code>）。假设环境可以是超市也可以是菜市场，先写菜市场：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*菜市场*/</span>
 <span class="kd">class</span> <span class="nc">MeatDishesFromTheWetMarketImpl</span> <span class="kd">implements</span> <span class="nc">IMeat</span> <span class="o">{</span>
@@ -261,7 +263,7 @@
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">IVegetarian</span><span class="o">.</span><span class="na">getVegetarianName</span><span class="o">());</span><span class="c1">//菜市场的素菜</span>
 </code></pre></div></div>
 
-<p>看起来似乎也没什么作用。</p>
+<p>看起来似乎也没什么特别的作用。</p>
 
 <p>再写超市：</p>
 
@@ -319,7 +321,7 @@
 
 <p>抽象工厂模式是为了让创建工厂和一组产品与使用相分离，并可以随时切换到另一个工厂以及另一组产品；</p>
 
-<p>抽象工厂模式实现的关键点是定义工厂接口和产品接口，但如何实现工厂与产品本身需要留给具体的子类实现，客户端只和抽象工厂与抽象产品打交道。</p>
+<p>抽象工厂模式实现的关键点是<strong>定义工厂接口和产品接口</strong>，但如何实现工厂与产品本身需要留给具体的子类实现，<strong>客户端只和抽象工厂与抽象产品打交道</strong>。</p>
 
 <hr />
 
@@ -421,7 +423,7 @@
 
 <p>使用Builder是因为创建这个对象的步骤比较多，每个步骤都需要一个零部件，最终组合成一个完整的对象。</p>
 
-<p>以Markdown转HTML为例，直接编写一个完整的转换器比较困难，但如果针对类似下面的一行文本：</p>
+<p>以Markdown转HTML为例，直接编写一个完整的转换器比较困难，但如果针对类似下面的<strong>一行</strong>文本：</p>
 
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh"># this is a heading</span>
 </code></pre></div></div>
