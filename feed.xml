@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-09T20:02:26+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-12T22:00:35+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
 <p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p>
 
 <h1 id="设计模式">设计模式</h1>
@@ -2185,7 +2185,182 @@ Grace
 
 <p>模板方法模式（Template Method）：定义一个操作中的算法的骨架，将一些步骤延迟到子类中，使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</p>
 
-<p>访问者模式（Visitor）：表示一个作用于某对象结构中的各元素的操作，它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<p>访问者模式（Visitor）：表示一个作用于某对象结构中的各元素的操作，它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</p>
+
+<h3 id="责任链">责任链</h3>
+
+<blockquote>
+  <p>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止。</p>
+</blockquote>
+
+<p>责任链模式（Chain of Responsibility）是一种处理请求的模式，它让多个处理器都有机会处理该请求，直到<strong>其中某个处理成功为止</strong>。责任链模式把多个处理器串成链，然后让请求在链上传递。</p>
+
+<p>用责任链模式时，每个处理方法只关心自己责任的范围内的数据。对于超出自己责任范围的，扔给下一个处理方法。</p>
+
+<p>定义一个要处理的<code class="language-plaintext highlighter-rouge">Request</code>数据：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Data</span><span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">=</span><span class="s">""</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Data</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getSum</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">sum</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setSum</span><span class="o">(</span><span class="kt">int</span> <span class="n">sum</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>抽象出处理方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">I</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 返回Boolean.TRUE = 成功</span>
+    <span class="c1">// 返回Boolean.FALSE = 拒绝</span>
+    <span class="c1">// 返回null = 交下一个处理</span>
+    <span class="nc">Boolean</span> <span class="nf">process</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>实现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">AHandler</span> <span class="kd">implements</span> <span class="no">I</span><span class="o">&lt;</span><span class="nc">Data</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Boolean</span> <span class="nf">process</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getSum</span><span class="o">()&gt;=</span><span class="mi">90</span><span class="o">){</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"优"</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="cm">/*继续责任链*/</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">BHandler</span> <span class="kd">implements</span> <span class="no">I</span><span class="o">&lt;</span><span class="nc">Data</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Boolean</span> <span class="nf">process</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getSum</span><span class="o">()&gt;=</span><span class="mi">80</span><span class="o">){</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"良"</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="cm">/*继续责任链*/</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">CHandler</span> <span class="kd">implements</span> <span class="no">I</span><span class="o">&lt;</span><span class="nc">Data</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Boolean</span> <span class="nf">process</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getSum</span><span class="o">()&gt;=</span><span class="mi">60</span><span class="o">){</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"及格"</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="cm">/*继续责任链*/</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">DHandler</span> <span class="kd">implements</span> <span class="no">I</span><span class="o">&lt;</span><span class="nc">Data</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Boolean</span> <span class="nf">process</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getSum</span><span class="o">()&gt;=</span><span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"不及格"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="cm">/*停止责任链*/</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>组合处理方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">HandlerChain</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;&gt;</span> <span class="n">handlers</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addHandler</span><span class="o">(</span><span class="no">I</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">handler</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">handlers</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">handler</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">start</span><span class="o">(</span><span class="no">T</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 依次调用每个Handler:</span>
+        <span class="k">for</span> <span class="o">(</span><span class="no">I</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">handler</span> <span class="o">:</span> <span class="n">handlers</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">Boolean</span> <span class="n">r</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 如果返回TRUE或FALSE，处理结束:</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">data</span><span class="o">+</span> <span class="o">(</span><span class="n">r</span> <span class="o">?</span> <span class="s">"已打分"</span> <span class="o">:</span> <span class="s">"已拒绝"</span><span class="o">)</span> <span class="o">+</span><span class="n">handler</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">());</span>
+                <span class="k">return</span> <span class="n">r</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"没有责任方法对此处理："</span> <span class="o">+</span> <span class="n">data</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>使用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*构造责任链*/</span>
+<span class="nc">HandlerChain</span><span class="o">&lt;</span><span class="nc">Data</span><span class="o">&gt;</span> <span class="n">handlerChain</span><span class="o">=</span><span class="k">new</span> <span class="nc">HandlerChain</span><span class="o">&lt;&gt;();</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="k">new</span> <span class="nc">AHandler</span><span class="o">());</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="k">new</span> <span class="nc">BHandler</span><span class="o">());</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="k">new</span> <span class="nc">CHandler</span><span class="o">());</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="k">new</span> <span class="nc">DHandler</span><span class="o">());</span>
+<span class="cm">/*使用责任链*/</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="k">new</span> <span class="nc">Data</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="s">"小并"</span><span class="o">,</span><span class="mi">100</span><span class="o">));</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="k">new</span> <span class="nc">Data</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span><span class="s">"小西"</span><span class="o">,</span><span class="mi">60</span><span class="o">));</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="k">new</span> <span class="nc">Data</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span><span class="s">"小强"</span><span class="o">,</span><span class="mi">50</span><span class="o">));</span>
+<span class="n">handlerChain</span><span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="k">new</span> <span class="nc">Data</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span><span class="s">"小希"</span><span class="o">,-</span><span class="mi">1</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>控制台：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>优
+test.Data@8c3b9d已打分AHandler
+及格
+test.Data@4c39bec8已打分CHandler
+不及格
+test.Data@f79e已拒绝DHandler
+test.Data@7ee8290b已拒绝DHandler
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Handler</code>添加的顺序很重要，如果顺序不对，处理的结果可能就不是符合要求的。</p>
+
+<p>责任链模式有很多变种。有些责任链的实现方式是通过某个<code class="language-plaintext highlighter-rouge">Handler</code>手动调用下一个<code class="language-plaintext highlighter-rouge">Handler</code>来传递<code class="language-plaintext highlighter-rouge">Request</code>。</p>
+
+<p>还有一些责任链模式，每个<code class="language-plaintext highlighter-rouge">Handler</code>都有机会处理<code class="language-plaintext highlighter-rouge">Request</code>，通常这种责任链被称为拦截器（Interceptor）或者过滤器（Filter），它的目的不是找到某个<code class="language-plaintext highlighter-rouge">Handler</code>处理掉<code class="language-plaintext highlighter-rouge">Request</code>，而是每个<code class="language-plaintext highlighter-rouge">Handler</code>都做一些工作，比如：记录日志；检查权限；准备相关资源；</p>
+
+<p>Servlet规范定义的<code class="language-plaintext highlighter-rouge">Filter</code>就是一种责任链模式，它不但允许每个<code class="language-plaintext highlighter-rouge">Filter</code>都有机会处理请求，还允许每个<code class="language-plaintext highlighter-rouge">Filter</code>决定是否将请求“放行”给下一个<code class="language-plaintext highlighter-rouge">Filter</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">AuditFilter</span> <span class="kd">implements</span> <span class="nc">Filter</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doFilter</span><span class="o">(</span><span class="nc">ServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="nc">ServletResponse</span> <span class="n">resp</span><span class="o">,</span> <span class="nc">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">ServletException</span> <span class="o">{</span>
+        <span class="c1">//做些工作，如果做完了就放行给下一个：</span>
+        <span class="n">chain</span><span class="o">.</span><span class="na">doFilter</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="n">resp</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这种模式不但允许一个<code class="language-plaintext highlighter-rouge">Filter</code>自行决定处理<code class="language-plaintext highlighter-rouge">ServletRequest</code>和<code class="language-plaintext highlighter-rouge">ServletResponse</code>，还可以“伪造”<code class="language-plaintext highlighter-rouge">ServletRequest</code>和<code class="language-plaintext highlighter-rouge">ServletResponse</code>以便让下一个<code class="language-plaintext highlighter-rouge">Filter</code>处理，能实现非常复杂的功能。</p>
+
+<p>责任链模式是一种把多个处理器组合在一起，依次处理请求的模式，添加新的处理器或者重新排列处理器非常容易，经常用在拦截、预处理请求等。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Lambda、方法引用、Stream。</p>
 
 <h1 id="函数式编程">函数式编程</h1>
