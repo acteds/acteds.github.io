@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-13T19:11:09+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-05-13T21:10:50+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">设计模式</title><link href="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="设计模式" /><published>2024-05-02T00:00:00+08:00</published><updated>2024-05-02T00:00:00+08:00</updated><id>/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="/2024/05/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h1 id="引言">引言</h1>
 <p>设计模式，即Design Patterns，是指在软件设计中，被反复使用的一种代码设计经验。使用设计模式的目的是为了可重用代码，提高代码的可扩展性和可维护性。</p>
 
 <h1 id="设计模式">设计模式</h1>
@@ -2165,27 +2165,27 @@ Grace
 
 <p>行为型模式有：</p>
 
-<p>责任链模式（Chain of Responsibility）：将请求的发送者和接收者解耦，让多个对象都有机会处理这个请求。</p>
+<p>责任链模式（Chain of Responsibility）：将请求的发送者和接收者<strong>解耦</strong>，让多个对象<strong>都有机会</strong>处理这个请求。</p>
 
 <p>命令模式（Command）：将请求封装成一个对象，从而可以用不同的请求对客户进行参数化，并且对请求排队或记录请求日志，以及支持可撤销的操作。</p>
 
-<p>解释器模式（Interpreter）：给定一个语言，定义它的文法的一种表示，并定义一个解释器，该解释器使用该表示来解释语言中的句子。</p>
+<p>解释器模式（Interpreter）：给定一个语言，定义它的文法的一种表示，并定义一个<strong>解释器</strong>，该解释器使用该表示来解释语言中的句子。</p>
 
-<p>迭代器模式（Iterator）：提供一种方法顺序访问一个聚合对象中各个元素，而又不暴露该对象的内部表示。</p>
+<p>迭代器模式（Iterator）：提供一种方法<strong>顺序访问</strong>一个<strong>聚合对象中各个元素</strong>，而又不暴露该对象的内部表示。</p>
 
-<p>中介模式（Mediator）：用一个中介对象来封装一系列的对象交互，使得对象不需要显式地相互引用，从而达到解耦的目的。</p>
+<p>中介模式（Mediator）：用一个<strong>中介对象</strong>来封装一系列的对象交互，使得对象<strong>不需要显式地相互引用</strong>，从而达到解耦的目的。</p>
 
-<p>备忘录模式（Memento）：在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，以便之后恢复对象到原先保存的状态。</p>
+<p>备忘录模式（Memento）：在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外<strong>保存</strong>这个状态，以便之后<strong>恢复</strong>对象到原先保存的状态。</p>
 
-<p>观察者模式（Observer）：定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象，当主题对象状态发生变化时，会通知所有的观察者对象。</p>
+<p>观察者模式（Observer）：定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象，当主题对象状态发生变化时，会通知所有的观察者对象。观察者模式就是要分离被观察者和观察者之间的<strong>耦合关系</strong>。</p>
 
-<p>状态模式（State）：允许对象在其内部状态改变时改变它的行为，对象看起来似乎修改了它的类。状态模式将对象的状态封装成独立的类，并将不同状态对应的行为抽象出来，使得在不同状态下可以定义不同的行为，而不需要使用大量的条件语句来判断当前状态。这样可以让代码更加清晰、可维护，同时也符合开闭原则，因为添加新的状态类不会影响现有代码。</p>
+<p>状态模式（State）：允许对象在其内部状态改变时改变它的行为，对象看起来似乎修改了它的类。状态模式将<strong>对象的状态封装成独立的类</strong>，并将不同状态对应的行为<strong>抽象</strong>出来，使得<strong>在不同状态下可以定义不同的行为</strong>，而不需要使用大量的条件语句来判断当前状态。这样可以让代码更加清晰、可维护，同时也符合开闭原则，因为添加新的状态类不会影响现有代码。</p>
 
-<p>策略模式（Strategy）：定义了一系列的算法，并将每一个算法封装起来，使得它们可以相互替换，让算法独立于使用它的客户而独立变化。</p>
+<p>策略模式（Strategy）：定义了一系列的算法，并将每一个算法封装起来，使得它们可以相互替换，<strong>让算法独立于使用它的客户而独立变化</strong>。</p>
 
-<p>模板方法模式（Template Method）：定义一个操作中的算法的骨架，将一些步骤延迟到子类中，使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</p>
+<p>模板方法模式（Template Method）：定义一个操作中的算法的骨架，将一些步骤延迟到子类中，使得子类可以不改变一个算法的<strong>结构</strong>即可<strong>重定义</strong>该算法的某些<strong>特定步骤</strong>。</p>
 
-<p>访问者模式（Visitor）：表示一个作用于某对象结构中的各元素的操作，它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</p>
+<p>访问者模式（Visitor）：表示一个作用于某对象结构中的各元素的操作，它使你可以在不改变各元素的类的前提下定义作用于这些元素的<strong>新操作</strong>。访问者模式的核心思想是访问比较复杂的数据结构时，不去改变数据结构，而是把对数据的操作<strong>抽象</strong>出来，在“访问”的过程中<strong>以回调形式</strong>在访问者中<strong>处理操作逻辑</strong>。如果要新增一组操作，那么只需要增加一个新的访问者。</p>
 
 <h3 id="责任链">责任链</h3>
 
@@ -2944,7 +2944,7 @@ test.Data@7ee8290b已拒绝DHandler
 
 <p><code class="language-plaintext highlighter-rouge">Store</code>类直接引用了<code class="language-plaintext highlighter-rouge">Customer</code>和<code class="language-plaintext highlighter-rouge">Admin</code>。先不考虑多个<code class="language-plaintext highlighter-rouge">Customer</code>或多个<code class="language-plaintext highlighter-rouge">Admin</code>的问题，上述<code class="language-plaintext highlighter-rouge">Store</code>类最大的问题是，如果要加一个新的观察者类型，例如工商局管理员，<code class="language-plaintext highlighter-rouge">Store</code>类就必须继续改动。</p>
 
-<p>问题的本质是<code class="language-plaintext highlighter-rouge">Store</code>希望发送通知给那些关心<code class="language-plaintext highlighter-rouge">Product</code>的对象，但<code class="language-plaintext highlighter-rouge">Store</code>并不想知道这些人是谁。<strong>观察者模式就是要分离被观察者和观察者之间的耦合关系</strong>。</p>
+<p>问题的本质是<code class="language-plaintext highlighter-rouge">Store</code>希望发送通知给那些关心<code class="language-plaintext highlighter-rouge">Product</code>的对象，但<code class="language-plaintext highlighter-rouge">Store</code>并不想知道这些人是谁。<strong>观察者模式就是要分离被观察者和观察者之间的耦合关系。</strong></p>
 
 <p>要实现这一目标也很简单，<code class="language-plaintext highlighter-rouge">Store</code>不能直接引用<code class="language-plaintext highlighter-rouge">Customer</code>和<code class="language-plaintext highlighter-rouge">Admin</code>，相反，它引用一个<code class="language-plaintext highlighter-rouge">ProductObserver</code>接口列表，任何人想要观察<code class="language-plaintext highlighter-rouge">Store</code>，只要实现该接口，并且把自己注册到<code class="language-plaintext highlighter-rouge">Store</code>即可。</p>
 
@@ -3292,7 +3292,7 @@ test.Data@7ee8290b已拒绝DHandler
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>调用方必须首先创建一个DiscountContext，并指定一个策略（或者使用默认策略），即可获得折扣后的价格：</p>
+<p>调用方必须首先创建一个<code class="language-plaintext highlighter-rouge">DiscountContext</code>，并指定一个策略（或者使用默认策略），即可获得折扣后的价格：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">DiscountContext</span> <span class="n">ctx</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DiscountContext</span><span class="o">();</span>
 
@@ -3327,7 +3327,308 @@ test.Data@7ee8290b已拒绝DHandler
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>策略模式的核心思想是在一个计算方法中把容易变化的算法抽出来作为“策略”参数传进去，从而使得新增策略不必修改原有逻辑。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
+<p>策略模式的核心思想是在一个计算方法中把容易变化的算法抽出来作为“策略”参数传进去，从而使得新增策略不必修改原有逻辑。</p>
+
+<h3 id="模板方法">模板方法</h3>
+
+<blockquote>
+  <p>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中，使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</p>
+</blockquote>
+
+<p>模板方法（Template Method）是一个比较简单的模式。它的主要思想是，定义一个操作的一系列步骤，对于某些暂时确定不下来的步骤，就留给子类去实现好了，这样不同的子类就可以定义出不同的步骤。</p>
+
+<p>因此，模板方法的核心在于定义一个“骨架”。</p>
+
+<p>假设开发了一个从数据库读取设置的类：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Setting</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="nf">getSetting</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">readFromDatabase</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+    <span class="o">}</span>
+
+	<span class="kd">private</span> <span class="nc">String</span> <span class="nf">readFromDatabase</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO: 从数据库读取</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>由于从数据库读取数据较慢，可以考虑把读取的设置缓存起来，这样下一次读取同样的key就不必再访问数据库了。怎么实现缓存，暂时没想好，但可以先写出使用缓存的代码：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Setting</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="nf">getSetting</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 先从缓存读取:</span>
+        <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">lookupCache</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 在缓存中未找到,从数据库读取:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">readFromDatabase</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"[DEBUG] load from db: "</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s">" = "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+            <span class="c1">// 放入缓存:</span>
+            <span class="n">putIntoCache</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"[DEBUG] load from cache: "</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s">" = "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">readFromDatabase</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">){</span>
+        <span class="k">return</span> <span class="s">""</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>整个流程没有问题，但是，<code class="language-plaintext highlighter-rouge">lookupCache(key)</code>和<code class="language-plaintext highlighter-rouge">putIntoCache(key, value)</code>这两个方法还根本没实现，怎么编译通过？这个不要紧，声明抽象方法就可以：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractSetting</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="nc">String</span> <span class="nf">getSetting</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">lookupCache</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">readFromDatabase</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="n">putIntoCache</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">readFromDatabase</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">){</span>
+        <span class="k">return</span> <span class="s">""</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="nc">String</span> <span class="nf">lookupCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">);</span>
+
+    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">putIntoCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>因为声明了抽象方法，自然整个类也必须是抽象类。如何实现<code class="language-plaintext highlighter-rouge">lookupCache(key)</code>和<code class="language-plaintext highlighter-rouge">putIntoCache(key, value)</code>这两个方法就交给子类了。子类其实并不关心核心代码<code class="language-plaintext highlighter-rouge">getSetting(key)</code>的逻辑，它只需要关心如何完成两个小小的子任务就可以了。</p>
+
+<p>假设希望用一个<code class="language-plaintext highlighter-rouge">Map</code>做缓存，那么可以写一个<code class="language-plaintext highlighter-rouge">LocalSetting</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LocalSetting</span> <span class="kd">extends</span> <span class="nc">AbstractSetting</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+
+    <span class="kd">protected</span> <span class="nc">String</span> <span class="nf">lookupCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">putIntoCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">cache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果要使用Redis做缓存，那么可以再写一个<code class="language-plaintext highlighter-rouge">RedisSetting</code>：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>io.lettuce<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>lettuce-core<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.2.1.RELEASE<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisSetting</span> <span class="kd">extends</span> <span class="nc">AbstractSetting</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">RedisClient</span> <span class="n">client</span> <span class="o">=</span> <span class="nc">RedisClient</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="s">"redis://localhost:6379"</span><span class="o">);</span>
+
+    <span class="kd">protected</span> <span class="nc">String</span> <span class="nf">lookupCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">connect</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">();</span>
+            <span class="k">return</span> <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">putIntoCache</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">connect</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">();</span>
+            <span class="n">commands</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>客户端代码使用本地缓存的代码这么写：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">AbstractSetting</span> <span class="n">setting1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocalSetting</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"test = "</span> <span class="o">+</span> <span class="n">setting1</span><span class="o">.</span><span class="na">getSetting</span><span class="o">(</span><span class="s">"test"</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"test = "</span> <span class="o">+</span> <span class="n">setting1</span><span class="o">.</span><span class="na">getSetting</span><span class="o">(</span><span class="s">"test"</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>要改成Redis缓存，只需要把<code class="language-plaintext highlighter-rouge">LocalSetting</code>替换为<code class="language-plaintext highlighter-rouge">RedisSetting</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">AbstractSetting</span> <span class="n">setting2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RedisSetting</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"autosave = "</span> <span class="o">+</span> <span class="n">setting2</span><span class="o">.</span><span class="na">getSetting</span><span class="o">(</span><span class="s">"autosave"</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"autosave = "</span> <span class="o">+</span> <span class="n">setting2</span><span class="o">.</span><span class="na">getSetting</span><span class="o">(</span><span class="s">"autosave"</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>模板方法的核心思想是：父类定义骨架，子类实现某些细节。</p>
+
+<p>为了防止子类重写父类的骨架方法，可以在父类中对骨架方法使用<code class="language-plaintext highlighter-rouge">final</code>。对于需要子类实现的抽象方法，一般声明为<code class="language-plaintext highlighter-rouge">protected</code>，使得这些方法对外部客户端不可见。</p>
+
+<p>Java标准库也有很多模板方法的应用。在集合类中，<code class="language-plaintext highlighter-rouge">AbstractList</code>和<code class="language-plaintext highlighter-rouge">AbstractQueuedSynchronizer</code>都定义了很多通用操作，子类只需要实现某些必要方法。</p>
+
+<h3 id="访问者">访问者</h3>
+
+<blockquote>
+  <p>表示一个作用于某对象结构中的各元素的操作。它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</p>
+</blockquote>
+
+<p>访问者模式（Visitor）是一种操作一组对象的操作，它的目的是不改变对象的定义，但允许新增不同的访问者，来定义新的操作。</p>
+
+<p>假设我们要递归遍历某个文件夹的所有子文件夹和文件，然后找出<code class="language-plaintext highlighter-rouge">.java</code>文件，正常的做法是写个递归：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">scan</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">File</span><span class="o">&gt;</span> <span class="n">collector</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">File</span> <span class="n">file</span> <span class="o">:</span> <span class="n">dir</span><span class="o">.</span><span class="na">listFiles</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isFile</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".java"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">collector</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c1">// 递归调用:</span>
+            <span class="n">scan</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">collector</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>上述代码的问题在于，扫描目录的逻辑和找java文件的逻辑混在了一起。如果下次需要增加一个清理<code class="language-plaintext highlighter-rouge">.class</code>文件的功能，就必须再重复写扫描逻辑。</p>
+
+<p>因此，访问者模式先把<strong>数据结构</strong>（这里是文件夹和文件构成的树型结构）和对其的<strong>操作</strong>（查找文件）分离开，以后如果要新增操作（例如清理<code class="language-plaintext highlighter-rouge">.class</code>文件），只需要新增访问者，不需要改变现有逻辑。</p>
+
+<p>用访问者模式改写上述代码步骤如下：</p>
+
+<p>首先，定义访问者接口，即该访问者能够干的事情：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Visitor</span> <span class="o">{</span>
+    <span class="c1">// 访问文件夹:</span>
+    <span class="kt">void</span> <span class="nf">visitDir</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">);</span>
+    <span class="c1">// 访问文件:</span>
+    <span class="kt">void</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>定义能持有文件夹和文件的数据结构<code class="language-plaintext highlighter-rouge">FileStructure</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">FileStructure</span> <span class="o">{</span>
+    <span class="c1">// 根目录:</span>
+    <span class="kd">private</span> <span class="nc">File</span> <span class="n">path</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">FileStructure</span><span class="o">(</span><span class="nc">File</span> <span class="n">path</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="nc">Visitor</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">scan</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">path</span><span class="o">,</span> <span class="n">visitor</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">scan</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">,</span> <span class="nc">Visitor</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c1">// 让访问者处理文件夹:</span>
+			<span class="n">visitor</span><span class="o">.</span><span class="na">visitDir</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+			<span class="k">for</span> <span class="o">(</span><span class="nc">File</span> <span class="n">sub</span> <span class="o">:</span> <span class="n">file</span><span class="o">.</span><span class="na">listFiles</span><span class="o">())</span> <span class="o">{</span>
+                <span class="c1">// 递归处理子文件夹:</span>
+				<span class="n">scan</span><span class="o">(</span><span class="n">sub</span><span class="o">,</span> <span class="n">visitor</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isFile</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c1">// 让访问者处理文件:</span>
+			<span class="n">visitor</span><span class="o">.</span><span class="na">visitFile</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>java文件访问者：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">JavaFileVisitor</span> <span class="kd">implements</span> <span class="nc">Visitor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitDir</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问目录："</span> <span class="o">+</span> <span class="n">dir</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".java"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"找到的java文件： "</span> <span class="o">+</span> <span class="n">file</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这样，就把访问者的行为抽象出来了。如果要实现查找<code class="language-plaintext highlighter-rouge">.java</code>文件，就传入<code class="language-plaintext highlighter-rouge">JavaFileVisitor</code>。</p>
+
+<p>如果要清理<code class="language-plaintext highlighter-rouge">.class</code>文件，可以再写一个<code class="language-plaintext highlighter-rouge">ClassFileClearnerVisitor</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ClassFileCleanerVisitor</span> <span class="kd">implements</span> <span class="nc">Visitor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitDir</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".class"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"将清理类文件： "</span> <span class="o">+</span> <span class="n">file</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>访问者模式的核心思想是访问比较复杂的数据结构时，不去改变数据结构，而是把对数据的操作<strong>抽象</strong>出来，在“访问”的过程中<strong>以回调形式</strong>在访问者中<strong>处理操作逻辑</strong>。如果要新增一组操作，那么只需要增加一个新的访问者。</p>
+
+<p>实际上，Java标准库提供的<code class="language-plaintext highlighter-rouge">Files.walkFileTree()</code>已经实现了一个访问者模式：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Files</span><span class="o">.</span><span class="na">walkFileTree</span><span class="o">(</span><span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"."</span><span class="o">),</span> <span class="k">new</span> <span class="nc">SimpleFileVisitor</span><span class="o">&lt;</span><span class="nc">Path</span><span class="o">&gt;(){</span>
+    <span class="c1">// 处理Directory:</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">FileVisitResult</span> <span class="nf">preVisitDirectory</span><span class="o">(</span><span class="nc">Path</span> <span class="n">dir</span><span class="o">,</span> <span class="nc">BasicFileAttributes</span> <span class="n">attrs</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"pre visit dir: "</span> <span class="o">+</span> <span class="n">dir</span><span class="o">);</span>
+        <span class="c1">// 返回CONTINUE表示继续访问:</span>
+        <span class="k">return</span> <span class="nc">FileVisitResult</span><span class="o">.</span><span class="na">CONTINUE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// 处理File:</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">FileVisitResult</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">Path</span> <span class="n">file</span><span class="o">,</span> <span class="nc">BasicFileAttributes</span> <span class="n">attrs</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"visit file: "</span> <span class="o">+</span> <span class="n">file</span><span class="o">);</span>
+        <span class="c1">// 返回CONTINUE表示继续访问:</span>
+        <span class="k">return</span> <span class="nc">FileVisitResult</span><span class="o">.</span><span class="na">CONTINUE</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Files.walkFileTree()</code>允许访问者返回<code class="language-plaintext highlighter-rouge">FileVisitResult.CONTINUE</code>以便继续访问，或者返回<code class="language-plaintext highlighter-rouge">FileVisitResult.TERMINATE</code>停止访问。</p>
+
+<p>类似的，对XML的SAX处理也是一个访问者模式，需要提供一个SAX Handler作为访问者处理XML的各个节点。</p>
+
+<p>简化的写法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">File</span><span class="o">&gt;</span> <span class="n">collector</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="n">scan</span><span class="o">(</span><span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"."</span><span class="o">).</span><span class="na">toFile</span><span class="o">(),</span> <span class="k">new</span> <span class="nc">Visitor</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitDir</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".java"</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="n">collector</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">scan</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">,</span><span class="nc">Visitor</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">File</span> <span class="n">file</span> <span class="o">:</span> <span class="n">dir</span><span class="o">.</span><span class="na">listFiles</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isFile</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">v</span><span class="o">.</span><span class="na">visitFile</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">v</span><span class="o">.</span><span class="na">visitDir</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+                <span class="c1">// 递归调用:</span>
+                <span class="n">scan</span><span class="o">(</span><span class="n">file</span><span class="o">,</span><span class="n">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">interface</span> <span class="nc">Visitor</span> <span class="o">{</span>
+    <span class="c1">// 访问文件夹:</span>
+    <span class="kt">void</span> <span class="nf">visitDir</span><span class="o">(</span><span class="nc">File</span> <span class="n">dir</span><span class="o">);</span>
+    <span class="c1">// 访问文件:</span>
+    <span class="kt">void</span> <span class="nf">visitFile</span><span class="o">(</span><span class="nc">File</span> <span class="n">file</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>策略模式和访问者模式都允许在运行时改变对象的行为，但它们的应用场景和目的有所不同。</p>
+
+<p>在策略模式中，定义了一系列算法，并将每个算法封装到具有共同接口的独立类中，使得这些算法可以互相替换。客户端可以在运行时选择不同的算法来使用，而不需要修改原有的代码。策略模式主要关注的是<strong>算法的选择和切换</strong>。</p>
+
+<p>而在访问者模式中，主要关注的是对<strong>不同类型的元素进行不同的操作</strong>，同时又不改变元素本身的结构。通过访问者模式，可以在不改变元素结构的情况下，定义新的操作方式。访问者模式通常用于处理具有复杂结构的对象，且这些对象的结构经常发生变化。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">函数式编程</title><link href="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html" title="函数式编程" /><published>2024-04-25T00:00:00+08:00</published><updated>2024-04-25T00:00:00+08:00</updated><id>/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B</id><content type="html" xml:base="/2024/04/25/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Lambda、方法引用、Stream。</p>
 
 <h1 id="函数式编程">函数式编程</h1>
