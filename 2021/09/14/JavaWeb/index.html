@@ -1,0 +1,367 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Javaweb &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2021/09/14/JavaWeb/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Javaweb"><meta name="keywords" content="博客"><meta name="og:keywords" content="博客"><meta name="description" content="Java Web"><meta name="og:description" content="Java Web"><meta property="og:url" content="/2021/09/14/JavaWeb/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2021-09-14"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Javaweb"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Javaweb</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2021/09/14 </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 15700 字，约 45 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="java-web">Java Web</h1><p>对于Browser来说，请求页面的流程如下：</p><ol><li>与服务器建立TCP连接；</li><li>发送HTTP请求；</li><li>收取HTTP响应，然后把网页在浏览器中显示出来。</li></ol><p>浏览器发送的HTTP请求如下：</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET / HTTP/1.1
+Host: www.sina.com.cn
+User-Agent: Mozilla/5.0 xxx
+Accept: */*
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8
+</code></pre></div></div><p>其中，第一行表示使用<code class="language-plaintext highlighter-rouge">GET</code>请求获取路径为<code class="language-plaintext highlighter-rouge">/</code>的资源，并使用<code class="language-plaintext highlighter-rouge">HTTP/1.1</code>协议，从第二行开始，每行都是以<code class="language-plaintext highlighter-rouge">Header: Value</code>形式表示的HTTP头，比较常用的HTTP Header包括：</p><ul><li>Host: 表示请求的主机名，因为一个服务器上可能运行着多个网站，因此，Host表示浏览器正在请求的域名；</li><li>User-Agent: 标识客户端本身，例如Chrome浏览器的标识类似<code class="language-plaintext highlighter-rouge">Mozilla/5.0 ... Chrome/79</code>，IE浏览器的标识类似<code class="language-plaintext highlighter-rouge">Mozilla/5.0 (Windows NT ...) like Gecko</code>；</li><li>Accept：表示浏览器能接收的资源类型，如<code class="language-plaintext highlighter-rouge">text/*</code>，<code class="language-plaintext highlighter-rouge">image/*</code>或者<code class="language-plaintext highlighter-rouge">*/*</code>表示所有；</li><li>Accept-Language：表示浏览器偏好的语言，服务器可以据此返回不同语言的网页；</li><li>Accept-Encoding：表示浏览器可以支持的压缩类型，例如<code class="language-plaintext highlighter-rouge">gzip, deflate, br</code>。</li></ul><p>服务器的响应如下：</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 21932
+Content-Encoding: gzip
+Cache-Control: max-age=300
+
+&lt;html&gt;...网页数据...
+</code></pre></div></div><p>服务器响应的第一行总是版本号+空格+数字+空格+文本，数字表示响应代码，其中<code class="language-plaintext highlighter-rouge">2xx</code>表示成功，<code class="language-plaintext highlighter-rouge">3xx</code>表示重定向，<code class="language-plaintext highlighter-rouge">4xx</code>表示客户端引发的错误，<code class="language-plaintext highlighter-rouge">5xx</code>表示服务器端引发的错误。数字是给程序识别，文本则是给开发者调试使用的。常见的响应代码有：</p><ul><li>200 OK：表示成功；</li><li>301 Moved Permanently：表示该URL已经永久重定向；</li><li>302 Found：表示该URL需要临时重定向；</li><li>304 Not Modified：表示该资源没有修改，客户端可以使用本地缓存的版本；</li><li>400 Bad Request：表示客户端发送了一个错误的请求，例如参数无效；</li><li>401 Unauthorized：表示客户端因为身份未验证而不允许访问该URL；</li><li>403 Forbidden：表示服务器因为权限问题拒绝了客户端的请求；</li><li>404 Not Found：表示客户端请求了一个不存在的资源；</li><li>500 Internal Server Error：表示服务器处理时内部出错，例如因为无法连接数据库；</li><li>503 Service Unavailable：表示服务器此刻暂时无法处理请求。</li></ul><p>从第二行开始，服务器每一行均返回一个HTTP头。服务器经常返回的HTTP Header包括：</p><ul><li>Content-Type：表示该响应内容的类型，例如<code class="language-plaintext highlighter-rouge">text/html</code>，<code class="language-plaintext highlighter-rouge">image/jpeg</code>；</li><li>Content-Length：表示该响应内容的长度（字节数）；</li><li>Content-Encoding：表示该响应压缩算法，例如<code class="language-plaintext highlighter-rouge">gzip</code>；</li><li>Cache-Control：指示客户端应如何缓存，例如<code class="language-plaintext highlighter-rouge">max-age=300</code>表示可以最多缓存300秒。</li></ul><p>HTTP请求和响应都由HTTP Header和HTTP Body构成，其中HTTP Header每行都以<code class="language-plaintext highlighter-rouge">\r\n</code>结束。如果遇到两个连续的<code class="language-plaintext highlighter-rouge">\r\n</code>，那么后面就是HTTP Body。浏览器读取HTTP Body，并根据Header信息中指示的<code class="language-plaintext highlighter-rouge">Content-Type</code>、<code class="language-plaintext highlighter-rouge">Content-Encoding</code>等解压后显示网页、图像或其他内容。</p><p>通常浏览器获取的<strong>第一个资源是HTML网页</strong>，在网页中，如果嵌入了JavaScript、CSS、图片、视频等其他资源，浏览器会根据资源的URL<strong>再次</strong>向服务器请求对应的资源。</p><p>Browser/Server模式，简称BS架构，基本过程是：</p><p>浏览器请求一个URL，服务器就把生成的HTML网页发送给浏览器，而浏览器和服务器之间的传输协议是HTTP。浏览器根据网页的url继续请求获取网页需要的资源，比如图片等</p><p>HTTP协议是一个基于TCP协议之上的请求-响应协议，也就是说，本质是一个TCP连接，然后根据HTTP协议的规定，规范化处理交互的内容，就是分析HTTP body 和 header，实现就是使用<code class="language-plaintext highlighter-rouge">ServeSocket</code>，而对于HTML浏览器会自己解析，因此只要保证通信、负责传输HTML内容到客户端本地就行。</p><h2 id="编写http-server">编写HTTP Server</h2><p>一个HTTP Server本质上是一个TCP服务器，用TCP编程的多线程实现的服务器端框架：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span> <span class="o">(</span><span class="nc">ServerSocket</span> <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ServerSocket</span><span class="o">(</span><span class="mi">8080</span><span class="o">))</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"服务器正在运行。"</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(;</span> <span class="o">;</span> <span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Socket</span> <span class="n">sock</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="na">accept</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"连接来自："</span> <span class="o">+</span> <span class="n">sock</span><span class="o">.</span><span class="na">getRemoteSocketAddress</span><span class="o">());</span>
+        <span class="nc">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">WebPage</span><span class="o">(</span><span class="n">sock</span><span class="o">);</span>
+        <span class="n">t</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div><p>处理：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">WebPage</span> <span class="kd">extends</span> <span class="nc">Thread</span><span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Socket</span> <span class="n">socket</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">WebPage</span><span class="o">(</span><span class="nc">Socket</span> <span class="n">socket</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">InputStream</span> <span class="n">input</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">socket</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">(</span><span class="nc">OutputStream</span> <span class="n">output</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">socket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">handle</span><span class="o">(</span><span class="n">input</span><span class="o">,</span> <span class="n">output</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"客户端已断开连接。"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{}</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="nc">InputStream</span> <span class="n">in</span><span class="o">,</span><span class="nc">OutputStream</span> <span class="n">out</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">BufferedReader</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">in</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">));</span>
+        <span class="nc">BufferedWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="n">out</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">));</span>
+        <span class="c1">// 读取HTTP请求:</span>
+        <span class="kt">boolean</span> <span class="n">requestOk</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="nc">String</span> <span class="n">first</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">first</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"GET / HTTP/1."</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">requestOk</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">header</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">header</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 读取到空行时, HTTP Header读取完毕</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">header</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">requestOk</span> <span class="o">?</span> <span class="s">"响应正常"</span> <span class="o">:</span> <span class="s">"响应错误"</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">requestOk</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 发送错误响应:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"HTTP/1.0 404 Not Found\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"Content-Length: 0\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// 发送成功响应:</span>
+            <span class="nc">String</span> <span class="n">data</span> <span class="o">=</span> <span class="s">"&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello, world!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">).</span><span class="na">length</span><span class="o">;</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"HTTP/1.0 200 OK\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"Connection: close\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"Content-Type: text/html\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"Content-Length: "</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">"\r\n"</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"\r\n"</span><span class="o">);</span> <span class="c1">// 空行标识Header和Body的分隔</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+            <span class="n">writer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>只处理了<code class="language-plaintext highlighter-rouge">GET /</code>的请求。当读取到空行时，表示已读到连续两个<code class="language-plaintext highlighter-rouge">\r\n</code>，说明请求结束，可以发送响应。发送响应时，先发送响应代码<code class="language-plaintext highlighter-rouge">HTTP/1.0 200 OK</code>表示一个成功的200响应，使用<code class="language-plaintext highlighter-rouge">HTTP/1.0</code>协议。然后，依次发送Header，发送完Header后，再发送一个空行标识Header结束，紧接着发送HTTP Body。</p><p>HTTP目前有多个版本，<code class="language-plaintext highlighter-rouge">1.0</code>是早期版本，浏览器每次建立TCP连接后，只发送一个HTTP请求并接收一个HTTP响应，然后就关闭TCP连接。由于创建TCP连接本身就需要消耗一定的时间，因此，HTTP 1.1允许浏览器和服务器在同一个TCP连接上反复发送、接收多个HTTP请求和响应，这样就大大提高了传输效率。</p><p>HTTP协议是一个请求-响应协议，它总是发送一个请求，然后接收一个响应。能不能一次性发送多个请求，然后再接收多个响应呢？HTTP 2.0可以支持浏览器同时发出多个请求，但每个请求需要唯一标识，服务器可以不按请求的顺序返回多个响应，由浏览器自己把收到的响应和请求对应起来。可见，HTTP 2.0进一步提高了传输效率，因为浏览器发出一个请求后，不必等待响应，就可以继续发下一个请求。</p><p>HTTP 3.0为了进一步提高速度，将抛弃TCP协议，改为使用无需创建连接的UDP协议，目前HTTP 3.0仍然处于实验阶段。</p><h2 id="servlet">Servlet</h2><p>编写HTTP服务器其实是非常简单的，只需要先编写基于多线程的TCP服务，然后在一个TCP连接中读取HTTP请求，发送HTTP响应即可。</p><p>但是，要编写一个完善的HTTP服务器，以HTTP/1.1为例，需要考虑的包括：</p><ul><li>识别正确和错误的HTTP请求；</li><li>识别正确和错误的HTTP头；</li><li>复用TCP连接；</li><li>复用线程；</li><li>IO异常处理；</li><li>…</li></ul><p>这些基础工作需要耗费大量的时间，并且经过长期测试才能稳定运行。如果只需要输出一个简单的HTML页面，就不得不编写上千行底层代码，那就根本无法做到高效而可靠地开发。</p><p>因此，在JavaEE平台上，处理TCP连接，解析HTTP协议这些底层工作统统扔给现成的Web服务器去做，然后只需要把自己的应用程序跑在Web服务器上。为了实现这一目的，JavaEE提供了Servlet API，使用Servlet API编写自己的Servlet来处理HTTP请求，Web服务器实现Servlet API接口，实现底层功能。</p><p>实现一个最简单的Servlet：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@WebServlet</span><span class="o">(</span><span class="s">"/"</span><span class="o">)</span><span class="c1">// WebServlet注解表示这是一个Servlet，并映射到地址/:</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyServlet</span> <span class="kd">extends</span> <span class="nc">HttpServlet</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doGet</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="n">resp</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">"text/html"</span><span class="o">);</span><span class="c1">// 设置响应类型</span>
+        <span class="n">resp</span><span class="o">.</span><span class="na">getWriter</span><span class="o">().</span><span class="na">write</span><span class="o">(</span><span class="s">"&lt;h1&gt;Hello, world!&lt;/h1&gt;"</span><span class="o">);</span><span class="c1">// 获取输出流，并写入。</span>
+        <span class="n">resp</span><span class="o">.</span><span class="na">getWriter</span><span class="o">().</span><span class="na">flush</span><span class="o">();</span><span class="c1">//强制输出</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">@WebServlet("/")</code>也可以在<code class="language-plaintext highlighter-rouge">Web.xml</code>里配置：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;servlet&gt;</span>
+    <span class="nt">&lt;servlet-name&gt;</span>hello<span class="nt">&lt;/servlet-name&gt;</span>
+    <span class="nt">&lt;servlet-class&gt;</span>test.MyServlet<span class="nt">&lt;/servlet-class&gt;</span>
+<span class="nt">&lt;/servlet&gt;</span>
+<span class="nt">&lt;servlet-mapping&gt;</span>
+    <span class="nt">&lt;servlet-name&gt;</span>hello<span class="nt">&lt;/servlet-name&gt;</span>
+    <span class="nt">&lt;url-pattern&gt;</span>/<span class="nt">&lt;/url-pattern&gt;</span>
+<span class="nt">&lt;/servlet-mapping&gt;</span>
+</code></pre></div></div><p>一个Servlet总是继承自<code class="language-plaintext highlighter-rouge">HttpServlet</code>，然后覆写<code class="language-plaintext highlighter-rouge">doGet()</code>或<code class="language-plaintext highlighter-rouge">doPost()</code>方法。注意到<code class="language-plaintext highlighter-rouge">doGet()</code>方法传入了<code class="language-plaintext highlighter-rouge">HttpServletRequest</code>和<code class="language-plaintext highlighter-rouge">HttpServletResponse</code>两个对象，分别代表HTTP请求和响应。使用Servlet API时，并不直接与底层TCP交互，也不需要解析HTTP协议，因为<code class="language-plaintext highlighter-rouge">HttpServletRequest</code>和<code class="language-plaintext highlighter-rouge">HttpServletResponse</code>就已经封装好了请求和响应。以发送响应为例，只需要设置正确的响应类型，然后获取<code class="language-plaintext highlighter-rouge">PrintWriter</code>，写入响应即可。</p><p>Servlet API是一个jar包，需要通过Maven来引入它，才能正常编译。<code class="language-plaintext highlighter-rouge">pom.xml</code>文件的打包类型需要设置为<code class="language-plaintext highlighter-rouge">war</code>。并引入依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">&lt;scope&gt;</code>指定为<code class="language-plaintext highlighter-rouge">provided</code>，表示编译时使用，但不会打包到<code class="language-plaintext highlighter-rouge">.war</code>文件中，因为运行期Web服务器本身已经提供了Servlet API相关的jar包。</p><p>4.0及之前版本的<code class="language-plaintext highlighter-rouge">servlet-api</code>由Oracle官方维护，而5.0及以后的<code class="language-plaintext highlighter-rouge">servlet-api</code>由Eclipse开源社区维护，引入的依赖项是<code class="language-plaintext highlighter-rouge">jakarta.servlet</code>，对于很多仅支持Servlet 4.0版本的框架来说，例如Spring 5，就只能使用<code class="language-plaintext highlighter-rouge">javax.servlet:4.0.0</code>版本。</p><p>目录结构为：</p><pre><code class="language-ascii">Maven
+│  pom.xml
+│
+├─src
+│  ├─main
+│  │  ├─java
+│  │  │  └─test
+│  │  │          MyServlet.java
+│  │  │
+│  │  ├─resources
+│  │  │
+│  │  └─webapp
+│  │      │  index.jsp
+│  │      │
+│  │      └─WEB-INF
+│  │              web.xml
+│  │
+│  └─test
+│      ├─java
+│      └─resources
+│
+└─target
+</code></pre><p>运行Maven命令<code class="language-plaintext highlighter-rouge">mvn clean package</code>，在<code class="language-plaintext highlighter-rouge">target</code>目录下得到一个<code class="language-plaintext highlighter-rouge">war</code>文件，这个文件就是编译打包后的Web应用程序。</p><p>如果使用mvn clean package报错信息中有类似</p><p><code class="language-plaintext highlighter-rouge">org.apache.maven.plugins 的Due to ..... Cannot access defaults field of Properties</code>错误（war打包问题）</p><p>在pom.xml中指定package插件的版本即可:</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;build&gt;</span>
+    <span class="nt">&lt;plugins&gt;</span>
+        <span class="nt">&lt;plugin&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>maven-war-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>3.3.2<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;/plugin&gt;</span>
+    <span class="nt">&lt;/plugins&gt;</span>
+<span class="nt">&lt;/build&gt;</span>
+</code></pre></div></div><p>maven-war-plugin插件会自动使用main-webapp-WEB-INF-web.xml文件作为配置文件。也可以自己在pom.xml中进行配置:</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;finalName&gt;</span>打包的名字<span class="nt">&lt;/finalName&gt;</span>
+<span class="c">&lt;!-- 如果使用maven-war-plugin默认配置则不需要配--&gt;</span>
+        <span class="nt">&lt;pluginManagement&gt;</span>
+            <span class="nt">&lt;plugins&gt;</span>
+                <span class="nt">&lt;plugin&gt;</span>
+                    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+                    <span class="nt">&lt;artifactId&gt;</span>maven-war-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                    <span class="nt">&lt;version&gt;</span>2.2<span class="nt">&lt;/version&gt;</span>
+                    <span class="nt">&lt;configuration&gt;</span>
+                        <span class="nt">&lt;webXml&gt;</span>webapp\WEB-INF.xml<span class="nt">&lt;/webXml&gt;</span>
+                        <span class="c">&lt;!-- 指定jsp、js、css的路劲 --&gt;</span>
+<span class="c">&lt;!--                        &lt;warSourceDirectory&gt;WebRoot&lt;/warSourceDirectory&gt;--&gt;</span>
+                    <span class="nt">&lt;/configuration&gt;</span>
+                <span class="nt">&lt;/plugin&gt;</span>
+            <span class="nt">&lt;/plugins&gt;</span>
+        <span class="nt">&lt;/pluginManagement&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+</code></pre></div></div><hr /><p>普通的Java程序是通过启动JVM，然后执行<code class="language-plaintext highlighter-rouge">main()</code>方法开始运行。但是Web应用程序有所不同，我们无法直接运行<code class="language-plaintext highlighter-rouge">war</code>文件，必须先启动Web服务器，再由Web服务器加载我们编写的<code class="language-plaintext highlighter-rouge">HelloServlet</code>，这样就可以让<code class="language-plaintext highlighter-rouge">HelloServlet</code>处理浏览器发送的请求。</p><p>因此，首先要找一个支持Servlet API的Web服务器。常用的服务器有：</p><ul><li><a href="https://tomcat.apache.org/">Tomcat</a>：由Apache开发的开源免费服务器；</li><li><a href="https://www.eclipse.org/jetty/">Jetty</a>：由Eclipse开发的开源免费服务器；</li><li><a href="https://javaee.github.io/glassfish/">GlassFish</a>：一个开源的全功能JavaEE服务器。</li></ul><p>还有一些收费的商用服务器，如Oracle的<a href="https://www.oracle.com/middleware/weblogic/">WebLogic</a>，IBM的<a href="https://www.ibm.com/cloud/websphere-application-platform/">WebSphere</a>。</p><p>无论使用哪个服务器，只要它支持对应版本的Servlet API ，war包都可以在上面运行。</p><p>要运行<code class="language-plaintext highlighter-rouge">war</code>文件，首先要<a href="https://tomcat.apache.org/download-90.cgi">下载Tomcat服务器</a>，解压后，把<code class="language-plaintext highlighter-rouge">war</code>复制到Tomcat的<code class="language-plaintext highlighter-rouge">webapps</code>目录下，然后切换到<code class="language-plaintext highlighter-rouge">bin</code>目录，执行<code class="language-plaintext highlighter-rouge">startup.sh</code>或<code class="language-plaintext highlighter-rouge">startup.bat</code>启动Tomcat服务器。然后通过浏览器访问<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/war文件名称/</code>即可。</p><p>一个Web服务器允许同时运行多个Web App，因此，第一级目录<code class="language-plaintext highlighter-rouge">/war文件名称</code>表示Web App的名字，后面的<code class="language-plaintext highlighter-rouge">/</code>才是在项目中映射的servlet路径。</p><p>那能不能直接使用<code class="language-plaintext highlighter-rouge">/</code>？答案是肯定的。先关闭Tomcat（执行<code class="language-plaintext highlighter-rouge">shutdown.sh</code>或<code class="language-plaintext highlighter-rouge">shutdown.bat</code>），然后删除Tomcat的webapps目录下的所有文件夹和文件，最后把自己的<code class="language-plaintext highlighter-rouge">war</code>文件复制过来，改名为<code class="language-plaintext highlighter-rouge">ROOT.war</code>，文件名为<code class="language-plaintext highlighter-rouge">ROOT</code>的应用程序将作为默认应用，启动后直接访问<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/</code>即可。</p><p>Tomcat这样的服务器也是Java编写的，启动Tomcat服务器实际上是启动Java虚拟机，执行Tomcat的<code class="language-plaintext highlighter-rouge">main()</code>方法，然后由Tomcat负责加载<code class="language-plaintext highlighter-rouge">.war</code>文件，实例化Servlet。如果Tomcat服务器收到的请求路径是<code class="language-plaintext highlighter-rouge">/</code>（假定部署文件为ROOT.war），就转发到<code class="language-plaintext highlighter-rouge">HelloServlet</code>并传入<code class="language-plaintext highlighter-rouge">HttpServletRequest</code>和<code class="language-plaintext highlighter-rouge">HttpServletResponse</code>两个对象。编写的Servlet并不是直接运行，而是由Web服务器加载后创建实例运行，所以，类似Tomcat这样的Web服务器也称为Servlet容器。</p><p>由于Servlet版本分为&lt;=4.0和&gt;=5.0两种，所以，要根据使用的Servlet版本选择正确的Tomcat版本。从<a href="https://tomcat.apache.org/whichversion.html">Tomcat版本页</a>可知：</p><ul><li>使用Servlet&lt;=4.0时，选择Tomcat 9.x或更低版本；</li><li>使用Servlet&gt;=5.0时，选择Tomcat 10.x或更高版本。</li></ul><p>在Servlet容器中运行的Servlet具有如下特点：</p><ul><li>无法在代码中直接通过new创建Servlet实例，必须由Servlet容器自动创建Servlet实例；</li><li>Servlet容器只会给每个Servlet类创建唯一实例；</li><li>Servlet容器会使用多线程执行<code class="language-plaintext highlighter-rouge">doGet()</code>或<code class="language-plaintext highlighter-rouge">doPost()</code>方法。</li></ul><p>线程安全问题：</p><ul><li>在Servlet中定义的实例变量会被多个线程同时访问，要注意线程安全；</li><li><code class="language-plaintext highlighter-rouge">HttpServletRequest</code>和<code class="language-plaintext highlighter-rouge">HttpServletResponse</code>实例是由Servlet容器传入的局部变量，它们只能被当前线程访问，不存在多个线程访问的问题；</li><li>在<code class="language-plaintext highlighter-rouge">doGet()</code>或<code class="language-plaintext highlighter-rouge">doPost()</code>方法中，如果使用了<code class="language-plaintext highlighter-rouge">ThreadLocal</code>，但没有清理，那么它的状态很可能会影响到下次的某个请求，因为Servlet容器很可能用线程池实现线程复用。</li></ul><p><strong>在IDEA中配置Tomcat运行调试：</strong></p><p>运行调试窗口-添加Tomcat服务器-本地，配置-选择本地Tomcat路径。</p><p>项目结构窗口-工件-添加-Web应用程序（展开或者归档都行）-基于模块。</p><p>运行调试窗口-Tomcat服务器-部署选项卡-添加工件-设置映射的网址。</p><p><strong>使用Tomcat的jar包运行调试：</strong></p><p>Tomcat的启动流程：</p><ol><li>启动JVM并执行Tomcat的<code class="language-plaintext highlighter-rouge">main()</code>方法；</li><li>加载war并初始化Servlet；</li><li>正常服务。</li></ol><p>启动Tomcat无非就是设置好classpath并执行Tomcat某个jar包的<code class="language-plaintext highlighter-rouge">main()</code>方法，完全可以把Tomcat的jar包全部引入进来，然后自己编写一个<code class="language-plaintext highlighter-rouge">main()</code>方法，先启动Tomcat，然后让它加载我们的webapp就行。</p><p>添加依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.tomcat.embed<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>tomcat-embed-core<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>9.0.26<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.tomcat.embed<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>tomcat-embed-jasper<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>9.0.26<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>Servlet API可以不用显示引用，因为引入Tomcat依赖后自动引入了Servlet API。</p><p>可以编写一个<code class="language-plaintext highlighter-rouge">main()</code>方法，启动Tomcat服务器：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">LifecycleException</span> <span class="o">{</span>
+        <span class="nc">Tomcat</span> <span class="n">tomcat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Tomcat</span><span class="o">();</span>
+        <span class="c1">// 设置Tomcat的端口号，默认为8080</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="s">"port"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">));</span>
+        <span class="c1">// 获取Tomcat的连接器</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getConnector</span><span class="o">();</span>
+
+        <span class="c1">// 将webapp添加到Tomcat，路径为src/main/webapp</span>
+        <span class="nc">Context</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">tomcat</span><span class="o">.</span><span class="na">addWebapp</span><span class="o">(</span>
+                <span class="s">""</span><span class="o">,</span>
+                <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"src/main/webapp"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">()</span>
+        <span class="o">);</span>
+        <span class="c1">// 创建Web资源根目录</span>
+        <span class="nc">WebResourceRoot</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StandardRoot</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span>
+        <span class="c1">// 添加预设资源，包括类路径和WEB-INF目录</span>
+        <span class="n">resources</span><span class="o">.</span><span class="na">addPreResources</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">DirResourceSet</span><span class="o">(</span>
+                        <span class="n">resources</span><span class="o">,</span>
+                        <span class="s">"/WEB-INF/classes"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"target/classes"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="s">"/"</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="c1">// 设置Web应用的资源</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setResources</span><span class="o">(</span><span class="n">resources</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="c1">// 等待Tomcat服务器结束</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getServer</span><span class="o">().</span><span class="na">await</span><span class="o">();</span>
+    <span class="o">}</span>
+</code></pre></div></div><p>使用IDEA时需要注意设置：在<code class="language-plaintext highlighter-rouge">运行调试</code>窗口的<code class="language-plaintext highlighter-rouge">构建并运行</code>栏，右边的<code class="language-plaintext highlighter-rouge">修改选项</code>勾选<code class="language-plaintext highlighter-rouge">将带有"provided"作用域的依赖项添加到类路径</code>。</p><p>这样，直接运行<code class="language-plaintext highlighter-rouge">main()</code>方法，即可启动嵌入式Tomcat服务器，然后，通过预设的<code class="language-plaintext highlighter-rouge">tomcat.addWebapp("", new File("src/main/webapp")</code>，Tomcat会自动加载当前工程作为根webapp，可直接在浏览器访问<code class="language-plaintext highlighter-rouge">http://localhost:8080/</code>。</p><p>通过<code class="language-plaintext highlighter-rouge">main()</code>方法启动Tomcat服务器并加载自己的webapp有如下好处：</p><ol><li>启动简单，无需下载Tomcat或安装任何IDE插件；</li><li>调试方便，可在IDE中使用断点调试；</li><li>使用Maven创建war包后，也可以正常部署到独立的Tomcat服务器中。</li></ol><p><strong>生成可执行war包</strong></p><p>如果要生成可执行的war包，用<code class="language-plaintext highlighter-rouge">java -jar xxx.war</code>启动，则需要把Tomcat的依赖项的<code class="language-plaintext highlighter-rouge">&lt;scope&gt;</code>设置为compile，然后配置<code class="language-plaintext highlighter-rouge">maven-war-plugin</code>如下：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;build&gt;</span>
+    <span class="nt">&lt;finalName&gt;</span>hello<span class="nt">&lt;/finalName&gt;</span>
+    <span class="nt">&lt;plugins&gt;</span>
+        <span class="nt">&lt;plugin&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>maven-war-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>3.3.2<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="c">&lt;!-- 复制classes到war包根目录 --&gt;</span>
+                <span class="nt">&lt;webResources&gt;</span>
+                    <span class="nt">&lt;resource&gt;</span>
+                        <span class="nt">&lt;directory&gt;</span>${project.build.directory}/classes<span class="nt">&lt;/directory&gt;</span>
+                    <span class="nt">&lt;/resource&gt;</span>
+                <span class="nt">&lt;/webResources&gt;</span>
+                <span class="nt">&lt;archiveClasses&gt;</span>true<span class="nt">&lt;/archiveClasses&gt;</span>
+                <span class="nt">&lt;archive&gt;</span>
+                    <span class="nt">&lt;manifest&gt;</span>
+                        <span class="c">&lt;!-- 添加Class-Path --&gt;</span>
+                        <span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+                        <span class="c">&lt;!-- Classpath前缀 --&gt;</span>
+                        <span class="nt">&lt;classpathPrefix&gt;</span>tmp-webapp/WEB-INF/lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
+                        <span class="c">&lt;!-- main所在的启动类 --&gt;</span>
+                        <span class="nt">&lt;mainClass&gt;</span>test.Main<span class="nt">&lt;/mainClass&gt;</span>
+                    <span class="nt">&lt;/manifest&gt;</span>
+                <span class="nt">&lt;/archive&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;/plugin&gt;</span>
+    <span class="nt">&lt;/plugins&gt;</span>
+<span class="nt">&lt;/build&gt;</span>
+</code></pre></div></div><p>生成的war包结构如下：</p><pre><code class="language-ascii">hello.war
+├── META-INF
+│   ├── MANIFEST.MF
+│   └── maven
+│       └── ...
+├── WEB-INF
+│   ├── classes
+│   ├── lib
+│   │   ├── ecj-3.18.0.jar
+│   │   ├── tomcat-annotations-api-9.0.26.jar
+│   │   ├── tomcat-embed-core-9.0.26.jar
+│   │   ├── tomcat-embed-el-9.0.26.jar
+│   │   ├── tomcat-embed-jasper-9.0.26.jar
+│   │   └── Maven-1.0-SNAPSHOT.jar
+│   └── web.xml
+└──test
+    ├── MyServlet.class
+    └── Main.class
+</code></pre><p>之所以要把编译后的classes复制到war包根目录，是因为用<code class="language-plaintext highlighter-rouge">java -jar hello.war</code>启动时，JVM的Class Loader不会查找<code class="language-plaintext highlighter-rouge">WEB-INF/lib</code>的jar包，而是直接从<code class="language-plaintext highlighter-rouge">hello.war</code>的根目录查找。<code class="language-plaintext highlighter-rouge">MANIFEST.MF</code>生成的内容如下：</p><div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Manifest-Version: 1.0
+Created-By: Maven WAR Plugin 3.3.2
+Build-Jdk-Spec: 10
+Class-Path: tmp-webapp/WEB-INF/lib/commons-lang3-3.9.jar tmp-webapp/WE
+ B-INF/lib/mysql-connector-java-5.1.47.jar tmp-webapp/WEB-INF/lib/tomc
+ at-embed-core-9.0.26.jar tmp-webapp/WEB-INF/lib/tomcat-annotations-ap
+ i-9.0.26.jar tmp-webapp/WEB-INF/lib/tomcat-embed-jasper-9.0.26.jar tm
+ p-webapp/WEB-INF/lib/tomcat-embed-el-9.0.26.jar tmp-webapp/WEB-INF/li
+ b/ecj-3.18.0.jar
+Main-Class: test.Main
+</code></pre></div></div><p>注意到<code class="language-plaintext highlighter-rouge">Class-Path</code>的路径，这里定义的<code class="language-plaintext highlighter-rouge">Class-Path</code>相当于<code class="language-plaintext highlighter-rouge">java -cp</code>指定的Classpath，JVM不会在一个jar包中查找jar包内的jar包，它只会在文件系统中搜索，因此，还要修改<code class="language-plaintext highlighter-rouge">main()</code>方法，在执行<code class="language-plaintext highlighter-rouge">main()</code>方法时，先自解压<code class="language-plaintext highlighter-rouge">war</code>包，再启动Tomcat。还要注意依赖问题，如果在不存在Tomcat依赖时important，就会提示找不到类，因此Tomcat启动要另外写在一个类中：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.apache.catalina.Context</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.LifecycleException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.WebResourceRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.startup.Tomcat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.DirResourceSet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.StandardRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TomcatRun</span><span class="o">{</span>
+    <span class="kd">protected</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">runTomcat</span><span class="o">(</span><span class="nc">String</span> <span class="n">webDir</span><span class="o">,</span> <span class="nc">String</span> <span class="n">baseDir</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Tomcat</span> <span class="n">tomcat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Tomcat</span><span class="o">();</span>
+        <span class="c1">// 设置Tomcat的端口号，默认为8080</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="s">"port"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">));</span>
+        <span class="c1">// 获取Tomcat的连接器</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getConnector</span><span class="o">();</span>
+
+        <span class="c1">// 将webapp添加到Tomcat，路径为webDir</span>
+        <span class="nc">Context</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">tomcat</span><span class="o">.</span><span class="na">addWebapp</span><span class="o">(</span>
+                <span class="s">""</span><span class="o">,</span>
+                <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="n">webDir</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">()</span>
+        <span class="o">);</span>
+        <span class="c1">// 创建Web资源根目录</span>
+        <span class="nc">WebResourceRoot</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StandardRoot</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span>
+        <span class="c1">// 添加预设资源，包括类路径和WEB-INF目录</span>
+        <span class="n">resources</span><span class="o">.</span><span class="na">addPreResources</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">DirResourceSet</span><span class="o">(</span>
+                        <span class="n">resources</span><span class="o">,</span>
+                        <span class="s">"/WEB-INF/classes"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="n">baseDir</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="s">"/"</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="c1">// 设置Web应用的资源</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setResources</span><span class="o">(</span><span class="n">resources</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">tomcat</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">LifecycleException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 等待Tomcat服务器结束</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getServer</span><span class="o">().</span><span class="na">await</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>启动类：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">test</span><span class="o">;</span>
+
+
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.file.Files</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.file.Path</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.file.Paths</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Comparator</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.jar.JarEntry</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.jar.JarFile</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Collectors</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Stream</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="c1">// 判定是否从jar/war启动:</span>
+        <span class="nc">String</span> <span class="n">jarFile</span> <span class="o">=</span> <span class="nc">Main</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getProtectionDomain</span><span class="o">().</span><span class="na">getCodeSource</span><span class="o">().</span><span class="na">getLocation</span><span class="o">().</span><span class="na">getFile</span><span class="o">();</span>
+        <span class="kt">boolean</span> <span class="n">isJarFile</span> <span class="o">=</span> <span class="n">jarFile</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".war"</span><span class="o">)</span> <span class="o">||</span> <span class="n">jarFile</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".jar"</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">isJarFile</span><span class="o">){</span>
+            <span class="nc">TomcatRun</span><span class="o">.</span><span class="na">runTomcat</span><span class="o">(</span><span class="s">"src/main/webapp"</span><span class="o">,</span><span class="s">"target/classes"</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// webapp根目录:</span>
+        <span class="nc">String</span> <span class="n">webDir</span> <span class="o">=</span>  <span class="s">"tmp-webapp"</span><span class="o">;</span>
+        <span class="c1">// 解压到tmp-webapp:</span>
+        <span class="n">unpack</span><span class="o">(</span><span class="n">webDir</span><span class="o">,</span> <span class="n">jarFile</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat:</span>
+        <span class="nc">TomcatRun</span><span class="o">.</span><span class="na">runTomcat</span><span class="o">(</span><span class="n">webDir</span><span class="o">,</span> <span class="s">"tmp-webapp"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">unpack</span><span class="o">(</span><span class="nc">String</span> <span class="n">webDir</span><span class="o">,</span> <span class="nc">String</span> <span class="n">jarFile</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">Path</span> <span class="n">baseDir</span> <span class="o">=</span> <span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">webDir</span><span class="o">).</span><span class="na">normalize</span><span class="o">().</span><span class="na">toAbsolutePath</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nc">Files</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">(</span><span class="n">baseDir</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nc">Files</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">baseDir</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">Files</span><span class="o">.</span><span class="na">createDirectories</span><span class="o">(</span><span class="n">baseDir</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"extract to: "</span> <span class="o">+</span> <span class="n">baseDir</span><span class="o">);</span>
+
+        <span class="k">try</span> <span class="o">(</span><span class="nc">JarFile</span> <span class="n">jar</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JarFile</span><span class="o">(</span><span class="n">jarFile</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">JarEntry</span><span class="o">&gt;</span> <span class="n">entries</span> <span class="o">=</span> <span class="n">jar</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">sorted</span><span class="o">(</span><span class="nc">Comparator</span><span class="o">.</span><span class="na">comparing</span><span class="o">(</span><span class="nl">JarEntry:</span><span class="o">:</span><span class="n">getName</span><span class="o">))</span>
+                    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nc">JarEntry</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">entries</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">Path</span> <span class="n">res</span> <span class="o">=</span> <span class="n">baseDir</span><span class="o">.</span><span class="na">resolve</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="n">entry</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">res</span><span class="o">);</span>
+                    <span class="nc">Files</span><span class="o">.</span><span class="na">createDirectories</span><span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="na">getParent</span><span class="o">());</span>
+                    <span class="nc">Files</span><span class="o">.</span><span class="na">copy</span><span class="o">(</span><span class="n">jar</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">(</span><span class="n">entry</span><span class="o">),</span> <span class="n">res</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="c1">// JVM退出时自动删除tmp-webapp:</span>
+        <span class="nc">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">addShutdownHook</span><span class="o">(</span><span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">try</span><span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Path</span><span class="o">&gt;</span> <span class="n">sorted</span> <span class="o">=</span> <span class="nc">Files</span><span class="o">.</span><span class="na">walk</span><span class="o">(</span><span class="n">baseDir</span><span class="o">).</span><span class="na">sorted</span><span class="o">(</span><span class="nc">Comparator</span><span class="o">.</span><span class="na">reverseOrder</span><span class="o">()))</span> <span class="o">{</span>
+                <span class="n">sorted</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Path:</span><span class="o">:</span><span class="n">toFile</span><span class="o">).</span><span class="na">forEach</span><span class="o">(</span><span class="nl">File:</span><span class="o">:</span><span class="n">delete</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>现在，执行<code class="language-plaintext highlighter-rouge">java -jar hello.war</code>时，JVM先定位<code class="language-plaintext highlighter-rouge">hello.war</code>的<code class="language-plaintext highlighter-rouge">Main</code>类，运行<code class="language-plaintext highlighter-rouge">main()</code>，自动解压后，文件系统目录如下：</p><pre><code class="language-ascii">&lt;work&gt;
+├── hello.war
+└── tmp-webapp
+    └── WEB-INF
+        ├── lib
+	   	│   ├── ecj-3.18.0.jar
+   		│   ├── tomcat-annotations-api-9.0.26.jar
+	   	│   ├── tomcat-embed-core-9.0.26.jar
+	   	│   ├── tomcat-embed-el-9.0.26.jar
+	   	│   ├── tomcat-embed-jasper-9.0.26.jar
+   		│   └── Maven-1.0-SNAPSHOT.jar
+        └── web.xml
+</code></pre><p>解压后的目录结构和我们在<code class="language-plaintext highlighter-rouge">MANIFEST.MF</code>中设定的<code class="language-plaintext highlighter-rouge">Class-Path</code>一致，因此，JVM能顺利加载Tomcat的jar包，然后运行Tomcat，启动Web App。</p><p>编写可执行的jar或者war需要注意的几点：</p><ul><li>必须在<code class="language-plaintext highlighter-rouge">MANIFEST.MF</code>中指定<code class="language-plaintext highlighter-rouge">Main-Class</code>和<code class="language-plaintext highlighter-rouge">Class-Path</code>；</li><li><code class="language-plaintext highlighter-rouge">Main</code>必须能在jar/war包的根目录下被JVM的Class Loader加载；</li><li><code class="language-plaintext highlighter-rouge">Main</code>负责解压jar/war，解压后的目录结构与<code class="language-plaintext highlighter-rouge">MANIFEST.MF</code>中设定的<code class="language-plaintext highlighter-rouge">Class-Path</code>一致；</li><li><code class="language-plaintext highlighter-rouge">Main</code><strong>不能引用任何解压后才能被加载的类</strong>，例如<code class="language-plaintext highlighter-rouge">org.apache.catalina.startup.Tomcat</code>。</li></ul><p>实际上直接用springboot打包最简单。</p><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2021/09/14/JavaWeb/" target="_blank">https://acteds.github.io/2021/09/14/JavaWeb/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1715687872', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
