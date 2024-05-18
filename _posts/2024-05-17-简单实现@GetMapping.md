@@ -37,6 +37,7 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
         /*todo 其他处理*/
+        req.getRequestDispatcher(s).forward(req,resp);
     }
 }
 ```
@@ -372,7 +373,11 @@ public class Test {
 }
 ```
 
-`/WEB-INF/templates/test.html`内用双括号引用变量`user`即：&lcub;&lcub; user&rcub;&rcub;。
+`/WEB-INF/templates/test.html`内用双大括号引用变量`user`即：
+
+```html
+{{user}}
+```
 
 访问：`http://localhost:8080/test?key=bob`正常使用。
 
