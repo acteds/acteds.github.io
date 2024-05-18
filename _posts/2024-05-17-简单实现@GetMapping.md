@@ -234,6 +234,8 @@ public class Test {
 <h1>你好!<c:out value="${user}"/></h1>
 ```
 
+设置程序编译参数：`-parameters`，它的作用是在编译后的类文件中**保留方法参数的名称**。默认情况下，Java编译器在编译过程中会丢弃方法参数的名称，而只保留参数的顺序。
+
 访问：`http://localhost:8080/test?key=bob`正常使用。
 
 ------
@@ -370,11 +372,7 @@ public class Test {
 }
 ```
 
-`/WEB-INF/templates/test.html`:
-
-```html
-<h1>{{user}}</h1>
-```
+`/WEB-INF/templates/test.html`内用双括号引用变量`user`即：&lcub;&lcub; user&rcub;&rcub;。
 
 访问：`http://localhost:8080/test?key=bob`正常使用。
 
