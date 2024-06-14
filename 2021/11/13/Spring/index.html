@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Spring &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2021/11/13/Spring/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Spring"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2021/11/13/Spring/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2021-11-13"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Spring"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Spring</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2021/11/13 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 129859 字，约 372 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>Spring框架笔记。</p><h1 id="spring">Spring</h1><p>Spring是一个支持快速开发Java EE应用程序的框架。它提供了一系列底层容器和基础设施，并可以和大量常用的开源框架无缝集成，可以说是开发Java EE应用程序的必备。</p><p>Spring Framework主要包括几个模块：</p><ul><li>支持IoC和AOP的容器；</li><li>支持JDBC和ORM的数据访问模块；</li><li>支持声明式事务的模块；</li><li>支持基于Servlet的MVC开发；</li><li>支持基于Reactive的Web开发；</li><li>以及集成JMS、JavaMail、JMX、缓存等其他模块。</li></ul><h2 id="ioc">IoC</h2><p>容器是一种为某种特定组件的运行提供必要支持的一个软件环境。例如，Tomcat就是一个Servlet容器，它可以为Servlet的运行提供运行环境。类似Docker这样的软件也是一个容器，它提供了必要的Linux环境以便运行一个特定的Linux进程。</p><p>通常来说，使用容器运行组件，除了提供一个组件运行环境之外，容器还提供了许多底层服务。例如，Servlet容器底层实现了TCP连接，解析HTTP协议等非常复杂的服务，如果没有容器来提供这些服务，我们就无法编写像Servlet这样代码简单，功能强大的组件。早期的JavaEE服务器提供的EJB容器最重要的功能就是通过声明式事务服务，使得EJB组件的开发人员不必自己编写冗长的事务处理代码，所以极大地简化了事务处理。</p><p>Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级的JavaBean组件，提供的底层服务包括组件的生命周期管理、配置和组装服务、AOP支持，以及建立在AOP基础上的声明式事务服务等。</p><p>IoC全称Inversion of Control，直译为控制反转。</p><p>假定一个在线书店，通过<code class="language-plaintext highlighter-rouge">BookService</code>获取书籍：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BookService</span> <span class="o">{</span>
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Spring &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2021/11/13/Spring/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Spring"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2021/11/13/Spring/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2021-11-13"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Spring"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Spring</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2021/11/13 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 140936 字，约 403 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>Spring框架笔记。</p><h1 id="spring">Spring</h1><p>Spring是一个支持快速开发Java EE应用程序的框架。它提供了一系列底层容器和基础设施，并可以和大量常用的开源框架无缝集成，可以说是开发Java EE应用程序的必备。</p><p>Spring Framework主要包括几个模块：</p><ul><li>支持IoC和AOP的容器；</li><li>支持JDBC和ORM的数据访问模块；</li><li>支持声明式事务的模块；</li><li>支持基于Servlet的MVC开发；</li><li>支持基于Reactive的Web开发；</li><li>以及集成JMS、JavaMail、JMX、缓存等其他模块。</li></ul><h2 id="ioc">IoC</h2><p>容器是一种为某种特定组件的运行提供必要支持的一个软件环境。例如，Tomcat就是一个Servlet容器，它可以为Servlet的运行提供运行环境。类似Docker这样的软件也是一个容器，它提供了必要的Linux环境以便运行一个特定的Linux进程。</p><p>通常来说，使用容器运行组件，除了提供一个组件运行环境之外，容器还提供了许多底层服务。例如，Servlet容器底层实现了TCP连接，解析HTTP协议等非常复杂的服务，如果没有容器来提供这些服务，我们就无法编写像Servlet这样代码简单，功能强大的组件。早期的JavaEE服务器提供的EJB容器最重要的功能就是通过声明式事务服务，使得EJB组件的开发人员不必自己编写冗长的事务处理代码，所以极大地简化了事务处理。</p><p>Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级的JavaBean组件，提供的底层服务包括组件的生命周期管理、配置和组装服务、AOP支持，以及建立在AOP基础上的声明式事务服务等。</p><p>IoC全称Inversion of Control，直译为控制反转。</p><p>假定一个在线书店，通过<code class="language-plaintext highlighter-rouge">BookService</code>获取书籍：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BookService</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="nc">HikariConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HikariConfig</span><span class="o">();</span>
     <span class="kd">private</span> <span class="nc">DataSource</span> <span class="n">dataSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HikariDataSource</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
 
@@ -2592,11 +2592,6 @@ User{id=1, email='1@qq.com', password='123456', name='小米'}
 <span class="kn">import</span> <span class="nn">java.util.Properties</span><span class="o">;</span>
 
 
-<span class="cm">/**
- * @author aotmd
- * @version 1.0
- * @date 2024/6/1 22:16
- */</span>
 <span class="nd">@Configuration</span>
 <span class="nd">@ComponentScan</span>
 <span class="nd">@EnableTransactionManagement</span>
@@ -2876,4 +2871,377 @@ User{id=1, email='1@qq.com', password='123456', name='小米'}
     <span class="n">city</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
     <span class="n">country</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
 <span class="p">);</span>
-</code></pre></div></div><p>在这个表结构中：</p><ul><li><code class="language-plaintext highlighter-rouge">id</code>、<code class="language-plaintext highlighter-rouge">name</code>字段与<code class="language-plaintext highlighter-rouge">Person</code>类中的属性对应，无变化。</li><li><code class="language-plaintext highlighter-rouge">street</code>、<code class="language-plaintext highlighter-rouge">city</code>、<code class="language-plaintext highlighter-rouge">country</code>字段对应于<code class="language-plaintext highlighter-rouge">Address</code>对象中的属性，通过<code class="language-plaintext highlighter-rouge">@Column</code>注解指定了列名。这些字段直接位于<code class="language-plaintext highlighter-rouge">Person</code>表中，而不是<code class="language-plaintext highlighter-rouge">Address</code>表，因为<code class="language-plaintext highlighter-rouge">Address</code>对象是嵌入式的，不是单独的实体。</li></ul><p><a href="https://memorynotfound.com/hibernate-embeddable-embedded-annotation-example/">详细参考</a>。</p><h4 id="jpa">JPA</h4><p>JPA：Java Persistence API，JPA就是JavaEE的一个ORM标准，它的实现其实和Hibernate没啥本质区别，但是用户如果使用JPA，那么引用的就是<code class="language-plaintext highlighter-rouge">javax.persistence</code>这个“标准”包，而不是<code class="language-plaintext highlighter-rouge">org.hibernate</code>这样的第三方包。因为JPA只是接口，所以，还需要选择一个实现产品，跟JDBC接口和MySQL驱动一个道理。</p><p>使用JPA时也完全可以选择Hibernate作为底层实现，但也可以选择其它的JPA提供方，比如<a href="https://www.eclipse.org/eclipselink/">EclipseLink</a>。Spring内置了JPA的集成，并支持选择Hibernate或EclipseLink作为实现。若要以Hibernate作为JPA实现，则和使用Hibernate一样，只需要引入同样的依赖。Hibernate既提供了它自己的接口，也提供了JPA接口，用JPA接口就相当于通过JPA操作Hibernate。</p><p>使用Hibernate时，需要创建一个<code class="language-plaintext highlighter-rouge">LocalSessionFactoryBean</code>，并让它再自动创建一个<code class="language-plaintext highlighter-rouge">SessionFactory</code>。使用JPA也是类似的，也创建一个<code class="language-plaintext highlighter-rouge">LocalContainerEntityManagerFactoryBean</code>，并让它再自动创建一个<code class="language-plaintext highlighter-rouge">EntityManagerFactory</code>。</p><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2021/11/13/Spring/" target="_blank">https://acteds.github.io/2021/11/13/Spring/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1718259050', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
+</code></pre></div></div><p>在这个表结构中：</p><ul><li><code class="language-plaintext highlighter-rouge">id</code>、<code class="language-plaintext highlighter-rouge">name</code>字段与<code class="language-plaintext highlighter-rouge">Person</code>类中的属性对应，无变化。</li><li><code class="language-plaintext highlighter-rouge">street</code>、<code class="language-plaintext highlighter-rouge">city</code>、<code class="language-plaintext highlighter-rouge">country</code>字段对应于<code class="language-plaintext highlighter-rouge">Address</code>对象中的属性，通过<code class="language-plaintext highlighter-rouge">@Column</code>注解指定了列名。这些字段直接位于<code class="language-plaintext highlighter-rouge">Person</code>表中，而不是<code class="language-plaintext highlighter-rouge">Address</code>表，因为<code class="language-plaintext highlighter-rouge">Address</code>对象是嵌入式的，不是单独的实体。</li></ul><p><a href="https://memorynotfound.com/hibernate-embeddable-embedded-annotation-example/">详细参考</a>。</p><h4 id="jpa">JPA</h4><p>JPA：Java Persistence API，JPA就是JavaEE的一个ORM标准，它的实现其实和Hibernate没啥本质区别，但是用户如果使用JPA，那么引用的就是<code class="language-plaintext highlighter-rouge">javax.persistence</code>这个“标准”包，而不是<code class="language-plaintext highlighter-rouge">org.hibernate</code>这样的第三方包。因为JPA只是接口，所以，还需要选择一个实现产品，跟JDBC接口和MySQL驱动一个道理。</p><p>使用JPA时也完全可以选择Hibernate作为底层实现，但也可以选择其它的JPA提供方，比如<a href="https://www.eclipse.org/eclipselink/">EclipseLink</a>。Spring内置了JPA的集成，并支持选择Hibernate或EclipseLink作为实现。若要以Hibernate作为JPA实现，则和使用Hibernate一样，只需要引入同样的依赖。Hibernate既提供了它自己的接口，也提供了JPA接口，用JPA接口就相当于通过JPA操作Hibernate。</p><p>使用Hibernate时，需要创建一个<code class="language-plaintext highlighter-rouge">LocalSessionFactoryBean</code>，并让它再自动创建一个<code class="language-plaintext highlighter-rouge">SessionFactory</code>。使用JPA也是类似的，也创建一个<code class="language-plaintext highlighter-rouge">LocalContainerEntityManagerFactoryBean</code>，并让它再自动创建一个<code class="language-plaintext highlighter-rouge">EntityManagerFactory</code>。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="nc">LocalContainerEntityManagerFactoryBean</span> <span class="nf">createEntityManagerFactory</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">DataSource</span> <span class="n">dataSource</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">emFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocalContainerEntityManagerFactoryBean</span><span class="o">();</span>
+    <span class="c1">// 注入DataSource:</span>
+    <span class="n">emFactory</span><span class="o">.</span><span class="na">setDataSource</span><span class="o">(</span><span class="n">dataSource</span><span class="o">);</span>
+    <span class="c1">// 扫描指定的package获取所有entity class:</span>
+    <span class="n">emFactory</span><span class="o">.</span><span class="na">setPackagesToScan</span><span class="o">(</span><span class="nc">AbstractEntity</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getPackageName</span><span class="o">());</span>
+    <span class="c1">// 使用Hibernate作为JPA实现:</span>
+    <span class="n">emFactory</span><span class="o">.</span><span class="na">setJpaVendorAdapter</span><span class="o">(</span><span class="k">new</span> <span class="nc">HibernateJpaVendorAdapter</span><span class="o">());</span>
+    <span class="c1">// 其他配置项:</span>
+    <span class="kt">var</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Properties</span><span class="o">();</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.hbm2ddl.auto"</span><span class="o">,</span> <span class="s">"update"</span><span class="o">);</span> <span class="c1">// 生产环境不要使用</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.dialect"</span><span class="o">,</span> <span class="s">"org.hibernate.dialect.HSQLDialect"</span><span class="o">);</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.show_sql"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span>
+    <span class="n">emFactory</span><span class="o">.</span><span class="na">setJpaProperties</span><span class="o">(</span><span class="n">props</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">emFactory</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>除了需要注入<code class="language-plaintext highlighter-rouge">DataSource</code>和设定自动扫描的<code class="language-plaintext highlighter-rouge">package</code>外，还需要指定JPA的提供商，这里使用Spring提供的一个<code class="language-plaintext highlighter-rouge">HibernateJpaVendorAdapter</code>，最后，针对Hibernate自己需要的配置，以<code class="language-plaintext highlighter-rouge">Properties</code>的形式注入。</p><p>还需要实例化一个<code class="language-plaintext highlighter-rouge">JpaTransactionManager</code>，以实现声明式事务：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">PlatformTransactionManager</span> <span class="nf">createTxManager</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">EntityManagerFactory</span> <span class="n">entityManagerFactory</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">JpaTransactionManager</span><span class="o">(</span><span class="n">entityManagerFactory</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>这样，就完成了JPA的全部初始化工作。使用Spring+Hibernate作为JPA实现，无需任何配置文件。</p><p>所有Entity Bean的配置和上一节完全相同，全部采用Annotation标注。现在只需关心具体的业务类如何通过JPA接口操作数据库。</p><p>还是以<code class="language-plaintext highlighter-rouge">UserService</code>为例，需要注入一个<code class="language-plaintext highlighter-rouge">EntityManager</code>，但是不要使用<code class="language-plaintext highlighter-rouge">@Autowired</code>，而是<code class="language-plaintext highlighter-rouge">@PersistenceContext</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">UserService</span> <span class="o">{</span>
+    <span class="nd">@PersistenceContext</span>
+    <span class="nc">EntityManager</span> <span class="n">em</span><span class="o">;</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>JDBC、Hibernate和JPA提供的接口，实际上，它们的关系如下：</p><table><thead><tr><th style="text-align: left">JDBC</th><th style="text-align: left">Hibernate</th><th style="text-align: left">JPA</th></tr></thead><tbody><tr><td style="text-align: left">DataSource</td><td style="text-align: left">SessionFactory</td><td style="text-align: left">EntityManagerFactory</td></tr><tr><td style="text-align: left">Connection</td><td style="text-align: left">Session</td><td style="text-align: left">EntityManager</td></tr></tbody></table><p><code class="language-plaintext highlighter-rouge">SessionFactory</code>和<code class="language-plaintext highlighter-rouge">EntityManagerFactory</code>相当于<code class="language-plaintext highlighter-rouge">DataSource</code>，<code class="language-plaintext highlighter-rouge">Session</code>和<code class="language-plaintext highlighter-rouge">EntityManager</code>相当于<code class="language-plaintext highlighter-rouge">Connection</code>。每次需要访问数据库的时候，需要获取新的<code class="language-plaintext highlighter-rouge">Session</code>和<code class="language-plaintext highlighter-rouge">EntityManager</code>，用完后再关闭。</p><p><code class="language-plaintext highlighter-rouge">UserService</code>注入的不是<code class="language-plaintext highlighter-rouge">EntityManagerFactory</code>，而是<code class="language-plaintext highlighter-rouge">EntityManager</code>，并且标注了<code class="language-plaintext highlighter-rouge">@PersistenceContext</code>。难道使用JPA可以允许多线程操作同一个<code class="language-plaintext highlighter-rouge">EntityManager</code>？</p><p>实际上这里注入的并不是真正的<code class="language-plaintext highlighter-rouge">EntityManager</code>，而是一个<code class="language-plaintext highlighter-rouge">EntityManager</code>的代理类，相当于：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">EntityManagerProxy</span> <span class="kd">implements</span> <span class="nc">EntityManager</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">EntityManagerFactory</span> <span class="n">emf</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>Spring遇到标注了<code class="language-plaintext highlighter-rouge">@PersistenceContext</code>的<code class="language-plaintext highlighter-rouge">EntityManager</code>会自动注入代理，该代理会在必要的时候自动打开<code class="language-plaintext highlighter-rouge">EntityManager</code>。换句话说，多线程引用的<code class="language-plaintext highlighter-rouge">EntityManager</code>虽然是同一个代理类，但该代理类内部针对不同线程会创建不同的<code class="language-plaintext highlighter-rouge">EntityManager</code>实例。</p><p>因此，标注了<code class="language-plaintext highlighter-rouge">@PersistenceContext</code>的<code class="language-plaintext highlighter-rouge">EntityManager</code>可以被多线程安全地共享。</p><p>因此，在<code class="language-plaintext highlighter-rouge">UserService</code>的每个业务方法里，直接使用<code class="language-plaintext highlighter-rouge">EntityManager</code>就很方便。以主键查询为例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">em</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+</code></pre></div></div><p>对比Hibernate：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">sessionFactory</span><span class="o">.</span><span class="na">getCurrentSession</span><span class="o">().</span><span class="na">byId</span><span class="o">(</span><span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">load</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+</code></pre></div></div><p>与HQL查询类似，JPA使用JPQL查询，它的语法和HQL基本差不多：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">selectByEmailAndByPassword</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">){</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">em</span>
+            <span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT u from User u where u.email = :e and u.password = :p"</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"e"</span><span class="o">,</span> <span class="n">email</span><span class="o">).</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"p"</span><span class="o">,</span> <span class="n">password</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+    <span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>对比Hibernate，不同点在于：不需要<code class="language-plaintext highlighter-rouge">getCurrentSession()</code>，占位符名称不同，<code class="language-plaintext highlighter-rouge">list()</code>变为<code class="language-plaintext highlighter-rouge">getResultList()</code>。</p><p>同样的，JPA也支持<code class="language-plaintext highlighter-rouge">NamedQuery</code>，即先给查询起个名字，再按名字创建查询：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Transactional</span>
+<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">selectByEmailAndByPassword2</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">){</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">em</span>
+            <span class="o">.</span><span class="na">createNamedQuery</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="c1">// 创建NamedQuery</span>
+            <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"e"</span><span class="o">,</span> <span class="n">email</span><span class="o">)</span> <span class="c1">// 绑定e参数</span>
+            <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"pwd"</span><span class="o">,</span> <span class="n">password</span><span class="o">)</span> <span class="c1">// 绑定pwd参数</span>
+            <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+    <span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">NamedQuery</code>通过注解标注在<code class="language-plaintext highlighter-rouge">User</code>类上，它的定义和上一节的<code class="language-plaintext highlighter-rouge">User</code>类一样：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@NamedQueries</span><span class="o">(</span>
+    <span class="nd">@NamedQuery</span><span class="o">(</span>
+        <span class="c1">// 查询名称:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">"login"</span><span class="o">,</span>
+        <span class="c1">// 查询语句:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s">"SELECT u FROM User u WHERE u.email = :e AND u.password = :pwd"</span>
+    <span class="o">)</span>
+<span class="o">)</span>
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">extends</span> <span class="nc">AbstractEntity</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>对比Hibernate，不同点在于：不需要<code class="language-plaintext highlighter-rouge">getCurrentSession()</code>，<code class="language-plaintext highlighter-rouge">list()</code>变为<code class="language-plaintext highlighter-rouge">getResultList()</code>。</p><p>对数据库进行增删改的操作，可以分别使用<code class="language-plaintext highlighter-rouge">persist()</code>、<code class="language-plaintext highlighter-rouge">remove()</code>和<code class="language-plaintext highlighter-rouge">merge()</code>方法，参数均为Entity Bean本身，使用非常简单，基本上都是去掉<code class="language-plaintext highlighter-rouge">getCurrentSession()</code>就行。</p><p>实际上，<code class="language-plaintext highlighter-rouge">EntityManager</code>接口和Hibernate的<code class="language-plaintext highlighter-rouge">Session</code>接口在方法上有很多重叠之处，因为<code class="language-plaintext highlighter-rouge">EntityManager</code>接口是JPA的一部分，而Hibernate<strong>实现</strong>了JPA规范。即：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Session</span> <span class="kd">extends</span> <span class="nc">SharedSessionContract</span><span class="o">,</span> <span class="nc">EntityManager</span><span class="o">,</span> <span class="nc">HibernateEntityManager</span><span class="o">,</span> <span class="nc">AutoCloseable</span><span class="o">,</span> <span class="nc">Closeable</span> <span class="o">{}</span>
+</code></pre></div></div><p>一些常见的方法，无论是在<code class="language-plaintext highlighter-rouge">EntityManager</code>接口还是Hibernate的<code class="language-plaintext highlighter-rouge">Session</code>接口中都可以找到，包括<code class="language-plaintext highlighter-rouge">persist()</code>、<code class="language-plaintext highlighter-rouge">merge()</code>、<code class="language-plaintext highlighter-rouge">refresh()</code>、<code class="language-plaintext highlighter-rouge">find()</code>、<code class="language-plaintext highlighter-rouge">remove()</code>等。这些方法在JPA规范中定义，并且Hibernate作为JPA的实现，也提供了相应的实现。</p><p>对于之前提到的编程式事务：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">User</span> <span class="nf">register</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 创建一个User对象:</span>
+    <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+    <span class="c1">// 设置好各个属性:</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+
+    <span class="nc">Transaction</span> <span class="n">transaction</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">(</span><span class="nc">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">sessionFactory</span><span class="o">.</span><span class="na">openSession</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">transaction</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">beginTransaction</span><span class="o">();</span>
+        <span class="c1">// 保存到数据库:</span>
+        <span class="n">session</span><span class="o">.</span><span class="na">persist</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="n">transaction</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+        <span class="c1">// 现在已经自动获得了id:</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">transaction</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">transaction</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>改写一下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">User</span> <span class="nf">register</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 创建一个User对象:</span>
+    <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+    <span class="c1">// 设置好各个属性:</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+
+    <span class="nc">EntityTransaction</span> <span class="n">transaction</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">try</span>  <span class="o">{</span>
+        <span class="n">transaction</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">();</span>
+        <span class="c1">// 保存到数据库:</span>
+        <span class="n">em</span><span class="o">.</span><span class="na">persist</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="n">transaction</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+        <span class="c1">// 现在已经自动获得了id:</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">transaction</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">transaction</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>运行后会报错：不允许在共享 EntityManager 上创建事务 - 改用 Spring 事务或 EJB CMT。</p><p>改为Spring事务：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Autowired</span>
+<span class="kd">private</span>  <span class="nc">PlatformTransactionManager</span> <span class="n">transactionManager</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="nc">User</span> <span class="nf">register</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 创建一个User对象:</span>
+    <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+    <span class="c1">// 设置好各个属性:</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+    <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+
+    <span class="nc">TransactionDefinition</span> <span class="n">def</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DefaultTransactionDefinition</span><span class="o">();</span>
+    <span class="nc">TransactionStatus</span> <span class="n">status</span> <span class="o">=</span> <span class="n">transactionManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="n">def</span><span class="o">);</span>
+    <span class="k">try</span>  <span class="o">{</span>
+        <span class="c1">// 保存到数据库:</span>
+        <span class="n">em</span><span class="o">.</span><span class="na">persist</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="n">transactionManager</span><span class="o">.</span><span class="na">commit</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+        <span class="c1">// 现在已经自动获得了id:</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">transactionManager</span><span class="o">.</span><span class="na">rollback</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+        <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>正常。</p><p>完整实例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd.test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.zaxxer.hikari.HikariConfig</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.zaxxer.hikari.HikariDataSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Value</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContext</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.orm.jpa.JpaTransactionManager</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.PlatformTransactionManager</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.TransactionDefinition</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.TransactionStatus</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.annotation.EnableTransactionManagement</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.annotation.Transactional</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.support.DefaultTransactionDefinition</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.persistence.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.sql.DataSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.time.Instant</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.time.ZoneId</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.time.ZonedDateTime</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Properties</span><span class="o">;</span>
+
+
+<span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="nd">@EnableTransactionManagement</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test4</span><span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">ApplicationContext</span> <span class="n">ac</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AnnotationConfigApplicationContext</span><span class="o">(</span><span class="nc">Test4</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="nc">UserService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">ac</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="nc">UserService</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">service</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="s">"1@qq.com"</span><span class="o">,</span><span class="s">"123456"</span><span class="o">,</span><span class="s">"小米"</span><span class="o">);</span>
+        <span class="n">service</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="s">"2@qq.com"</span><span class="o">,</span><span class="s">"123456"</span><span class="o">,</span><span class="s">"小明"</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">selectByEmailAndByPassword</span><span class="o">(</span><span class="s">"1@qq.com"</span><span class="o">,</span> <span class="s">"123456"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list2</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">selectByEmailAndByPassword2</span><span class="o">(</span><span class="s">"2@qq.com"</span><span class="o">,</span> <span class="s">"123456"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">list2</span><span class="o">);</span>
+        <span class="n">service</span><span class="o">.</span><span class="na">deleteUser</span><span class="o">(</span><span class="mi">1L</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list3</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">selectByEmailAndByPassword</span><span class="o">(</span><span class="s">"1@qq.com"</span><span class="o">,</span> <span class="s">"123456"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">list3</span><span class="o">);</span>
+        <span class="n">service</span><span class="o">.</span><span class="na">updateUser</span><span class="o">(</span><span class="mi">2L</span><span class="o">,</span><span class="s">"小华"</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list4</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">selectByEmailAndByPassword</span><span class="o">(</span><span class="s">"2@qq.com"</span><span class="o">,</span> <span class="s">"123456"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">list4</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@Configuration</span>
+<span class="nd">@PropertySource</span><span class="o">(</span><span class="s">"classpath:jdbc.properties"</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">Config</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${jdbc.url}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">jdbcUrl</span><span class="o">;</span>
+
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${jdbc.username}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">jdbcUsername</span><span class="o">;</span>
+
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${jdbc.password}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">jdbcPassword</span><span class="o">;</span>
+
+    <span class="nd">@Bean</span>
+    <span class="nc">DataSource</span> <span class="nf">createDataSource</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">HikariConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HikariConfig</span><span class="o">();</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">setJdbcUrl</span><span class="o">(</span><span class="n">jdbcUrl</span><span class="o">);</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">setUsername</span><span class="o">(</span><span class="n">jdbcUsername</span><span class="o">);</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">jdbcPassword</span><span class="o">);</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">addDataSourceProperty</span><span class="o">(</span><span class="s">"autoCommit"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">addDataSourceProperty</span><span class="o">(</span><span class="s">"connectionTimeout"</span><span class="o">,</span> <span class="s">"5"</span><span class="o">);</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">addDataSourceProperty</span><span class="o">(</span><span class="s">"idleTimeout"</span><span class="o">,</span> <span class="s">"60"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">HikariDataSource</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">LocalContainerEntityManagerFactoryBean</span> <span class="nf">createEntityManagerFactory</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">DataSource</span> <span class="n">dataSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">emFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocalContainerEntityManagerFactoryBean</span><span class="o">();</span>
+        <span class="c1">// 注入DataSource:</span>
+        <span class="n">emFactory</span><span class="o">.</span><span class="na">setDataSource</span><span class="o">(</span><span class="n">dataSource</span><span class="o">);</span>
+        <span class="c1">// 扫描指定的package获取所有entity class:</span>
+        <span class="n">emFactory</span><span class="o">.</span><span class="na">setPackagesToScan</span><span class="o">(</span><span class="nc">AbstractEntity</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getPackageName</span><span class="o">());</span>
+        <span class="c1">// 使用Hibernate作为JPA实现:</span>
+        <span class="n">emFactory</span><span class="o">.</span><span class="na">setJpaVendorAdapter</span><span class="o">(</span><span class="k">new</span> <span class="nc">HibernateJpaVendorAdapter</span><span class="o">());</span>
+        <span class="c1">// 其他配置项:</span>
+        <span class="kt">var</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Properties</span><span class="o">();</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.hbm2ddl.auto"</span><span class="o">,</span> <span class="s">"update"</span><span class="o">);</span> <span class="c1">// 生产环境不要使用</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.dialect"</span><span class="o">,</span> <span class="s">"org.hibernate.dialect.HSQLDialect"</span><span class="o">);</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"hibernate.show_sql"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span>
+        <span class="n">emFactory</span><span class="o">.</span><span class="na">setJpaProperties</span><span class="o">(</span><span class="n">props</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">emFactory</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">PlatformTransactionManager</span> <span class="nf">createTxManager</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">EntityManagerFactory</span> <span class="n">entityManagerFactory</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JpaTransactionManager</span><span class="o">(</span><span class="n">entityManagerFactory</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+
+<span class="nd">@MappedSuperclass</span>
+<span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractEntity</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">createdAt</span><span class="o">;</span>
+
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">updatable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">id</span><span class="o">;</span> <span class="o">}</span>
+
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">updatable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">getCreatedAt</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">createdAt</span><span class="o">;</span> <span class="o">}</span>
+
+    <span class="nd">@Transient</span>
+    <span class="kd">public</span> <span class="nc">ZonedDateTime</span> <span class="nf">getCreatedDateTime</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Instant</span><span class="o">.</span><span class="na">ofEpochMilli</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">createdAt</span><span class="o">).</span><span class="na">atZone</span><span class="o">(</span><span class="nc">ZoneId</span><span class="o">.</span><span class="na">systemDefault</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreatedAt</span><span class="o">(</span><span class="nc">Long</span> <span class="n">createdAt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">createdAt</span> <span class="o">=</span> <span class="n">createdAt</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PrePersist</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">preInsert</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">setCreatedAt</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@NamedQueries</span><span class="o">({</span>
+        <span class="nd">@NamedQuery</span><span class="o">(</span>
+                <span class="c1">// 查询名称:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s">"login"</span><span class="o">,</span>
+                <span class="c1">// 查询语句:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="s">"SELECT u FROM User u WHERE u.email = :e AND u.password = :pwd"</span>
+        <span class="o">),</span>
+        <span class="nd">@NamedQuery</span><span class="o">(</span>
+                <span class="c1">// 查询名称:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s">"selectByID"</span><span class="o">,</span>
+                <span class="c1">// 查询语句:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="s">"SELECT u FROM User u WHERE u.id = :id"</span>
+        <span class="o">),</span>
+    <span class="o">}</span>
+<span class="o">)</span>
+<span class="nd">@Entity</span>
+<span class="kd">class</span> <span class="nc">User</span> <span class="kd">extends</span> <span class="nc">AbstractEntity</span><span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">User</span><span class="o">()</span> <span class="o">{}</span>
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getEmail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getPassword</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">password</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setEmail</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPassword</span><span class="o">(</span><span class="nc">String</span> <span class="n">password</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="s">"User{email='"</span> <span class="o">+</span> <span class="n">email</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="s">", password='"</span> <span class="o">+</span> <span class="n">password</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="s">", name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span> <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">UserService</span> <span class="o">{</span>
+    <span class="nd">@PersistenceContext</span>
+    <span class="nc">EntityManager</span> <span class="n">em</span><span class="o">;</span>
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span>  <span class="nc">PlatformTransactionManager</span> <span class="n">transactionManager</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">User</span> <span class="nf">register</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 创建一个User对象:</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+        <span class="c1">// 设置好各个属性:</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+
+        <span class="nc">TransactionDefinition</span> <span class="n">def</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DefaultTransactionDefinition</span><span class="o">();</span>
+        <span class="nc">TransactionStatus</span> <span class="n">status</span> <span class="o">=</span> <span class="n">transactionManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="n">def</span><span class="o">);</span>
+        <span class="k">try</span>  <span class="o">{</span>
+            <span class="c1">// 保存到数据库:</span>
+            <span class="n">em</span><span class="o">.</span><span class="na">persist</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+            <span class="n">transactionManager</span><span class="o">.</span><span class="na">commit</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+            <span class="c1">// 现在已经自动获得了id:</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">transactionManager</span><span class="o">.</span><span class="na">rollback</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Transactional</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">deleteUser</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">id</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">user</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">em</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Transactional</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">updateUser</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">id</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+        <span class="n">em</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">selectByEmailAndByPassword</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">){</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">em</span>
+                <span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT u from User u where u.email = :e and u.password = :p"</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"e"</span><span class="o">,</span> <span class="n">email</span><span class="o">).</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"p"</span><span class="o">,</span> <span class="n">password</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Transactional</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">selectByEmailAndByPassword2</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">){</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">em</span>
+                <span class="o">.</span><span class="na">createNamedQuery</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="c1">// 创建NamedQuery</span>
+                <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"e"</span><span class="o">,</span> <span class="n">email</span><span class="o">)</span> <span class="c1">// 绑定e参数</span>
+                <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"pwd"</span><span class="o">,</span> <span class="n">password</span><span class="o">)</span> <span class="c1">// 绑定pwd参数</span>
+                <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2021/11/13/Spring/" target="_blank">https://acteds.github.io/2021/11/13/Spring/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1718363945', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
