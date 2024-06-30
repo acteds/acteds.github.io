@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Spring &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2021/11/13/Spring/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Spring"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2021/11/13/Spring/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2021-11-13"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Spring"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Spring</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2021/11/13 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 201484 字，约 576 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>Spring框架笔记。</p><h1 id="spring">Spring</h1><p>Spring是一个支持快速开发Java EE应用程序的框架。它提供了一系列底层容器和基础设施，并可以和大量常用的开源框架无缝集成，可以说是开发Java EE应用程序的必备。</p><p>Spring Framework主要包括几个模块：</p><ul><li>支持IoC和AOP的容器；</li><li>支持JDBC和ORM的数据访问模块；</li><li>支持声明式事务的模块；</li><li>支持基于Servlet的MVC开发；</li><li>支持基于Reactive的Web开发；</li><li>以及集成JMS、JavaMail、JMX、缓存等其他模块。</li></ul><h2 id="ioc">IoC</h2><p>容器是一种为某种特定组件的运行提供必要支持的一个软件环境。例如，Tomcat就是一个Servlet容器，它可以为Servlet的运行提供运行环境。类似Docker这样的软件也是一个容器，它提供了必要的Linux环境以便运行一个特定的Linux进程。</p><p>通常来说，使用容器运行组件，除了提供一个组件运行环境之外，容器还提供了许多底层服务。例如，Servlet容器底层实现了TCP连接，解析HTTP协议等非常复杂的服务，如果没有容器来提供这些服务，我们就无法编写像Servlet这样代码简单，功能强大的组件。早期的JavaEE服务器提供的EJB容器最重要的功能就是通过声明式事务服务，使得EJB组件的开发人员不必自己编写冗长的事务处理代码，所以极大地简化了事务处理。</p><p>Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级的JavaBean组件，提供的底层服务包括组件的生命周期管理、配置和组装服务、AOP支持，以及建立在AOP基础上的声明式事务服务等。</p><p>IoC全称Inversion of Control，直译为控制反转。</p><p>假定一个在线书店，通过<code class="language-plaintext highlighter-rouge">BookService</code>获取书籍：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BookService</span> <span class="o">{</span>
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Spring &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2021/11/13/Spring/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Spring"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2021/11/13/Spring/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2021-11-13"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Spring"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Spring</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2021/11/13 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 222333 字，约 636 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>Spring框架笔记。</p><h1 id="spring">Spring</h1><p>Spring是一个支持快速开发Java EE应用程序的框架。它提供了一系列底层容器和基础设施，并可以和大量常用的开源框架无缝集成，可以说是开发Java EE应用程序的必备。</p><p>Spring Framework主要包括几个模块：</p><ul><li>支持IoC和AOP的容器；</li><li>支持JDBC和ORM的数据访问模块；</li><li>支持声明式事务的模块；</li><li>支持基于Servlet的MVC开发；</li><li>支持基于Reactive的Web开发；</li><li>以及集成JMS、JavaMail、JMX、缓存等其他模块。</li></ul><h2 id="ioc">IoC</h2><p>容器是一种为某种特定组件的运行提供必要支持的一个软件环境。例如，Tomcat就是一个Servlet容器，它可以为Servlet的运行提供运行环境。类似Docker这样的软件也是一个容器，它提供了必要的Linux环境以便运行一个特定的Linux进程。</p><p>通常来说，使用容器运行组件，除了提供一个组件运行环境之外，容器还提供了许多底层服务。例如，Servlet容器底层实现了TCP连接，解析HTTP协议等非常复杂的服务，如果没有容器来提供这些服务，我们就无法编写像Servlet这样代码简单，功能强大的组件。早期的JavaEE服务器提供的EJB容器最重要的功能就是通过声明式事务服务，使得EJB组件的开发人员不必自己编写冗长的事务处理代码，所以极大地简化了事务处理。</p><p>Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级的JavaBean组件，提供的底层服务包括组件的生命周期管理、配置和组装服务、AOP支持，以及建立在AOP基础上的声明式事务服务等。</p><p>IoC全称Inversion of Control，直译为控制反转。</p><p>假定一个在线书店，通过<code class="language-plaintext highlighter-rouge">BookService</code>获取书籍：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BookService</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="nc">HikariConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HikariConfig</span><span class="o">();</span>
     <span class="kd">private</span> <span class="nc">DataSource</span> <span class="n">dataSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HikariDataSource</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
 
@@ -5006,4 +5006,650 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
         <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
-</code></pre></div></div><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2021/11/13/Spring/" target="_blank">https://acteds.github.io/2021/11/13/Spring/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1719670676', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
+</code></pre></div></div><h3 id="国际化">国际化</h3><p>在开发应用程序的时候，经常会遇到支持多语言的需求，这种支持多语言的功能称之为国际化，英文是internationalization，缩写为i18n（因为首字母i和末字母n中间有18个字母）。</p><p>还有针对特定地区的本地化功能，英文是localization，缩写为L10n，本地化是指根据地区调整类似姓名、日期的显示等。</p><p>也有把上面两者合称为全球化，英文是globalization，缩写为g11n。</p><p>在Java中，支持多语言和本地化是通过<code class="language-plaintext highlighter-rouge">MessageFormat</code>配合<code class="language-plaintext highlighter-rouge">Locale</code>实现的：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">price</span> <span class="o">=</span> <span class="mf">123.5</span><span class="o">;</span>
+<span class="kt">int</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+<span class="nc">Object</span><span class="o">[]</span> <span class="n">arguments</span> <span class="o">=</span> <span class="o">{</span> <span class="n">price</span><span class="o">,</span> <span class="n">number</span> <span class="o">};</span>
+<span class="nc">MessageFormat</span> <span class="n">mfUS</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MessageFormat</span><span class="o">(</span><span class="s">"Pay {0,number,currency} for {1} books."</span><span class="o">,</span> <span class="nc">Locale</span><span class="o">.</span><span class="na">US</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mfUS</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">arguments</span><span class="o">));</span>
+<span class="nc">MessageFormat</span> <span class="n">mfZH</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MessageFormat</span><span class="o">(</span><span class="s">"{1}本书一共{0,number,currency}。"</span><span class="o">,</span> <span class="nc">Locale</span><span class="o">.</span><span class="na">CHINA</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mfZH</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">arguments</span><span class="o">));</span>
+</code></pre></div></div><p>对于Web应用程序，要实现国际化功能，主要是渲染View的时候，要把各种语言的资源文件提出来，这样，不同的用户访问同一个页面时，显示的语言就是不同的。</p><h4 id="获取locale">获取<code class="language-plaintext highlighter-rouge">Locale</code></h4><p>实现国际化的第一步是获取到用户的<code class="language-plaintext highlighter-rouge">Locale</code>。在Web应用程序中，HTTP规范规定了浏览器会在请求中携带<code class="language-plaintext highlighter-rouge">Accept-Language</code>头，用来指示用户浏览器设定的语言顺序，如：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Accept-Language: zh-CN,zh;q=0.8,en;q=0.2
+</code></pre></div></div><p>上述HTTP请求头表示优先选择简体中文，其次选择中文，最后选择英文。<code class="language-plaintext highlighter-rouge">q</code>表示权重，解析后可获得一个根据优先级排序的语言列表，把它转换为Java的<code class="language-plaintext highlighter-rouge">Locale</code>，即获得了用户的<code class="language-plaintext highlighter-rouge">Locale</code>。大多数框架通常只返回权重最高的<code class="language-plaintext highlighter-rouge">Locale</code>。</p><p>Spring MVC通过<code class="language-plaintext highlighter-rouge">LocaleResolver</code>来自动从<code class="language-plaintext highlighter-rouge">HttpServletRequest</code>中获取<code class="language-plaintext highlighter-rouge">Locale</code>。有多种<code class="language-plaintext highlighter-rouge">LocaleResolver</code>的实现类，其中最常用的是<code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Primary</span>
+<span class="nd">@Bean</span>
+<span class="nc">LocaleResolver</span> <span class="nf">createLocaleResolver</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">clr</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CookieLocaleResolver</span><span class="o">();</span>
+    <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultLocale</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+    <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultTimeZone</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+    <span class="k">return</span> <span class="n">clr</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>从<code class="language-plaintext highlighter-rouge">HttpServletRequest</code>中获取<code class="language-plaintext highlighter-rouge">Locale</code>时，首先根据一个特定的Cookie判断是否指定了<code class="language-plaintext highlighter-rouge">Locale</code>，如果没有，就从HTTP头获取，如果还没有，就返回默认的<code class="language-plaintext highlighter-rouge">Locale</code>。</p><p>当用户第一次访问网站时，<code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>只能从HTTP头获取<code class="language-plaintext highlighter-rouge">Locale</code>，即使用浏览器的默认语言。通常网站也允许用户自己选择语言，此时，<code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>就会把用户选择的语言存放到Cookie中，下一次访问时，就会返回用户上次选择的语言而不是浏览器默认语言。</p><p><code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>读取Locale的顺序是<strong>先从<code class="language-plaintext highlighter-rouge">cookie</code>读取，再看有没有设置默认locale,最后从<code class="language-plaintext highlighter-rouge">accept-language</code>中读取。</strong></p><h4 id="提取资源文件">提取资源文件</h4><p>第二步是把写死在模板中的字符串以资源文件的方式存储在外部。对于多语言，主文件名如果命名为<code class="language-plaintext highlighter-rouge">messages</code>，那么资源文件必须按如下方式命名并放入classpath中：</p><ul><li>默认语言，文件名必须为<code class="language-plaintext highlighter-rouge">messages.properties</code>；</li><li>简体中文，Locale是<code class="language-plaintext highlighter-rouge">zh_CN</code>，文件名必须为<code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>；</li><li>日文，Locale是<code class="language-plaintext highlighter-rouge">ja_JP</code>，文件名必须为<code class="language-plaintext highlighter-rouge">messages_ja_JP.properties</code>；</li><li>其它更多语言……</li></ul><p>每个资源文件都有相同的key，例如，默认语言是英文，文件<code class="language-plaintext highlighter-rouge">messages.properties</code>内容如下：</p><div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">language.select</span><span class="p">=</span><span class="s">Language</span>
+<span class="py">home</span><span class="p">=</span><span class="s">Home</span>
+<span class="py">signin</span><span class="p">=</span><span class="s">Sign In</span>
+<span class="py">copyright</span><span class="p">=</span><span class="s">Copyright©{0,number,#}</span>
+<span class="py">hello</span><span class="p">=</span><span class="s">hello</span>
+</code></pre></div></div><p>文件<code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>内容如下：</p><div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">language.select</span><span class="p">=</span><span class="s">语言</span>
+<span class="py">home</span><span class="p">=</span><span class="s">首页</span>
+<span class="py">signin</span><span class="p">=</span><span class="s">登录</span>
+<span class="py">copyright</span><span class="p">=</span><span class="s">版权所有©{0,number,#}</span>
+<span class="py">hello</span><span class="p">=</span><span class="s">你好</span>
+</code></pre></div></div><h4 id="创建messagesource">创建<code class="language-plaintext highlighter-rouge">MessageSource</code></h4><p>第三步是创建一个Spring提供的<code class="language-plaintext highlighter-rouge">MessageSource</code>实例，它自动读取所有的<code class="language-plaintext highlighter-rouge">.properties</code>文件，并提供一个统一接口来实现“翻译”：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// code, arguments, locale:</span>
+<span class="nc">String</span> <span class="n">text</span> <span class="o">=</span> <span class="n">messageSource</span><span class="o">.</span><span class="na">getMessage</span><span class="o">(</span><span class="s">"signin"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+</code></pre></div></div><p>其中，<code class="language-plaintext highlighter-rouge">signin</code>是在<code class="language-plaintext highlighter-rouge">.properties</code>文件中定义的key，第二个参数是<code class="language-plaintext highlighter-rouge">Object[]</code>数组作为格式化时传入的参数，最后一个参数就是获取的用户<code class="language-plaintext highlighter-rouge">Locale</code>实例。</p><p>创建<code class="language-plaintext highlighter-rouge">MessageSource</code>如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span>
+<span class="nc">MessageSource</span> <span class="nf">createMessageSource</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">messageSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ResourceBundleMessageSource</span><span class="o">();</span>
+    <span class="c1">// 指定文件是UTF-8编码:</span>
+    <span class="n">messageSource</span><span class="o">.</span><span class="na">setDefaultEncoding</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
+    <span class="c1">// 指定主文件名:</span>
+    <span class="n">messageSource</span><span class="o">.</span><span class="na">setBasename</span><span class="o">(</span><span class="s">"messages"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">messageSource</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">ResourceBundleMessageSource</code>会自动根据主文件名自动把所有相关语言的资源文件都读进来。</p><p>Spring容器会创建不只一个<code class="language-plaintext highlighter-rouge">MessageSource</code>实例，我们自己创建的这个<code class="language-plaintext highlighter-rouge">MessageSource</code>是专门给页面国际化使用的，因此命名为<code class="language-plaintext highlighter-rouge">i18n</code>，不会与其它<code class="language-plaintext highlighter-rouge">MessageSource</code>实例冲突。</p><h4 id="实现多语言">实现多语言</h4><p>要在View中使用<code class="language-plaintext highlighter-rouge">MessageSource</code>加上<code class="language-plaintext highlighter-rouge">Locale</code>输出多语言，可以通过编写一个<code class="language-plaintext highlighter-rouge">MvcInterceptor</code>，把相关资源注入到<code class="language-plaintext highlighter-rouge">ModelAndView</code>中：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MvcInterceptor</span> <span class="kd">implements</span> <span class="nc">HandlerInterceptor</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">LocaleResolver</span> <span class="n">localeResolver</span><span class="o">;</span>
+
+    <span class="c1">// 注意注入的MessageSource名称是i18n:</span>
+    <span class="nd">@Autowired</span>
+    <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span>
+    <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">postHandle</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">,</span> <span class="nc">ModelAndView</span> <span class="n">modelAndView</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">modelAndView</span> <span class="o">!=</span> <span class="kc">null</span> <span class="c1">// 返回了ModelAndView</span>
+            <span class="o">&amp;&amp;</span> <span class="n">modelAndView</span><span class="o">.</span><span class="na">getViewName</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="c1">// 设置了View</span>
+            <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">modelAndView</span><span class="o">.</span><span class="na">getViewName</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"redirect:"</span><span class="o">)</span> <span class="c1">// 不是重定向</span>
+        <span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 解析用户的Locale:</span>
+            <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="n">localeResolver</span><span class="o">.</span><span class="na">resolveLocale</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="c1">// 放入Model:</span>
+            <span class="n">modelAndView</span><span class="o">.</span><span class="na">addObject</span><span class="o">(</span><span class="s">"__messageSource__"</span><span class="o">,</span> <span class="n">messageSource</span><span class="o">);</span>
+            <span class="n">modelAndView</span><span class="o">.</span><span class="na">addObject</span><span class="o">(</span><span class="s">"__locale__"</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>并在<code class="language-plaintext highlighter-rouge">WebMvcConfigurer</code>中注册<code class="language-plaintext highlighter-rouge">MvcInterceptor</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">WebMvcConfigurer</span> <span class="nf">createWebMvcConfigurer</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">HandlerInterceptor</span><span class="o">[]</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">WebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="nc">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">var</span> <span class="n">interceptor</span> <span class="o">:</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">interceptor</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="o">...</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div></div><p>现在，就可以在View中调用<code class="language-plaintext highlighter-rouge">MessageSource.getMessage()</code>方法来实现多语言：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/signin"</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div><p>上述这种写法虽然可行，但格式太复杂了。使用View时，要根据每个特定的View引擎定制国际化函数。在Pebble中，可以封装一个国际化函数，名称就是下划线<code class="language-plaintext highlighter-rouge">_</code>，改造一下创建<code class="language-plaintext highlighter-rouge">ViewResolver</code>的代码：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">ViewResolver</span> <span class="nf">createViewResolver</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">,</span> <span class="nd">@Autowired</span> <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span> <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+            <span class="c1">// cache:</span>
+            <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+            <span class="c1">// loader:</span>
+            <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">))</span>
+            <span class="c1">// 添加扩展:</span>
+            <span class="o">.</span><span class="na">extension</span><span class="o">(</span><span class="n">createExtension</span><span class="o">(</span><span class="n">messageSource</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="kt">var</span> <span class="n">viewResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleViewResolver</span><span class="o">(</span><span class="n">engine</span><span class="o">);</span>
+    <span class="n">viewResolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates/"</span><span class="o">);</span>
+    <span class="n">viewResolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">viewResolver</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="kd">private</span> <span class="nc">Extension</span> <span class="nf">createExtension</span><span class="o">(</span><span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">AbstractExtension</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&gt;</span> <span class="nf">getFunctions</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"_"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">,</span> <span class="nc">PebbleTemplate</span> <span class="n">self</span><span class="o">,</span> <span class="nc">EvaluationContext</span> <span class="n">context</span><span class="o">,</span> <span class="kt">int</span> <span class="n">lineNumber</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">args</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"0"</span><span class="o">);</span>
+                    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">arguments</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">extractArguments</span><span class="o">(</span><span class="n">args</span><span class="o">);</span>
+                    <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Locale</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getVariable</span><span class="o">(</span><span class="s">"__locale__"</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="n">messageSource</span><span class="o">.</span><span class="na">getMessage</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">arguments</span><span class="o">.</span><span class="na">toArray</span><span class="o">(),</span> <span class="s">"???"</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s">"???"</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">extractArguments</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+                    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">arguments</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+                    <span class="k">while</span> <span class="o">(</span><span class="n">args</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">i</span><span class="o">)))</span> <span class="o">{</span>
+                        <span class="nc">Object</span> <span class="n">param</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+                        <span class="n">arguments</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">param</span><span class="o">);</span>
+                        <span class="n">i</span><span class="o">++;</span>
+                    <span class="o">}</span>
+                    <span class="k">return</span> <span class="n">arguments</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getArgumentNames</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div></div><p>这样，我们可以把多语言页面改写为：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/signin"</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div><p>如果是带参数的多语言，需要把参数传进去：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;h5&gt;&lt;/h5&gt;</span>
+</code></pre></div></div><p>使用其它View引擎时，也应当根据引擎接口实现更方便的语法。</p><hr /><p>也可以直接把pebble-spring已经实现的SpringExtension拿来用：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">ViewResolver</span> <span class="nf">createViewResolver</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">,</span> <span class="nd">@Autowired</span> <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span> <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+            <span class="c1">// cache:</span>
+            <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+            <span class="c1">// loader:</span>
+            <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">))</span>
+            <span class="c1">// 添加扩展:</span>
+            <span class="o">.</span><span class="na">extension</span><span class="o">(</span><span class="k">new</span> <span class="nc">SpringExtension</span><span class="o">(</span><span class="n">messageSource</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="kt">var</span> <span class="n">viewResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleViewResolver</span><span class="o">(</span><span class="n">engine</span><span class="o">);</span>
+    <span class="n">viewResolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates/"</span><span class="o">);</span>
+    <span class="n">viewResolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">viewResolver</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>然后在模板里，可以直接使用MessageSourceFunction定义的函数message(…)：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/signin"</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div><h4 id="切换locale">切换<code class="language-plaintext highlighter-rouge">Locale</code></h4><p>如果需要允许用户手动切换<code class="language-plaintext highlighter-rouge">Locale</code>，可以编写一个<code class="language-plaintext highlighter-rouge">LocaleController</code>来实现该功能：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Controller</span>
+<span class="kd">class</span> <span class="nc">LocaleController</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">LocaleResolver</span> <span class="n">localeResolver</span><span class="o">;</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/locale/{lo}"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">setLocale</span><span class="o">(</span><span class="nd">@PathVariable</span><span class="o">(</span><span class="s">"lo"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">lo</span><span class="o">,</span> <span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 根据传入的lo创建Locale实例:</span>
+        <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="sc">'_'</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">lang</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">pos</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">country</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Locale</span><span class="o">(</span><span class="n">lang</span><span class="o">,</span> <span class="n">country</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Locale</span><span class="o">(</span><span class="n">lo</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 设定此Locale:</span>
+        <span class="n">localeResolver</span><span class="o">.</span><span class="na">setLocale</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"locale is set to {}."</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="c1">// 刷新页面:</span>
+        <span class="nc">String</span> <span class="n">referer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getHeader</span><span class="o">(</span><span class="s">"Referer"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="s">"redirect:"</span> <span class="o">+</span> <span class="o">(</span><span class="n">referer</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="s">"/"</span> <span class="o">:</span> <span class="n">referer</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/locale/en</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_en.properties</code>文件内容。</p><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/locale/zh</code>即可切换到<code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>文件。</p><p><code class="language-plaintext highlighter-rouge">templates/index.html</code>:</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;/h1&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div><p>也可以通过spring自带的一个通过GET请求参数传递并修改locale的<code class="language-plaintext highlighter-rouge">LocaleChangeInterceptor</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">WebMvcConfigurer</span> <span class="nf">createWebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">WebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+		<span class="o">...</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="nc">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">LocaleChangeInterceptor</span> <span class="n">l</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocaleChangeInterceptor</span><span class="o">();</span>
+            <span class="n">l</span><span class="o">.</span><span class="na">setParamName</span><span class="o">(</span><span class="s">"lang"</span><span class="o">);</span>
+            <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">l</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div></div><p>可以代替MvcInterceptor和LocaleController组合，直接通过类似<code class="language-plaintext highlighter-rouge">request_url/?lang=en</code>方式修改locale，他的要点则是需要注入我们自己的CookieLocaleResolver作为他的LocaleResolver，办法也很简单，给我们的bean添加一个别名：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span><span class="o">(</span><span class="s">"localeResolver"</span><span class="o">)</span>
+<span class="nc">LocaleResolver</span> <span class="nf">createLocaleResolver</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">var</span> <span class="n">clr</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CookieLocaleResolver</span><span class="o">();</span>
+    <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultLocale</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+    <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultTimeZone</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+    <span class="k">return</span> <span class="n">clr</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><p>其实pebble内置了一个i18n函数，和message也大致相同，不同的是没有用到ResourceBundleMessageSource，需要在用的时候给出bundle名，如：</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;/h1&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div><h4 id="实例">实例</h4><p>完整代码1：</p><p><code class="language-plaintext highlighter-rouge">Test4.java</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd.test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.PebbleEngine</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.extension.AbstractExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.extension.Extension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.extension.Function</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.loader.ServletLoader</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.template.EvaluationContext</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.template.PebbleTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.spring.servlet.PebbleViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.Context</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.LifecycleException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.WebResourceRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.startup.Tomcat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.DirResourceSet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.StandardRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.mybatis.spring.annotation.MapperScan</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Qualifier</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.MessageSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.ComponentScan</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Primary</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.support.ResourceBundleMessageSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Controller</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.transaction.annotation.EnableTransactionManagement</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.GetMapping</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.PathVariable</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.HandlerInterceptor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.LocaleResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.ModelAndView</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.ViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.config.annotation.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.i18n.CookieLocaleResolver</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.servlet.ServletContext</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletRequest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletResponse</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+
+
+<span class="cm">/**
+ * @author aotmd
+ * @version 1.0
+ * @date 2024/6/1 22:16
+ */</span>
+<span class="nd">@EnableWebMvc</span>
+<span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test4</span><span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">LifecycleException</span> <span class="o">{</span>
+        <span class="c1">//Locale.setDefault(Locale.ENGLISH);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="nc">Tomcat</span> <span class="n">tomcat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Tomcat</span><span class="o">();</span>
+        <span class="c1">// 设置Tomcat的端口号，默认为8080</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="s">"port"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">));</span>
+        <span class="c1">// 获取Tomcat的连接器</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getConnector</span><span class="o">();</span>
+
+        <span class="c1">// 将webapp添加到Tomcat，路径为src/main/webapp</span>
+        <span class="nc">Context</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">tomcat</span><span class="o">.</span><span class="na">addWebapp</span><span class="o">(</span>
+                <span class="s">""</span><span class="o">,</span>
+                <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"src/main/webapp"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">()</span>
+        <span class="o">);</span>
+        <span class="c1">//设置热部署</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setReloadable</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">// 创建Web资源根目录</span>
+        <span class="nc">WebResourceRoot</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StandardRoot</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span>
+        <span class="c1">// 添加预设资源，包括类路径和WEB-INF目录</span>
+        <span class="n">resources</span><span class="o">.</span><span class="na">addPreResources</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">DirResourceSet</span><span class="o">(</span>
+                        <span class="n">resources</span><span class="o">,</span>
+                        <span class="s">"/WEB-INF/classes"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"target/classes"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="s">"/"</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="c1">// 设置Web应用的资源</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setResources</span><span class="o">(</span><span class="n">resources</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="c1">// 等待Tomcat服务器结束</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getServer</span><span class="o">().</span><span class="na">await</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@Configuration</span>
+<span class="kd">class</span> <span class="nc">Config</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">WebMvcConfigurer</span> <span class="nf">createWebMvcConfigurer</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">HandlerInterceptor</span><span class="o">[]</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">WebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addResourceHandlers</span><span class="o">(</span><span class="nc">ResourceHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/static/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/static/"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addViewControllers</span><span class="o">(</span><span class="nc">ViewControllerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addViewController</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">setViewName</span><span class="o">(</span><span class="s">"/index.html"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addCorsMappings</span><span class="o">(</span><span class="nc">CorsRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addMapping</span><span class="o">(</span><span class="s">"/**"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedOrigins</span><span class="o">(</span><span class="s">"http://127.0.0.1:5500"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedMethods</span><span class="o">(</span><span class="s">"GET"</span><span class="o">,</span> <span class="s">"POST"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">maxAge</span><span class="o">(</span><span class="mi">3600</span><span class="o">);</span>
+                <span class="c1">// 可以继续添加其他URL规则:</span>
+                <span class="c1">// registry.addMapping("/rest/v2/**")...</span>
+            <span class="o">}</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="nc">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="kt">var</span> <span class="n">interceptor</span> <span class="o">:</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">interceptor</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span>
+    <span class="nc">MessageSource</span> <span class="nf">createMessageSource</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">messageSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ResourceBundleMessageSource</span><span class="o">();</span>
+        <span class="c1">// 指定文件是UTF-8编码:</span>
+        <span class="n">messageSource</span><span class="o">.</span><span class="na">setDefaultEncoding</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
+        <span class="c1">// 指定主文件名:</span>
+        <span class="n">messageSource</span><span class="o">.</span><span class="na">setBasename</span><span class="o">(</span><span class="s">"messages"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">messageSource</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">ViewResolver</span> <span class="nf">createViewResolver</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">,</span> <span class="nd">@Autowired</span> <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span> <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+                <span class="c1">// cache:</span>
+                <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+                <span class="c1">// loader:</span>
+                <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">))</span>
+                <span class="c1">// 添加扩展:</span>
+                <span class="o">.</span><span class="na">extension</span><span class="o">(</span><span class="n">createExtension</span><span class="o">(</span><span class="n">messageSource</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="kt">var</span> <span class="n">viewResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleViewResolver</span><span class="o">(</span><span class="n">engine</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates/"</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">viewResolver</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="nc">Extension</span> <span class="nf">createExtension</span><span class="o">(</span><span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">AbstractExtension</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&gt;</span> <span class="nf">getFunctions</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"_"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Function</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">,</span> <span class="nc">PebbleTemplate</span> <span class="n">self</span><span class="o">,</span> <span class="nc">EvaluationContext</span> <span class="n">context</span><span class="o">,</span> <span class="kt">int</span> <span class="n">lineNumber</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">args</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"0"</span><span class="o">);</span>
+                        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">arguments</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">extractArguments</span><span class="o">(</span><span class="n">args</span><span class="o">);</span>
+                        <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Locale</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getVariable</span><span class="o">(</span><span class="s">"__locale__"</span><span class="o">);</span>
+                        <span class="k">return</span> <span class="n">messageSource</span><span class="o">.</span><span class="na">getMessage</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">arguments</span><span class="o">.</span><span class="na">toArray</span><span class="o">(),</span> <span class="s">"???"</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s">"???"</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">extractArguments</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+                        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">arguments</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+                        <span class="k">while</span> <span class="o">(</span><span class="n">args</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">i</span><span class="o">)))</span> <span class="o">{</span>
+                            <span class="nc">Object</span> <span class="n">param</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+                            <span class="n">arguments</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">param</span><span class="o">);</span>
+                            <span class="n">i</span><span class="o">++;</span>
+                        <span class="o">}</span>
+                        <span class="k">return</span> <span class="n">arguments</span><span class="o">;</span>
+                    <span class="o">}</span>
+                    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getArgumentNames</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+    <span class="nd">@Primary</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">LocaleResolver</span> <span class="nf">createLocaleResolver</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">clr</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CookieLocaleResolver</span><span class="o">();</span>
+        <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultLocale</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultTimeZone</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">clr</span><span class="o">;</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">MvcInterceptor</span> <span class="kd">implements</span> <span class="nc">HandlerInterceptor</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">LocaleResolver</span> <span class="n">localeResolver</span><span class="o">;</span>
+
+    <span class="c1">// 注意注入的MessageSource名称是i18n:</span>
+    <span class="nd">@Autowired</span>
+    <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span>
+    <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">postHandle</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">,</span> <span class="nc">ModelAndView</span> <span class="n">modelAndView</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">modelAndView</span> <span class="o">!=</span> <span class="kc">null</span> <span class="c1">// 返回了ModelAndView</span>
+                <span class="o">&amp;&amp;</span> <span class="n">modelAndView</span><span class="o">.</span><span class="na">getViewName</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="c1">// 设置了View</span>
+                <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">modelAndView</span><span class="o">.</span><span class="na">getViewName</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"redirect:"</span><span class="o">)</span> <span class="c1">// 不是重定向</span>
+        <span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 解析用户的Locale:</span>
+            <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="n">localeResolver</span><span class="o">.</span><span class="na">resolveLocale</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="c1">// 放入Model:</span>
+            <span class="n">modelAndView</span><span class="o">.</span><span class="na">addObject</span><span class="o">(</span><span class="s">"__messageSource__"</span><span class="o">,</span> <span class="n">messageSource</span><span class="o">);</span>
+            <span class="n">modelAndView</span><span class="o">.</span><span class="na">addObject</span><span class="o">(</span><span class="s">"__locale__"</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@Controller</span>
+<span class="kd">class</span> <span class="nc">LocaleController</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">LocaleResolver</span> <span class="n">localeResolver</span><span class="o">;</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/locale/{lo}"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">setLocale</span><span class="o">(</span><span class="nd">@PathVariable</span><span class="o">(</span><span class="s">"lo"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">lo</span><span class="o">,</span> <span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 根据传入的lo创建Locale实例:</span>
+        <span class="nc">Locale</span> <span class="n">locale</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="sc">'_'</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">lang</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">pos</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">country</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Locale</span><span class="o">(</span><span class="n">lang</span><span class="o">,</span> <span class="n">country</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Locale</span><span class="o">(</span><span class="n">lo</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 设定此Locale:</span>
+        <span class="n">localeResolver</span><span class="o">.</span><span class="na">setLocale</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"locale is set to {}."</span><span class="o">,</span> <span class="n">locale</span><span class="o">);</span>
+        <span class="c1">// 刷新页面:</span>
+        <span class="nc">String</span> <span class="n">referer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getHeader</span><span class="o">(</span><span class="s">"Referer"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="s">"redirect:"</span> <span class="o">+</span> <span class="o">(</span><span class="n">referer</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="s">"/"</span> <span class="o">:</span> <span class="n">referer</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">src/main/webapp/WEB-INF/templates/index.html</code>:</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;/h1&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">web.xml</code>:</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;web-app</span> <span class="na">xmlns=</span><span class="s">"http://xmlns.jcp.org/xml/ns/javaee"</span>
+         <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="na">xsi:schemaLocation=</span><span class="s">"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"</span>
+         <span class="na">version=</span><span class="s">"4.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;servlet&gt;</span>
+        <span class="nt">&lt;servlet-name&gt;</span>dispatcher<span class="nt">&lt;/servlet-name&gt;</span>
+        <span class="nt">&lt;servlet-class&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="nt">&lt;/servlet-class&gt;</span>
+        <span class="nt">&lt;init-param&gt;</span>
+            <span class="nt">&lt;param-name&gt;</span>contextClass<span class="nt">&lt;/param-name&gt;</span>
+            <span class="nt">&lt;param-value&gt;</span>org.springframework.web.context.support.AnnotationConfigWebApplicationContext<span class="nt">&lt;/param-value&gt;</span>
+        <span class="nt">&lt;/init-param&gt;</span>
+        <span class="nt">&lt;init-param&gt;</span>
+            <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
+            <span class="nt">&lt;param-value&gt;</span>com.aotmd.test.Test4<span class="nt">&lt;/param-value&gt;</span>
+        <span class="nt">&lt;/init-param&gt;</span>
+        <span class="nt">&lt;load-on-startup&gt;</span>0<span class="nt">&lt;/load-on-startup&gt;</span>
+    <span class="nt">&lt;/servlet&gt;</span>
+
+    <span class="nt">&lt;servlet-mapping&gt;</span>
+        <span class="nt">&lt;servlet-name&gt;</span>dispatcher<span class="nt">&lt;/servlet-name&gt;</span>
+        <span class="nt">&lt;url-pattern&gt;</span>/*<span class="nt">&lt;/url-pattern&gt;</span>
+    <span class="nt">&lt;/servlet-mapping&gt;</span>
+
+    <span class="nt">&lt;filter&gt;</span>
+        <span class="nt">&lt;filter-name&gt;</span>encodingFilter<span class="nt">&lt;/filter-name&gt;</span>
+        <span class="nt">&lt;filter-class&gt;</span>org.springframework.web.filter.CharacterEncodingFilter<span class="nt">&lt;/filter-class&gt;</span>
+        <span class="nt">&lt;init-param&gt;</span>
+            <span class="nt">&lt;param-name&gt;</span>encoding<span class="nt">&lt;/param-name&gt;</span>
+            <span class="nt">&lt;param-value&gt;</span>UTF-8<span class="nt">&lt;/param-value&gt;</span>
+        <span class="nt">&lt;/init-param&gt;</span>
+        <span class="nt">&lt;init-param&gt;</span>
+            <span class="nt">&lt;param-name&gt;</span>forceEncoding<span class="nt">&lt;/param-name&gt;</span>
+            <span class="nt">&lt;param-value&gt;</span>true<span class="nt">&lt;/param-value&gt;</span>
+        <span class="nt">&lt;/init-param&gt;</span>
+    <span class="nt">&lt;/filter&gt;</span>
+
+    <span class="nt">&lt;filter-mapping&gt;</span>
+        <span class="nt">&lt;filter-name&gt;</span>encodingFilter<span class="nt">&lt;/filter-name&gt;</span>
+        <span class="nt">&lt;url-pattern&gt;</span>/*<span class="nt">&lt;/url-pattern&gt;</span>
+    <span class="nt">&lt;/filter-mapping&gt;</span>
+
+<span class="nt">&lt;/web-app&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">messages.properties</code></p><div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">language.select</span><span class="p">=</span><span class="s">Language</span>
+<span class="py">home</span><span class="p">=</span><span class="s">Home</span>
+<span class="py">signin</span><span class="p">=</span><span class="s">Sign In</span>
+<span class="py">copyright</span><span class="p">=</span><span class="s">Copyright©{0,number,#}</span>
+<span class="py">hello</span><span class="p">=</span><span class="s">hello</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">messages_en.properties</code></p><div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">language.select</span><span class="p">=</span><span class="s">Language</span>
+<span class="py">home</span><span class="p">=</span><span class="s">Home</span>
+<span class="py">signin</span><span class="p">=</span><span class="s">Sign In</span>
+<span class="py">copyright</span><span class="p">=</span><span class="s">Copyright©{0,number,#}</span>
+<span class="py">hello</span><span class="p">=</span><span class="s">hello</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code></p><div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">language.select</span><span class="p">=</span><span class="s">语言</span>
+<span class="py">home</span><span class="p">=</span><span class="s">首页</span>
+<span class="py">signin</span><span class="p">=</span><span class="s">登录</span>
+<span class="py">copyright</span><span class="p">=</span><span class="s">版权所有©{0,number,#}</span>
+<span class="py">hello</span><span class="p">=</span><span class="s">你好</span>
+</code></pre></div></div><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/locale/en</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_en.properties</code>文件内容。</p><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/locale/zh</code>即可切换到<code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>文件。</p><p>完整代码2，在1上修改：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd.test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.PebbleEngine</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.loader.ServletLoader</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.spring.extension.SpringExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.spring.servlet.PebbleViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.Context</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.LifecycleException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.WebResourceRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.startup.Tomcat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.DirResourceSet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.StandardRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Qualifier</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.MessageSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.ComponentScan</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.support.ResourceBundleMessageSource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.LocaleResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.ViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.config.annotation.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.i18n.CookieLocaleResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.i18n.LocaleChangeInterceptor</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.servlet.ServletContext</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Locale</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.TimeZone</span><span class="o">;</span>
+
+
+<span class="cm">/**
+ * @author aotmd
+ * @version 1.0
+ * @date 2024/6/1 22:16
+ */</span>
+<span class="nd">@EnableWebMvc</span>
+<span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test4</span><span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">LifecycleException</span> <span class="o">{</span>
+        <span class="c1">//Locale.setDefault(Locale.ENGLISH);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="nc">Tomcat</span> <span class="n">tomcat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Tomcat</span><span class="o">();</span>
+        <span class="c1">// 设置Tomcat的端口号，默认为8080</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="s">"port"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">));</span>
+        <span class="c1">// 获取Tomcat的连接器</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getConnector</span><span class="o">();</span>
+
+        <span class="c1">// 将webapp添加到Tomcat，路径为src/main/webapp</span>
+        <span class="nc">Context</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">tomcat</span><span class="o">.</span><span class="na">addWebapp</span><span class="o">(</span>
+                <span class="s">""</span><span class="o">,</span>
+                <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"src/main/webapp"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">()</span>
+        <span class="o">);</span>
+        <span class="c1">//设置热部署</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setReloadable</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">// 创建Web资源根目录</span>
+        <span class="nc">WebResourceRoot</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StandardRoot</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span>
+        <span class="c1">// 添加预设资源，包括类路径和WEB-INF目录</span>
+        <span class="n">resources</span><span class="o">.</span><span class="na">addPreResources</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">DirResourceSet</span><span class="o">(</span>
+                        <span class="n">resources</span><span class="o">,</span>
+                        <span class="s">"/WEB-INF/classes"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"target/classes"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="s">"/"</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="c1">// 设置Web应用的资源</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setResources</span><span class="o">(</span><span class="n">resources</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="c1">// 等待Tomcat服务器结束</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getServer</span><span class="o">().</span><span class="na">await</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@Configuration</span>
+<span class="kd">class</span> <span class="nc">Config</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">WebMvcConfigurer</span> <span class="nf">createWebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">WebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addResourceHandlers</span><span class="o">(</span><span class="nc">ResourceHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/static/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/static/"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addViewControllers</span><span class="o">(</span><span class="nc">ViewControllerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addViewController</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">setViewName</span><span class="o">(</span><span class="s">"/index.html"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addCorsMappings</span><span class="o">(</span><span class="nc">CorsRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addMapping</span><span class="o">(</span><span class="s">"/**"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedOrigins</span><span class="o">(</span><span class="s">"http://127.0.0.1:5500"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedMethods</span><span class="o">(</span><span class="s">"GET"</span><span class="o">,</span> <span class="s">"POST"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">maxAge</span><span class="o">(</span><span class="mi">3600</span><span class="o">);</span>
+                <span class="c1">// 可以继续添加其他URL规则:</span>
+                <span class="c1">// registry.addMapping("/rest/v2/**")...</span>
+            <span class="o">}</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="nc">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">LocaleChangeInterceptor</span> <span class="n">l</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocaleChangeInterceptor</span><span class="o">();</span>
+                <span class="n">l</span><span class="o">.</span><span class="na">setParamName</span><span class="o">(</span><span class="s">"lang"</span><span class="o">);</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">l</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span>
+    <span class="nc">MessageSource</span> <span class="nf">createMessageSource</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">messageSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ResourceBundleMessageSource</span><span class="o">();</span>
+        <span class="c1">// 指定文件是UTF-8编码:</span>
+        <span class="n">messageSource</span><span class="o">.</span><span class="na">setDefaultEncoding</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
+        <span class="c1">// 指定主文件名:</span>
+        <span class="n">messageSource</span><span class="o">.</span><span class="na">setBasename</span><span class="o">(</span><span class="s">"messages"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">messageSource</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">ViewResolver</span> <span class="nf">createViewResolver</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">,</span> <span class="nd">@Autowired</span> <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"i18n"</span><span class="o">)</span> <span class="nc">MessageSource</span> <span class="n">messageSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+                <span class="c1">// cache:</span>
+                <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+                <span class="c1">// loader:</span>
+                <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">))</span>
+                <span class="c1">// 添加扩展:</span>
+                <span class="o">.</span><span class="na">extension</span><span class="o">(</span><span class="k">new</span> <span class="nc">SpringExtension</span><span class="o">(</span><span class="n">messageSource</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="kt">var</span> <span class="n">viewResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleViewResolver</span><span class="o">(</span><span class="n">engine</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates/"</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">viewResolver</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span><span class="o">(</span><span class="s">"localeResolver"</span><span class="o">)</span>
+    <span class="nc">LocaleResolver</span> <span class="nf">createLocaleResolver</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">clr</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CookieLocaleResolver</span><span class="o">();</span>
+        <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultLocale</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="n">clr</span><span class="o">.</span><span class="na">setDefaultTimeZone</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getDefault</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">clr</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>index.html:</p><div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;/h1&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div><p>其他文件不变。</p><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/?lang=en</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_en.properties</code>文件内容。</p><p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/?lang=zh</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>文件内容。</p><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2021/11/13/Spring/" target="_blank">https://acteds.github.io/2021/11/13/Spring/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1719749176', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
