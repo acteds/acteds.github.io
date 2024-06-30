@@ -233,14 +233,6 @@
     } ,
   
     {
-      "title"    : "Spring",
-      "category" : "Java",
-      
-      "url"      : "/2021/11/13/Spring/",
-      "keywords" : "Java"
-    } ,
-  
-    {
       "title"    : "setTimeout(func,0)的延迟优化",
       "category" : "JavaScript",
       
@@ -405,6 +397,14 @@
       "category" : "Java",
       
       "url"      : "/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/",
+      "keywords" : "Java"
+    } ,
+  
+    {
+      "title"    : "Spring",
+      "category" : "Java",
+      
+      "url"      : "/2024/06/05/Spring/",
       "keywords" : "Java"
     } ,
   
