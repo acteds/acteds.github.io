@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-06-30T20:07:29+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-01T20:30:49+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Spring框架笔记。</p>
 
@@ -8436,7 +8436,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h3 id="国际化">国际化</h3>
+<h2 id="国际化">国际化</h2>
 
 <p>在开发应用程序的时候，经常会遇到支持多语言的需求，这种支持多语言的功能称之为国际化，英文是internationalization，缩写为i18n（因为首字母i和末字母n中间有18个字母）。</p>
 
@@ -8457,7 +8457,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 
 <p>对于Web应用程序，要实现国际化功能，主要是渲染View的时候，要把各种语言的资源文件提出来，这样，不同的用户访问同一个页面时，显示的语言就是不同的。</p>
 
-<h4 id="获取locale">获取<code class="language-plaintext highlighter-rouge">Locale</code></h4>
+<h3 id="获取locale">获取<code class="language-plaintext highlighter-rouge">Locale</code></h3>
 
 <p>实现国际化的第一步是获取到用户的<code class="language-plaintext highlighter-rouge">Locale</code>。在Web应用程序中，HTTP规范规定了浏览器会在请求中携带<code class="language-plaintext highlighter-rouge">Accept-Language</code>头，用来指示用户浏览器设定的语言顺序，如：</p>
 
@@ -8484,7 +8484,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 
 <p><code class="language-plaintext highlighter-rouge">CookieLocaleResolver</code>读取Locale的顺序是<strong>先从<code class="language-plaintext highlighter-rouge">cookie</code>读取，再看有没有设置默认locale,最后从<code class="language-plaintext highlighter-rouge">accept-language</code>中读取。</strong></p>
 
-<h4 id="提取资源文件">提取资源文件</h4>
+<h3 id="提取资源文件">提取资源文件</h3>
 
 <p>第二步是把写死在模板中的字符串以资源文件的方式存储在外部。对于多语言，主文件名如果命名为<code class="language-plaintext highlighter-rouge">messages</code>，那么资源文件必须按如下方式命名并放入classpath中：</p>
 
@@ -8513,7 +8513,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 <span class="py">hello</span><span class="p">=</span><span class="s">你好</span>
 </code></pre></div></div>
 
-<h4 id="创建messagesource">创建<code class="language-plaintext highlighter-rouge">MessageSource</code></h4>
+<h3 id="创建messagesource">创建<code class="language-plaintext highlighter-rouge">MessageSource</code></h3>
 
 <p>第三步是创建一个Spring提供的<code class="language-plaintext highlighter-rouge">MessageSource</code>实例，它自动读取所有的<code class="language-plaintext highlighter-rouge">.properties</code>文件，并提供一个统一接口来实现“翻译”：</p>
 
@@ -8540,7 +8540,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 
 <p>Spring容器会创建不只一个<code class="language-plaintext highlighter-rouge">MessageSource</code>实例，我们自己创建的这个<code class="language-plaintext highlighter-rouge">MessageSource</code>是专门给页面国际化使用的，因此命名为<code class="language-plaintext highlighter-rouge">i18n</code>，不会与其它<code class="language-plaintext highlighter-rouge">MessageSource</code>实例冲突。</p>
 
-<h4 id="实现多语言">实现多语言</h4>
+<h3 id="实现多语言">实现多语言</h3>
 
 <p>要在View中使用<code class="language-plaintext highlighter-rouge">MessageSource</code>加上<code class="language-plaintext highlighter-rouge">Locale</code>输出多语言，可以通过编写一个<code class="language-plaintext highlighter-rouge">MvcInterceptor</code>，把相关资源注入到<code class="language-plaintext highlighter-rouge">ModelAndView</code>中：</p>
 
@@ -8674,7 +8674,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/signin"</span><span class="nt">&gt;&lt;/a&gt;</span>
 </code></pre></div></div>
 
-<h4 id="切换locale">切换<code class="language-plaintext highlighter-rouge">Locale</code></h4>
+<h3 id="切换locale">切换<code class="language-plaintext highlighter-rouge">Locale</code></h3>
 
 <p>如果需要允许用户手动切换<code class="language-plaintext highlighter-rouge">Locale</code>，可以编写一个<code class="language-plaintext highlighter-rouge">LocaleController</code>来实现该功能：</p>
 
@@ -8765,7 +8765,7 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 <span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
-<h4 id="实例">实例</h4>
+<h3 id="实例">实例</h3>
 
 <p>完整代码1：</p>
 
