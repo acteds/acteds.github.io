@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-01T20:30:49+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-02T20:18:52+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Spring框架笔记。</p>
 
@@ -9257,7 +9257,456 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 
 <p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/?lang=en</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_en.properties</code>文件内容。</p>
 
-<p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/?lang=zh</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>文件内容。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
+<p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/?lang=zh</code>即可切换到 <code class="language-plaintext highlighter-rouge">messages_zh_CN.properties</code>文件内容。</p>
+
+<h2 id="websocket">WebSocket</h2>
+
+<p>WebSocket是一种基于HTTP的长链接技术。传统的HTTP协议是一种请求-响应模型，如果浏览器不发送请求，那么服务器无法主动给浏览器推送数据。如果需要定期给浏览器推送数据，例如股票行情，或者不定期给浏览器推送数据，例如在线聊天，基于HTTP协议实现这类需求，只能依靠浏览器的JavaScript定时轮询，效率很低且实时性不高。</p>
+
+<p>因为HTTP本身是基于TCP连接的，所以，WebSocket在HTTP协议的基础上做了一个简单的升级，即建立TCP连接后，浏览器发送请求时，附带几个头：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /chat HTTP/1.1
+Host: www.example.com
+Upgrade: websocket
+Connection: Upgrade
+</code></pre></div></div>
+
+<p>就表示客户端希望升级连接，变成长连接的WebSocket，服务器返回升级成功的响应：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+</code></pre></div></div>
+
+<p>收到成功响应后表示WebSocket“握手”成功，这样，代表WebSocket的这个TCP连接将不会被服务器关闭，而是一直保持，服务器可随时向浏览器推送消息，浏览器也可随时向服务器推送消息。双方推送的消息既可以是文本消息，也可以是二进制消息，一般来说，绝大部分应用程序会推送基于JSON的文本消息。</p>
+
+<p>现代浏览器都已经支持WebSocket协议，服务器则需要底层框架支持。Java的Servlet规范从3.1开始支持WebSocket，所以，必须选择支持Servlet 3.1或更高规范的Servlet容器，才能支持WebSocket。最新版本的Tomcat、Jetty等开源服务器均支持WebSocket。</p>
+
+<p>在Spring MVC中实现对WebSocket的支持，首先，需要在<code class="language-plaintext highlighter-rouge">pom.xml</code>中加入以下依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.tomcat.embed<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>tomcat-embed-websocket<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>9.0.26<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-websocket<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.0.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>第一项是嵌入式Tomcat支持WebSocket的组件，第二项是Spring封装的支持WebSocket的接口。</p>
+
+<p>接下来，需要在AppConfig中加入Spring Web对WebSocket的配置，此处需要创建一个<code class="language-plaintext highlighter-rouge">WebSocketConfigurer</code>实例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">WebSocketConfigurer</span> <span class="nf">createWebSocketConfigurer</span><span class="o">(</span>
+        <span class="nd">@Autowired</span> <span class="nc">ChatHandler</span> <span class="n">chatHandler</span><span class="o">,</span>
+        <span class="nd">@Autowired</span> <span class="nc">ChatHandshakeInterceptor</span> <span class="n">chatInterceptor</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">WebSocketConfigurer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerWebSocketHandlers</span><span class="o">(</span><span class="nc">WebSocketHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 把URL与指定的WebSocketHandler关联，可关联多个:</span>
+            <span class="n">registry</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="n">chatHandler</span><span class="o">,</span> <span class="s">"/chat"</span><span class="o">).</span><span class="na">addInterceptors</span><span class="o">(</span><span class="n">chatInterceptor</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>此实例在内部通过<code class="language-plaintext highlighter-rouge">WebSocketHandlerRegistry</code>注册能处理WebSocket的<code class="language-plaintext highlighter-rouge">WebSocketHandler</code>，以及可选的WebSocket拦截器<code class="language-plaintext highlighter-rouge">HandshakeInterceptor</code>。注入的这两个类都是自己编写的业务逻辑，这里只需关注浏览器连接到WebSocket的URL是<code class="language-plaintext highlighter-rouge">/chat</code>。</p>
+
+<p>然后需要启用WebSocket：<code class="language-plaintext highlighter-rouge">@EnableWebSocket</code>。</p>
+
+<p><strong>处理WebSocket连接</strong></p>
+
+<p>和处理普通HTTP请求不同，没法用一个方法处理一个URL。Spring提供了<code class="language-plaintext highlighter-rouge">TextWebSocketHandler</code>和<code class="language-plaintext highlighter-rouge">BinaryWebSocketHandler</code>分别处理文本消息和二进制消息，这里我们选择文本消息作为聊天室的协议，因此，<code class="language-plaintext highlighter-rouge">ChatHandler</code>需要继承自<code class="language-plaintext highlighter-rouge">TextWebSocketHandler</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatHandler</span> <span class="kd">extends</span> <span class="nc">TextWebSocketHandler</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>当浏览器请求一个WebSocket连接后，如果成功建立连接，Spring会自动调用<code class="language-plaintext highlighter-rouge">afterConnectionEstablished()</code>方法，任何原因导致WebSocket连接中断时，Spring会自动调用<code class="language-plaintext highlighter-rouge">afterConnectionClosed</code>方法，因此，覆写这两个方法即可处理连接成功和结束后的业务逻辑：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatHandler</span> <span class="kd">extends</span> <span class="nc">TextWebSocketHandler</span> <span class="o">{</span>
+    <span class="c1">// 保存所有Client的WebSocket会话实例:</span>
+    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">WebSocketSession</span><span class="o">&gt;</span> <span class="n">clients</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">&lt;&gt;();</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterConnectionEstablished</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 新会话根据ID放入Map:</span>
+        <span class="n">clients</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">session</span><span class="o">);</span>
+        <span class="n">session</span><span class="o">.</span><span class="na">getAttributes</span><span class="o">().</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Guest1"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterConnectionClosed</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">,</span> <span class="nc">CloseStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">clients</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>每个WebSocket会话以<code class="language-plaintext highlighter-rouge">WebSocketSession</code>表示，且已分配唯一ID。和WebSocket相关的数据，例如用户名称等，均可放入关联的<code class="language-plaintext highlighter-rouge">getAttributes()</code>中。</p>
+
+<p>用实例变量<code class="language-plaintext highlighter-rouge">clients</code>持有当前所有的<code class="language-plaintext highlighter-rouge">WebSocketSession</code>是为了广播，即向所有用户推送同一消息时，可以这么写：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">json</span> <span class="o">=</span> <span class="o">...</span>
+<span class="nc">TextMessage</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TextMessage</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
+<span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">id</span> <span class="o">:</span> <span class="n">clients</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">WebSocketSession</span> <span class="n">session</span> <span class="o">=</span> <span class="n">clients</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="n">session</span><span class="o">.</span><span class="na">sendMessage</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>发送的消息是序列化后的JSON，可以用<code class="language-plaintext highlighter-rouge">ChatMessage</code>表示：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatMessage</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">long</span> <span class="n">timestamp</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">text</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>每收到一个用户的消息后，我们就需要广播给所有用户：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatHandler</span> <span class="kd">extends</span> <span class="nc">TextWebSocketHandler</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">handleTextMessage</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">,</span> <span class="nc">TextMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">getPayload</span><span class="o">();</span>
+        <span class="nc">String</span> <span class="n">r</span> <span class="o">=</span> <span class="o">...</span> <span class="c1">// 根据输入消息构造待发送消息</span>
+        <span class="n">broadcastMessage</span><span class="o">(</span><span class="n">r</span><span class="o">);</span> <span class="c1">// 推送给所有用户</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果要推送给指定的几个用户，那就需要在<code class="language-plaintext highlighter-rouge">clients</code>中根据条件查找出某些<code class="language-plaintext highlighter-rouge">WebSocketSession</code>，然后发送消息。</p>
+
+<p>注意到我们在注册WebSocket时还传入了一个<code class="language-plaintext highlighter-rouge">ChatHandshakeInterceptor</code>，这个类实际上可以从<code class="language-plaintext highlighter-rouge">HttpSessionHandshakeInterceptor</code>继承，它的主要作用是在WebSocket建立连接后，把HttpSession的一些属性复制到WebSocketSession，例如，用户的登录信息等：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChatHandshakeInterceptor</span> <span class="kd">extends</span> <span class="nc">HttpSessionHandshakeInterceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">ChatHandshakeInterceptor</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// 指定从HttpSession复制属性到WebSocketSession:</span>
+        <span class="kd">super</span><span class="o">(</span><span class="nc">List</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">UserController</span><span class="o">.</span><span class="na">KEY_USER</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这样，在<code class="language-plaintext highlighter-rouge">ChatHandler</code>中，可以从<code class="language-plaintext highlighter-rouge">WebSocketSession.getAttributes()</code>中获取到复制过来的属性。</p>
+
+<p>在完成了服务器端的开发后，还需要在页面编写一点JavaScript逻辑：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 创建WebSocket连接:</span>
+<span class="kd">var</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="dl">'</span><span class="s1">ws://</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">location</span><span class="p">.</span><span class="nx">host</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">/chat</span><span class="dl">'</span><span class="p">);</span>
+<span class="c1">// 连接成功时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">open</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">websocket connected.</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// 收到消息时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">message: </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">msgs</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="c1">// TODO:</span>
+<span class="p">});</span>
+<span class="c1">// 连接关闭时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">close</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">websocket closed.</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// 绑定到全局变量:</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">chatWs</span> <span class="o">=</span> <span class="nx">ws</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>用户可以在连接成功后任何时候给服务器发送消息：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Hello, WebSocket.</span><span class="dl">'</span><span class="p">;</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">chatWs</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="na">text</span><span class="p">:</span> <span class="nx">inputText</span><span class="p">}));</span>
+</code></pre></div></div>
+
+<p>最后，连调浏览器和服务器端，如果一切无误，可以开多个不同的浏览器测试WebSocket的推送和广播。</p>
+
+<p>Servlet的线程模型并不适合大规模的长链接。基于NIO的Netty等框架更适合处理WebSocket长链接。</p>
+
+<p><strong>完整代码：</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd.test</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.PebbleEngine</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.pebble.loader.ServletLoader</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.pebbletemplates.spring.servlet.PebbleViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.Context</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.LifecycleException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.WebResourceRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.startup.Tomcat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.DirResourceSet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.catalina.webresources.StandardRoot</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.ComponentScan</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.ViewResolver</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.config.annotation.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.servlet.i18n.LocaleChangeInterceptor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.CloseStatus</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.TextMessage</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.WebSocketSession</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.config.annotation.EnableWebSocket</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.config.annotation.WebSocketConfigurer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.handler.TextWebSocketHandler</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.servlet.ServletContext</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.ConcurrentHashMap</span><span class="o">;</span>
+
+<span class="nd">@EnableWebSocket</span>
+<span class="nd">@EnableWebMvc</span>
+<span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test4</span><span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">LifecycleException</span> <span class="o">{</span>
+        <span class="nc">Tomcat</span> <span class="n">tomcat</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Tomcat</span><span class="o">();</span>
+        <span class="c1">// 设置Tomcat的端口号，默认为8080</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="s">"port"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">));</span>
+        <span class="c1">// 获取Tomcat的连接器</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getConnector</span><span class="o">();</span>
+
+        <span class="c1">// 将webapp添加到Tomcat，路径为src/main/webapp</span>
+        <span class="nc">Context</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">tomcat</span><span class="o">.</span><span class="na">addWebapp</span><span class="o">(</span>
+                <span class="s">""</span><span class="o">,</span>
+                <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"src/main/webapp"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">()</span>
+        <span class="o">);</span>
+        <span class="c1">//设置热部署</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setReloadable</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">// 创建Web资源根目录</span>
+        <span class="nc">WebResourceRoot</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StandardRoot</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span>
+        <span class="c1">// 添加预设资源，包括类路径和WEB-INF目录</span>
+        <span class="n">resources</span><span class="o">.</span><span class="na">addPreResources</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">DirResourceSet</span><span class="o">(</span>
+                        <span class="n">resources</span><span class="o">,</span>
+                        <span class="s">"/WEB-INF/classes"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="s">"target/classes"</span><span class="o">).</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="s">"/"</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+        <span class="c1">// 设置Web应用的资源</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="na">setResources</span><span class="o">(</span><span class="n">resources</span><span class="o">);</span>
+        <span class="c1">// 启动Tomcat</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="c1">// 等待Tomcat服务器结束</span>
+        <span class="n">tomcat</span><span class="o">.</span><span class="na">getServer</span><span class="o">().</span><span class="na">await</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nd">@Configuration</span>
+<span class="kd">class</span> <span class="nc">Config</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">WebMvcConfigurer</span> <span class="nf">createWebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">WebMvcConfigurer</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addResourceHandlers</span><span class="o">(</span><span class="nc">ResourceHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/static/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/static/"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addViewControllers</span><span class="o">(</span><span class="nc">ViewControllerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addViewController</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">setViewName</span><span class="o">(</span><span class="s">"/index.html"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addCorsMappings</span><span class="o">(</span><span class="nc">CorsRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addMapping</span><span class="o">(</span><span class="s">"/**"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedOrigins</span><span class="o">(</span><span class="s">"http://127.0.0.1:5500"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">allowedMethods</span><span class="o">(</span><span class="s">"GET"</span><span class="o">,</span> <span class="s">"POST"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">maxAge</span><span class="o">(</span><span class="mi">3600</span><span class="o">);</span>
+                <span class="c1">// 可以继续添加其他URL规则:</span>
+                <span class="c1">// registry.addMapping("/rest/v2/**")...</span>
+            <span class="o">}</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="nc">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">LocaleChangeInterceptor</span> <span class="n">l</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LocaleChangeInterceptor</span><span class="o">();</span>
+                <span class="n">l</span><span class="o">.</span><span class="na">setParamName</span><span class="o">(</span><span class="s">"lang"</span><span class="o">);</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">l</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">ViewResolver</span> <span class="nf">createViewResolver</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">var</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+                <span class="c1">// cache:</span>
+                <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+                <span class="c1">// loader:</span>
+                <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="kt">var</span> <span class="n">viewResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleViewResolver</span><span class="o">(</span><span class="n">engine</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates/"</span><span class="o">);</span>
+        <span class="n">viewResolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">viewResolver</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">WebSocketConfigurer</span> <span class="nf">createWebSocketConfigurer</span><span class="o">(</span>
+            <span class="nd">@Autowired</span> <span class="nc">ChatHandler</span> <span class="n">chatHandler</span><span class="o">,</span>
+            <span class="nd">@Autowired</span> <span class="nc">ChatHandshakeInterceptor</span> <span class="n">chatInterceptor</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">WebSocketConfigurer</span><span class="o">()</span> <span class="o">{</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerWebSocketHandlers</span><span class="o">(</span><span class="nc">WebSocketHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 把URL与指定的WebSocketHandler关联，可关联多个:</span>
+                <span class="n">registry</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="n">chatHandler</span><span class="o">,</span> <span class="s">"/chat"</span><span class="o">).</span><span class="na">addInterceptors</span><span class="o">(</span><span class="n">chatInterceptor</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">ChatHandler</span> <span class="kd">extends</span> <span class="nc">TextWebSocketHandler</span> <span class="o">{</span>
+    <span class="c1">// 保存所有Client的WebSocket会话实例:</span>
+    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">WebSocketSession</span><span class="o">&gt;</span> <span class="n">clients</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">&lt;&gt;();</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterConnectionEstablished</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 新会话根据ID放入Map:</span>
+        <span class="n">clients</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">session</span><span class="o">);</span>
+        <span class="n">session</span><span class="o">.</span><span class="na">getAttributes</span><span class="o">().</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Guest1"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterConnectionClosed</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">,</span> <span class="nc">CloseStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">clients</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"用户"</span><span class="o">+</span><span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">()+</span><span class="s">"已退出"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">handleTextMessage</span><span class="o">(</span><span class="nc">WebSocketSession</span> <span class="n">session</span><span class="o">,</span> <span class="nc">TextMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">getPayload</span><span class="o">();</span>
+        <span class="c1">// 根据输入消息构造待发送消息</span>
+        <span class="nc">ObjectMapper</span> <span class="n">mapper</span><span class="o">=</span><span class="k">new</span> <span class="nc">ObjectMapper</span><span class="o">();</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">=</span><span class="n">mapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="nc">ChatMessage</span> <span class="n">chatMessage</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChatMessage</span><span class="o">();</span>
+        <span class="n">chatMessage</span><span class="o">.</span><span class="na">timestamp</span><span class="o">=</span><span class="k">new</span> <span class="nc">Date</span><span class="o">().</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="n">chatMessage</span><span class="o">.</span><span class="na">name</span><span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
+        <span class="n">chatMessage</span><span class="o">.</span><span class="na">text</span><span class="o">=</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"text"</span><span class="o">);</span>
+        <span class="n">broadcastMessage</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">chatMessage</span><span class="o">));</span> <span class="c1">// 推送给所有用户</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">broadcastMessage</span><span class="o">(</span><span class="nc">String</span> <span class="n">json</span> <span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">TextMessage</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TextMessage</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">id</span> <span class="o">:</span> <span class="n">clients</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">WebSocketSession</span> <span class="n">session</span> <span class="o">=</span> <span class="n">clients</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+            <span class="n">session</span><span class="o">.</span><span class="na">sendMessage</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ChatMessage</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">long</span> <span class="n">timestamp</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">text</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">ChatHandshakeInterceptor</span> <span class="kd">extends</span> <span class="nc">HttpSessionHandshakeInterceptor</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">ChatHandshakeInterceptor</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// 指定从HttpSession复制属性到WebSocketSession:</span>
+        <span class="c1">//super(List.of(UserController.KEY_USER));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>打开浏览器，开两个新的<code class="language-plaintext highlighter-rouge">http://localhost:8080/</code>页面，分别建立WebSocket连接：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 创建WebSocket连接:</span>
+<span class="kd">var</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="dl">'</span><span class="s1">ws://</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">location</span><span class="p">.</span><span class="nx">host</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">/chat</span><span class="dl">'</span><span class="p">);</span>
+<span class="c1">// 连接成功时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">open</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">websocket connected.</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// 收到消息时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">message: </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">msgs</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="c1">// TODO:</span>
+<span class="p">});</span>
+<span class="c1">// 连接关闭时:</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">close</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">websocket closed.</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// 绑定到全局变量:</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">chatWs</span> <span class="o">=</span> <span class="nx">ws</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>发送：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Hello, WebSocket.</span><span class="dl">'</span><span class="p">;</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">chatWs</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="na">text</span><span class="p">:</span> <span class="nx">inputText</span><span class="p">}));</span>
+</code></pre></div></div>
+
+<p>则两个页面的控制台都会显示如：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">message</span><span class="p">:</span> <span class="p">{</span><span class="dl">"</span><span class="s2">timestamp</span><span class="dl">"</span><span class="p">:</span><span class="o">***</span><span class="p">,</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">0</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">Hello, WebSocket.</span><span class="dl">"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>用后连接的发送：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">测试</span><span class="dl">'</span><span class="p">;</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">chatWs</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="na">text</span><span class="p">:</span> <span class="nx">inputText</span><span class="p">}));</span>
+</code></pre></div></div>
+
+<p>则显示：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">message</span><span class="p">:</span> <span class="p">{</span><span class="dl">"</span><span class="s2">timestamp</span><span class="dl">"</span><span class="p">:</span><span class="o">***</span><span class="p">,</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">测试</span><span class="dl">"</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>关闭页面，则java控制台显示：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>13:31:51.143 [http-nio-8080-exec-9] DEBUG org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator - StandardWebSocketSession[id=1, uri=ws://localhost:8080/chat] closed with CloseStatus[code=1001, reason=null]
+用户1已退出
+13:32:19.014 [http-nio-8080-exec-10] DEBUG org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator - StandardWebSocketSession[id=0, uri=ws://localhost:8080/chat] closed with CloseStatus[code=1001, reason=null]
+用户0已退出
+</code></pre></div></div>
+
+<p>功能正常。</p>
+
+<p>如果要允许在所有页面访问，可以进行设置：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">WebSocketConfigurer</span> <span class="nf">createWebSocketConfigurer</span><span class="o">(</span>
+        <span class="nd">@Autowired</span> <span class="nc">ChatHandler</span> <span class="n">chatHandler</span><span class="o">,</span>
+        <span class="nd">@Autowired</span> <span class="nc">ChatHandshakeInterceptor</span> <span class="n">chatInterceptor</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">WebSocketConfigurer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerWebSocketHandlers</span><span class="o">(</span><span class="nc">WebSocketHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 把URL与指定的WebSocketHandler关联，可关联多个:</span>
+            <span class="n">registry</span><span class="o">.</span><span class="na">addHandler</span><span class="o">(</span><span class="n">chatHandler</span><span class="o">,</span> <span class="s">"/chat"</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">addInterceptors</span><span class="o">(</span><span class="n">chatInterceptor</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">setAllowedOrigins</span><span class="o">(</span><span class="s">"*"</span><span class="o">);</span><span class="c1">//允许所有页面</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">WebSocketHandlerRegistration</code>接口提供了一系列方法，用于配置WebSocket处理程序的各种细节：</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">addHandler(WebSocketHandler handler, String... paths)</code> - 添加更多的处理程序，们将共享相同的配置（拦截器、SockJS 配置）。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">setHandshakeHandler(HandshakeHandler handshakeHandler)</code> - 配置要使用的握手处理程序。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">addInterceptorsHandshakeInterceptor... interceptors)</code> - 配置用于握手请求的截器。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">setAllowedOrigins(String... origins)</code> - 配置允许连接到 WebSocket 端点的来源。该检查主要针浏览器客户端，每个允许的来源必须以 “http://”、”https://” 或 “*“（表示所有来源都被允许）开头。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">withSockJS()</code> - 启用 SockJS 回退选项。</p>
+  </li>
+</ul>
+
+<p>这些方法提供了丰富和灵活地配置 WebSocket 处理程序所需功能。你可以根据需要使用这些方法来定制和优化 WebSocket 处理程序。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
 
 <p>首先写个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，URL路径为：<code class="language-plaintext highlighter-rouge">/</code>,表示所有没有指定<code class="language-plaintext highlighter-rouge">Servlet</code>处理的URL，都映射到此Servlet，然后<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>再根据路径执行特定的方法。</p>
 
