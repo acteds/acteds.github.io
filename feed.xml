@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-02T20:18:52+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-03T19:46:25+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Spring框架笔记。</p>
 
@@ -9706,7 +9706,135 @@ Connection: Upgrade
   </li>
 </ul>
 
-<p>这些方法提供了丰富和灵活地配置 WebSocket 处理程序所需功能。你可以根据需要使用这些方法来定制和优化 WebSocket 处理程序。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
+<p>这些方法提供了丰富和灵活地配置 WebSocket 处理程序所需功能。你可以根据需要使用这些方法来定制和优化 WebSocket 处理程序。</p>
+
+<h2 id="集成javamail">集成JavaMail</h2>
+
+<p>在Spring中，同样可以集成JavaMail。因为在服务器端，主要以发送邮件为主，例如在注册成功、登录时、购物付款后通知用户，基本上不会遇到接收用户邮件的情况，所以只讨论如何在Spring中发送邮件。</p>
+
+<p>在Spring中，发送邮件最终也是需要JavaMail，Spring只对JavaMail做了一点简单的封装，目的是简化代码。为了在Spring中集成JavaMail，在<code class="language-plaintext highlighter-rouge">pom.xml</code>中添加以下依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>javax.mail<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>javax.mail-api<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.6.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.sun.mail<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>javax.mail<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.6.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-context-support<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>5.0.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>我们希望用户在注册成功后能收到注册邮件，为此，先定义一个<code class="language-plaintext highlighter-rouge">JavaMailSender</code>的Bean：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="nc">JavaMailSender</span> <span class="nf">createJavaMailSender</span><span class="o">(</span>
+    <span class="c1">// smtp.properties:</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.host}"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">host</span><span class="o">,</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.port}"</span><span class="o">)</span> <span class="kt">int</span> <span class="n">port</span><span class="o">,</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.auth}"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">auth</span><span class="o">,</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.username}"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">username</span><span class="o">,</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.password}"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.debug:true}"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">debug</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="kt">var</span> <span class="n">mailSender</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JavaMailSenderImpl</span><span class="o">();</span>
+    <span class="n">mailSender</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="n">host</span><span class="o">);</span>
+    <span class="n">mailSender</span><span class="o">.</span><span class="na">setPort</span><span class="o">(</span><span class="n">port</span><span class="o">);</span>
+    <span class="n">mailSender</span><span class="o">.</span><span class="na">setUsername</span><span class="o">(</span><span class="n">username</span><span class="o">);</span>
+    <span class="n">mailSender</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+    <span class="nc">Properties</span> <span class="n">props</span> <span class="o">=</span> <span class="n">mailSender</span><span class="o">.</span><span class="na">getJavaMailProperties</span><span class="o">();</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.transport.protocol"</span><span class="o">,</span> <span class="s">"smtp"</span><span class="o">);</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.auth"</span><span class="o">,</span> <span class="n">auth</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">port</span> <span class="o">==</span> <span class="mi">587</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.starttls.enable"</span><span class="o">,</span> <span class="s">"false"</span><span class="o">);</span> <span class="c1">// 不启用TLS加密</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.ssl.enable"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span> <span class="c1">// 启用SSL加密</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.socketFactory.class"</span><span class="o">,</span> <span class="s">"javax.net.ssl.SSLSocketFactory"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">port</span> <span class="o">==</span> <span class="mi">465</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.socketFactory.port"</span><span class="o">,</span> <span class="s">"465"</span><span class="o">);</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.smtp.socketFactory.class"</span><span class="o">,</span> <span class="s">"javax.net.ssl.SSLSocketFactory"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"mail.debug"</span><span class="o">,</span> <span class="n">debug</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">mailSender</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这个<code class="language-plaintext highlighter-rouge">JavaMailSender</code>接口的实现类是<code class="language-plaintext highlighter-rouge">JavaMailSenderImpl</code>，初始化时，传入的参数与JavaMail是完全一致的。</p>
+
+<p>另外注意到需要注入的属性是从<code class="language-plaintext highlighter-rouge">smtp.properties</code>中读取的，因此，<code class="language-plaintext highlighter-rouge">AppConfig</code>导入的就不止一个<code class="language-plaintext highlighter-rouge">.properties</code>文件，可以导入多个：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="nd">@EnableWebMvc</span>
+<span class="nd">@EnableTransactionManagement</span>
+<span class="nd">@PropertySource</span><span class="o">({</span> <span class="s">"classpath:/jdbc.properties"</span><span class="o">,</span> <span class="s">"classpath:/smtp.properties"</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>下一步是封装一个<code class="language-plaintext highlighter-rouge">MailService</code>，并定义<code class="language-plaintext highlighter-rouge">sendRegistrationMail()</code>方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">MailService</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${smtp.from}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">from</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">JavaMailSender</span> <span class="n">mailSender</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendRegistrationMail</span><span class="o">(</span><span class="nc">String</span> <span class="n">mail</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="nc">MimeMessage</span> <span class="n">mimeMessage</span> <span class="o">=</span> <span class="n">mailSender</span><span class="o">.</span><span class="na">createMimeMessage</span><span class="o">();</span>
+            <span class="nc">MimeMessageHelper</span> <span class="n">helper</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MimeMessageHelper</span><span class="o">(</span><span class="n">mimeMessage</span><span class="o">,</span> <span class="s">"utf-8"</span><span class="o">);</span>
+            <span class="n">helper</span><span class="o">.</span><span class="na">setFrom</span><span class="o">(</span><span class="n">from</span><span class="o">);</span>
+            <span class="n">helper</span><span class="o">.</span><span class="na">setTo</span><span class="o">(</span><span class="n">mail</span><span class="o">);</span>
+            <span class="n">helper</span><span class="o">.</span><span class="na">setSubject</span><span class="o">(</span><span class="s">"Welcome to Java course!"</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">html</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"&lt;p&gt;Hi, %s,&lt;/p&gt;&lt;p&gt;Welcome to Java course!&lt;/p&gt;&lt;p&gt;Sent at %s&lt;/p&gt;"</span><span class="o">,</span><span class="s">"测试"</span><span class="o">,</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">now</span><span class="o">());</span>
+            <span class="n">helper</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">html</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="n">mailSender</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">mimeMessage</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">MessagingException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">MimeMessage</code>是JavaMail的邮件对象，而<code class="language-plaintext highlighter-rouge">MimeMessageHelper</code>是Spring提供的用于简化设置MimeMessage的类，比如设置HTML邮件就可以直接调用<code class="language-plaintext highlighter-rouge">setText(String text, boolean html)</code>方法，而不必再调用比较繁琐的JavaMail接口方法。</p>
+
+<p>最后一步是调用<code class="language-plaintext highlighter-rouge">JavaMailSender.send()</code>方法把邮件发送出去。</p>
+
+<p>在MVC的某个Controller方法中，当用户注册成功后，就启动一个新线程来异步发送邮件：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@Controller</span>
+<span class="kd">class</span> <span class="nc">MailController</span><span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">MailService</span> <span class="n">mailService</span><span class="o">;</span>
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/testMail"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">Mail</span> <span class="n">mail</span><span class="o">)</span> <span class="o">{</span>
+<span class="c1">// send registration mail:</span>
+        <span class="k">new</span> <span class="nf">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">mailService</span><span class="o">.</span><span class="na">sendRegistrationMail</span><span class="o">(</span><span class="n">mail</span><span class="o">.</span><span class="na">email</span><span class="o">);</span>
+        <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Mail</span><span class="o">{</span>
+        <span class="kd">public</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>因为发送邮件是一种耗时的任务，从几秒到几分钟不等，因此，异步发送是保证页面能快速显示的必要措施。</p>
+
+<p>测试：post请求：<code class="language-plaintext highlighter-rouge">http://localhost:8080/testMail</code>，附带json：<code class="language-plaintext highlighter-rouge">{"email":"收件人@qq.com"}</code>，成功收到邮件。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
 
 <p>首先写个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，URL路径为：<code class="language-plaintext highlighter-rouge">/</code>,表示所有没有指定<code class="language-plaintext highlighter-rouge">Servlet</code>处理的URL，都映射到此Servlet，然后<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>再根据路径执行特定的方法。</p>
 
