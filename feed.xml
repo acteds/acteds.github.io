@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-03T19:46:25+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-05T20:04:24+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Spring框架笔记。</p>
 
@@ -9834,7 +9834,43 @@ Connection: Upgrade
 
 <p>因为发送邮件是一种耗时的任务，从几秒到几分钟不等，因此，异步发送是保证页面能快速显示的必要措施。</p>
 
-<p>测试：post请求：<code class="language-plaintext highlighter-rouge">http://localhost:8080/testMail</code>，附带json：<code class="language-plaintext highlighter-rouge">{"email":"收件人@qq.com"}</code>，成功收到邮件。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
+<p>测试：post请求：<code class="language-plaintext highlighter-rouge">http://localhost:8080/testMail</code>，附带json：<code class="language-plaintext highlighter-rouge">{"email":"收件人@qq.com"}</code>，成功收到邮件。</p>
+
+<h2 id="集成jms">集成JMS</h2>
+
+<p>JMS即Java Message Service，是JavaEE的消息服务接口。JMS主要有两个版本：1.1和2.0。2.0和1.1相比，主要是简化了收发消息的代码。</p>
+
+<p>所谓消息服务，就是两个进程之间，通过消息服务器传递消息：</p>
+
+<pre><code class="language-ascii">┌────────┐    ┌──────────────┐    ┌────────┐
+│Producer│───&gt;│Message Server│───&gt;│Consumer│
+└────────┘    └──────────────┘    └────────┘
+</code></pre>
+
+<p>使用消息服务，而不是直接调用对方的API，它的好处是：</p>
+
+<ul>
+  <li>双方各自无需知晓对方的存在，消息可以异步处理，因为消息服务器会在Consumer离线的时候自动缓存消息；</li>
+  <li>如果Producer发送的消息频率高于Consumer的处理能力，消息可以积压在消息服务器，不至于压垮Consumer；</li>
+  <li>通过一个消息服务器，可以连接多个Producer和多个Consumer。</li>
+</ul>
+
+<p>因为消息服务在各类应用程序中非常有用，所以JavaEE专门定义了JMS规范。JMS是一组接口定义，如果要使用JMS，还需要选择一个具体的JMS产品。常用的JMS服务器有开源的<a href="https://activemq.apache.org/">ActiveMQ</a>，商业服务器如WebLogic、WebSphere等也内置了JMS支持。这里选择开源的ActiveMQ作为JMS服务器，因此，在开发JMS之前必须安装ActiveMQ。</p>
+
+<p>ActiveMQ Classic或者ActiveMQ Artemis，这两个是什么关系，又有什么区别？</p>
+
+<p>实际上ActiveMQ Classic原来就叫ActiveMQ，是Apache开发的基于JMS 1.1的消息服务器，目前稳定版本号是5.x，而ActiveMQ Artemis是由RedHat捐赠的<a href="https://hornetq.jboss.org/">HornetQ</a>服务器代码的基础上开发的，目前稳定版本号是2.x。和ActiveMQ Classic相比，Artemis版的代码与Classic完全不同，并且，它支持JMS 2.0，使用基于Netty的异步IO，大大提升了性能。此外，Artemis不仅提供了JMS接口，它还提供了AMQP接口，STOMP接口和物联网使用的MQTT接口。选择Artemis，相当于一鱼四吃。</p>
+
+<p>所以，这里直接选择ActiveMQ Artemis。从官网<a href="https://activemq.apache.org/components/artemis/download/">下载</a>最新的2.x版本，解压后设置环境变量<code class="language-plaintext highlighter-rouge">ARTEMIS_HOME</code>，指向Artemis根目录，例如<code class="language-plaintext highlighter-rouge">C:\Apps\artemis</code>，然后，把<code class="language-plaintext highlighter-rouge">ARTEMIS_HOME/bin</code>加入PATH环境变量：</p>
+
+<ul>
+  <li>Windows下添加<code class="language-plaintext highlighter-rouge">%ARTEMIS_HOME%\bin</code>到Path路径；</li>
+  <li>Mac和Linux下添加<code class="language-plaintext highlighter-rouge">$ARTEMIS_HOME/bin</code>到PATH路径。</li>
+</ul>
+
+<p>Artemis有个很好的设计，就是它把程序和数据完全分离了。解压后的<code class="language-plaintext highlighter-rouge">ARTEMIS_HOME</code>目录是程序目录，要启动一个Artemis服务，还需要创建一个数据目录。</p>
+
+<p>要把数据目录直接设定在项目文件夹的<code class="language-plaintext highlighter-rouge">jms-data</code>目录下。需要在项目文件夹下执行命令<code class="language-plaintext highlighter-rouge">artemis create jms-data</code>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
 
 <p>首先写个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，URL路径为：<code class="language-plaintext highlighter-rouge">/</code>,表示所有没有指定<code class="language-plaintext highlighter-rouge">Servlet</code>处理的URL，都映射到此Servlet，然后<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>再根据路径执行特定的方法。</p>
 
