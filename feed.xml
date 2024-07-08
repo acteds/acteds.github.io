@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-07T19:33:01+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-08T23:10:55+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Spring框架笔记。</p>
 
@@ -10326,7 +10326,7 @@ Connection: Upgrade
 
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>14:50:58.306 [pool-1-thread-1] INFO com.aotmd.test.TaskService - 开始检查系统状态..
 14:50:59.306 [pool-1-thread-1] INFO com.aotmd.test.TaskService - 开始检查系统状态..
-14:51:00.304 [pool-1-thread-1] INFO com.aotmd.test.TaskService - 开始检查系
+14:51:00.304 [pool-1-thread-1] INFO com.aotmd.test.TaskService - 开始检查系统状态..
 </code></pre></div></div>
 
 <p>除了可以使用<code class="language-plaintext highlighter-rouge">fixedRate</code>外，还可以使用<code class="language-plaintext highlighter-rouge">fixedDelay</code>：</p>
@@ -10421,7 +10421,211 @@ Connection: Upgrade
 
 <p>Quartz可以配置一个JDBC数据源，以便存储所有的任务调度计划以及任务执行状态。也可以使用内存来调度任务，但这样配置就和使用Spring的调度没啥区别了，额外集成Quartz的意义就不大。</p>
 
-<p>Quartz的JDBC配置比较复杂，Spring对其也有一定的支持。要详细了解Quartz的集成，请参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#scheduling-quartz">Spring的文档</a>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
+<p>Quartz的JDBC配置比较复杂，Spring对其也有一定的支持。要详细了解Quartz的集成，请参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#scheduling-quartz">Spring的文档</a>。</p>
+
+<h2 id="集成jmx">集成JMX</h2>
+
+<p>JMX是Java Management Extensions，它是一个Java平台的管理和监控接口。在所有的应用程序中，对运行中的程序进行监控都是非常重要的，Java应用程序也不例外。我们肯定希望知道Java应用程序当前的状态，例如，占用了多少内存，分配了多少内存，当前有多少活动线程，有多少休眠线程等等。如何获取这些信息呢？</p>
+
+<p>为了标准化管理和监控，Java平台使用JMX作为管理和监控的标准接口，任何程序，只要按JMX规范访问这个接口，就可以获取所有管理与监控信息。</p>
+
+<p>实际上，常用的运维监控如Zabbix、Nagios等工具对JVM本身的监控都是通过JMX获取的信息。</p>
+
+<p>因为JMX是一个标准接口，不但可以用于管理JVM，还可以管理应用程序自身。下图是JMX的架构：</p>
+
+<pre><code class="language-ascii">    ┌─────────┐  ┌─────────┐
+    │jconsole │  │   Web   │
+    └─────────┘  └─────────┘
+         │            │
+┌ ─ ─ ─ ─│─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─
+ JVM     ▼            ▼        │
+│   ┌─────────┐  ┌─────────┐
+  ┌─┤Connector├──┤ Adaptor ├─┐ │
+│ │ └─────────┘  └─────────┘ │
+  │       MBeanServer        │ │
+│ │ ┌──────┐┌──────┐┌──────┐ │
+  └─┤MBean1├┤MBean2├┤MBean3├─┘ │
+│   └──────┘└──────┘└──────┘
+ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+</code></pre>
+
+<p>JMX把所有被管理的资源都称为MBean（Managed Bean），这些MBean全部由MBeanServer管理，如果要访问MBean，可以通过MBeanServer对外提供的访问接口，例如通过RMI或HTTP访问。</p>
+
+<p>使用JMX不需要安装任何额外组件，也不需要第三方库，因为MBeanServer已经内置在JavaSE标准库中了。JavaSE还提供了一个<code class="language-plaintext highlighter-rouge">jconsole</code>程序，用于通过RMI连接到MBeanServer，这样就可以管理整个Java进程。</p>
+
+<p>除了JVM会把自身的各种资源以MBean注册到JMX中，我们自己的配置、监控信息也可以作为MBean注册到JMX，这样，管理程序就可以直接控制我们暴露的MBean。因此，应用程序使用JMX，只需要两步：</p>
+
+<ol>
+  <li>编写MBean提供管理接口和监控数据；</li>
+  <li>注册MBean。</li>
+</ol>
+
+<p>而在Spring应用程序中，使用JMX只需要一步：</p>
+
+<ol>
+  <li>编写MBean提供管理接口和监控数据。</li>
+</ol>
+
+<p>第二步注册的过程由Spring自动完成。</p>
+
+<p>首先在<code class="language-plaintext highlighter-rouge">AppConfig</code>中加上<code class="language-plaintext highlighter-rouge">@EnableMBeanExport</code>注解，告诉Spring自动注册MBean。</p>
+
+<p>剩下的全部工作就是编写MBean。以实际问题为例，假设我们希望给应用程序添加一个IP黑名单功能，凡是在黑名单中的IP禁止访问，传统的做法是定义一个配置文件，启动的时候读取：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># blacklist.txt
+1.2.3.4
+5.6.7.8
+2.2.3.4
+...
+</code></pre></div></div>
+
+<p>如果要修改黑名单怎么办？修改配置文件，然后重启应用程序。</p>
+
+<p>但是每次都重启应用程序实在是太麻烦了，能不能不重启应用程序？可以自己写一个定时读取配置文件的功能，检测到文件改动时自动重新读取。</p>
+
+<p>上述需求本质上是在应用程序运行期间对参数、配置等进行热更新并要求尽快生效。如果以JMX的方式实现，不必自己编写自动重新读取等任何代码，只需要提供一个符合JMX标准的MBean来存储配置即可。</p>
+
+<p>还是以IP黑名单为例，JMX的MBean通常以MBean结尾，因此遵循标准命名规范，首先编写一个<code class="language-plaintext highlighter-rouge">BlacklistMBean</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BlacklistMBean</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">ips</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+
+    <span class="kd">public</span> <span class="nc">String</span><span class="o">[]</span> <span class="nf">getBlacklist</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">ips</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="nc">String</span><span class="o">[]::</span><span class="k">new</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addBlacklist</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ips</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeBlacklist</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ips</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">shouldBlock</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">ips</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这个MBean没什么特殊的，它的逻辑和普通Java类没有任何区别。</p>
+
+<p>下一步，我们要使用JMX的客户端来实时热更新这个MBean，所以要给它加上一些注解，让Spring能根据注解自动把相关方法注册到MBeanServer中：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@ManagedResource</span><span class="o">(</span><span class="n">objectName</span> <span class="o">=</span> <span class="s">"sample:name=blacklist"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Blacklist of IP addresses"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BlacklistMBean</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">ips</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+
+    <span class="nd">@ManagedAttribute</span><span class="o">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">"Get IP addresses in blacklist"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span><span class="o">[]</span> <span class="nf">getBlacklist</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">ips</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="n">ips</span><span class="o">.</span><span class="na">size</span><span class="o">()]);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@ManagedOperation</span>
+    <span class="nd">@ManagedOperationParameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"ip"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Target IP address that will be added to blacklist"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addBlacklist</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ips</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@ManagedOperation</span>
+    <span class="nd">@ManagedOperationParameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"ip"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Target IP address that will be removed from blacklist"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeBlacklist</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ips</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">shouldBlock</span><span class="o">(</span><span class="nc">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">ips</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">ip</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">BlacklistMBean</code>首先是一个标准的Spring管理的Bean，其次，添加了<code class="language-plaintext highlighter-rouge">@ManagedResource</code>表示这是一个MBean，将要被注册到JMX。objectName指定了这个MBean的名字，通常以<code class="language-plaintext highlighter-rouge">company:name=Xxx</code>来分类MBean。</p>
+
+<p>对于属性，使用<code class="language-plaintext highlighter-rouge">@ManagedAttribute</code>注解标注。上述MBean只有get属性，没有set属性，说明这是一个只读属性。</p>
+
+<p>对于操作，使用<code class="language-plaintext highlighter-rouge">@ManagedOperation</code>注解标准。上述MBean定义了两个操作：<code class="language-plaintext highlighter-rouge">addBlacklist()</code>和<code class="language-plaintext highlighter-rouge">removeBlacklist()</code>，其他方法如<code class="language-plaintext highlighter-rouge">shouldBlock()</code>不会被暴露给JMX。</p>
+
+<p>使用MBean和普通Bean是完全一样的。例如，在<code class="language-plaintext highlighter-rouge">BlacklistInterceptor</code>对IP进行黑名单拦截：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Order</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BlacklistInterceptor</span> <span class="kd">implements</span> <span class="nc">HandlerInterceptor</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">BlacklistMBean</span> <span class="n">blacklistMBean</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">preHandle</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">)</span>
+            <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">ip</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getRemoteAddr</span><span class="o">();</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"检查 IP 地址 {}..."</span><span class="o">,</span> <span class="n">ip</span><span class="o">);</span>
+        <span class="c1">// 是否在黑名单中:</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">blacklistMBean</span><span class="o">.</span><span class="na">shouldBlock</span><span class="o">(</span><span class="n">ip</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"将阻止 IP {}，因为它在黑名单中。"</span><span class="o">,</span> <span class="n">ip</span><span class="o">);</span>
+            <span class="c1">// 发送403错误响应:</span>
+            <span class="n">response</span><span class="o">.</span><span class="na">sendError</span><span class="o">(</span><span class="mi">403</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>下一步就是正常启动Web应用程序，不要关闭它，我们打开另一个命令行窗口，输入<code class="language-plaintext highlighter-rouge">jconsole</code>启动JavaSE自带的一个JMX客户端程序：</p>
+
+<p>通过jconsole连接到一个Java进程最简单的方法是直接在Local Process中找到正在运行的<code class="language-plaintext highlighter-rouge">AppConfig</code>，点击Connect即可连接到当前正在运行的Web应用，在jconsole中可直接看到内存、CPU等资源的监控。</p>
+
+<p>点击MBean，左侧按分类列出所有MBean，在<code class="language-plaintext highlighter-rouge">sample</code>中可以看到我们自己的MBean，点击可查看属性<code class="language-plaintext highlighter-rouge">blacklist</code>。</p>
+
+<p>点击<code class="language-plaintext highlighter-rouge">Operations</code>-<code class="language-plaintext highlighter-rouge">addBlacklist</code>，可以填入<code class="language-plaintext highlighter-rouge">127.0.0.1</code>并点击<code class="language-plaintext highlighter-rouge">addBlacklist</code>按钮，相当于jconsole通过JMX接口，调用了我们自己的<code class="language-plaintext highlighter-rouge">BlacklistMBean</code>的<code class="language-plaintext highlighter-rouge">addBlacklist()</code>方法，传入的参数就是填入的<code class="language-plaintext highlighter-rouge">127.0.0.1</code>。</p>
+
+<p>再次查看属性<code class="language-plaintext highlighter-rouge">blacklist</code>，可以看到结果已经更新了。</p>
+
+<p>注意：如果使用IPv6，那么需要把<code class="language-plaintext highlighter-rouge">0:0:0:0:0:0:0:1</code>这个本机地址加到黑名单。</p>
+
+<p>可以在浏览器中测试一下黑名单功能是否已生效：</p>
+
+<p>可见，<code class="language-plaintext highlighter-rouge">127.0.0.1</code>确实被添加到了黑名单，后台日志打印如下：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>09:10:31.557 [http-nio-8080-exec-9] INFO com.aotmd.test.BlacklistInterceptor - 检查 IP 地址 0:0:0:0:0:0:0:1...
+09:10:31.557 [http-nio-8080-exec-9] WARN com.aotmd.test.BlacklistInterceptor - 将阻止 IP 0:0:0:0:0:0:0:1，因为它在黑名单中。
+</code></pre></div></div>
+
+<p>如果从jconsole中调用<code class="language-plaintext highlighter-rouge">removeBlacklist</code>移除<code class="language-plaintext highlighter-rouge">127.0.0.1</code>，刷新浏览器可以看到又允许访问了。</p>
+
+<p>使用jconsole直接通过Local Process连接JVM有个限制，就是jconsole和正在运行的JVM必须在同一台机器。如果要远程连接，首先要打开JMX端口。在启动<code class="language-plaintext highlighter-rouge">AppConfig</code>时，需要传入以下JVM启动参数：</p>
+
+<ul>
+  <li>-Dcom.sun.management.jmxremote.port=19999</li>
+  <li>-Dcom.sun.management.jmxremote.authenticate=false</li>
+  <li>-Dcom.sun.management.jmxremote.ssl=false</li>
+</ul>
+
+<p>第一个参数表示在19999端口监听JMX连接，第二个和第三个参数表示无需验证，不使用SSL连接，在开发测试阶段比较方便，生产环境必须指定验证方式并启用SSL。详细参数可参考Oracle<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/management/agent.html#gdeum">官方文档</a>。这样jconsole可以用<code class="language-plaintext highlighter-rouge">ip:19999</code>的远程方式连接JMX。连接后的操作是完全一样的。</p>
+
+<p>许多JavaEE服务器如JBoss的管理后台都是通过JMX提供管理接口，并由Web方式访问，对用户更加友好。</p>
+
+<p>通过JMX实现配置的实时更新其实并不常用，JMX更多地用于收集JVM的运行状态和应用程序的性能数据，然后通过监控服务器汇总数据后实现监控与报警。一个典型的监控系统架构如下：</p>
+
+<pre><code class="language-ascii">┌───────────────┐   ┌───────────────┐
+│  Web Console  │◀──│Metrics Server │
+└───────────────┘   └───────────────┘
+                            │
+                            │
+   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─ ┐
+     ┌───────────────┐      │
+   │ │      App      │      │    │
+     ├─────────┬─────┤   ┌─────┐
+   │ │         │ JMX │──▶│Agent│ │
+     │         └─────┤   └─────┘
+   │ │      JVM      │           │
+     └───────────────┘
+   └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+</code></pre>
+
+<p>其中，App自身和JVM的的统计数据都通过JMX收集并发送给本机的一个Agent，Agent再将数据发送至监控服务器，最后以可视化的形式将监控数据通过Web等形式展示给用户。常用的监控系统有开源的<a href="https://prometheus.io/">Prometheus</a>和以云服务方式提供的<a href="https://www.datadoghq.com/">DataDog</a>等。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
 
 <p>首先写个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，URL路径为：<code class="language-plaintext highlighter-rouge">/</code>,表示所有没有指定<code class="language-plaintext highlighter-rouge">Servlet</code>处理的URL，都映射到此Servlet，然后<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>再根据路径执行特定的方法。</p>
 
