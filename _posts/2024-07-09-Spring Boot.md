@@ -7,11 +7,7 @@ keywords: Java
 ---
 
 # 引言
-
 Spring Boot笔记
-
-
-
 
 
 # Spring Boot
@@ -294,7 +290,333 @@ public class Application {
 
 现在就可以直接运行`Application`，Spring Boot自动启动了嵌入式Tomcat，当看到`Started Application in xxx seconds`时，Spring Boot应用启动成功。
 
+------
 
+之前我们定义的数据源、声明式事务、JdbcTemplate在哪创建的？怎么就可以直接注入到自己编写的`UserService`中呢？
 
+这些自动创建的Bean就是Spring Boot的特色：AutoConfiguration。
 
+当引入`spring-boot-starter-jdbc`时，启动时会自动扫描所有的`XxxAutoConfiguration`：
 
+- `DataSourceAutoConfiguration`：自动创建一个`DataSource`，其中配置项从`application.yml`的`spring.datasource`读取；
+- `DataSourceTransactionManagerAutoConfiguration`：自动创建了一个基于JDBC的事务管理器；
+- `JdbcTemplateAutoConfiguration`：自动创建了一个`JdbcTemplate`。
+
+因此，自动得到了一个`DataSource`、一个`DataSourceTransactionManager`和一个`JdbcTemplate`。
+
+类似的，当引入`spring-boot-starter-web`时，自动创建了：
+
+- `ServletWebServerFactoryAutoConfiguration`：自动创建一个嵌入式Web服务器，默认是Tomcat；
+- `DispatcherServletAutoConfiguration`：自动创建一个`DispatcherServlet`；
+- `HttpEncodingAutoConfiguration`：自动创建一个`CharacterEncodingFilter`；
+- `WebMvcAutoConfiguration`：自动创建若干与MVC相关的Bean。
+- ...
+
+引入第三方`pebble-spring-boot-starter`时，自动创建了：
+
+- `PebbleAutoConfiguration`：自动创建了一个`PebbleViewResolver`。
+
+Spring Boot大量使用`XxxAutoConfiguration`来使得许多组件被自动化配置并创建，而这些创建过程又大量使用了Spring的Conditional功能。例如，我们观察`JdbcTemplateAutoConfiguration`，它的代码如下：
+
+```java
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnClass({ DataSource.class, JdbcTemplate.class })
+@ConditionalOnSingleCandidate(DataSource.class)
+@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@EnableConfigurationProperties(JdbcProperties.class)
+@Import({ JdbcTemplateConfiguration.class, NamedParameterJdbcTemplateConfiguration.class })
+public class JdbcTemplateAutoConfiguration {
+}
+```
+
+当满足条件：
+
+- `@ConditionalOnClass`：在classpath中能找到`DataSource`和`JdbcTemplate`；
+- `@ConditionalOnSingleCandidate(DataSource.class)`：在当前Bean的定义中能找到唯一的`DataSource`；
+
+该`JdbcTemplateAutoConfiguration`就会起作用。实际创建由导入的`JdbcTemplateConfiguration`完成：
+
+```java
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnMissingBean(JdbcOperations.class)
+class JdbcTemplateConfiguration {
+    @Bean
+    @Primary
+    JdbcTemplate jdbcTemplate(DataSource dataSource, JdbcProperties properties) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcProperties.Template template = properties.getTemplate();
+        jdbcTemplate.setFetchSize(template.getFetchSize());
+        jdbcTemplate.setMaxRows(template.getMaxRows());
+        if (template.getQueryTimeout() != null) {
+            jdbcTemplate.setQueryTimeout((int) template.getQueryTimeout().getSeconds());
+        }
+        return jdbcTemplate;
+    }
+}
+```
+
+创建`JdbcTemplate`之前，要满足`@ConditionalOnMissingBean(JdbcOperations.class)`，即不存在`JdbcOperations`的Bean。
+
+如果自己创建了一个`JdbcTemplate`，例如，在`Application`中自己写个方法：
+
+```java
+@SpringBootApplication
+public class Application {
+    ...
+    @Bean
+    JdbcTemplate createJdbcTemplate(@Autowired DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+}
+```
+
+那么根据条件`@ConditionalOnMissingBean(JdbcOperations.class)`，Spring Boot就不会再创建一个重复的`JdbcTemplate`（因为`JdbcOperations`是`JdbcTemplate`的父类）。
+
+可见，Spring Boot自动装配功能是通过自动扫描+条件装配实现的，这一套机制在默认情况下工作得很好，但是，如果要手动控制某个Bean的创建，就需要详细地了解Spring Boot自动创建的原理，很多时候还要跟踪`XxxAutoConfiguration`，以便设定条件使得某个Bean不会被自动创建。
+
+------
+
+## 集成mybatis
+
+引入对应版本的依赖即可：
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.2.1</version>
+</dependency>
+```
+
+yml文件添加映射文件位置：
+
+```yml
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    root: INFO
+    com.aotmd: DEBUG
+    org.mybatis: DEBUG
+```
+
+然后添加之前Spring的非配置部分：
+
+```java
+class User{
+    private long id;
+    private String email;
+    private String password;
+    private String name;
+    private Long createdAt;
+    public User() {}
+    public String getEmail() {
+        return email;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override public String toString() {return "User{id=" + id + ", email='" + email + '\'' + ", password='" + password + '\'' + ", name='" + name + '\'' + ", createdAt=" + createdAt + '}'; }
+}
+
+interface UserMapper {
+    User getById(@Param("id") long id);
+    List<User> getAll(@Param("offset") int offset, @Param("maxResults") int maxResults);
+    int insert(@Param("user") User user);
+    int insert2(@Param("user") User user);
+    int updateName(@Param("user") User user);
+    int deleteById(@Param("id") long id);
+    User getByEmailAndByPassword(@Param("user") User user);
+}
+
+@Component
+class init{
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @PostConstruct
+    public void init() {
+        //在Spring容器启动时自动创建一个users表
+        jdbcTemplate.update("DROP TABLE IF EXISTS users");
+        jdbcTemplate.update("CREATE TABLE IF NOT EXISTS users ("
+                + "id BIGINT IDENTITY NOT NULL PRIMARY KEY, "
+                + "email VARCHAR(100) NOT NULL, "
+                + "password VARCHAR(100) NOT NULL, "
+                + "name VARCHAR(100) NOT NULL, "
+                + "createdAt BIGINT NOT NULL, "
+                + "UNIQUE (email))");
+    }
+
+}
+
+@Component
+class UserService {
+    // 注入UserMapper:
+    @Autowired
+    UserMapper userMapper;
+
+    public User getById(long id) {
+        // 调用Mapper方法:
+        return userMapper.getById(id);
+    }
+    public List<User> getAll(int offset,int maxResults){
+        List<User> all = userMapper.getAll(offset, maxResults);
+        return all;
+    }
+    public User register(String email, String password, String name){
+        // 创建一个User对象:
+        User user = new User();
+        // 设置好各个属性:
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setName(name);
+        user.setCreatedAt(System.currentTimeMillis());
+        // 不要设置id，因为使用了自增主键
+        // 保存到数据库:
+        userMapper.insert2(user);
+        // 现在已经自动获得了id:
+        System.out.println(user.getId());
+        return user;
+    }
+
+    public int updateEmail(String name, long id){
+        // 创建一个User对象:
+        User user = new User();
+        // 设置好各个属性:
+        user.setName(name);
+        user.setId(id);
+        int i = userMapper.updateName(user);
+        System.out.println(i);
+        return i;
+    }
+    public int delete(long id){
+        int i = userMapper.deleteById(id);
+        return i;
+    }
+
+    public User login(String email, String password){
+        // 创建一个User对象:
+        User user = new User();
+        // 设置好各个属性:
+        user.setEmail(email);
+        user.setPassword(password);
+        user=userMapper.getByEmailAndByPassword(user);
+        return user;
+    }
+}
+
+@RestController
+@RequestMapping("/api")
+class ApiController {
+    @Autowired
+    UserService userService;
+
+    @GetMapping("/users")
+    public List<User> users() {
+        return userService.getAll(0,5);
+    }
+
+    @GetMapping("/users/{id}")
+    public User user(@PathVariable("id") long id) {
+        return userService.getById(id);
+    }
+
+    @PostMapping("/signin")
+    public Map<String, Object> signin(@RequestBody SignInRequest signinRequest) {
+        try {
+            User user = userService.register(signinRequest.email, signinRequest.password,signinRequest.name);
+            return Map.of("user", user);
+        } catch (Exception e) {
+            return Map.of("error", "SIGNIN_FAILED", "message", e.getMessage());
+        }
+    }
+
+    public static class SignInRequest {
+        public String email;
+        public String password;
+        public String name;
+    }
+}
+```
+
+映射文件也与之前相同：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aotmd.UserMapper"><!--命名空间为接口名称-->
+    <!--id需与接口方法完全一致,parameterType形参,resultType返回值类型-->
+    <select id="getById" parameterType="Long" resultType="com.aotmd.User">
+        SELECT *
+        FROM users
+        WHERE id = #{id}
+    </select>
+    <select id="getAll"  resultType="com.aotmd.User">
+        SELECT *
+        FROM users LIMIT #{offset}, #{maxResults}
+    </select>
+    <select id="getByEmailAndByPassword" resultType="com.aotmd.User">
+        SELECT *
+        FROM users
+        WHERE email = #{user.email} and
+        password=#{user.password}
+    </select>
+    <insert id="insert" parameterType="com.aotmd.User">
+        INSERT INTO users (email, password, name, createdAt)
+        VALUES (#{user.email}, #{user.password}, #{user.name}, #{user.createdAt})
+    </insert>
+    <insert id="insert2" parameterType="com.aotmd.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO users (email, password, name, createdAt)
+        VALUES (#{user.email}, #{user.password}, #{user.name}, #{user.createdAt})
+    </insert>
+
+    <update id="updateName" parameterType="com.aotmd.User">
+        UPDATE users
+        SET name = #{user.name}
+        WHERE id = #{user.id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE
+        FROM users
+        WHERE id = #{id}
+    </delete>
+</mapper>
+```
+
+启动，然后post访问`http://localhost:8080/api/signin`，附带json：`{"email":"tom@example.com","password":"tomcat","name":"test"}`，返回body：`{"user":{"id":0,"email":"tom@example.com","password":"tomcat","name":"test","createdAt":***}}`
+
+再get访问`http://localhost:8080/api/users`，得到：`[{"id":0,"email":"tom@example.com","password":"tomcat","name":"test","createdAt":***}]`
+
+功能正常。
