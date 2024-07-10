@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-09T21:37:00+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
-
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-10T21:01:35+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -314,8 +313,339 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>现在就可以直接运行<code class="language-plaintext highlighter-rouge">Application</code>，Spring Boot自动启动了嵌入式Tomcat，当看到<code class="language-plaintext highlighter-rouge">Started Application in xxx seconds</code>时，Spring Boot应用启动成功。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>现在就可以直接运行<code class="language-plaintext highlighter-rouge">Application</code>，Spring Boot自动启动了嵌入式Tomcat，当看到<code class="language-plaintext highlighter-rouge">Started Application in xxx seconds</code>时，Spring Boot应用启动成功。</p>
 
+<hr />
+
+<p>之前我们定义的数据源、声明式事务、JdbcTemplate在哪创建的？怎么就可以直接注入到自己编写的<code class="language-plaintext highlighter-rouge">UserService</code>中呢？</p>
+
+<p>这些自动创建的Bean就是Spring Boot的特色：AutoConfiguration。</p>
+
+<p>当引入<code class="language-plaintext highlighter-rouge">spring-boot-starter-jdbc</code>时，启动时会自动扫描所有的<code class="language-plaintext highlighter-rouge">XxxAutoConfiguration</code>：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">DataSourceAutoConfiguration</code>：自动创建一个<code class="language-plaintext highlighter-rouge">DataSource</code>，其中配置项从<code class="language-plaintext highlighter-rouge">application.yml</code>的<code class="language-plaintext highlighter-rouge">spring.datasource</code>读取；</li>
+  <li><code class="language-plaintext highlighter-rouge">DataSourceTransactionManagerAutoConfiguration</code>：自动创建了一个基于JDBC的事务管理器；</li>
+  <li><code class="language-plaintext highlighter-rouge">JdbcTemplateAutoConfiguration</code>：自动创建了一个<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>。</li>
+</ul>
+
+<p>因此，自动得到了一个<code class="language-plaintext highlighter-rouge">DataSource</code>、一个<code class="language-plaintext highlighter-rouge">DataSourceTransactionManager</code>和一个<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>。</p>
+
+<p>类似的，当引入<code class="language-plaintext highlighter-rouge">spring-boot-starter-web</code>时，自动创建了：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ServletWebServerFactoryAutoConfiguration</code>：自动创建一个嵌入式Web服务器，默认是Tomcat；</li>
+  <li><code class="language-plaintext highlighter-rouge">DispatcherServletAutoConfiguration</code>：自动创建一个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>；</li>
+  <li><code class="language-plaintext highlighter-rouge">HttpEncodingAutoConfiguration</code>：自动创建一个<code class="language-plaintext highlighter-rouge">CharacterEncodingFilter</code>；</li>
+  <li><code class="language-plaintext highlighter-rouge">WebMvcAutoConfiguration</code>：自动创建若干与MVC相关的Bean。</li>
+  <li>…</li>
+</ul>
+
+<p>引入第三方<code class="language-plaintext highlighter-rouge">pebble-spring-boot-starter</code>时，自动创建了：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PebbleAutoConfiguration</code>：自动创建了一个<code class="language-plaintext highlighter-rouge">PebbleViewResolver</code>。</li>
+</ul>
+
+<p>Spring Boot大量使用<code class="language-plaintext highlighter-rouge">XxxAutoConfiguration</code>来使得许多组件被自动化配置并创建，而这些创建过程又大量使用了Spring的Conditional功能。例如，我们观察<code class="language-plaintext highlighter-rouge">JdbcTemplateAutoConfiguration</code>，它的代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span><span class="o">(</span><span class="n">proxyBeanMethods</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@ConditionalOnClass</span><span class="o">({</span> <span class="nc">DataSource</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">JdbcTemplate</span><span class="o">.</span><span class="na">class</span> <span class="o">})</span>
+<span class="nd">@ConditionalOnSingleCandidate</span><span class="o">(</span><span class="nc">DataSource</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@AutoConfigureAfter</span><span class="o">(</span><span class="nc">DataSourceAutoConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@EnableConfigurationProperties</span><span class="o">(</span><span class="nc">JdbcProperties</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@Import</span><span class="o">({</span> <span class="nc">JdbcTemplateConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">NamedParameterJdbcTemplateConfiguration</span><span class="o">.</span><span class="na">class</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">JdbcTemplateAutoConfiguration</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>当满足条件：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnClass</code>：在classpath中能找到<code class="language-plaintext highlighter-rouge">DataSource</code>和<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnSingleCandidate(DataSource.class)</code>：在当前Bean的定义中能找到唯一的<code class="language-plaintext highlighter-rouge">DataSource</code>；</li>
+</ul>
+
+<p>该<code class="language-plaintext highlighter-rouge">JdbcTemplateAutoConfiguration</code>就会起作用。实际创建由导入的<code class="language-plaintext highlighter-rouge">JdbcTemplateConfiguration</code>完成：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span><span class="o">(</span><span class="n">proxyBeanMethods</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@ConditionalOnMissingBean</span><span class="o">(</span><span class="nc">JdbcOperations</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">JdbcTemplateConfiguration</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="nd">@Primary</span>
+    <span class="nc">JdbcTemplate</span> <span class="nf">jdbcTemplate</span><span class="o">(</span><span class="nc">DataSource</span> <span class="n">dataSource</span><span class="o">,</span> <span class="nc">JdbcProperties</span> <span class="n">properties</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">JdbcTemplate</span> <span class="n">jdbcTemplate</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JdbcTemplate</span><span class="o">(</span><span class="n">dataSource</span><span class="o">);</span>
+        <span class="nc">JdbcProperties</span><span class="o">.</span><span class="na">Template</span> <span class="n">template</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="na">getTemplate</span><span class="o">();</span>
+        <span class="n">jdbcTemplate</span><span class="o">.</span><span class="na">setFetchSize</span><span class="o">(</span><span class="n">template</span><span class="o">.</span><span class="na">getFetchSize</span><span class="o">());</span>
+        <span class="n">jdbcTemplate</span><span class="o">.</span><span class="na">setMaxRows</span><span class="o">(</span><span class="n">template</span><span class="o">.</span><span class="na">getMaxRows</span><span class="o">());</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">template</span><span class="o">.</span><span class="na">getQueryTimeout</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">jdbcTemplate</span><span class="o">.</span><span class="na">setQueryTimeout</span><span class="o">((</span><span class="kt">int</span><span class="o">)</span> <span class="n">template</span><span class="o">.</span><span class="na">getQueryTimeout</span><span class="o">().</span><span class="na">getSeconds</span><span class="o">());</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">jdbcTemplate</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>创建<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>之前，要满足<code class="language-plaintext highlighter-rouge">@ConditionalOnMissingBean(JdbcOperations.class)</code>，即不存在<code class="language-plaintext highlighter-rouge">JdbcOperations</code>的Bean。</p>
+
+<p>如果自己创建了一个<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>，例如，在<code class="language-plaintext highlighter-rouge">Application</code>中自己写个方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nd">@Bean</span>
+    <span class="nc">JdbcTemplate</span> <span class="nf">createJdbcTemplate</span><span class="o">(</span><span class="nd">@Autowired</span> <span class="nc">DataSource</span> <span class="n">dataSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JdbcTemplate</span><span class="o">(</span><span class="n">dataSource</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>那么根据条件<code class="language-plaintext highlighter-rouge">@ConditionalOnMissingBean(JdbcOperations.class)</code>，Spring Boot就不会再创建一个重复的<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>（因为<code class="language-plaintext highlighter-rouge">JdbcOperations</code>是<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>的父类）。</p>
+
+<p>可见，Spring Boot自动装配功能是通过自动扫描+条件装配实现的，这一套机制在默认情况下工作得很好，但是，如果要手动控制某个Bean的创建，就需要详细地了解Spring Boot自动创建的原理，很多时候还要跟踪<code class="language-plaintext highlighter-rouge">XxxAutoConfiguration</code>，以便设定条件使得某个Bean不会被自动创建。</p>
+
+<hr />
+
+<h2 id="集成mybatis">集成mybatis</h2>
+
+<p>引入对应版本的依赖即可：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.mybatis.spring.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>mybatis-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.2.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>yml文件添加映射文件位置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">mybatis</span><span class="pi">:</span>
+  <span class="na">mapper-locations</span><span class="pi">:</span> <span class="s">classpath:mapper/*.xml</span>
+
+<span class="na">logging</span><span class="pi">:</span>
+  <span class="na">level</span><span class="pi">:</span>
+    <span class="na">root</span><span class="pi">:</span> <span class="s">INFO</span>
+    <span class="na">com.aotmd</span><span class="pi">:</span> <span class="s">DEBUG</span>
+    <span class="na">org.mybatis</span><span class="pi">:</span> <span class="s">DEBUG</span>
+</code></pre></div></div>
+
+<p>然后添加之前Spring的非配置部分：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">User</span><span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">createdAt</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">User</span><span class="o">()</span> <span class="o">{}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getEmail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getPassword</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">password</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setEmail</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPassword</span><span class="o">(</span><span class="nc">String</span> <span class="n">password</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">getCreatedAt</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">createdAt</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreatedAt</span><span class="o">(</span><span class="nc">Long</span> <span class="n">createdAt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">createdAt</span> <span class="o">=</span> <span class="n">createdAt</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span> <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span><span class="k">return</span> <span class="s">"User{id="</span> <span class="o">+</span> <span class="n">id</span> <span class="o">+</span> <span class="s">", email='"</span> <span class="o">+</span> <span class="n">email</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="s">", password='"</span> <span class="o">+</span> <span class="n">password</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="s">", name='"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">'\''</span> <span class="o">+</span> <span class="s">", createdAt="</span> <span class="o">+</span> <span class="n">createdAt</span> <span class="o">+</span> <span class="sc">'}'</span><span class="o">;</span> <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">interface</span> <span class="nc">UserMapper</span> <span class="o">{</span>
+    <span class="nc">User</span> <span class="nf">getById</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"id"</span><span class="o">)</span> <span class="kt">long</span> <span class="n">id</span><span class="o">);</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">getAll</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"offset"</span><span class="o">)</span> <span class="kt">int</span> <span class="n">offset</span><span class="o">,</span> <span class="nd">@Param</span><span class="o">(</span><span class="s">"maxResults"</span><span class="o">)</span> <span class="kt">int</span> <span class="n">maxResults</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="nf">insert</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"user"</span><span class="o">)</span> <span class="nc">User</span> <span class="n">user</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="nf">insert2</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"user"</span><span class="o">)</span> <span class="nc">User</span> <span class="n">user</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="nf">updateName</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"user"</span><span class="o">)</span> <span class="nc">User</span> <span class="n">user</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="nf">deleteById</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"id"</span><span class="o">)</span> <span class="kt">long</span> <span class="n">id</span><span class="o">);</span>
+    <span class="nc">User</span> <span class="nf">getByEmailAndByPassword</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"user"</span><span class="o">)</span> <span class="nc">User</span> <span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">init</span><span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">JdbcTemplate</span> <span class="n">jdbcTemplate</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">//在Spring容器启动时自动创建一个users表</span>
+        <span class="n">jdbcTemplate</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="s">"DROP TABLE IF EXISTS users"</span><span class="o">);</span>
+        <span class="n">jdbcTemplate</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="s">"CREATE TABLE IF NOT EXISTS users ("</span>
+                <span class="o">+</span> <span class="s">"id BIGINT IDENTITY NOT NULL PRIMARY KEY, "</span>
+                <span class="o">+</span> <span class="s">"email VARCHAR(100) NOT NULL, "</span>
+                <span class="o">+</span> <span class="s">"password VARCHAR(100) NOT NULL, "</span>
+                <span class="o">+</span> <span class="s">"name VARCHAR(100) NOT NULL, "</span>
+                <span class="o">+</span> <span class="s">"createdAt BIGINT NOT NULL, "</span>
+                <span class="o">+</span> <span class="s">"UNIQUE (email))"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">class</span> <span class="nc">UserService</span> <span class="o">{</span>
+    <span class="c1">// 注入UserMapper:</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">User</span> <span class="nf">getById</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 调用Mapper方法:</span>
+        <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">getById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">getAll</span><span class="o">(</span><span class="kt">int</span> <span class="n">offset</span><span class="o">,</span><span class="kt">int</span> <span class="n">maxResults</span><span class="o">){</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="n">all</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">getAll</span><span class="o">(</span><span class="n">offset</span><span class="o">,</span> <span class="n">maxResults</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">all</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">User</span> <span class="nf">register</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">){</span>
+        <span class="c1">// 创建一个User对象:</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+        <span class="c1">// 设置好各个属性:</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setCreatedAt</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">());</span>
+        <span class="c1">// 不要设置id，因为使用了自增主键</span>
+        <span class="c1">// 保存到数据库:</span>
+        <span class="n">userMapper</span><span class="o">.</span><span class="na">insert2</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="c1">// 现在已经自动获得了id:</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">long</span> <span class="n">id</span><span class="o">){</span>
+        <span class="c1">// 创建一个User对象:</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+        <span class="c1">// 设置好各个属性:</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setId</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">updateName</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">i</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">delete</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">){</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">deleteById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">i</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">User</span> <span class="nf">login</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nc">String</span> <span class="n">password</span><span class="o">){</span>
+        <span class="c1">// 创建一个User对象:</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">User</span><span class="o">();</span>
+        <span class="c1">// 设置好各个属性:</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setEmail</span><span class="o">(</span><span class="n">email</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="n">password</span><span class="o">);</span>
+        <span class="n">user</span><span class="o">=</span><span class="n">userMapper</span><span class="o">.</span><span class="na">getByEmailAndByPassword</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/api"</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">ApiController</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">UserService</span> <span class="n">userService</span><span class="o">;</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/users"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">users</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">userService</span><span class="o">.</span><span class="na">getAll</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">5</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/users/{id}"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">User</span> <span class="nf">user</span><span class="o">(</span><span class="nd">@PathVariable</span><span class="o">(</span><span class="s">"id"</span><span class="o">)</span> <span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">userService</span><span class="o">.</span><span class="na">getById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/signin"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">signin</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">SignInRequest</span> <span class="n">signinRequest</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">userService</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">signinRequest</span><span class="o">.</span><span class="na">email</span><span class="o">,</span> <span class="n">signinRequest</span><span class="o">.</span><span class="na">password</span><span class="o">,</span><span class="n">signinRequest</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span> <span class="n">user</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"error"</span><span class="o">,</span> <span class="s">"SIGNIN_FAILED"</span><span class="o">,</span> <span class="s">"message"</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">SignInRequest</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+        <span class="kd">public</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+        <span class="kd">public</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>映射文件也与之前相同：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">"com.aotmd.UserMapper"</span><span class="nt">&gt;</span><span class="c">&lt;!--命名空间为接口名称--&gt;</span>
+    <span class="c">&lt;!--id需与接口方法完全一致,parameterType形参,resultType返回值类型--&gt;</span>
+    <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">"getById"</span> <span class="na">parameterType=</span><span class="s">"Long"</span> <span class="na">resultType=</span><span class="s">"com.aotmd.User"</span><span class="nt">&gt;</span>
+        SELECT *
+        FROM users
+        WHERE id = #{id}
+    <span class="nt">&lt;/select&gt;</span>
+    <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">"getAll"</span>  <span class="na">resultType=</span><span class="s">"com.aotmd.User"</span><span class="nt">&gt;</span>
+        SELECT *
+        FROM users LIMIT #{offset}, #{maxResults}
+    <span class="nt">&lt;/select&gt;</span>
+    <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">"getByEmailAndByPassword"</span> <span class="na">resultType=</span><span class="s">"com.aotmd.User"</span><span class="nt">&gt;</span>
+        SELECT *
+        FROM users
+        WHERE email = #{user.email} and
+        password=#{user.password}
+    <span class="nt">&lt;/select&gt;</span>
+    <span class="nt">&lt;insert</span> <span class="na">id=</span><span class="s">"insert"</span> <span class="na">parameterType=</span><span class="s">"com.aotmd.User"</span><span class="nt">&gt;</span>
+        INSERT INTO users (email, password, name, createdAt)
+        VALUES (#{user.email}, #{user.password}, #{user.name}, #{user.createdAt})
+    <span class="nt">&lt;/insert&gt;</span>
+    <span class="nt">&lt;insert</span> <span class="na">id=</span><span class="s">"insert2"</span> <span class="na">parameterType=</span><span class="s">"com.aotmd.User"</span> <span class="na">useGeneratedKeys=</span><span class="s">"true"</span> <span class="na">keyProperty=</span><span class="s">"id"</span> <span class="na">keyColumn=</span><span class="s">"id"</span><span class="nt">&gt;</span>
+        INSERT INTO users (email, password, name, createdAt)
+        VALUES (#{user.email}, #{user.password}, #{user.name}, #{user.createdAt})
+    <span class="nt">&lt;/insert&gt;</span>
+
+    <span class="nt">&lt;update</span> <span class="na">id=</span><span class="s">"updateName"</span> <span class="na">parameterType=</span><span class="s">"com.aotmd.User"</span><span class="nt">&gt;</span>
+        UPDATE users
+        SET name = #{user.name}
+        WHERE id = #{user.id}
+    <span class="nt">&lt;/update&gt;</span>
+
+    <span class="nt">&lt;delete</span> <span class="na">id=</span><span class="s">"deleteById"</span> <span class="na">parameterType=</span><span class="s">"long"</span><span class="nt">&gt;</span>
+        DELETE
+        FROM users
+        WHERE id = #{id}
+    <span class="nt">&lt;/delete&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</code></pre></div></div>
+
+<p>启动，然后post访问<code class="language-plaintext highlighter-rouge">http://localhost:8080/api/signin</code>，附带json：<code class="language-plaintext highlighter-rouge">{"email":"tom@example.com","password":"tomcat","name":"test"}</code>，返回body：<code class="language-plaintext highlighter-rouge">{"user":{"id":0,"email":"tom@example.com","password":"tomcat","name":"test","createdAt":***}}</code></p>
+
+<p>再get访问<code class="language-plaintext highlighter-rouge">http://localhost:8080/api/users</code>，得到：<code class="language-plaintext highlighter-rouge">[{"id":0,"email":"tom@example.com","password":"tomcat","name":"test","createdAt":***}]</code></p>
+
+<p>功能正常。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
