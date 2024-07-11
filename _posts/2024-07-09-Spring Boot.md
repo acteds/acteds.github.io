@@ -237,11 +237,13 @@ public class Application {
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <!-- 集成Pebble View -->
+        <!-- https://mvnrepository.com/artifact/io.pebbletemplates/pebble-spring-boot-starter -->
         <dependency>
             <groupId>io.pebbletemplates</groupId>
             <artifactId>pebble-spring-boot-starter</artifactId>
-            <version>3.2.2</version>
+            <version>3.1.3</version>
         </dependency>
+
 
         <!-- JDBC驱动 -->
         <dependency>
@@ -254,7 +256,9 @@ public class Application {
 
 使用Spring Boot时，强烈推荐从`spring-boot-starter-parent`继承，因为这样就可以引入Spring Boot的预置配置。
 
-紧接着，我们引入了依赖`spring-boot-starter-web`和`spring-boot-starter-jdbc`，它们分别引入了Spring MVC相关依赖和Spring JDBC相关依赖，无需指定版本号，因为引入的`<parent>`内已经指定了，只有我们自己引入的某些第三方jar包需要指定版本号。这里我们引入`pebble-spring-boot-starter`作为View，以及`hsqldb`作为嵌入式数据库。`hsqldb`已在`spring-boot-starter-jdbc`中预置了版本号，因此此处无需指定版本号。
+紧接着，引入了依赖`spring-boot-starter-web`和`spring-boot-starter-jdbc`，它们分别引入了Spring MVC相关依赖和Spring JDBC相关依赖，无需指定版本号，因为引入的`<parent>`内已经指定了，只有我们自己引入的某些第三方jar包需要指定版本号。这里引入`pebble-spring-boot-starter`作为View，以及`hsqldb`作为嵌入式数据库。`hsqldb`已在`spring-boot-starter-jdbc`中预置了版本号，因此此处无需指定版本号。
+
+**第三方jar的版本兼容性可以查看[mvnrepository](https://mvnrepository.com/artifact/io.pebbletemplates/pebble-spring-boot-starter/3.1.3)下的Compile Dependencies查看兼容性。**
 
 根据`pebble-spring-boot-starter`的[文档](https://pebbletemplates.io/wiki/guide/spring-boot-integration/)，加入如下配置到`application.yml`：
 
@@ -264,6 +268,7 @@ pebble:
   suffix:
   # 开发阶段禁用模板缓存:
   cache: false
+  prefix: /templates/
 ```
 
 对`Application`稍作改动，添加`WebMvcConfigurer`这个Bean：
@@ -289,6 +294,40 @@ public class Application {
 ```
 
 现在就可以直接运行`Application`，Spring Boot自动启动了嵌入式Tomcat，当看到`Started Application in xxx seconds`时，Spring Boot应用启动成功。
+
+添加测试：
+
+```java
+@Controller
+class TestController{
+    @GetMapping("/test1")
+    public ModelAndView test(){
+        Map<String, String> map = new HashMap<>();
+        map.put("body","你好");
+        map.put("title","测试");
+        return new ModelAndView("test.html",map);
+    }
+}
+```
+
+test.html:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+</head>
+<body>
+{{body}}
+</body>
+</html>
+```
+
+访问：`http://localhost:8080/test1`：
+
+显示：`你好`
 
 ------
 
@@ -316,7 +355,7 @@ public class Application {
 
 - `PebbleAutoConfiguration`：自动创建了一个`PebbleViewResolver`。
 
-Spring Boot大量使用`XxxAutoConfiguration`来使得许多组件被自动化配置并创建，而这些创建过程又大量使用了Spring的Conditional功能。例如，我们观察`JdbcTemplateAutoConfiguration`，它的代码如下：
+Spring Boot大量使用`XxxAutoConfiguration`来使得许多组件被自动化配置并创建，而这些创建过程又大量使用了Spring的Conditional功能。例如`JdbcTemplateAutoConfiguration`，它的代码如下：
 
 ```java
 @Configuration(proxyBeanMethods = false)
@@ -620,3 +659,53 @@ class ApiController {
 再get访问`http://localhost:8080/api/users`，得到：`[{"id":0,"email":"tom@example.com","password":"tomcat","name":"test","createdAt":***}]`
 
 功能正常。
+
+## spring-boot-devtools
+
+在开发阶段，我们经常要修改代码，然后重启Spring Boot应用。经常手动停止再启动，比较麻烦。
+
+Spring Boot提供了一个开发者工具，可以监控classpath路径上的文件。只要源码或配置文件发生修改，Spring Boot应用可以自动重启。在开发阶段，这个功能比较有用。
+
+要使用这一开发者功能，只需添加如下依赖到`pom.xml`：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+
+然后，没有然后了。直接启动应用程序，然后试着修改源码，保存，观察日志输出，Spring Boot会自动重新加载。
+
+默认配置下，针对`/static`、`/public`和`/templates`目录中的文件修改，不会自动重启，因为禁用缓存后，这些文件的修改可以实时更新。
+
+------
+
+如果没有效果，那需要修改以下设置：
+
+1. 设置IDEA的编译器：
+
+   - File->Settings…->Build,Execution,Deployment->Compiler，勾选"Build project automatically"
+   - 文件->设置...->构建、执行、部署->编译器，勾选"自动构建项目"
+
+2. 应用程序运行时允许编译器自动生成：
+
+   - 在IntellijIDEA中：按Ctrl+Shift+a，然后键入“注册表”并点击它。然后启用选项“compiler.Automake.Allow.When.app.Running”。
+   - 在新版本这个选项已经被移到了高级设置中，文件->设置...->高级设置->编译器栏->“即使开发的应用程序当前正在运行，也允许自动make启动”。
+
+   
+
+还有可能是项目名称的问题：
+
+在决定类路径上的条目更改时是否应触发重启时，DevTools会自动忽略名为Spring-Boot、Spring-Boot-DevTools、Spring-Boot-Autoconfiguration、Spring-Boot-Actuator和Spring-Boot-starter的项目。
+
+使用Ctrl+F9构建项目**会自动触发重新启动**。如果您希望在保存类文件后立即自动触发，可以按照问题中提供的热插拔链接进行操作。
+
+Spring Boot还具有在特定文件发生更改时触发重新启动的选项，可以使用以下属性在应用程序中配置该选项
+
+> spring.devtools.restart.trigger-file=
+>
+> Spring.devtools.restart.rigger-file=
+
+参见： [Spring Boot Developer Tools Auto restart doesn't work in IntelliJ](https://stackoverflow.com/questions/53569745/spring-boot-developer-tools-auto-restart-doesnt-work-in-intellij)
