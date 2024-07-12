@@ -709,3 +709,109 @@ Spring Boot还具有在特定文件发生更改时触发重新启动的选项，
 > Spring.devtools.restart.rigger-file=
 
 参见： [Spring Boot Developer Tools Auto restart doesn't work in IntelliJ](https://stackoverflow.com/questions/53569745/spring-boot-developer-tools-auto-restart-doesnt-work-in-intellij)
+
+## 打包Spring Boot应用
+
+在Spring Boot应用中，Spring Boot自带一个更简单的`spring-boot-maven-plugin`插件用来打包，只需要在`pom.xml`中加入以下配置：
+
+```xml
+<project ...>
+    ...
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+无需任何配置，Spring Boot的这款插件会自动定位应用程序的入口Class，执行以下Maven命令即可打包：
+
+```bash
+mvn clean package
+```
+
+以`spring-boot-hello`项目为例，打包后在`target`目录下可以看到两个jar文件：
+
+```text
+spring-boot-hello-1.0-SNAPSHOT.jar
+spring-boot-hello-1.0-SNAPSHOT.jar.original
+```
+
+其中，`spring-boot-hello-1.0-SNAPSHOT.jar.original`是Maven标准打包插件打的jar包，它只包含我们自己的Class，不包含依赖，而`spring-boot-hello-1.0-SNAPSHOT.jar`是Spring Boot打包插件创建的包含依赖的jar，可以直接运行：
+
+```bash
+java -jar springboot-exec-jar-1.0-SNAPSHOT.jar
+```
+
+这样，部署一个Spring Boot应用就非常简单，无需预装任何服务器，只需要上传jar包即可。
+
+在打包的时候，因为打包后的Spring Boot应用不会被修改，因此，默认情况下，`spring-boot-devtools`这个依赖不会被打包进去。但是要注意，使用早期的Spring Boot版本时，需要配置一下才能排除`spring-boot-devtools`这个依赖：
+
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <excludeDevtools>true</excludeDevtools>
+    </configuration>
+</plugin>
+```
+
+如果不喜欢默认的项目名+版本号作为文件名，可以加一个配置指定文件名：
+
+```xml
+<project ...>
+    ...
+    <build>
+        <finalName>awesome-app</finalName>
+        ...
+    </build>
+</project>
+```
+
+这样打包后的文件名就是`awesome-app.jar`。
+
+------
+
+在 IntelliJ IDEA 中运行打包好的 Spring Boot JAR 文件，可以按照以下步骤操作：
+
+**方法 1：使用终端运行 JAR 文件**
+
+1. 打开 IntelliJ IDEA 并导航到终端（View -> Tool Windows -> Terminal）。
+2. 切换到包含 JAR 文件的目录，例如：
+    ```bash
+    cd target
+    ```
+3. 使用以下命令运行 JAR 文件：
+    ```bash
+    java -jar your-application.jar
+    ```
+    替换 `your-application.jar` 为实际的 JAR 文件名。
+
+**方法 2：创建运行配置**
+
+1. 打开 IntelliJ IDEA 并导航到 "Run/Debug Configurations"（Run -> Edit Configurations）。
+2. 点击左上角的 `+` 号，选择 `Application`。
+3. 配置运行配置：
+    - **Name**: 运行配置的名称，例如 `Run Jar`.
+    - **Main class**: 选择 `org.springframework.boot.loader.JarLauncher`。
+    - **Program arguments**: 填写 JAR 文件的路径，例如 `path/to/your-application.jar`。
+4. 点击 "OK" 保存运行配置。
+5. 在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 "Run" 按钮。
+
+**方法 3：使用 JAR 文件配置**
+
+1. 打开 IntelliJ IDEA 并导航到 "Run/Debug Configurations"（Run -> Edit Configurations）。
+2. 点击左上角的 `+` 号，选择 `JAR Application`。
+3. 配置运行配置：
+    - **Name**: 运行配置的名称，例如 `Run Jar`.
+    - **Path to JAR**: 选择 JAR 文件的路径，例如 `target/your-application.jar`。
+    - **Working Directory**: 设置为项目的根目录。
+    - **VM options**: 根据需要填写，例如 `-Xmx1024m`。
+4. 点击 "OK" 保存运行配置。
+5. 在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 "Run" 按钮。
+
