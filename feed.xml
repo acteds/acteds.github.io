@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-11T19:46:56+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-12T22:24:15+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -740,7 +740,118 @@
   <p>Spring.devtools.restart.rigger-file=</p>
 </blockquote>
 
-<p>参见： <a href="https://stackoverflow.com/questions/53569745/spring-boot-developer-tools-auto-restart-doesnt-work-in-intellij">Spring Boot Developer Tools Auto restart doesn’t work in IntelliJ</a></p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>参见： <a href="https://stackoverflow.com/questions/53569745/spring-boot-developer-tools-auto-restart-doesnt-work-in-intellij">Spring Boot Developer Tools Auto restart doesn’t work in IntelliJ</a></p>
+
+<h2 id="打包spring-boot应用">打包Spring Boot应用</h2>
+
+<p>在Spring Boot应用中，Spring Boot自带一个更简单的<code class="language-plaintext highlighter-rouge">spring-boot-maven-plugin</code>插件用来打包，只需要在<code class="language-plaintext highlighter-rouge">pom.xml</code>中加入以下配置：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="err">...</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;plugins&gt;</span>
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>无需任何配置，Spring Boot的这款插件会自动定位应用程序的入口Class，执行以下Maven命令即可打包：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mvn clean package
+</code></pre></div></div>
+
+<p>以<code class="language-plaintext highlighter-rouge">spring-boot-hello</code>项目为例，打包后在<code class="language-plaintext highlighter-rouge">target</code>目录下可以看到两个jar文件：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spring-boot-hello-1.0-SNAPSHOT.jar
+spring-boot-hello-1.0-SNAPSHOT.jar.original
+</code></pre></div></div>
+
+<p>其中，<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar.original</code>是Maven标准打包插件打的jar包，它只包含我们自己的Class，不包含依赖，而<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>是Spring Boot打包插件创建的包含依赖的jar，可以直接运行：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java <span class="nt">-jar</span> springboot-exec-jar-1.0-SNAPSHOT.jar
+</code></pre></div></div>
+
+<p>这样，部署一个Spring Boot应用就非常简单，无需预装任何服务器，只需要上传jar包即可。</p>
+
+<p>在打包的时候，因为打包后的Spring Boot应用不会被修改，因此，默认情况下，<code class="language-plaintext highlighter-rouge">spring-boot-devtools</code>这个依赖不会被打包进去。但是要注意，使用早期的Spring Boot版本时，需要配置一下才能排除<code class="language-plaintext highlighter-rouge">spring-boot-devtools</code>这个依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="nt">&lt;excludeDevtools&gt;</span>true<span class="nt">&lt;/excludeDevtools&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></div></div>
+
+<p>如果不喜欢默认的项目名+版本号作为文件名，可以加一个配置指定文件名：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="err">...</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;finalName&gt;</span>awesome-app<span class="nt">&lt;/finalName&gt;</span>
+        ...
+    <span class="nt">&lt;/build&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>这样打包后的文件名就是<code class="language-plaintext highlighter-rouge">awesome-app.jar</code>。</p>
+
+<hr />
+
+<p>在 IntelliJ IDEA 中运行打包好的 Spring Boot JAR 文件，可以按照以下步骤操作：</p>
+
+<p><strong>方法 1：使用终端运行 JAR 文件</strong></p>
+
+<ol>
+  <li>打开 IntelliJ IDEA 并导航到终端（View -&gt; Tool Windows -&gt; Terminal）。</li>
+  <li>切换到包含 JAR 文件的目录，例如：
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd </span>target
+</code></pre></div>    </div>
+  </li>
+  <li>使用以下命令运行 JAR 文件：
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> java <span class="nt">-jar</span> your-application.jar
+</code></pre></div>    </div>
+    <p>替换 <code class="language-plaintext highlighter-rouge">your-application.jar</code> 为实际的 JAR 文件名。</p>
+  </li>
+</ol>
+
+<p><strong>方法 2：创建运行配置</strong></p>
+
+<ol>
+  <li>打开 IntelliJ IDEA 并导航到 “Run/Debug Configurations”（Run -&gt; Edit Configurations）。</li>
+  <li>点击左上角的 <code class="language-plaintext highlighter-rouge">+</code> 号，选择 <code class="language-plaintext highlighter-rouge">Application</code>。</li>
+  <li>配置运行配置：
+    <ul>
+      <li><strong>Name</strong>: 运行配置的名称，例如 <code class="language-plaintext highlighter-rouge">Run Jar</code>.</li>
+      <li><strong>Main class</strong>: 选择 <code class="language-plaintext highlighter-rouge">org.springframework.boot.loader.JarLauncher</code>。</li>
+      <li><strong>Program arguments</strong>: 填写 JAR 文件的路径，例如 <code class="language-plaintext highlighter-rouge">path/to/your-application.jar</code>。</li>
+    </ul>
+  </li>
+  <li>点击 “OK” 保存运行配置。</li>
+  <li>在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 “Run” 按钮。</li>
+</ol>
+
+<p><strong>方法 3：使用 JAR 文件配置</strong></p>
+
+<ol>
+  <li>打开 IntelliJ IDEA 并导航到 “Run/Debug Configurations”（Run -&gt; Edit Configurations）。</li>
+  <li>点击左上角的 <code class="language-plaintext highlighter-rouge">+</code> 号，选择 <code class="language-plaintext highlighter-rouge">JAR Application</code>。</li>
+  <li>配置运行配置：
+    <ul>
+      <li><strong>Name</strong>: 运行配置的名称，例如 <code class="language-plaintext highlighter-rouge">Run Jar</code>.</li>
+      <li><strong>Path to JAR</strong>: 选择 JAR 文件的路径，例如 <code class="language-plaintext highlighter-rouge">target/your-application.jar</code>。</li>
+      <li><strong>Working Directory</strong>: 设置为项目的根目录。</li>
+      <li><strong>VM options</strong>: 根据需要填写，例如 <code class="language-plaintext highlighter-rouge">-Xmx1024m</code>。</li>
+    </ul>
+  </li>
+  <li>点击 “OK” 保存运行配置。</li>
+  <li>在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 “Run” 按钮。</li>
+</ol>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
