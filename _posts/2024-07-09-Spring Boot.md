@@ -815,3 +815,205 @@ java -jar springboot-exec-jar-1.0-SNAPSHOT.jar
 4. 点击 "OK" 保存运行配置。
 5. 在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 "Run" 按钮。
 
+
+
+## 瘦身Spring Boot应用
+
+使用Spring Boot提供的`spring-boot-maven-plugin`打包Spring Boot应用，可以直接获得一个完整的可运行的jar包，把它上传到服务器上再运行就极其方便。
+
+但是这种方式也不是没有缺点。最大的缺点就是包太大了，动不动几十MB，在网速不给力的情况下，上传服务器非常耗时。引用到的Tomcat、Spring和其他第三方组件，只要版本号不变，这些jar就相当于每次都重复打进去，再重复上传了一遍。
+
+真正经常改动的代码其实是自己编写的代码。如果只打包自己编写的代码，通常jar包也就几百KB。但是，运行的时候，classpath中没有依赖的jar包，肯定会报错。
+
+如何只打自己编写的代码，同时又自动把依赖包下载到某处，并自动引入到classpath中。解决方案就是使用`spring-boot-thin-launcher`。
+
+修改`<build>`-`<plugins>`-`<plugin>`，给原来的`spring-boot-maven-plugin`增加一个`<dependency>`如下：
+
+```xml
+<project ...>
+    ...
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework.boot.experimental</groupId>
+                        <artifactId>spring-boot-thin-layout</artifactId>
+                        <version>1.0.31.RELEASE</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot.experimental</groupId>
+                <artifactId>spring-boot-thin-maven-plugin</artifactId>
+                <version>1.0.31.RELEASE</version>
+                <executions>
+                    <!--在构建时下载依赖项-->
+                    <execution>
+                        <id>resolve</id>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <!-- 阿里云maven仓库 -->
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
+```
+
+如果无法自动下载：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot.experimental</groupId>
+    <artifactId>spring-boot-thin-layout</artifactId>
+    <version>1.0.31.RELEASE</version>
+</dependency>
+```
+
+可以把它加入到
+
+```xml
+<project ...>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot.experimental</groupId>
+			<artifactId>spring-boot-thin-layout</artifactId>
+			<version>1.0.31.RELEASE</version>
+		</dependency>
+	</dependencies>
+</project>
+```
+
+加载完毕后删除。
+
+然后不需要任何其他改动了，直接按正常的流程打包，执行`mvn clean package`，`target`目录最终生成的可执行`spring-boot-hello-1.0-SNAPSHOT.jar`只有79KB左右。
+
+直接运行`java -jar spring-boot-hello-1.0-SNAPSHOT.jar`，效果和上一节完全一样。显然，79KB的jar肯定无法放下Tomcat和Spring。那么，运行时这个`spring-boot-hello-1.0-SNAPSHOT.jar`又是怎么找到它自己依赖的jar包呢？
+
+实际上`spring-boot-thin-launcher`这个插件改变了`spring-boot-maven-plugin`的默认行为。它输出的jar包只包含自己代码编译后的class，一个很小的`ThinJarWrapper`，以及解析`pom.xml`后得到的所有依赖jar的列表。
+
+运行的时候，入口实际上是`ThinJarWrapper`，它会先在指定目录搜索看看依赖的jar包是否都存在，如果不存在，先从Maven中央仓库下载到本地，然后，再执行我们自己编写的`main()`入口方法。这种方式有点类似很多在线安装程序：用户下载后得到的是一个很小的exe安装程序，执行安装程序时，会首先在线下载所需的若干巨大的文件，再进行真正的安装。
+
+这个`spring-boot-thin-launcher`在启动时搜索的默认目录是用户主目录的`.m2`，也可以指定下载目录，例如，将下载目录指定为当前目录：
+
+```bash
+$ java -Dthin.root=. -jar spring-boot-hello-1.0-SNAPSHOT.jar
+```
+
+上述命令通过环境变量`thin.root`传入当前目录，执行后发现当前目录下自动生成了一个`repository`目录，这和Maven的默认下载目录`~/.m2/repository`的结构是完全一样的，只是它仅包含`spring-boot-hello-1.0-SNAPSHOT.jar`所需的运行期依赖项。
+
+ 注意：只有首次运行时会自动下载依赖项，再次运行时由于无需下载，所以启动速度会大大加快。如果删除了repository目录，再次运行时就会再次触发下载。
+
+**预热**
+
+把79KB大小的`spring-boot-hello-1.0-SNAPSHOT.jar`直接扔到服务器执行，上传过程就非常快。但是，第一次在服务器上运行`spring-boot-hello-1.0-SNAPSHOT.jar`时，仍需要从Maven中央仓库下载大量的jar包，所以，`spring-boot-thin-launcher`还提供了一个`dryrun`选项，专门用来下载依赖项而不执行实际代码：
+
+```bash
+java -Dthin.dryrun=true -Dthin.root=. -jar spring-boot-hello-1.0-SNAPSHOT.jar
+```
+
+执行上述代码会在当前目录创建`repository`目录，并下载所有依赖项，但并不会运行我们编写的`main()`方法。此过程称之为“预热”（warm up）。
+
+如果服务器由于安全限制不允许从外网下载文件，那么可以在本地预热，然后把`spring-boot-hello-1.0-SNAPSHOT.jar`和`repository`目录上传到服务器。只要依赖项没有变化，后续改动只需要上传`spring-boot-hello-1.0-SNAPSHOT.jar`即可。
+
+如果在maven中使用相对路径引入了自己的jar,使用 `java -jar .\xxx.jar --thin.root=.` 会报错。如：`<systemPath>${project.basedir}/src/main/resources/lib/spring-file-storage-0.4.0.jar</systemPath>`
+
+`thin.root`根目录默认用的是本地的m2目录：`${user.home}/.m2`
+
+把自己的jar直接复制到开发环境和部署环境的m2目录下
+
+```xml
+<systemPath>
+  ${user.home}/.m2/repository/com/***/abc.jar
+</systemPath>
+```
+
+这样就不会提示找不到依赖了。
+
+[Spring Boot Thin Launcher官网](https://github.com/spring-projects-experimental/spring-boot-thin-launcher)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
