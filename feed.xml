@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-12T22:24:15+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-14T19:58:20+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -851,7 +851,145 @@ spring-boot-hello-1.0-SNAPSHOT.jar.original
   </li>
   <li>点击 “OK” 保存运行配置。</li>
   <li>在 IntelliJ IDEA 的工具栏上选择新创建的运行配置，然后点击 “Run” 按钮。</li>
-</ol>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+</ol>
+
+<h2 id="瘦身spring-boot应用">瘦身Spring Boot应用</h2>
+
+<p>使用Spring Boot提供的<code class="language-plaintext highlighter-rouge">spring-boot-maven-plugin</code>打包Spring Boot应用，可以直接获得一个完整的可运行的jar包，把它上传到服务器上再运行就极其方便。</p>
+
+<p>但是这种方式也不是没有缺点。最大的缺点就是包太大了，动不动几十MB，在网速不给力的情况下，上传服务器非常耗时。引用到的Tomcat、Spring和其他第三方组件，只要版本号不变，这些jar就相当于每次都重复打进去，再重复上传了一遍。</p>
+
+<p>真正经常改动的代码其实是自己编写的代码。如果只打包自己编写的代码，通常jar包也就几百KB。但是，运行的时候，classpath中没有依赖的jar包，肯定会报错。</p>
+
+<p>如何只打自己编写的代码，同时又自动把依赖包下载到某处，并自动引入到classpath中。解决方案就是使用<code class="language-plaintext highlighter-rouge">spring-boot-thin-launcher</code>。</p>
+
+<p>修改<code class="language-plaintext highlighter-rouge">&lt;build&gt;</code>-<code class="language-plaintext highlighter-rouge">&lt;plugins&gt;</code>-<code class="language-plaintext highlighter-rouge">&lt;plugin&gt;</code>，给原来的<code class="language-plaintext highlighter-rouge">spring-boot-maven-plugin</code>增加一个<code class="language-plaintext highlighter-rouge">&lt;dependency&gt;</code>如下：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="err">...</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;plugins&gt;</span>
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;dependencies&gt;</span>
+                    <span class="nt">&lt;dependency&gt;</span>
+                        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot.experimental<span class="nt">&lt;/groupId&gt;</span>
+                        <span class="nt">&lt;artifactId&gt;</span>spring-boot-thin-layout<span class="nt">&lt;/artifactId&gt;</span>
+                        <span class="nt">&lt;version&gt;</span>1.0.31.RELEASE<span class="nt">&lt;/version&gt;</span>
+                    <span class="nt">&lt;/dependency&gt;</span>
+                <span class="nt">&lt;/dependencies&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot.experimental<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>spring-boot-thin-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>1.0.31.RELEASE<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;executions&gt;</span>
+                    <span class="c">&lt;!--在构建时下载依赖项--&gt;</span>
+                    <span class="nt">&lt;execution&gt;</span>
+                        <span class="nt">&lt;id&gt;</span>resolve<span class="nt">&lt;/id&gt;</span>
+                        <span class="nt">&lt;goals&gt;</span>
+                            <span class="nt">&lt;goal&gt;</span>resolve<span class="nt">&lt;/goal&gt;</span>
+                        <span class="nt">&lt;/goals&gt;</span>
+                        <span class="nt">&lt;inherited&gt;</span>false<span class="nt">&lt;/inherited&gt;</span>
+                    <span class="nt">&lt;/execution&gt;</span>
+                <span class="nt">&lt;/executions&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+    <span class="c">&lt;!-- 阿里云maven仓库 --&gt;</span>
+    <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>public<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;name&gt;</span>aliyun nexus<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;url&gt;</span>https://maven.aliyun.com/repository/public<span class="nt">&lt;/url&gt;</span>
+            <span class="nt">&lt;releases&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/releases&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+    <span class="nt">&lt;/repositories&gt;</span>
+    <span class="nt">&lt;pluginRepositories&gt;</span>
+        <span class="nt">&lt;pluginRepository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>public<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;name&gt;</span>aliyun nexus<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;url&gt;</span>https://maven.aliyun.com/repository/public<span class="nt">&lt;/url&gt;</span>
+            <span class="nt">&lt;releases&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/releases&gt;</span>
+            <span class="nt">&lt;snapshots&gt;</span>
+                <span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;/snapshots&gt;</span>
+        <span class="nt">&lt;/pluginRepository&gt;</span>
+    <span class="nt">&lt;/pluginRepositories&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>如果无法自动下载：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot.experimental<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-thin-layout<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0.31.RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>可以把它加入到</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="err">...</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;dependencies&gt;</span>
+		<span class="nt">&lt;dependency&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.springframework.boot.experimental<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>spring-boot-thin-layout<span class="nt">&lt;/artifactId&gt;</span>
+			<span class="nt">&lt;version&gt;</span>1.0.31.RELEASE<span class="nt">&lt;/version&gt;</span>
+		<span class="nt">&lt;/dependency&gt;</span>
+	<span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>加载完毕后删除。</p>
+
+<p>然后不需要任何其他改动了，直接按正常的流程打包，执行<code class="language-plaintext highlighter-rouge">mvn clean package</code>，<code class="language-plaintext highlighter-rouge">target</code>目录最终生成的可执行<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>只有79KB左右。</p>
+
+<p>直接运行<code class="language-plaintext highlighter-rouge">java -jar spring-boot-hello-1.0-SNAPSHOT.jar</code>，效果和上一节完全一样。显然，79KB的jar肯定无法放下Tomcat和Spring。那么，运行时这个<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>又是怎么找到它自己依赖的jar包呢？</p>
+
+<p>实际上<code class="language-plaintext highlighter-rouge">spring-boot-thin-launcher</code>这个插件改变了<code class="language-plaintext highlighter-rouge">spring-boot-maven-plugin</code>的默认行为。它输出的jar包只包含自己代码编译后的class，一个很小的<code class="language-plaintext highlighter-rouge">ThinJarWrapper</code>，以及解析<code class="language-plaintext highlighter-rouge">pom.xml</code>后得到的所有依赖jar的列表。</p>
+
+<p>运行的时候，入口实际上是<code class="language-plaintext highlighter-rouge">ThinJarWrapper</code>，它会先在指定目录搜索看看依赖的jar包是否都存在，如果不存在，先从Maven中央仓库下载到本地，然后，再执行我们自己编写的<code class="language-plaintext highlighter-rouge">main()</code>入口方法。这种方式有点类似很多在线安装程序：用户下载后得到的是一个很小的exe安装程序，执行安装程序时，会首先在线下载所需的若干巨大的文件，再进行真正的安装。</p>
+
+<p>这个<code class="language-plaintext highlighter-rouge">spring-boot-thin-launcher</code>在启动时搜索的默认目录是用户主目录的<code class="language-plaintext highlighter-rouge">.m2</code>，也可以指定下载目录，例如，将下载目录指定为当前目录：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>java <span class="nt">-Dthin</span>.root<span class="o">=</span><span class="nb">.</span> <span class="nt">-jar</span> spring-boot-hello-1.0-SNAPSHOT.jar
+</code></pre></div></div>
+
+<p>上述命令通过环境变量<code class="language-plaintext highlighter-rouge">thin.root</code>传入当前目录，执行后发现当前目录下自动生成了一个<code class="language-plaintext highlighter-rouge">repository</code>目录，这和Maven的默认下载目录<code class="language-plaintext highlighter-rouge">~/.m2/repository</code>的结构是完全一样的，只是它仅包含<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>所需的运行期依赖项。</p>
+
+<p>注意：只有首次运行时会自动下载依赖项，再次运行时由于无需下载，所以启动速度会大大加快。如果删除了repository目录，再次运行时就会再次触发下载。</p>
+
+<p><strong>预热</strong></p>
+
+<p>把79KB大小的<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>直接扔到服务器执行，上传过程就非常快。但是，第一次在服务器上运行<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>时，仍需要从Maven中央仓库下载大量的jar包，所以，<code class="language-plaintext highlighter-rouge">spring-boot-thin-launcher</code>还提供了一个<code class="language-plaintext highlighter-rouge">dryrun</code>选项，专门用来下载依赖项而不执行实际代码：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java <span class="nt">-Dthin</span>.dryrun<span class="o">=</span><span class="nb">true</span> <span class="nt">-Dthin</span>.root<span class="o">=</span><span class="nb">.</span> <span class="nt">-jar</span> spring-boot-hello-1.0-SNAPSHOT.jar
+</code></pre></div></div>
+
+<p>执行上述代码会在当前目录创建<code class="language-plaintext highlighter-rouge">repository</code>目录，并下载所有依赖项，但并不会运行我们编写的<code class="language-plaintext highlighter-rouge">main()</code>方法。此过程称之为“预热”（warm up）。</p>
+
+<p>如果服务器由于安全限制不允许从外网下载文件，那么可以在本地预热，然后把<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>和<code class="language-plaintext highlighter-rouge">repository</code>目录上传到服务器。只要依赖项没有变化，后续改动只需要上传<code class="language-plaintext highlighter-rouge">spring-boot-hello-1.0-SNAPSHOT.jar</code>即可。</p>
+
+<p>如果在maven中使用相对路径引入了自己的jar,使用 <code class="language-plaintext highlighter-rouge">java -jar .\xxx.jar --thin.root=.</code> 会报错。如：<code class="language-plaintext highlighter-rouge">&lt;systemPath&gt;${project.basedir}/src/main/resources/lib/spring-file-storage-0.4.0.jar&lt;/systemPath&gt;</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">thin.root</code>根目录默认用的是本地的m2目录：<code class="language-plaintext highlighter-rouge">${user.home}/.m2</code></p>
+
+<p>把自己的jar直接复制到开发环境和部署环境的m2目录下</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;systemPath&gt;</span>
+  ${user.home}/.m2/repository/com/***/abc.jar
+<span class="nt">&lt;/systemPath&gt;</span>
+</code></pre></div></div>
+
+<p>这样就不会提示找不到依赖了。</p>
+
+<p><a href="https://github.com/spring-projects-experimental/spring-boot-thin-launcher">Spring Boot Thin Launcher官网</a></p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
