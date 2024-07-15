@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-14T19:58:20+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-15T22:54:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -989,7 +989,39 @@ spring-boot-hello-1.0-SNAPSHOT.jar.original
 
 <p>这样就不会提示找不到依赖了。</p>
 
-<p><a href="https://github.com/spring-projects-experimental/spring-boot-thin-launcher">Spring Boot Thin Launcher官网</a></p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p><a href="https://github.com/spring-projects-experimental/spring-boot-thin-launcher">Spring Boot Thin Launcher官网</a></p>
+
+<h2 id="actuator">Actuator</h2>
+
+<p>如果需要对应用程序的状态进行监控，</p>
+
+<p>使用JMX需要把一些监控信息以MBean的形式暴露给JMX Server，而Spring Boot已经内置了一个监控功能叫Actuator。</p>
+
+<p>使用Actuator非常简单，只需添加如下依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-actuator<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>然后正常启动应用程序，Actuator会把它能收集到的所有信息都暴露给JMX。此外，Actuator还可以通过URL<code class="language-plaintext highlighter-rouge">/actuator/</code>挂载一些监控点，例如，输入<code class="language-plaintext highlighter-rouge">http://localhost:8080/actuator/health</code>，可以查看应用程序当前状态：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UP"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Actuator默认把<strong>所有访问点暴露给JMX</strong>，但处于安全原因，只有<code class="language-plaintext highlighter-rouge">health</code>和<code class="language-plaintext highlighter-rouge">info</code>会暴露给Web。Actuator提供的所有访问点均在官方文档列出，要暴露更多的访问点给Web，需要在<code class="language-plaintext highlighter-rouge">application.yml</code>中加上配置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">management</span><span class="pi">:</span>
+  <span class="na">endpoints</span><span class="pi">:</span>
+    <span class="na">web</span><span class="pi">:</span>
+      <span class="na">exposure</span><span class="pi">:</span>
+        <span class="na">include</span><span class="pi">:</span> <span class="s">info, health, beans, env, metrics</span>
+</code></pre></div></div>
+
+<p>要特别注意暴露的URL的安全性，例如，<code class="language-plaintext highlighter-rouge">/actuator/env</code>可以获取当前机器的所有环境变量，不可暴露给公网。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
