@@ -996,7 +996,208 @@ management:
 
 要特别注意暴露的URL的安全性，例如，`/actuator/env`可以获取当前机器的所有环境变量，不可暴露给公网。
 
+## 使用Profiles
 
+Profile本身是Spring提供的功能，Profile表示一个环境的概念，如开发、测试和生产这3个环境：
+
+- native
+- test
+- production
+
+或者按git分支定义master、dev这些环境：
+
+- master
+- dev
+
+在启动一个Spring应用程序的时候，可以传入一个或多个环境，例如：
+
+```bash
+-Dspring.profiles.active=test,master
+```
+
+大多数情况下，使用一个环境就足够了。
+
+Spring Boot对Profiles的支持在于，可以在`application.yml`中为每个环境进行配置。下面是一个示例配置：
+
+```yml
+spring:
+  application:
+    name: ${APP_NAME:unnamed}
+  datasource:
+    url: jdbc:hsqldb:file:testdb
+    username: sa
+    password:
+    dirver-class-name: org.hsqldb.jdbc.JDBCDriver
+    hikari:
+      auto-commit: false
+      connection-timeout: 3000
+      validation-timeout: 3000
+      max-lifetime: 60000
+      maximum-pool-size: 20
+      minimum-idle: 1
+
+pebble:
+  suffix:
+  cache: false
+
+server:
+  port: ${APP_PORT:8080}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+server:
+  port: 8000
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: production
+
+server:
+  port: 80
+
+pebble:
+  cache: true
+```
+
+分隔符`---`，最前面的配置是默认配置，不需要指定Profile，后面的每段配置都必须以`spring.config.activate.on-profile: xxx`开头，表示一个Profile。上述配置默认使用8080端口，但是在`test`环境下，使用`8000`端口，在`production`环境下，使用`80`端口，并且启用Pebble的缓存。
+
+如果不指定任何Profile，直接启动应用程序，那么Profile实际上就是`default`，可以从Spring Boot启动日志看出：
+
+```text
+... INFO 54252 --- [  restartedMain] com.aotmd.Application                    : No active profile set, falling back to default profiles: default
+```
+
+上述日志显示未设置Profile，使用默认的Profile为`default`。
+
+要以`test`环境启动，可输入如下命令：
+
+```text
+java -Dspring.profiles.active=test -jar springboot-profiles-1.0-SNAPSHOT.jar
+...
+INFO 58848 --- [  restartedMain] com.aotmd.Application                    : The following profiles are active: test
+...
+INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8000 (http) with context path ''
+...
+```
+
+从日志看到活动的Profile是`test`，Tomcat的监听端口是`8000`。
+
+通过Profile可以实现一套代码在不同环境启用不同的配置和功能。
+
+在启动一个Spring应用程序的时候，可以传入一个或多个环境。如`-Dspring.profiles.active=test,master`，那最终会以哪个为准呢？答案是：先合并配置，如果有冲突，后面的覆盖前面的。
+
+也可以多文件配置，将单文件中用---分割的文档块，分离到单个文件，主配置文件`application.yml`，环境配置文件`application-{profile}.yml`，因为已经通过文件名称设置了`spring.config.activate.on-profile: xxx`，因此不再需要重复写了，则`application-test.yml`的文件内容为：
+
+```yml
+server:
+  port: 8000
+```
+
+通过主配置文件中`spring.profiles.active: test`进行激活环境
+
+或者使用环境参数激活：
+
+- VM options参数：`-Dspring.profiles.active=test`
+- Program argument参数：`--spring.profiles.active=test`
+
+在新版本中`spring.profiles: test`更换成了`spring.config.activate.on-profile: test`
+
+假设需要一个存储服务，在本地开发时，直接使用文件存储即可，但是，在测试和生产环境，需要存储到云端，如何通过Profile实现该功能？首先，要定义存储接口`StorageService`：
+
+```java
+public interface StorageService {
+
+    // 根据URI打开InputStream:
+    InputStream openInputStream(String uri) throws IOException;
+
+    // 根据扩展名+InputStream保存并返回URI:
+    String store(String extName, InputStream input) throws IOException;
+}
+```
+
+本地存储可通过`LocalStorageService`实现：
+
+```java
+@Component
+@Profile("default")
+public class LocalStorageService implements StorageService {
+    @Value("${storage.local:/var/static}")
+    String localStorageRootDir;
+
+    final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private File localStorageRoot;
+
+    @PostConstruct
+    public void init() {
+        logger.info("Intializing local storage with root dir: {}", this.localStorageRootDir);
+        this.localStorageRoot = new File(this.localStorageRootDir);
+    }
+
+    @Override
+    public InputStream openInputStream(String uri) throws IOException {
+        File targetFile = new File(this.localStorageRoot, uri);
+        return new BufferedInputStream(new FileInputStream(targetFile));
+    }
+
+    @Override
+    public String store(String extName, InputStream input) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "." + extName;
+        File targetFile = new File(this.localStorageRoot, fileName);
+        try (OutputStream output = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+            input.transferTo(output);
+        }
+        return fileName;
+    }
+}
+```
+
+而云端存储可通过`CloudStorageService`实现：
+
+```java
+@Component
+@Profile("!default")
+public class CloudStorageService implements StorageService {
+    @Value("${storage.cloud.bucket:}")
+    String bucket;
+
+    @Value("${storage.cloud.access-key:}")
+    String accessKey;
+
+    @Value("${storage.cloud.access-secret:}")
+    String accessSecret;
+
+    final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @PostConstruct
+    public void init() {
+        // TODO:
+        logger.info("Initializing cloud storage...");
+    }
+
+    @Override
+    public InputStream openInputStream(String uri) throws IOException {
+        // TODO:
+        throw new IOException("File not found: " + uri);
+    }
+
+    @Override
+    public String store(String extName, InputStream input) throws IOException {
+        // TODO:
+        throw new IOException("Unable to access cloud storage.");
+    }
+}
+```
+
+`LocalStorageService`使用了条件装配`@Profile("default")`，即默认启用`LocalStorageService`，而`CloudStorageService`使用了条件装配`@Profile("!default")`，即非`default`环境时，自动启用`CloudStorageService`。这样，一套代码，就实现了不同环境启用不同的配置。
 
 
 
