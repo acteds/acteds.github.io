@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-15T22:54:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-17T22:52:07+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -1021,7 +1021,208 @@ spring-boot-hello-1.0-SNAPSHOT.jar.original
         <span class="na">include</span><span class="pi">:</span> <span class="s">info, health, beans, env, metrics</span>
 </code></pre></div></div>
 
-<p>要特别注意暴露的URL的安全性，例如，<code class="language-plaintext highlighter-rouge">/actuator/env</code>可以获取当前机器的所有环境变量，不可暴露给公网。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>要特别注意暴露的URL的安全性，例如，<code class="language-plaintext highlighter-rouge">/actuator/env</code>可以获取当前机器的所有环境变量，不可暴露给公网。</p>
+
+<h2 id="使用profiles">使用Profiles</h2>
+
+<p>Profile本身是Spring提供的功能，Profile表示一个环境的概念，如开发、测试和生产这3个环境：</p>
+
+<ul>
+  <li>native</li>
+  <li>test</li>
+  <li>production</li>
+</ul>
+
+<p>或者按git分支定义master、dev这些环境：</p>
+
+<ul>
+  <li>master</li>
+  <li>dev</li>
+</ul>
+
+<p>在启动一个Spring应用程序的时候，可以传入一个或多个环境，例如：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-Dspring</span>.profiles.active<span class="o">=</span><span class="nb">test</span>,master
+</code></pre></div></div>
+
+<p>大多数情况下，使用一个环境就足够了。</p>
+
+<p>Spring Boot对Profiles的支持在于，可以在<code class="language-plaintext highlighter-rouge">application.yml</code>中为每个环境进行配置。下面是一个示例配置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">application</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">${APP_NAME:unnamed}</span>
+  <span class="na">datasource</span><span class="pi">:</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:hsqldb:file:testdb</span>
+    <span class="na">username</span><span class="pi">:</span> <span class="s">sa</span>
+    <span class="na">password</span><span class="pi">:</span>
+    <span class="na">dirver-class-name</span><span class="pi">:</span> <span class="s">org.hsqldb.jdbc.JDBCDriver</span>
+    <span class="na">hikari</span><span class="pi">:</span>
+      <span class="na">auto-commit</span><span class="pi">:</span> <span class="no">false</span>
+      <span class="na">connection-timeout</span><span class="pi">:</span> <span class="m">3000</span>
+      <span class="na">validation-timeout</span><span class="pi">:</span> <span class="m">3000</span>
+      <span class="na">max-lifetime</span><span class="pi">:</span> <span class="m">60000</span>
+      <span class="na">maximum-pool-size</span><span class="pi">:</span> <span class="m">20</span>
+      <span class="na">minimum-idle</span><span class="pi">:</span> <span class="m">1</span>
+
+<span class="na">pebble</span><span class="pi">:</span>
+  <span class="na">suffix</span><span class="pi">:</span>
+  <span class="na">cache</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="s">${APP_PORT:8080}</span>
+
+<span class="nn">---</span>
+
+<span class="na">spring</span><span class="pi">:</span>
+  <span class="na">config</span><span class="pi">:</span>
+    <span class="na">activate</span><span class="pi">:</span>
+      <span class="na">on-profile</span><span class="pi">:</span> <span class="s">test</span>
+
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">8000</span>
+
+<span class="nn">---</span>
+
+<span class="na">spring</span><span class="pi">:</span>
+  <span class="na">config</span><span class="pi">:</span>
+    <span class="na">activate</span><span class="pi">:</span>
+      <span class="na">on-profile</span><span class="pi">:</span> <span class="s">production</span>
+
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+
+<span class="na">pebble</span><span class="pi">:</span>
+  <span class="na">cache</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+
+<p>分隔符<code class="language-plaintext highlighter-rouge">---</code>，最前面的配置是默认配置，不需要指定Profile，后面的每段配置都必须以<code class="language-plaintext highlighter-rouge">spring.config.activate.on-profile: xxx</code>开头，表示一个Profile。上述配置默认使用8080端口，但是在<code class="language-plaintext highlighter-rouge">test</code>环境下，使用<code class="language-plaintext highlighter-rouge">8000</code>端口，在<code class="language-plaintext highlighter-rouge">production</code>环境下，使用<code class="language-plaintext highlighter-rouge">80</code>端口，并且启用Pebble的缓存。</p>
+
+<p>如果不指定任何Profile，直接启动应用程序，那么Profile实际上就是<code class="language-plaintext highlighter-rouge">default</code>，可以从Spring Boot启动日志看出：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>... INFO 54252 --- [  restartedMain] com.aotmd.Application                    : No active profile set, falling back to default profiles: default
+</code></pre></div></div>
+
+<p>上述日志显示未设置Profile，使用默认的Profile为<code class="language-plaintext highlighter-rouge">default</code>。</p>
+
+<p>要以<code class="language-plaintext highlighter-rouge">test</code>环境启动，可输入如下命令：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java -Dspring.profiles.active=test -jar springboot-profiles-1.0-SNAPSHOT.jar
+...
+INFO 58848 --- [  restartedMain] com.aotmd.Application                    : The following profiles are active: test
+...
+INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8000 (http) with context path ''
+...
+</code></pre></div></div>
+
+<p>从日志看到活动的Profile是<code class="language-plaintext highlighter-rouge">test</code>，Tomcat的监听端口是<code class="language-plaintext highlighter-rouge">8000</code>。</p>
+
+<p>通过Profile可以实现一套代码在不同环境启用不同的配置和功能。</p>
+
+<p>在启动一个Spring应用程序的时候，可以传入一个或多个环境。如<code class="language-plaintext highlighter-rouge">-Dspring.profiles.active=test,master</code>，那最终会以哪个为准呢？答案是：先合并配置，如果有冲突，后面的覆盖前面的。</p>
+
+<p>也可以多文件配置，将单文件中用—分割的文档块，分离到单个文件，主配置文件<code class="language-plaintext highlighter-rouge">application.yml</code>，环境配置文件<code class="language-plaintext highlighter-rouge">application-{profile}.yml</code>，因为已经通过文件名称设置了<code class="language-plaintext highlighter-rouge">spring.config.activate.on-profile: xxx</code>，因此不再需要重复写了，则<code class="language-plaintext highlighter-rouge">application-test.yml</code>的文件内容为：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">8000</span>
+</code></pre></div></div>
+
+<p>通过主配置文件中<code class="language-plaintext highlighter-rouge">spring.profiles.active: test</code>进行激活环境</p>
+
+<p>或者使用环境参数激活：</p>
+
+<ul>
+  <li>VM options参数：<code class="language-plaintext highlighter-rouge">-Dspring.profiles.active=test</code></li>
+  <li>Program argument参数：<code class="language-plaintext highlighter-rouge">--spring.profiles.active=test</code></li>
+</ul>
+
+<p>在新版本中<code class="language-plaintext highlighter-rouge">spring.profiles: test</code>更换成了<code class="language-plaintext highlighter-rouge">spring.config.activate.on-profile: test</code></p>
+
+<p>假设需要一个存储服务，在本地开发时，直接使用文件存储即可，但是，在测试和生产环境，需要存储到云端，如何通过Profile实现该功能？首先，要定义存储接口<code class="language-plaintext highlighter-rouge">StorageService</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">StorageService</span> <span class="o">{</span>
+
+    <span class="c1">// 根据URI打开InputStream:</span>
+    <span class="nc">InputStream</span> <span class="nf">openInputStream</span><span class="o">(</span><span class="nc">String</span> <span class="n">uri</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">;</span>
+
+    <span class="c1">// 根据扩展名+InputStream保存并返回URI:</span>
+    <span class="nc">String</span> <span class="nf">store</span><span class="o">(</span><span class="nc">String</span> <span class="n">extName</span><span class="o">,</span> <span class="nc">InputStream</span> <span class="n">input</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>本地存储可通过<code class="language-plaintext highlighter-rouge">LocalStorageService</code>实现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@Profile</span><span class="o">(</span><span class="s">"default"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LocalStorageService</span> <span class="kd">implements</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.local:/var/static}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">localStorageRootDir</span><span class="o">;</span>
+
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="kd">private</span> <span class="nc">File</span> <span class="n">localStorageRoot</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Intializing local storage with root dir: {}"</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">localStorageRootDir</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">localStorageRoot</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">localStorageRootDir</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">InputStream</span> <span class="nf">openInputStream</span><span class="o">(</span><span class="nc">String</span> <span class="n">uri</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">File</span> <span class="n">targetFile</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">localStorageRoot</span><span class="o">,</span> <span class="n">uri</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">BufferedInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="n">targetFile</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">store</span><span class="o">(</span><span class="nc">String</span> <span class="n">extName</span><span class="o">,</span> <span class="nc">InputStream</span> <span class="n">input</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">fileName</span> <span class="o">=</span> <span class="no">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">extName</span><span class="o">;</span>
+        <span class="nc">File</span> <span class="n">targetFile</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">localStorageRoot</span><span class="o">,</span> <span class="n">fileName</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">OutputStream</span> <span class="n">output</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="n">targetFile</span><span class="o">)))</span> <span class="o">{</span>
+            <span class="n">input</span><span class="o">.</span><span class="na">transferTo</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">fileName</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>而云端存储可通过<code class="language-plaintext highlighter-rouge">CloudStorageService</code>实现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@Profile</span><span class="o">(</span><span class="s">"!default"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CloudStorageService</span> <span class="kd">implements</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.cloud.bucket:}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">bucket</span><span class="o">;</span>
+
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.cloud.access-key:}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">accessKey</span><span class="o">;</span>
+
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.cloud.access-secret:}"</span><span class="o">)</span>
+    <span class="nc">String</span> <span class="n">accessSecret</span><span class="o">;</span>
+
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// TODO:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Initializing cloud storage..."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">InputStream</span> <span class="nf">openInputStream</span><span class="o">(</span><span class="nc">String</span> <span class="n">uri</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="c1">// TODO:</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">"File not found: "</span> <span class="o">+</span> <span class="n">uri</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">store</span><span class="o">(</span><span class="nc">String</span> <span class="n">extName</span><span class="o">,</span> <span class="nc">InputStream</span> <span class="n">input</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="c1">// TODO:</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">"Unable to access cloud storage."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">LocalStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("default")</code>，即默认启用<code class="language-plaintext highlighter-rouge">LocalStorageService</code>，而<code class="language-plaintext highlighter-rouge">CloudStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("!default")</code>，即非<code class="language-plaintext highlighter-rouge">default</code>环境时，自动启用<code class="language-plaintext highlighter-rouge">CloudStorageService</code>。这样，一套代码，就实现了不同环境启用不同的配置。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
