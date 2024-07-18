@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-17T22:52:07+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-18T20:41:51+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -26073,7 +26073,7 @@ key=画画,value = 小强
 <h1 id="list">List</h1>
 <p><strong><code class="language-plaintext highlighter-rouge">List</code>的子接口</strong>除了<code class="language-plaintext highlighter-rouge">List</code>接口外，还有<code class="language-plaintext highlighter-rouge">Deque</code>（双端队列）和<code class="language-plaintext highlighter-rouge">Queue</code>（队列）等接口，它们分别代表具有不同特性的列表。<code class="language-plaintext highlighter-rouge">Deque</code>支持在两端添加和删除元素，而<code class="language-plaintext highlighter-rouge">Queue</code>通常采用先进先出（FIFO）的方式管理元素。</p>
 
-<p>在Java 8中，集合框架引入了一些新的特性，如<code class="language-plaintext highlighter-rouge">forEach()</code>方法、<code class="language-plaintext highlighter-rouge">stream</code>流操作、函数式接口等，可以更方便地对集合进行操作和处理。</p>
+<p>在<strong>Java 8</strong> 中，集合框架引入了一些新的特性，如<code class="language-plaintext highlighter-rouge">forEach()</code>方法、<code class="language-plaintext highlighter-rouge">stream</code>流操作、函数式接口等，可以更方便地对集合进行操作和处理。</p>
 
 <p>在实际应用中，需要增删元素的有序列表，我们使用最多的是<code class="language-plaintext highlighter-rouge">ArrayList</code>。</p>
 
