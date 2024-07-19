@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-18T20:41:51+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-19T21:34:43+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -1023,7 +1023,7 @@ spring-boot-hello-1.0-SNAPSHOT.jar.original
 
 <p>要特别注意暴露的URL的安全性，例如，<code class="language-plaintext highlighter-rouge">/actuator/env</code>可以获取当前机器的所有环境变量，不可暴露给公网。</p>
 
-<h2 id="使用profiles">使用Profiles</h2>
+<h2 id="profiles">Profiles</h2>
 
 <p>Profile本身是Spring提供的功能，Profile表示一个环境的概念，如开发、测试和生产这3个环境：</p>
 
@@ -1222,7 +1222,158 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">LocalStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("default")</code>，即默认启用<code class="language-plaintext highlighter-rouge">LocalStorageService</code>，而<code class="language-plaintext highlighter-rouge">CloudStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("!default")</code>，即非<code class="language-plaintext highlighter-rouge">default</code>环境时，自动启用<code class="language-plaintext highlighter-rouge">CloudStorageService</code>。这样，一套代码，就实现了不同环境启用不同的配置。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p><code class="language-plaintext highlighter-rouge">LocalStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("default")</code>，即默认启用<code class="language-plaintext highlighter-rouge">LocalStorageService</code>，而<code class="language-plaintext highlighter-rouge">CloudStorageService</code>使用了条件装配<code class="language-plaintext highlighter-rouge">@Profile("!default")</code>，即非<code class="language-plaintext highlighter-rouge">default</code>环境时，自动启用<code class="language-plaintext highlighter-rouge">CloudStorageService</code>。这样，一套代码，就实现了不同环境启用不同的配置。</p>
+
+<h2 id="conditional">Conditional</h2>
+
+<p>使用Profile能根据不同的Profile进行条件装配，但是Profile控制比较糙，如果想要精细控制，用Profile就很难实现。</p>
+
+<p>Spring本身提供了条件装配<code class="language-plaintext highlighter-rouge">@Conditional</code>，但是要自己编写比较复杂的<code class="language-plaintext highlighter-rouge">Condition</code>来做判断，比较麻烦。Spring Boot则准备好了几个非常有用的条件：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnProperty</code>：如果有指定的配置，条件生效；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnBean</code>：如果有指定的Bean，条件生效；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnMissingBean</code>：如果没有指定的Bean，条件生效；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnMissingClass</code>：如果没有指定的Class，条件生效；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnWebApplication</code>：在Web环境中条件生效；</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConditionalOnExpression</code>：根据表达式判断条件是否生效。</li>
+</ul>
+
+<p>以最常用的<code class="language-plaintext highlighter-rouge">@ConditionalOnProperty</code>为例，把上一节的<code class="language-plaintext highlighter-rouge">StorageService</code>改写如下。首先，定义配置<code class="language-plaintext highlighter-rouge">storage.type=xxx</code>，用来判断条件，默认为<code class="language-plaintext highlighter-rouge">local</code>：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">storage</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">${STORAGE_TYPE:local}</span>
+</code></pre></div></div>
+
+<p>设定为<code class="language-plaintext highlighter-rouge">local</code>时，启用<code class="language-plaintext highlighter-rouge">LocalStorageService</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@ConditionalOnProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"storage.type"</span><span class="o">,</span> <span class="n">havingValue</span> <span class="o">=</span> <span class="s">"local"</span><span class="o">,</span> <span class="n">matchIfMissing</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LocalStorageService</span> <span class="kd">implements</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">LocalStorageService</code>的注解，当指定配置为<code class="language-plaintext highlighter-rouge">local</code>，或者配置不存在，均启用<code class="language-plaintext highlighter-rouge">LocalStorageService</code>。</p>
+
+<p>设定为<code class="language-plaintext highlighter-rouge">aws</code>时，启用<code class="language-plaintext highlighter-rouge">AwsStorageService</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@ConditionalOnProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"storage.type"</span><span class="o">,</span> <span class="n">havingValue</span> <span class="o">=</span> <span class="s">"aws"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AwsStorageService</span> <span class="kd">implements</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>设定为<code class="language-plaintext highlighter-rouge">aliyun</code>时，启用<code class="language-plaintext highlighter-rouge">AliyunStorageService</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@ConditionalOnProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"storage.type"</span><span class="o">,</span> <span class="n">havingValue</span> <span class="o">=</span> <span class="s">"aliyun"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AliyunStorageService</span> <span class="kd">implements</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnProperty</code>：当指定的配置属性存在且符合预期时，条件生效。</p>
+
+<p><strong>常用属性:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">name</code>: 要检查的属性名称。</li>
+  <li><code class="language-plaintext highlighter-rouge">havingValue</code>: 属性值必须与此值匹配才生效。</li>
+  <li><code class="language-plaintext highlighter-rouge">matchIfMissing</code>: 如果属性不存在，是否匹配。默认值是 <code class="language-plaintext highlighter-rouge">false</code>。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnProperty</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"feature.enabled"</span><span class="o">,</span> <span class="n">havingValue</span> <span class="o">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">matchIfMissing</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeatureConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnBean</code>：当指定的Bean存在时，条件生效。</p>
+
+<p><strong>常用属性:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 或 <code class="language-plaintext highlighter-rouge">type</code>: 要检查的Bean类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code>: 要检查的Bean名称。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnBean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"myBean"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BeanDependentConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnMissingBean</code>：当指定的Bean不存在时，条件生效。</p>
+
+<p><strong>常用属性:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 或 <code class="language-plaintext highlighter-rouge">type</code>: 要检查的Bean类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code>: 要检查的Bean名称。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnMissingBean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"myBean"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MissingBeanConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnMissingClass</code>：当指定的类不存在时，条件生效。</p>
+
+<p><strong>常用属性:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code>: 要检查的类名。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnMissingClass</span><span class="o">(</span><span class="s">"com.example.SomeClass"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MissingClassConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnWebApplication</code>：在Web应用环境中，条件生效。</p>
+
+<p><strong>常用属性:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">type</code>: Web应用的类型，可以是 <code class="language-plaintext highlighter-rouge">SERVLET</code> 或 <code class="language-plaintext highlighter-rouge">REACTIVE</code>。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnWebApplication</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="nc">ConditionalOnWebApplication</span><span class="o">.</span><span class="na">Type</span><span class="o">.</span><span class="na">SERVLET</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebAppConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConditionalOnExpression</code>：根据SpEL表达式判断条件是否生效。</p>
+
+<p><strong>常用属性:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code>: SpEL表达式。</li>
+</ul>
+
+<p><strong>示例:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnExpression</span><span class="o">(</span><span class="s">"'${env}'.equals('dev')"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DevEnvConfig</span> <span class="o">{</span>
+    <span class="c1">// 配置内容</span>
+<span class="o">}</span>
+</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
