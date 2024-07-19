@@ -996,7 +996,7 @@ management:
 
 要特别注意暴露的URL的安全性，例如，`/actuator/env`可以获取当前机器的所有环境变量，不可暴露给公网。
 
-## 使用Profiles
+## Profiles
 
 Profile本身是Spring提供的功能，Profile表示一个环境的概念，如开发、测试和生产这3个环境：
 
@@ -1199,9 +1199,152 @@ public class CloudStorageService implements StorageService {
 
 `LocalStorageService`使用了条件装配`@Profile("default")`，即默认启用`LocalStorageService`，而`CloudStorageService`使用了条件装配`@Profile("!default")`，即非`default`环境时，自动启用`CloudStorageService`。这样，一套代码，就实现了不同环境启用不同的配置。
 
+## Conditional
 
+使用Profile能根据不同的Profile进行条件装配，但是Profile控制比较糙，如果想要精细控制，用Profile就很难实现。
 
+Spring本身提供了条件装配`@Conditional`，但是要自己编写比较复杂的`Condition`来做判断，比较麻烦。Spring Boot则准备好了几个非常有用的条件：
 
+- `@ConditionalOnProperty`：如果有指定的配置，条件生效；
+- `@ConditionalOnBean`：如果有指定的Bean，条件生效；
+- `@ConditionalOnMissingBean`：如果没有指定的Bean，条件生效；
+- `@ConditionalOnMissingClass`：如果没有指定的Class，条件生效；
+- `@ConditionalOnWebApplication`：在Web环境中条件生效；
+- `@ConditionalOnExpression`：根据表达式判断条件是否生效。
+
+以最常用的`@ConditionalOnProperty`为例，把上一节的`StorageService`改写如下。首先，定义配置`storage.type=xxx`，用来判断条件，默认为`local`：
+
+```yml
+storage:
+  type: ${STORAGE_TYPE:local}
+```
+
+设定为`local`时，启用`LocalStorageService`：
+
+```java
+@Component
+@ConditionalOnProperty(value = "storage.type", havingValue = "local", matchIfMissing = true)
+public class LocalStorageService implements StorageService {
+    ...
+}
+```
+
+`LocalStorageService`的注解，当指定配置为`local`，或者配置不存在，均启用`LocalStorageService`。
+
+设定为`aws`时，启用`AwsStorageService`：
+
+```java
+@Component
+@ConditionalOnProperty(value = "storage.type", havingValue = "aws")
+public class AwsStorageService implements StorageService {
+    ...
+}
+```
+
+设定为`aliyun`时，启用`AliyunStorageService`：
+
+```java
+@Component
+@ConditionalOnProperty(value = "storage.type", havingValue = "aliyun")
+public class AliyunStorageService implements StorageService {
+    ...
+}
+```
+
+------
+
+`@ConditionalOnProperty`：当指定的配置属性存在且符合预期时，条件生效。
+
+**常用属性:**
+
+- `name`: 要检查的属性名称。
+- `havingValue`: 属性值必须与此值匹配才生效。
+- `matchIfMissing`: 如果属性不存在，是否匹配。默认值是 `false`。
+
+**示例:**
+```java
+@Configuration
+@ConditionalOnProperty(name = "feature.enabled", havingValue = "true", matchIfMissing = true)
+public class FeatureConfig {
+    // 配置内容
+}
+```
+
+`@ConditionalOnBean`：当指定的Bean存在时，条件生效。
+
+**常用属性:**
+
+- `value` 或 `type`: 要检查的Bean类型。
+- `name`: 要检查的Bean名称。
+
+**示例:**
+
+```java
+@Configuration
+@ConditionalOnBean(name = "myBean")
+public class BeanDependentConfig {
+    // 配置内容
+}
+```
+
+`@ConditionalOnMissingBean`：当指定的Bean不存在时，条件生效。
+
+**常用属性:**
+- `value` 或 `type`: 要检查的Bean类型。
+- `name`: 要检查的Bean名称。
+
+**示例:**
+
+```java
+@Configuration
+@ConditionalOnMissingBean(name = "myBean")
+public class MissingBeanConfig {
+    // 配置内容
+}
+```
+
+`@ConditionalOnMissingClass`：当指定的类不存在时，条件生效。
+
+**常用属性:**
+- `value`: 要检查的类名。
+
+**示例:**
+
+```java
+@Configuration
+@ConditionalOnMissingClass("com.example.SomeClass")
+public class MissingClassConfig {
+    // 配置内容
+}
+```
+
+`@ConditionalOnWebApplication`：在Web应用环境中，条件生效。
+
+**常用属性:**
+- `type`: Web应用的类型，可以是 `SERVLET` 或 `REACTIVE`。
+
+**示例:**
+```java
+@Configuration
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+public class WebAppConfig {
+    // 配置内容
+}
+```
+
+`@ConditionalOnExpression`：根据SpEL表达式判断条件是否生效。
+
+**常用属性:**
+- `value`: SpEL表达式。
+
+**示例:**
+```java
+@Configuration
+@ConditionalOnExpression("'${env}'.equals('dev')")
+public class DevEnvConfig {
+    // 配置内容
+}
+```
 
 
 
