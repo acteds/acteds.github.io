@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-19T21:34:43+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-20T20:57:59+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -1373,7 +1373,242 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DevEnvConfig</span> <span class="o">{</span>
     <span class="c1">// 配置内容</span>
 <span class="o">}</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+</code></pre></div></div>
+
+<h2 id="加载配置文件">加载配置文件</h2>
+
+<p>加载配置文件可以直接使用注解<code class="language-plaintext highlighter-rouge">@Value</code>，例如，我们定义了一个最大允许上传的文件大小配置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">storage</span><span class="pi">:</span>
+  <span class="na">local</span><span class="pi">:</span>
+    <span class="na">max-size</span><span class="pi">:</span> <span class="m">102400</span>
+</code></pre></div></div>
+
+<p>在某个FileUploader里，需要获取该配置，可使用<code class="language-plaintext highlighter-rouge">@Value</code>注入：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FileUploader</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.local.max-size:102400}"</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="n">maxSize</span><span class="o">;</span>
+
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在另一个<code class="language-plaintext highlighter-rouge">UploadFilter</code>中，因为要检查文件的MD5，同时也要检查输入流的大小，因此，也需要该配置：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UploadFilter</span> <span class="kd">implements</span> <span class="nc">Filter</span> <span class="o">{</span>
+    <span class="nd">@Value</span><span class="o">(</span><span class="s">"${storage.local.max-size:100000}"</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="n">maxSize</span><span class="o">;</span>
+
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>多次引用同一个<code class="language-plaintext highlighter-rouge">@Value</code>不但麻烦，而且<code class="language-plaintext highlighter-rouge">@Value</code>使用字符串，缺少编译器检查，容易造成多处引用不一致（例如，<code class="language-plaintext highlighter-rouge">UploadFilter</code>把缺省值误写为<code class="language-plaintext highlighter-rouge">100000</code>）。</p>
+
+<p>为了更好地管理配置，Spring Boot允许创建一个Bean，持有一组配置，并由Spring Boot自动注入。</p>
+
+<p>假设在<code class="language-plaintext highlighter-rouge">application.yml</code>中添加了如下配置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">storage</span><span class="pi">:</span>
+  <span class="na">local</span><span class="pi">:</span>
+    <span class="c1"># 文件存储根目录:</span>
+    <span class="na">root-dir</span><span class="pi">:</span> <span class="s">${STORAGE_LOCAL_ROOT:/var/storage}</span>
+    <span class="c1"># 最大文件大小，默认100K:</span>
+    <span class="na">max-size</span><span class="pi">:</span> <span class="s">${STORAGE_LOCAL_MAX_SIZE:102400}</span>
+    <span class="c1"># 是否允许空文件:</span>
+    <span class="na">allow-empty</span><span class="pi">:</span> <span class="no">false</span>
+    <span class="c1"># 允许的文件类型:</span>
+    <span class="na">allow-types</span><span class="pi">:</span> <span class="s">jpg, png, gif</span>
+</code></pre></div></div>
+
+<p>可以首先定义一个Java Bean，持有该组配置：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StorageConfiguration</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">rootDir</span><span class="o">;</span><span class="c1">//注意使用驼峰替代横线</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">maxSize</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">allowEmpty</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">allowTypes</span><span class="o">;</span>
+
+    <span class="c1">// TODO: getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>保证Java Bean的属性名称与配置一致即可。然后，添加两个注解：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"storage.local"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StorageConfiguration</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@ConfigurationProperties("storage.local")</code>表示将从配置项<code class="language-plaintext highlighter-rouge">storage.local</code>读取该项的所有子项配置，并且，<code class="language-plaintext highlighter-rouge">@Configuration</code>表示<code class="language-plaintext highlighter-rouge">StorageConfiguration</code>也是一个Spring管理的Bean，可直接注入到其他Bean中：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StorageService</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">StorageConfiguration</span> <span class="n">storageConfig</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Load configuration: root-dir = {}"</span><span class="o">,</span> <span class="n">storageConfig</span><span class="o">.</span><span class="na">getRootDir</span><span class="o">());</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Load configuration: max-size = {}"</span><span class="o">,</span> <span class="n">storageConfig</span><span class="o">.</span><span class="na">getMaxSize</span><span class="o">());</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Load configuration: allowed-types = {}"</span><span class="o">,</span> <span class="n">storageConfig</span><span class="o">.</span><span class="na">getAllowTypes</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这样一来，引入<code class="language-plaintext highlighter-rouge">storage.local</code>的相关配置就很容易了，因为只需要注入<code class="language-plaintext highlighter-rouge">StorageConfiguration</code>这个Bean，这样可以由编译器检查类型，无需编写重复的<code class="language-plaintext highlighter-rouge">@Value</code>注解。</p>
+
+<hr />
+
+<p>如果你的配置项有嵌套结构，可以在Java Bean中定义对应的嵌套类。下面是一个示例，其中包括嵌套配置项的处理。</p>
+
+<p>首先，你的<code class="language-plaintext highlighter-rouge">application.yml</code>配置文件内容如下：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">storage</span><span class="pi">:</span>
+  <span class="na">local</span><span class="pi">:</span>
+    <span class="na">root-dir</span><span class="pi">:</span> <span class="s">${STORAGE_LOCAL_ROOT:/var/storage}</span>
+    <span class="na">max-size</span><span class="pi">:</span> <span class="s">${STORAGE_LOCAL_MAX_SIZE:102400}</span>
+    <span class="na">allow-empty</span><span class="pi">:</span> <span class="no">false</span>
+    <span class="na">allow-types</span><span class="pi">:</span> <span class="s">jpg, png, gif</span>
+  <span class="na">remote</span><span class="pi">:</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">${STORAGE_REMOTE_URL:http://example.com}</span>
+    <span class="na">timeout</span><span class="pi">:</span> <span class="s">${STORAGE_REMOTE_TIMEOUT:5000}</span>
+</code></pre></div></div>
+
+<p>接下来，你需要定义对应的Java Bean类来表示这个配置。可以将<code class="language-plaintext highlighter-rouge">local</code>和<code class="language-plaintext highlighter-rouge">remote</code>配置项分别封装到嵌套的类中。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.ConfigurationProperties</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"storage"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StorageConfiguration</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">Local</span> <span class="n">local</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Remote</span> <span class="n">remote</span><span class="o">;</span>
+
+    <span class="c1">// Getters and setters for `local` and `remote`</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Local</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">rootDir</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">maxSize</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">allowEmpty</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">allowTypes</span><span class="o">;</span>
+
+        <span class="c1">// Getters and setters for `rootDir`, `maxSize`, `allowEmpty`, and `allowTypes`</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Remote</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">url</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
+
+        <span class="c1">// Getters and setters for `url` and `timeout`</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Getters and setters for `local` and `remote`</span>
+    <span class="kd">public</span> <span class="nc">Local</span> <span class="nf">getLocal</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">local</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLocal</span><span class="o">(</span><span class="nc">Local</span> <span class="n">local</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">local</span> <span class="o">=</span> <span class="n">local</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Remote</span> <span class="nf">getRemote</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">remote</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRemote</span><span class="o">(</span><span class="nc">Remote</span> <span class="n">remote</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">remote</span> <span class="o">=</span> <span class="n">remote</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在上述代码中：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Configuration</code>注解表示<code class="language-plaintext highlighter-rouge">StorageConfiguration</code>是一个Spring管理的Bean。</li>
+  <li><code class="language-plaintext highlighter-rouge">@ConfigurationProperties("storage")</code>注解表示从<code class="language-plaintext highlighter-rouge">storage</code>前缀开始读取配置项。</li>
+  <li><code class="language-plaintext highlighter-rouge">Local</code>和<code class="language-plaintext highlighter-rouge">Remote</code>是两个静态嵌套类，用于表示嵌套的配置项。</li>
+</ul>
+
+<p>通过这种方式，Spring Boot会自动将配置文件中的值绑定到相应的Java Bean中。</p>
+
+<p>你还需要为嵌套类定义getter和setter方法，例如：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Local</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">rootDir</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">maxSize</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">allowEmpty</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">allowTypes</span><span class="o">;</span>
+
+    <span class="c1">// Getters and setters</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getRootDir</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">rootDir</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRootDir</span><span class="o">(</span><span class="nc">String</span> <span class="n">rootDir</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">rootDir</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getMaxSize</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">maxSize</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMaxSize</span><span class="o">(</span><span class="kt">int</span> <span class="n">maxSize</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">maxSize</span> <span class="o">=</span> <span class="n">maxSize</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isAllowEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">allowEmpty</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAllowEmpty</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">allowEmpty</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">allowEmpty</span> <span class="o">=</span> <span class="n">allowEmpty</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getAllowTypes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">allowTypes</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAllowTypes</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">allowTypes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">allowTypes</span> <span class="o">=</span> <span class="n">allowTypes</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Remote</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">url</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
+
+    <span class="c1">// Getters and setters</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getUrl</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">url</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUrl</span><span class="o">(</span><span class="nc">String</span> <span class="n">url</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getTimeout</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">timeout</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTimeout</span><span class="o">(</span><span class="kt">int</span> <span class="n">timeout</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">timeout</span> <span class="o">=</span> <span class="n">timeout</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这样，配置文件中的值就会自动绑定到对应的Java Bean中，并且可以在你的应用程序中通过注入<code class="language-plaintext highlighter-rouge">StorageConfiguration</code> Bean来访问这些配置值。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
