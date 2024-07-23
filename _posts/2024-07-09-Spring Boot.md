@@ -1991,3 +1991,189 @@ public class Application {
 
 访问数据库可以用之前的。
 
+## Filter
+
+在Spring Boot中，添加一个`Filter`更简单了，可以做到零配置。
+
+Spring Boot会自动扫描所有的`FilterRegistrationBean`类型的Bean，然后，将它们返回的`Filter`自动注册到Servlet容器中，无需任何配置。
+
+以`AuthFilter`为例，首先编写一个`AuthFilterRegistrationBean`，它继承自`FilterRegistrationBean`：
+
+```java
+@Component
+public class AuthFilterRegistrationBean extends FilterRegistrationBean<Filter> {
+    @Autowired
+    UserService userService;
+
+    @Override
+    public Filter getFilter() {
+        setOrder(10);
+        return new AuthFilter();
+    }
+
+    class AuthFilter implements Filter {
+        ...
+    }
+}
+```
+
+`FilterRegistrationBean`本身不是`Filter`，它实际上是`Filter`的工厂。Spring Boot会调用`getFilter()`，把返回的`Filter`注册到Servlet容器中。因为可以在`FilterRegistrationBean`中注入需要的资源，然后，在返回的`AuthFilter`中，这个内部类可以引用外部类的所有字段，自然也包括注入的`UserService`，所以，整个过程完全基于Spring的IoC容器完成。
+
+`AuthFilterRegistrationBean`使用了`setOrder(10)`，因为Spring Boot支持给多个`Filter`排序，**数字小的在前面**，所以，多个`Filter`的顺序是可以固定的。
+
+再编写一个`ApiFilter`，专门过滤`/api/*`这样的URL。首先编写一个`ApiFilterRegistrationBean`：
+
+```java
+@Component
+public class ApiFilterRegistrationBean extends FilterRegistrationBean<Filter> {
+    @PostConstruct
+    public void init() {
+        setOrder(20);
+        setFilter(new ApiFilter());
+        setUrlPatterns(List.of("/api/*"));
+    }
+
+    class ApiFilter implements Filter {
+        ...
+    }
+}
+```
+
+这个`ApiFilterRegistrationBean`和`AuthFilterRegistrationBean`又有所不同。因为要过滤URL，而不是针对所有URL生效，因此，在`@PostConstruct`方法中，通过`setFilter()`设置一个`Filter`实例后，再调用`setUrlPatterns()`传入要过滤的URL列表。
+
+------
+
+`FilterRegistrationBean` 是 Spring Framework 中的一个类，用于注册和配置 Servlet 过滤器。它提供了一些常用的方法来控制过滤器的注册和行为。以下是 `FilterRegistrationBean` 的一些常用方法及其简要说明：
+
+1. **`setFilter(Filter filter)`**：设置过滤器实例。
+```java
+FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+registrationBean.setFilter(new MyFilter());
+```
+
+2. **`setUrlPatterns(Collection<String> urlPatterns)`**：设置过滤器的 URL 模式。
+```java
+registrationBean.setUrlPatterns(Arrays.asList("/api/*"));
+```
+
+3. **`addUrlPatterns(String... urlPatterns)`**：添加过滤器的 URL 模式。
+```java
+registrationBean.addUrlPatterns("/api/*");
+```
+
+4. **`setServletNames(Collection<String> servletNames)`**：设置过滤器要应用的 Servlet 名称。
+```java
+registrationBean.setServletNames(Arrays.asList("myServlet"));
+```
+
+5. **`addServletNames(String... servletNames)`**：添加过滤器要应用的 Servlet 名称。
+```java
+registrationBean.addServletNames("myServlet");
+```
+
+6. **`setOrder(int order)`**：设置过滤器的执行顺序，值越小优先级越高。
+```java
+registrationBean.setOrder(1);
+```
+
+7. **`setDispatcherTypes(EnumSet<DispatcherType> dispatcherTypes)`**：设置过滤器的分发类型（如 REQUEST、FORWARD、INCLUDE 等）。
+```java
+registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+```
+
+8. **`setAsyncSupported(boolean isAsyncSupported)`**：设置过滤器是否支持异步操作。
+```java
+registrationBean.setAsyncSupported(true);
+```
+
+9. **`setName(String name)`**：设置过滤器的名称。
+```java
+registrationBean.setName("myFilter");
+```
+
+10. **`setInitParameters(Map<String, String> initParameters)`**：设置过滤器的初始化参数。
+```java
+Map<String, String> initParams = new HashMap<>();
+initParams.put("param1", "value1");
+registrationBean.setInitParameters(initParams);
+```
+
+
+以下是一个完整的示例，展示如何使用 `FilterRegistrationBean` 来注册和配置一个过滤器：
+
+```java
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.EnumSet;
+
+@Configuration
+public class FilterConfig {
+
+    @Bean
+    public FilterRegistrationBean<Filter> myFilter() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+        
+        Filter myFilter = new Filter() {
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
+                // 初始化代码
+            }
+
+            @Override
+            public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+                    throws IOException, ServletException {
+                // 过滤器逻辑
+                chain.doFilter(request, response);
+            }
+
+            @Override
+            public void destroy() {
+                // 销毁代码
+            }
+        };
+        
+        registrationBean.setFilter(myFilter);
+        registrationBean.setUrlPatterns(Arrays.asList("/api/*"));
+        registrationBean.setOrder(1);
+        registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
+        registrationBean.setAsyncSupported(true);
+        registrationBean.setName("myFilter");
+        registrationBean.setInitParameters(Map.of("param1", "value1"));
+        
+        return registrationBean;
+    }
+}
+```
+
+这个示例中，`FilterRegistrationBean` 被用来注册一个简单的过滤器，并设置了一些常见的配置选项。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
