@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-23T21:12:52+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-07-25T22:32:54+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -728,7 +728,7 @@
 
 <p>还有可能是项目名称的问题：</p>
 
-<p>在决定类路径上的条目更改时是否应触发重启时，DevTools会自动忽略名为Spring-Boot、Spring-Boot-DevTools、Spring-Boot-Autoconfiguration、Spring-Boot-Actuator和Spring-Boot-starter的项目。</p>
+<p>在决定类路径上的条目更改时是否应触发重启时，<strong>DevTools会自动忽略名为：</strong><code class="language-plaintext highlighter-rouge">Spring-Boot</code>、<code class="language-plaintext highlighter-rouge">Spring-Boot-DevTools</code>、<code class="language-plaintext highlighter-rouge">Spring-Boot-Autoconfiguration</code>、<code class="language-plaintext highlighter-rouge">Spring-Boot-Actuator</code>和<code class="language-plaintext highlighter-rouge">Spring-Boot-starter</code>的项目。</p>
 
 <p>使用Ctrl+F9构建项目<strong>会自动触发重新启动</strong>。如果您希望在保存类文件后立即自动触发，可以按照问题中提供的热插拔链接进行操作。</p>
 
@@ -2147,7 +2147,79 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>这个示例中，<code class="language-plaintext highlighter-rouge">FilterRegistrationBean</code> 被用来注册一个简单的过滤器，并设置了一些常见的配置选项。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>这个示例中，<code class="language-plaintext highlighter-rouge">FilterRegistrationBean</code> 被用来注册一个简单的过滤器，并设置了一些常见的配置选项。</p>
+
+<h2 id="在项目启动后运行一段代码">在项目启动后运行一段代码</h2>
+
+<p>在Spring Boot项目启动后运行一段代码，你可以使用<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>或<code class="language-plaintext highlighter-rouge">ApplicationRunner</code>接口。两者的用法类似，都可以在应用程序启动完成后执行特定代码。</p>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">CommandLineRunner</code></strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">CommandLineRunner</code>接口提供了一个<code class="language-plaintext highlighter-rouge">run</code>方法，在Spring Boot启动后立即执行。你可以创建一个实现此接口的类。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.boot.CommandLineRunner</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCommandLineRunner</span> <span class="kd">implements</span> <span class="nc">CommandLineRunner</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="nc">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 在应用程序启动后运行的代码</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Spring Boot 应用程序已启动，执行自定义代码..."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">ApplicationRunner</code></strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">ApplicationRunner</code>接口与<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>类似，但它接受一个<code class="language-plaintext highlighter-rouge">ApplicationArguments</code>对象，可以更方便地访问应用程序参数。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.boot.ApplicationArguments</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.ApplicationRunner</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplicationRunner</span> <span class="kd">implements</span> <span class="nc">ApplicationRunner</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="nc">ApplicationArguments</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 在应用程序启动后运行的代码</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Spring Boot 应用程序已启动，执行自定义代码..."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果有多个<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>或<code class="language-plaintext highlighter-rouge">ApplicationRunner</code>实现，并且希望它们按特定顺序执行，你可以实现<code class="language-plaintext highlighter-rouge">Ordered</code>接口或使用<code class="language-plaintext highlighter-rouge">@Order</code>注解。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.boot.CommandLineRunner</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.core.annotation.Order</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="nd">@Component</span>
+<span class="nd">@Order</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCommandLineRunner1</span> <span class="kd">implements</span> <span class="nc">CommandLineRunner</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="nc">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"第一个运行的 CommandLineRunner"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="nd">@Order</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCommandLineRunner2</span> <span class="kd">implements</span> <span class="nc">CommandLineRunner</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="nc">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"第二个运行的 CommandLineRunner"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这样，<code class="language-plaintext highlighter-rouge">MyCommandLineRunner1</code>将会在<code class="language-plaintext highlighter-rouge">MyCommandLineRunner2</code>之前执行。</p>
+
+<p>在Spring Boot应用启动后运行代码的两种常用方法是实现<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>或<code class="language-plaintext highlighter-rouge">ApplicationRunner</code>接口。选择其中之一，并将所需逻辑放入<code class="language-plaintext highlighter-rouge">run</code>方法中。通过实现<code class="language-plaintext highlighter-rouge">Ordered</code>接口或使用<code class="language-plaintext highlighter-rouge">@Order</code>注解，你可以控制多个运行器的执行顺序。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
