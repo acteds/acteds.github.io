@@ -698,7 +698,7 @@ Spring Boot提供了一个开发者工具，可以监控classpath路径上的文
 
 还有可能是项目名称的问题：
 
-在决定类路径上的条目更改时是否应触发重启时，DevTools会自动忽略名为Spring-Boot、Spring-Boot-DevTools、Spring-Boot-Autoconfiguration、Spring-Boot-Actuator和Spring-Boot-starter的项目。
+在决定类路径上的条目更改时是否应触发重启时，**DevTools会自动忽略名为：**`Spring-Boot`、`Spring-Boot-DevTools`、`Spring-Boot-Autoconfiguration`、`Spring-Boot-Actuator`和`Spring-Boot-starter`的项目。
 
 使用Ctrl+F9构建项目**会自动触发重新启动**。如果您希望在保存类文件后立即自动触发，可以按照问题中提供的热插拔链接进行操作。
 
@@ -2157,9 +2157,80 @@ public class FilterConfig {
 
 这个示例中，`FilterRegistrationBean` 被用来注册一个简单的过滤器，并设置了一些常见的配置选项。
 
+## 在项目启动后运行一段代码
 
+在Spring Boot项目启动后运行一段代码，你可以使用`CommandLineRunner`或`ApplicationRunner`接口。两者的用法类似，都可以在应用程序启动完成后执行特定代码。
 
+**使用 `CommandLineRunner`**
 
+`CommandLineRunner`接口提供了一个`run`方法，在Spring Boot启动后立即执行。你可以创建一个实现此接口的类。
+
+```java
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyCommandLineRunner implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) throws Exception {
+        // 在应用程序启动后运行的代码
+        System.out.println("Spring Boot 应用程序已启动，执行自定义代码...");
+    }
+}
+```
+
+**使用 `ApplicationRunner`**
+
+`ApplicationRunner`接口与`CommandLineRunner`类似，但它接受一个`ApplicationArguments`对象，可以更方便地访问应用程序参数。
+
+```java
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyApplicationRunner implements ApplicationRunner {
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        // 在应用程序启动后运行的代码
+        System.out.println("Spring Boot 应用程序已启动，执行自定义代码...");
+    }
+}
+```
+
+如果有多个`CommandLineRunner`或`ApplicationRunner`实现，并且希望它们按特定顺序执行，你可以实现`Ordered`接口或使用`@Order`注解。
+
+```java
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+@Order(1)
+public class MyCommandLineRunner1 implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("第一个运行的 CommandLineRunner");
+    }
+}
+
+@Component
+@Order(2)
+public class MyCommandLineRunner2 implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("第二个运行的 CommandLineRunner");
+    }
+}
+```
+
+这样，`MyCommandLineRunner1`将会在`MyCommandLineRunner2`之前执行。
+
+在Spring Boot应用启动后运行代码的两种常用方法是实现`CommandLineRunner`或`ApplicationRunner`接口。选择其中之一，并将所需逻辑放入`run`方法中。通过实现`Ordered`接口或使用`@Order`注解，你可以控制多个运行器的执行顺序。
 
 
 
