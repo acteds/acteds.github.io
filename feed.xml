@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-04T19:56:07+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-05T20:46:13+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2219,7 +2219,76 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 
 <p>这样，<code class="language-plaintext highlighter-rouge">MyCommandLineRunner1</code>将会在<code class="language-plaintext highlighter-rouge">MyCommandLineRunner2</code>之前执行。</p>
 
-<p>在Spring Boot应用启动后运行代码的两种常用方法是实现<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>或<code class="language-plaintext highlighter-rouge">ApplicationRunner</code>接口。选择其中之一，并将所需逻辑放入<code class="language-plaintext highlighter-rouge">run</code>方法中。通过实现<code class="language-plaintext highlighter-rouge">Ordered</code>接口或使用<code class="language-plaintext highlighter-rouge">@Order</code>注解，你可以控制多个运行器的执行顺序。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>在Spring Boot应用启动后运行代码的两种常用方法是实现<code class="language-plaintext highlighter-rouge">CommandLineRunner</code>或<code class="language-plaintext highlighter-rouge">ApplicationRunner</code>接口。选择其中之一，并将所需逻辑放入<code class="language-plaintext highlighter-rouge">run</code>方法中。通过实现<code class="language-plaintext highlighter-rouge">Ordered</code>接口或使用<code class="language-plaintext highlighter-rouge">@Order</code>注解，你可以控制多个运行器的执行顺序。</p>
+
+<h2 id="集成open-api">集成Open API</h2>
+
+<p><a href="https://www.openapis.org/">Open API</a>是一个标准，它的主要作用是<strong>描述REST API</strong>，既可以作为文档给开发者阅读，又可以让机器根据这个文档自动生成客户端代码等。</p>
+
+<p>在Spring Boot应用中，假设编写了一堆REST API，只需要在<code class="language-plaintext highlighter-rouge">pom.xml</code>中加入以下依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springdoc<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>springdoc-openapi-starter-webmvc-ui<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.0.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>直接启动应用，打开浏览器输入<code class="language-plaintext highlighter-rouge">http://localhost:8080/swagger-ui.html</code></p>
+
+<p>立刻可以看到自动生成的API文档，点击某个API还可以交互，即输入API参数，点“Try it out”按钮，获得运行结果。</p>
+
+<p>因为引入<code class="language-plaintext highlighter-rouge">springdoc-openapi-ui</code>这个依赖后，它自动引入Swagger UI用来创建API文档。可以给API加入一些描述信息，例如：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/api"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ApiController</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nd">@Operation</span><span class="o">(</span><span class="n">summary</span> <span class="o">=</span> <span class="s">"Get specific user object by it's id."</span><span class="o">)</span>
+	<span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/users/{id}"</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="nc">User</span> <span class="nf">user</span><span class="o">(</span><span class="nd">@Parameter</span><span class="o">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">"id of the user."</span><span class="o">)</span> <span class="nd">@PathVariable</span><span class="o">(</span><span class="s">"id"</span><span class="o">)</span> <span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">userService</span><span class="o">.</span><span class="na">getUserById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+	<span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">@Operation</code>可以对API进行描述，<code class="language-plaintext highlighter-rouge">@Parameter</code>可以对参数进行描述，它们的目的是用于生成API文档的描述信息。</p>
+
+<p>大多数情况下，不需要任何配置，就直接得到了一个运行时动态生成的可交互的API文档，该API文档总是和代码保持同步，大大简化了文档的编写工作。</p>
+
+<p>要自定义文档的样式、控制某些API显示等，请参考<a href="https://springdoc.org/">springdoc文档</a>。</p>
+
+<p><strong>配置反向代理</strong></p>
+
+<p>如果在服务器上，用户访问的域名是<code class="language-plaintext highlighter-rouge">https://example.com</code>，但内部是通过类似Nginx这样的反向代理访问实际的Spring Boot应用，比如<code class="language-plaintext highlighter-rouge">http://localhost:8080</code>，这个时候，在页面<code class="language-plaintext highlighter-rouge">https://example.com/swagger-ui.html</code>上，显示的URL仍然是<code class="language-plaintext highlighter-rouge">http://localhost:8080</code>，这样一来，就无法直接在页面执行API，非常不方便。</p>
+
+<p>这是因为Spring Boot内置的Tomcat默认获取的服务器名称是<code class="language-plaintext highlighter-rouge">localhost</code>，端口是实际监听端口，而不是对外暴露的域名和<code class="language-plaintext highlighter-rouge">80</code>或<code class="language-plaintext highlighter-rouge">443</code>端口。要让Tomcat获取到对外暴露的域名等信息，必须在Nginx配置中传入必要的HTTP Header，常用的配置如下：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Nginx配置</span>
+<span class="n">server</span> <span class="p">{</span>
+    <span class="o">...</span>
+    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+        <span class="n">proxy_pass</span> <span class="n">http</span><span class="ss">:/</span><span class="o">/</span><span class="n">localhost</span><span class="p">:</span><span class="mi">8080</span><span class="p">;</span>
+        <span class="n">proxy_set_header</span> <span class="no">Host</span> <span class="vg">$host</span><span class="p">;</span>
+        <span class="n">proxy_set_header</span> <span class="no">X</span><span class="o">-</span><span class="no">Real</span><span class="o">-</span><span class="no">IP</span> <span class="vg">$remote_addr</span><span class="p">;</span>
+        <span class="n">proxy_set_header</span> <span class="no">X</span><span class="o">-</span><span class="no">Forwarded</span><span class="o">-</span><span class="no">Proto</span> <span class="vg">$scheme</span><span class="p">;</span>
+        <span class="n">proxy_set_header</span> <span class="no">X</span><span class="o">-</span><span class="no">Forwarded</span><span class="o">-</span><span class="no">For</span> <span class="vg">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后，在Spring Boot的<code class="language-plaintext highlighter-rouge">application.yml</code>中，加入如下配置：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="c1"># 实际监听端口:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">8080</span>
+  <span class="c1"># 从反向代理读取相关的HTTP Header:</span>
+  <span class="na">forward-headers-strategy</span><span class="pi">:</span> <span class="s">native</span>
+</code></pre></div></div>
+
+<p>重启Spring Boot应用，即可在Swagger中显示正确的URL。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
