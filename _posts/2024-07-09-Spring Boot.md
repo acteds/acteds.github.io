@@ -2304,3 +2304,128 @@ server:
 ```
 
 重启Spring Boot应用，即可在Swagger中显示正确的URL。
+
+**使用knife4j**
+
+在日常开发中，写接口文档是我们必不可少的，而Knife4j就是一个接口文档工具，可以看作是Swagger的升级版，但是界面比Swagger更好看，功能更丰富
+
+早期，swagger-boostrap-ui是1.x版本，如今swagger-bootsrap-ui到2.x，同时也更改名字Knife4j，适用于单体和微服务项目。
+
+Knife4j官方网站：https://doc.xiaominfo.com/
+
+导入依赖：
+
+```xml
+<dependency>
+    <groupId>com.github.xiaoymin</groupId>
+    <artifactId>knife4j-spring-boot-starter</artifactId>
+    <version>2.0.1</version>
+</dependency>
+```
+
+创建配置类：
+
+```java
+package com.aotmd;
+
+import io.swagger.annotations.ApiOperation;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+
+
+
+/**
+ * Swagger2配置信息
+ * 这里分了两组显示
+ * 第一组是api，当作用户端接口
+ * 第二组是admin，当作后台管理接口
+ * 也可以根据实际情况来减少或者增加组
+ */
+
+@Configuration
+@EnableSwagger2
+public class Swagger2Config{
+
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                //加了ApiOperation注解的类，生成接口文档
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                //包下的类，生成接口文档
+                //.apis(RequestHandlerSelectors.basePackage("com.aotmd"))
+                .paths(PathSelectors.any())
+                .build()
+                .directModelSubstitute(java.util.Date.class, String.class)
+                .securitySchemes(security());
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("`文档`")
+                .description("文档")
+                .termsOfServiceUrl("*")
+                .version("2.0.0")
+                .build();
+    }
+
+    private List<ApiKey> security() {
+        return newArrayList(
+                new ApiKey("token", "token", "header")
+        );
+    }
+}
+```
+
+实体类：
+
+```java
+@ApiModel("用户实体类")
+@Data
+@Builder
+public class SwaggerUser {
+    @ApiModelProperty("用户Id")
+    private Long id;
+    @ApiModelProperty("用户名称")
+    private String name;
+}
+```
+
+控制器：
+
+```java
+@Api(tags = "用户端控制器")
+@RestController
+@RequestMapping("/api")
+public class ApiController {
+
+    @ApiOperation(value = "获取数据")
+    @GetMapping("/test")
+    public List<SwaggerUser> test(@ApiParam(name = "id",value = "用户Id") Long id,
+                                  @ApiParam(name = "name",value = "用户名称") String name){
+        List<SwaggerUser> list = new ArrayList<>();
+        list.add(SwaggerUser.builder().id(id).name(name).build());
+        return list;
+    }
+}
+```
+
+运行后访问`http://127.0.0.1:8080/doc.html`即可。
+
+
+
+
+
