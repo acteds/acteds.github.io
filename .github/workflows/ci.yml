@@ -19,7 +19,7 @@ jobs:
       - name: Set Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.4
+          ruby-version: '3.3'
 
       - name: Install and Build
         run: |
