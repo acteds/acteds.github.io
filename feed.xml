@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-10T22:11:18+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-11T23:41:30+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2296,7 +2296,7 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 
 <p>早期，swagger-boostrap-ui是1.x版本，如今swagger-bootsrap-ui到2.x，同时也更改名字Knife4j，适用于单体和微服务项目。</p>
 
-<p>Knife4j官方网站：https://doc.xiaominfo.com/</p>
+<p><a href="https://doc.xiaominfo.com/">Knife4j官方网站</a>。</p>
 
 <p>导入依赖：</p>
 
@@ -2404,7 +2404,270 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>运行后访问<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/doc.html</code>即可。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>运行后访问<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/doc.html</code>即可。</p>
+
+<h2 id="redis">Redis</h2>
+
+<p>在Spring Boot中，要访问Redis，可以直接引入<code class="language-plaintext highlighter-rouge">spring-boot-starter-data-redis</code>依赖，它实际上是Spring Data的一个子项目——Spring Data Redis，主要用到了这几个组件：</p>
+
+<ul>
+  <li>Lettuce：一个基于Netty的高性能Redis客户端；</li>
+  <li>RedisTemplate：一个类似于JdbcTemplate的接口，用于简化Redis的操作。</li>
+</ul>
+
+<p>因为Spring Data Redis引入的依赖项很多，如果只是为了使用Redis，完全可以只引入Lettuce，剩下的操作都自己来完成。</p>
+
+<p>如何把一个第三方组件引入到Spring Boot中：</p>
+
+<p>首先，添加必要的几个依赖项：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>io.lettuce<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>lettuce-core<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.commons<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>commons-pool2<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>在<code class="language-plaintext highlighter-rouge">spring-boot-starter-parent</code>中已经把常用组件的版本号确定下来了，因此不需要显式设置版本号。</p>
+
+<p>第一步是在配置文件<code class="language-plaintext highlighter-rouge">application.yml</code>中添加Redis的相关配置：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">${REDIS_HOST:localhost}</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">${REDIS_PORT:6379}</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">${REDIS_PASSWORD:}</span>
+    <span class="na">ssl</span><span class="pi">:</span> <span class="s">${REDIS_SSL:false}</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="s">${REDIS_DATABASE:0}</span>
+</code></pre></div></div>
+
+<p>然后，通过<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>来加载它：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"spring.redis"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfiguration</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="nc">String</span> <span class="n">host</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">port</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">database</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>再编写一个<code class="language-plaintext highlighter-rouge">@Bean</code>方法来创建<code class="language-plaintext highlighter-rouge">RedisClient</code>，可以直接放在<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>中：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"spring.redis"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfiguration</span> <span class="o">{</span>
+    <span class="o">...</span>
+
+    <span class="nd">@Bean</span>
+    <span class="nc">RedisClient</span> <span class="nf">redisClient</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="s">""</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">password</span><span class="o">.</span><span class="na">trim</span><span class="o">()))</span> <span class="o">{</span>
+     		<span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+        <span class="nc">RedisURI</span> <span class="n">uri</span> <span class="o">=</span> <span class="nc">RedisURI</span><span class="o">.</span><span class="na">Builder</span><span class="o">.</span><span class="na">redis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">host</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">port</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">withPassword</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">password</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">withDatabase</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">database</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="k">return</span> <span class="nc">RedisClient</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">uri</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在启动入口引入该配置：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootApplication</span>
+<span class="nd">@Import</span><span class="o">(</span><span class="nc">RedisConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="c1">// 加载Redis配置</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果在<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>中标注<code class="language-plaintext highlighter-rouge">@Configuration</code>，则可通过Spring Boot的自动扫描机制自动加载，否则需要使用<code class="language-plaintext highlighter-rouge">@Import</code>手动加载。</p>
+
+<p>用一个<code class="language-plaintext highlighter-rouge">RedisService</code>来封装所有的Redis操作。基础代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">RedisClient</span> <span class="n">redisClient</span><span class="o">;</span>
+
+    <span class="nc">GenericObjectPool</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">redisConnectionPool</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;&gt;();</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnReturn</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span> <span class="o">=</span> <span class="nc">ConnectionPoolSupport</span><span class="o">.</span><span class="na">createGenericObjectPool</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">redisClient</span><span class="o">.</span><span class="na">connect</span><span class="o">(),</span> <span class="n">poolConfig</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PreDestroy</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shutdown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisClient</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>上述代码引入了Commons Pool的一个对象池，用于缓存Redis连接。因为Lettuce本身是基于Netty的异步驱动，在异步访问时并不需要创建连接池，但基于Servlet模型的同步访问时，连接池是有必要的。连接池在<code class="language-plaintext highlighter-rouge">@PostConstruct</code>方法中初始化，在<code class="language-plaintext highlighter-rouge">@PreDestroy</code>方法中关闭。</p>
+
+<p>下一步，是在<code class="language-plaintext highlighter-rouge">RedisService</code>中添加Redis访问方法。为了简化代码，仿照<code class="language-plaintext highlighter-rouge">JdbcTemplate.execute(ConnectionCallback)</code>方法，传入回调函数，可大幅减少样板代码。</p>
+
+<p>首先定义回调函数接口<code class="language-plaintext highlighter-rouge">SyncCommandCallback</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 在此操作Redis:</span>
+    <span class="no">T</span> <span class="nf">doInConnection</span><span class="o">(</span><span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>编写<code class="language-plaintext highlighter-rouge">executeSync</code>方法，在该方法中，获取Redis连接，利用callback操作Redis，最后释放连接，并返回操作结果：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">executeSync</span><span class="o">(</span><span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">(</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">redisConnectionPool</span><span class="o">.</span><span class="na">borrowObject</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">setAutoFlushCommands</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="na">doInConnection</span><span class="o">(</span><span class="n">commands</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"executeSync redis failed."</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>可以针对常用操作把它封装一下，例如<code class="language-plaintext highlighter-rouge">set</code>和<code class="language-plaintext highlighter-rouge">get</code>命令：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>类似的，<code class="language-plaintext highlighter-rouge">hget</code>和<code class="language-plaintext highlighter-rouge">hset</code>操作如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hset</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">hget</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="nf">hgetall</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hgetall</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>常用命令可以提供方法接口，如果要执行任意复杂的操作，就可以通过<code class="language-plaintext highlighter-rouge">executeSync(SyncCommandCallback&lt;T&gt;)</code>来完成。</p>
+
+<p>完成了<code class="language-plaintext highlighter-rouge">RedisService</code>后，就可以使用Redis了。例如，在<code class="language-plaintext highlighter-rouge">UserController</code>中，在Session中只存放登录用户的ID，用户信息存放到Redis，提供两个方法用于读写：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Controller</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">KEY_USER_ID</span> <span class="o">=</span> <span class="s">"__userid__"</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">KEY_USERS</span> <span class="o">=</span> <span class="s">"__users__"</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span> <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+    <span class="nd">@Autowired</span> <span class="nc">RedisService</span> <span class="n">redisService</span><span class="o">;</span>
+
+    <span class="c1">// 把User写入Redis:</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">putUserIntoRedis</span><span class="o">(</span><span class="nc">User</span> <span class="n">user</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">redisService</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="no">KEY_USERS</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">user</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 从Redis读取User:</span>
+    <span class="kd">private</span> <span class="nc">User</span> <span class="nf">getUserFromRedis</span><span class="o">(</span><span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">Long</span> <span class="n">id</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Long</span><span class="o">)</span> <span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="no">KEY_USER_ID</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">id</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">redisService</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="no">KEY_USERS</span><span class="o">,</span> <span class="n">id</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">s</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>用户登录成功后，把ID放入Session，把<code class="language-plaintext highlighter-rouge">User</code>实例放入Redis：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/signin"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">doSignin</span><span class="o">(</span><span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"email"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"password"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">userService</span><span class="o">.</span><span class="na">signin</span><span class="o">(</span><span class="n">email</span><span class="o">,</span> <span class="n">password</span><span class="o">);</span>
+        <span class="n">session</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="no">KEY_USER_ID</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="n">putUserIntoRedis</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"signin.html"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"email"</span><span class="o">,</span> <span class="n">email</span><span class="o">,</span> <span class="s">"error"</span><span class="o">,</span> <span class="s">"Signin failed"</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"redirect:/profile"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>需要获取<code class="language-plaintext highlighter-rouge">User</code>时，从Redis取出：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/profile"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">profile</span><span class="o">(</span><span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">getUserFromRedis</span><span class="o">(</span><span class="n">session</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">user</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"redirect:/signin"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"profile.html"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span> <span class="n">user</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>从Redis读写Java对象时，序列化和反序列化是应用程序的工作，上述代码使用JSON作为序列化方案，简单可靠。也可将相关序列化操作封装到<code class="language-plaintext highlighter-rouge">RedisService</code>中，这样可以提供更加通用的方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>redis在各大操作系统中的安装使用都非常简单，默认配置就是监听<code class="language-plaintext highlighter-rouge">127.0.0.1:6379</code>，且无帐号密码。</p>
+
+<p><a href="https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/">在windows通过虚拟机安装redis</a>，或通过doker镜像运行：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull redis
+docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 6379:6379 <span class="nt">-d</span> redis
+</code></pre></div></div>
+
+<p>也可以使用<a href="https://github.com/microsoftarchive/redis">古早版本</a>，输入：<code class="language-plaintext highlighter-rouge">redis-server redis.windows.conf</code> 即可启动redis。</p>
+
+<p>如果要部署Redis为windows下的服务，可以输入：<code class="language-plaintext highlighter-rouge">redis-server --service-install redis.windows.conf</code>。</p>
+
+<p>其他常用命令：</p>
+
+<ul>
+  <li>卸载服务：<code class="language-plaintext highlighter-rouge">redis-server --service-uninstall</code></li>
+  <li>开启服务：<code class="language-plaintext highlighter-rouge">redis-server --service-start</code></li>
+  <li>停止服务：<code class="language-plaintext highlighter-rouge">redis-server --service-stop</code></li>
+</ul>
+
+<p>测试：</p>
+
+<p>可以通过set、get指令查看是否成功启动：</p>
+
+<pre><code class="language-cmd">C:\Redis&gt;redis-cli
+127.0.0.1:6379&gt;set A 123
+127.0.0.1:6379&gt;get A
+</code></pre>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
