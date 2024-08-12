@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-11T23:41:30+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-12T19:48:13+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2667,7 +2667,70 @@ docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 63
 <pre><code class="language-cmd">C:\Redis&gt;redis-cli
 127.0.0.1:6379&gt;set A 123
 127.0.0.1:6379&gt;get A
-</code></pre>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+</code></pre>
+
+<h2 id="集成artemis">集成Artemis</h2>
+
+<p>ActiveMQ Artemis是一个JMS服务器，在<a href="/2024/06/05/Spring/#集成jms">集成JMS</a>一节中介绍如何在Spring中集成Artemis，现在介绍在Spring Boot中集成Artemis。</p>
+
+<p>创建一个<code class="language-plaintext highlighter-rouge">springboot-jms</code>工程，引入的依赖除了<code class="language-plaintext highlighter-rouge">spring-boot-starter-web</code>，<code class="language-plaintext highlighter-rouge">spring-boot-starter-jdbc</code>等以外，新增<code class="language-plaintext highlighter-rouge">spring-boot-starter-artemis</code>：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-artemis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>同样无需指定版本号。</p>
+
+<p>如何创建Artemis服务器已经在集成JMS一节中详细讲述了，此处不再重复。创建Artemis服务器后，在<code class="language-plaintext highlighter-rouge">application.yml</code>中加入相关配置：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">artemis</span><span class="pi">:</span>
+    <span class="c1"># 指定连接外部Artemis服务器，而不是启动嵌入式服务:</span>
+    <span class="na">mode</span><span class="pi">:</span> <span class="s">native</span>
+    <span class="c1"># 服务器地址和端口号:</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">61616</span>
+    <span class="c1"># 连接用户名和口令由创建Artemis服务器时指定:</span>
+    <span class="na">user</span><span class="pi">:</span> <span class="s">admin</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">password</span>
+</code></pre></div></div>
+
+<p>和Spring版本的JMS代码相比，使用Spring Boot集成JMS时，只要引入了<code class="language-plaintext highlighter-rouge">spring-boot-starter-artemis</code>，Spring Boot会自动创建JMS相关的<code class="language-plaintext highlighter-rouge">ConnectionFactory</code>、<code class="language-plaintext highlighter-rouge">JmsListenerContainerFactory</code>、<code class="language-plaintext highlighter-rouge">JmsTemplate</code>等，无需再手动配置了。</p>
+
+<p>发送消息时只需要引入<code class="language-plaintext highlighter-rouge">JmsTemplate</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessagingService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">JmsTemplate</span> <span class="n">jmsTemplate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendMailMessage</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">text</span> <span class="o">=</span> <span class="s">"..."</span><span class="o">;</span>
+        <span class="n">jmsTemplate</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="s">"jms/queue/mail"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">MessageCreator</span><span class="o">()</span> <span class="o">{</span>
+            <span class="kd">public</span> <span class="nc">Message</span> <span class="nf">createMessage</span><span class="o">(</span><span class="nc">Session</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">JMSException</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="na">createTextMessage</span><span class="o">(</span><span class="n">text</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>接收消息时只需要标注<code class="language-plaintext highlighter-rouge">@JmsListener</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MailMessageListener</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@JmsListener</span><span class="o">(</span><span class="n">destination</span> <span class="o">=</span> <span class="s">"jms/queue/mail"</span><span class="o">,</span> <span class="n">concurrency</span> <span class="o">=</span> <span class="s">"10"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onMailMessageReceived</span><span class="o">(</span><span class="nc">Message</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"received message: "</span> <span class="o">+</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>应用程序收发消息的逻辑和Spring中使用JMS完全相同，只是通过Spring Boot，可以把工程简化到只需要设定Artemis相关配置。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
