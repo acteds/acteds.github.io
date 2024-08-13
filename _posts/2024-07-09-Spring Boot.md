@@ -2767,6 +2767,18 @@ public class MailMessageListener {
 
 应用程序收发消息的逻辑和Spring中使用JMS完全相同，只是通过Spring Boot，可以把工程简化到只需要设定Artemis相关配置。
 
+## 集成RabbitMQ
+
+JMS是JavaEE的消息服务标准接口，但是，如果Java程序要和另一种语言编写的程序通过消息服务器进行通信，那么JMS就不太适合了。
+
+AMQP是一种使用广泛的独立于语言的消息协议，它的全称是Advanced Message Queuing Protocol，即高级消息队列协议，它定义了一种二进制格式的消息流，任何编程语言都可以实现该协议。实际上，Artemis也支持AMQP，但实际应用最广泛的AMQP服务器是使用[Erlang](https://www.erlang.org/)编写的[RabbitMQ](https://www.rabbitmq.com/)。
+
+**安装RabbitMQ**
+
+先从RabbitMQ的官网[下载](https://www.rabbitmq.com/download.html)并安装RabbitMQ，安装和启动RabbitMQ请参考官方文档。要验证启动是否成功，可以访问RabbitMQ的管理后台[http://localhost:15672](http://localhost:15672/)，RabbitMQ后台管理的默认用户名和口令均为`guest`。
+
+
+
 
 
 
