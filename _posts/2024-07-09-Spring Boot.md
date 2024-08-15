@@ -2777,7 +2777,7 @@ AMQP是一种使用广泛的独立于语言的消息协议，它的全称是Adva
 
 先从RabbitMQ的官网[下载](https://www.rabbitmq.com/download.html)并安装RabbitMQ，安装和启动RabbitMQ请参考官方文档。要验证启动是否成功，可以访问RabbitMQ的管理后台[http://localhost:15672](http://localhost:15672/)，RabbitMQ后台管理的默认用户名和口令均为`guest`。
 
-### AMQP协议
+**AMQP协议**
 
 AMQP协议和JMS协议有所不同。在JMS中，有两种类型的消息通道：
 
@@ -2802,15 +2802,198 @@ AMQP协议和JMS协议有所不同。在JMS中，有两种类型的消息通道�
 
 如果某个Exchange总是把消息发送到固定的Queue，那么这个消息通道就相当于JMS的Queue。如果某个Exchange把消息发送到多个Queue，那么这个消息通道就相当于JMS的Topic。和JMS的Topic相比，Exchange的投递规则更灵活，比如一个“登录成功”的消息被投递到Queue-1和Queue-2，而“登录失败”的消息则被投递到Queue-3。这些路由规则称之为Binding，通常都在RabbitMQ的管理后台设置。
 
+在RabbitMQ中，首先创建3个Queue，分别用于发送邮件、短信和App通知：q_app、q_mail、q_sms。
 
+创建Queue时注意到可配置为持久化（Durable）和非持久化（Transient），当Consumer不在线时，持久化的Queue会暂存消息，非持久化的Queue会丢弃消息。
 
+然后在Exchanges中创建一个Direct类型的Exchange，命名为`registration`，并添加q_mail、q_sms到Binding。
 
+Binding的规则就是：凡是发送到`registration`这个Exchange的消息，均被发送到`q_mail`和`q_sms`这两个Queue。
 
+再创建一个Direct类型的Exchange，命名为`login`，并添加q_app、q_mail、q_sms到Binding，且指定q_sms，Routing Key="login_failed"。
 
+当发送消息给`login`这个Exchange时，如果消息没有指定Routing Key，则被投递到`q_app`和`q_mail`，如果消息指定了Routing Key="login_failed"，那么消息被投递到`q_sms`。
 
+配置好RabbitMQ后，就可以基于Spring Boot开发AMQP程序。
 
+**使用RabbitMQ**
 
+首先创建Spring Boot工程`springboot-rabbitmq`，并添加如下依赖引入RabbitMQ：
 
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+```
+
+然后在`application.yml`中添加RabbitMQ相关配置：
+
+```yaml
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+```
+
+并在`Application`中添加一个`MessageConverter`：
+
+```java
+import org.springframework.amqp.support.converter.MessageConverter;
+
+@SpringBootApplication
+public class Application {
+    ...
+
+    @Bean
+    MessageConverter createMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+}
+```
+
+`MessageConverter`用于将Java对象转换为RabbitMQ的消息。默认情况下，Spring Boot使用`SimpleMessageConverter`，只能发送`String`和`byte[]`类型的消息，不太方便。使用`Jackson2JsonMessageConverter`，就可以发送JavaBean对象，由Spring Boot自动序列化为JSON并以文本消息传递。
+
+因为引入了starter，所有RabbitMQ相关的Bean均自动装配。
+
+可以直接注入`RabbitTemplate`：
+
+```java
+@Component
+public class MessagingService {
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
+    public void sendRegistrationMessage(RegistrationMessage msg) {
+        rabbitTemplate.convertAndSend("registration", "", msg);
+    }
+
+    public void sendLoginMessage(LoginMessage msg) {
+        String routingKey = msg.success ? "" : "login_failed";
+        rabbitTemplate.convertAndSend("login", routingKey, msg);
+    }
+}
+```
+
+发送消息时，使用`convertAndSend(exchange, routingKey, message)`可以指定Exchange、Routing Key以及消息本身。这里传入JavaBean后会自动序列化为JSON文本。上述代码将`RegistrationMessage`发送到`registration`，将`LoginMessage`发送到`login`，并根据登录是否成功来指定Routing Key。
+
+接收消息时，需要在消息处理的方法上标注`@RabbitListener`：
+
+```java
+@Component
+public class QueueMessageListener {
+    final Logger logger = LoggerFactory.getLogger(getClass());
+
+    static final String QUEUE_MAIL = "q_mail";
+    static final String QUEUE_SMS = "q_sms";
+    static final String QUEUE_APP = "q_app";
+
+    @RabbitListener(queues = QUEUE_MAIL)
+    public void onRegistrationMessageFromMailQueue(RegistrationMessage message) throws Exception {
+        logger.info("queue {} received registration message: {}", QUEUE_MAIL, message);
+    }
+
+    @RabbitListener(queues = QUEUE_SMS)
+    public void onRegistrationMessageFromSmsQueue(RegistrationMessage message) throws Exception {
+        logger.info("queue {} received registration message: {}", QUEUE_SMS, message);
+    }
+
+    @RabbitListener(queues = QUEUE_MAIL)
+    public void onLoginMessageFromMailQueue(LoginMessage message) throws Exception {
+        logger.info("queue {} received message: {}", QUEUE_MAIL, message);
+    }
+
+    @RabbitListener(queues = QUEUE_SMS)
+    public void onLoginMessageFromSmsQueue(LoginMessage message) throws Exception {
+        logger.info("queue {} received message: {}", QUEUE_SMS, message);
+    }
+
+    @RabbitListener(queues = QUEUE_APP)
+    public void onLoginMessageFromAppQueue(LoginMessage message) throws Exception {
+        logger.info("queue {} received message: {}", QUEUE_APP, message);
+    }
+}
+```
+
+上述代码一共定义了5个Consumer，监听3个Queue。
+
+启动应用程序，注册一个新用户，然后发送一条`RegistrationMessage`消息。此时，根据`registration`这个Exchange的设定，会在两个Queue收到消息：
+
+```plain
+try register by bob@example.com...
+user registered: bob@example.com
+queue q_mail received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
+queue q_sms received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
+```
+
+当登录失败时，发送`LoginMessage`并设定Routing Key为`login_failed`，此时，只有`q_sms`会收到消息：
+
+```plain
+try login by bob@example.com...
+queue q_sms received message: [LoginMessage: email=bob@example.com, name=(unknown), success=false]
+```
+
+登录成功后，发送`LoginMessage`，此时，`q_mail`和`q_app`将收到消息：
+
+```plain
+try login by bob@example.com...
+queue q_mail received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+```
+
+RabbitMQ还提供了使用Topic的Exchange（此Topic指消息的标签，并非JMS的Topic概念），可以使用`*`进行匹配并路由。可见，掌握RabbitMQ的核心是理解其消息的路由规则。
+
+直接指定一个Queue并投递消息也是可以的，此时指定Routing Key为Queue的名称即可，因为RabbitMQ提供了一个`default exchange`用于根据Routing Key查找Queue并直接投递消息到指定的Queue。但是要实现一对多的投递就必须自己配置Exchange。
+
+示例：
+
+```java
+@Component
+@RabbitListener(queues = { QueueMessageListener.QUEUE_APP, QueueMessageListener.QUEUE_MAIL,
+                          QueueMessageListener.QUEUE_SMS })
+public class QueueMessageListener {
+
+    final Logger logger = LoggerFactory.getLogger(getClass());
+
+    static final String QUEUE_MAIL = "q_mail";
+    static final String QUEUE_SMS = "q_sms";
+    static final String QUEUE_APP = "q_app";
+
+    @RabbitHandler
+    public void onRegistrationMessage(Message messageOriginal, RegistrationMessage message) throws Exception {
+        String queueName = messageOriginal.getMessageProperties().getConsumerQueue();
+        logger.info("queue {} received registration message: {}", queueName, message);
+    }
+
+    @RabbitHandler
+    public void onLoginMessage(Message messageOriginal, LoginMessage message) throws Exception {
+        String queueName = messageOriginal.getMessageProperties().getConsumerQueue();
+        logger.info("queue {} received login message: {}", queueName, message);
+    }
+}
+```
+
+解释：
+
+- **`@RabbitListener(queues = {...})`**:  这个注解用于声明该类监听哪些队列的消息。在这个示例中，`QueueMessageListener` 类监听 `QUEUE_APP`、`QUEUE_MAIL` 和 `QUEUE_SMS` 三个队列的消息。当这些队列有新消息到达时，该类会被触发。
+  
+- **`@RabbitHandler`**:  该注解用于标记处理消息的方法。一个类可以有多个 `@RabbitHandler` 方法，它们会根据消息的类型来自动选择对应的方法进行处理。
+
+- **`onRegistrationMessage(Message messageOriginal, RegistrationMessage message)`**:  是一个处理注册消息的方法。`@RabbitHandler` 注解表明这个方法会处理 `RegistrationMessage` 类型的消息。
+  - **`Message messageOriginal`**:  这个参数是原始的 RabbitMQ 消息对象，包含消息的元数据（如消息属性、队列名等）。
+    
+  - **`RegistrationMessage message`**:  这是实际的消息体，Spring 会自动将消息反序列化为 `RegistrationMessage` 对象。
+    
+  - **`queueName`**:  使用 `messageOriginal.getMessageProperties().getConsumerQueue()` 获取当前消息来自的队列名称。这在日志中用于记录消息来自哪个队列。
+
+当 RabbitMQ 中的 `q_mail`、`q_sms` 或 `q_app` 队列有新消息时，`QueueMessageListener` 会自动接收消息。Spring AMQP 框架根据消息的类型（例如 `RegistrationMessage` 或 `LoginMessage`）来选择合适的 `@RabbitHandler` 方法处理消息。
+
+- 如果消息是 `RegistrationMessage` 类型的，则调用`onRegistrationMessage` 方法。
+- 如果消息是 `LoginMessage` 类型的，则调用 `onLoginMessage` 方法。
+
+该机制允许根据消息的不同类型，使用不同的方法进行处理，简化了消息处理逻辑的组织。
 
 
 
