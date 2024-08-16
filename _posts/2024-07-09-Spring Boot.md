@@ -2995,5 +2995,24 @@ public class QueueMessageListener {
 
 该机制允许根据消息的不同类型，使用不同的方法进行处理，简化了消息处理逻辑的组织。
 
+## 集成Kafka
 
+JMS是JavaEE的标准消息接口，Artemis是一个JMS实现产品，AMQP是跨语言的一个标准消息接口，RabbitMQ是一个AMQP实现产品。
 
+Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，那么Kafka实现了什么标准消息接口呢？
+
+Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。
+
+Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过Kafka的客户端使用网络来与之通信。从逻辑上讲，Kafka设计非常简单，它只有一种类似JMS的Topic的消息通道：
+
+```ascii
+                           ┌──────────┐
+                       ┌──▶│Consumer-1│
+                       │   └──────────┘
+┌────────┐    ┌─────┐  │   ┌──────────┐
+│Producer│───▶│Topic│──┼──▶│Consumer-2│
+└────────┘    └─────┘  │   └──────────┘
+                       │   ┌──────────┐
+                       └──▶│Consumer-3│
+                           └──────────┘
+```
