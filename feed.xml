@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-14T22:45:03+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-16T20:25:03+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2742,7 +2742,7 @@ docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 63
 
 <p>先从RabbitMQ的官网<a href="https://www.rabbitmq.com/download.html">下载</a>并安装RabbitMQ，安装和启动RabbitMQ请参考官方文档。要验证启动是否成功，可以访问RabbitMQ的管理后台<a href="http://localhost:15672/">http://localhost:15672</a>，RabbitMQ后台管理的默认用户名和口令均为<code class="language-plaintext highlighter-rouge">guest</code>。</p>
 
-<h3 id="amqp协议">AMQP协议</h3>
+<p><strong>AMQP协议</strong></p>
 
 <p>AMQP协议和JMS协议有所不同。在JMS中，有两种类型的消息通道：</p>
 
@@ -2766,7 +2766,226 @@ docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 63
                                     └───────┘
 </code></pre></div></div>
 
-<p>如果某个Exchange总是把消息发送到固定的Queue，那么这个消息通道就相当于JMS的Queue。如果某个Exchange把消息发送到多个Queue，那么这个消息通道就相当于JMS的Topic。和JMS的Topic相比，Exchange的投递规则更灵活，比如一个“登录成功”的消息被投递到Queue-1和Queue-2，而“登录失败”的消息则被投递到Queue-3。这些路由规则称之为Binding，通常都在RabbitMQ的管理后台设置。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>如果某个Exchange总是把消息发送到固定的Queue，那么这个消息通道就相当于JMS的Queue。如果某个Exchange把消息发送到多个Queue，那么这个消息通道就相当于JMS的Topic。和JMS的Topic相比，Exchange的投递规则更灵活，比如一个“登录成功”的消息被投递到Queue-1和Queue-2，而“登录失败”的消息则被投递到Queue-3。这些路由规则称之为Binding，通常都在RabbitMQ的管理后台设置。</p>
+
+<p>在RabbitMQ中，首先创建3个Queue，分别用于发送邮件、短信和App通知：q_app、q_mail、q_sms。</p>
+
+<p>创建Queue时注意到可配置为持久化（Durable）和非持久化（Transient），当Consumer不在线时，持久化的Queue会暂存消息，非持久化的Queue会丢弃消息。</p>
+
+<p>然后在Exchanges中创建一个Direct类型的Exchange，命名为<code class="language-plaintext highlighter-rouge">registration</code>，并添加q_mail、q_sms到Binding。</p>
+
+<p>Binding的规则就是：凡是发送到<code class="language-plaintext highlighter-rouge">registration</code>这个Exchange的消息，均被发送到<code class="language-plaintext highlighter-rouge">q_mail</code>和<code class="language-plaintext highlighter-rouge">q_sms</code>这两个Queue。</p>
+
+<p>再创建一个Direct类型的Exchange，命名为<code class="language-plaintext highlighter-rouge">login</code>，并添加q_app、q_mail、q_sms到Binding，且指定q_sms，Routing Key=”login_failed”。</p>
+
+<p>当发送消息给<code class="language-plaintext highlighter-rouge">login</code>这个Exchange时，如果消息没有指定Routing Key，则被投递到<code class="language-plaintext highlighter-rouge">q_app</code>和<code class="language-plaintext highlighter-rouge">q_mail</code>，如果消息指定了Routing Key=”login_failed”，那么消息被投递到<code class="language-plaintext highlighter-rouge">q_sms</code>。</p>
+
+<p>配置好RabbitMQ后，就可以基于Spring Boot开发AMQP程序。</p>
+
+<p><strong>使用RabbitMQ</strong></p>
+
+<p>首先创建Spring Boot工程<code class="language-plaintext highlighter-rouge">springboot-rabbitmq</code>，并添加如下依赖引入RabbitMQ：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-amqp<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>然后在<code class="language-plaintext highlighter-rouge">application.yml</code>中添加RabbitMQ相关配置：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">rabbitmq</span><span class="pi">:</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">localhost</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">5672</span>
+    <span class="na">username</span><span class="pi">:</span> <span class="s">guest</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">guest</span>
+</code></pre></div></div>
+
+<p>并在<code class="language-plaintext highlighter-rouge">Application</code>中添加一个<code class="language-plaintext highlighter-rouge">MessageConverter</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.amqp.support.converter.MessageConverter</span><span class="o">;</span>
+
+<span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+    <span class="o">...</span>
+
+    <span class="nd">@Bean</span>
+    <span class="nc">MessageConverter</span> <span class="nf">createMessageConverter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Jackson2JsonMessageConverter</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">MessageConverter</code>用于将Java对象转换为RabbitMQ的消息。默认情况下，Spring Boot使用<code class="language-plaintext highlighter-rouge">SimpleMessageConverter</code>，只能发送<code class="language-plaintext highlighter-rouge">String</code>和<code class="language-plaintext highlighter-rouge">byte[]</code>类型的消息，不太方便。使用<code class="language-plaintext highlighter-rouge">Jackson2JsonMessageConverter</code>，就可以发送JavaBean对象，由Spring Boot自动序列化为JSON并以文本消息传递。</p>
+
+<p>因为引入了starter，所有RabbitMQ相关的Bean均自动装配。</p>
+
+<p>可以直接注入<code class="language-plaintext highlighter-rouge">RabbitTemplate</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessagingService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">RabbitTemplate</span> <span class="n">rabbitTemplate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendRegistrationMessage</span><span class="o">(</span><span class="nc">RegistrationMessage</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">rabbitTemplate</span><span class="o">.</span><span class="na">convertAndSend</span><span class="o">(</span><span class="s">"registration"</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendLoginMessage</span><span class="o">(</span><span class="nc">LoginMessage</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">routingKey</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="na">success</span> <span class="o">?</span> <span class="s">""</span> <span class="o">:</span> <span class="s">"login_failed"</span><span class="o">;</span>
+        <span class="n">rabbitTemplate</span><span class="o">.</span><span class="na">convertAndSend</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span> <span class="n">routingKey</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>发送消息时，使用<code class="language-plaintext highlighter-rouge">convertAndSend(exchange, routingKey, message)</code>可以指定Exchange、Routing Key以及消息本身。这里传入JavaBean后会自动序列化为JSON文本。上述代码将<code class="language-plaintext highlighter-rouge">RegistrationMessage</code>发送到<code class="language-plaintext highlighter-rouge">registration</code>，将<code class="language-plaintext highlighter-rouge">LoginMessage</code>发送到<code class="language-plaintext highlighter-rouge">login</code>，并根据登录是否成功来指定Routing Key。</p>
+
+<p>接收消息时，需要在消息处理的方法上标注<code class="language-plaintext highlighter-rouge">@RabbitListener</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">QueueMessageListener</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_MAIL</span> <span class="o">=</span> <span class="s">"q_mail"</span><span class="o">;</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_SMS</span> <span class="o">=</span> <span class="s">"q_sms"</span><span class="o">;</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_APP</span> <span class="o">=</span> <span class="s">"q_app"</span><span class="o">;</span>
+
+    <span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="no">QUEUE_MAIL</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRegistrationMessageFromMailQueue</span><span class="o">(</span><span class="nc">RegistrationMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received registration message: {}"</span><span class="o">,</span> <span class="no">QUEUE_MAIL</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="no">QUEUE_SMS</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRegistrationMessageFromSmsQueue</span><span class="o">(</span><span class="nc">RegistrationMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received registration message: {}"</span><span class="o">,</span> <span class="no">QUEUE_SMS</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="no">QUEUE_MAIL</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoginMessageFromMailQueue</span><span class="o">(</span><span class="nc">LoginMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received message: {}"</span><span class="o">,</span> <span class="no">QUEUE_MAIL</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="no">QUEUE_SMS</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoginMessageFromSmsQueue</span><span class="o">(</span><span class="nc">LoginMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received message: {}"</span><span class="o">,</span> <span class="no">QUEUE_SMS</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="no">QUEUE_APP</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoginMessageFromAppQueue</span><span class="o">(</span><span class="nc">LoginMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received message: {}"</span><span class="o">,</span> <span class="no">QUEUE_APP</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>上述代码一共定义了5个Consumer，监听3个Queue。</p>
+
+<p>启动应用程序，注册一个新用户，然后发送一条<code class="language-plaintext highlighter-rouge">RegistrationMessage</code>消息。此时，根据<code class="language-plaintext highlighter-rouge">registration</code>这个Exchange的设定，会在两个Queue收到消息：</p>
+
+<pre><code class="language-plain">try register by bob@example.com...
+user registered: bob@example.com
+queue q_mail received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
+queue q_sms received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
+</code></pre>
+
+<p>当登录失败时，发送<code class="language-plaintext highlighter-rouge">LoginMessage</code>并设定Routing Key为<code class="language-plaintext highlighter-rouge">login_failed</code>，此时，只有<code class="language-plaintext highlighter-rouge">q_sms</code>会收到消息：</p>
+
+<pre><code class="language-plain">try login by bob@example.com...
+queue q_sms received message: [LoginMessage: email=bob@example.com, name=(unknown), success=false]
+</code></pre>
+
+<p>登录成功后，发送<code class="language-plaintext highlighter-rouge">LoginMessage</code>，此时，<code class="language-plaintext highlighter-rouge">q_mail</code>和<code class="language-plaintext highlighter-rouge">q_app</code>将收到消息：</p>
+
+<pre><code class="language-plain">try login by bob@example.com...
+queue q_mail received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+</code></pre>
+
+<p>RabbitMQ还提供了使用Topic的Exchange（此Topic指消息的标签，并非JMS的Topic概念），可以使用<code class="language-plaintext highlighter-rouge">*</code>进行匹配并路由。可见，掌握RabbitMQ的核心是理解其消息的路由规则。</p>
+
+<p>直接指定一个Queue并投递消息也是可以的，此时指定Routing Key为Queue的名称即可，因为RabbitMQ提供了一个<code class="language-plaintext highlighter-rouge">default exchange</code>用于根据Routing Key查找Queue并直接投递消息到指定的Queue。但是要实现一对多的投递就必须自己配置Exchange。</p>
+
+<p>示例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@RabbitListener</span><span class="o">(</span><span class="n">queues</span> <span class="o">=</span> <span class="o">{</span> <span class="nc">QueueMessageListener</span><span class="o">.</span><span class="na">QUEUE_APP</span><span class="o">,</span> <span class="nc">QueueMessageListener</span><span class="o">.</span><span class="na">QUEUE_MAIL</span><span class="o">,</span>
+                          <span class="nc">QueueMessageListener</span><span class="o">.</span><span class="na">QUEUE_SMS</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">QueueMessageListener</span> <span class="o">{</span>
+
+    <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_MAIL</span> <span class="o">=</span> <span class="s">"q_mail"</span><span class="o">;</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_SMS</span> <span class="o">=</span> <span class="s">"q_sms"</span><span class="o">;</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">QUEUE_APP</span> <span class="o">=</span> <span class="s">"q_app"</span><span class="o">;</span>
+
+    <span class="nd">@RabbitHandler</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRegistrationMessage</span><span class="o">(</span><span class="nc">Message</span> <span class="n">messageOriginal</span><span class="o">,</span> <span class="nc">RegistrationMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">queueName</span> <span class="o">=</span> <span class="n">messageOriginal</span><span class="o">.</span><span class="na">getMessageProperties</span><span class="o">().</span><span class="na">getConsumerQueue</span><span class="o">();</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received registration message: {}"</span><span class="o">,</span> <span class="n">queueName</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RabbitHandler</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoginMessage</span><span class="o">(</span><span class="nc">Message</span> <span class="n">messageOriginal</span><span class="o">,</span> <span class="nc">LoginMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">queueName</span> <span class="o">=</span> <span class="n">messageOriginal</span><span class="o">.</span><span class="na">getMessageProperties</span><span class="o">().</span><span class="na">getConsumerQueue</span><span class="o">();</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"queue {} received login message: {}"</span><span class="o">,</span> <span class="n">queueName</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>解释：</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">@RabbitListener(queues = {...})</code></strong>:  这个注解用于声明该类监听哪些队列的消息。在这个示例中，<code class="language-plaintext highlighter-rouge">QueueMessageListener</code> 类监听 <code class="language-plaintext highlighter-rouge">QUEUE_APP</code>、<code class="language-plaintext highlighter-rouge">QUEUE_MAIL</code> 和 <code class="language-plaintext highlighter-rouge">QUEUE_SMS</code> 三个队列的消息。当这些队列有新消息到达时，该类会被触发。</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">@RabbitHandler</code></strong>:  该注解用于标记处理消息的方法。一个类可以有多个 <code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 方法，它们会根据消息的类型来自动选择对应的方法进行处理。</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">onRegistrationMessage(Message messageOriginal, RegistrationMessage message)</code></strong>:  是一个处理注册消息的方法。<code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 注解表明这个方法会处理 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 类型的消息。</p>
+    <ul>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">Message messageOriginal</code></strong>:  这个参数是原始的 RabbitMQ 消息对象，包含消息的元数据（如消息属性、队列名等）。</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">RegistrationMessage message</code></strong>:  这是实际的消息体，Spring 会自动将消息反序列化为 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 对象。</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">queueName</code></strong>:  使用 <code class="language-plaintext highlighter-rouge">messageOriginal.getMessageProperties().getConsumerQueue()</code> 获取当前消息来自的队列名称。这在日志中用于记录消息来自哪个队列。</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>当 RabbitMQ 中的 <code class="language-plaintext highlighter-rouge">q_mail</code>、<code class="language-plaintext highlighter-rouge">q_sms</code> 或 <code class="language-plaintext highlighter-rouge">q_app</code> 队列有新消息时，<code class="language-plaintext highlighter-rouge">QueueMessageListener</code> 会自动接收消息。Spring AMQP 框架根据消息的类型（例如 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 或 <code class="language-plaintext highlighter-rouge">LoginMessage</code>）来选择合适的 <code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 方法处理消息。</p>
+
+<ul>
+  <li>如果消息是 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 类型的，则调用<code class="language-plaintext highlighter-rouge">onRegistrationMessage</code> 方法。</li>
+  <li>如果消息是 <code class="language-plaintext highlighter-rouge">LoginMessage</code> 类型的，则调用 <code class="language-plaintext highlighter-rouge">onLoginMessage</code> 方法。</li>
+</ul>
+
+<p>该机制允许根据消息的不同类型，使用不同的方法进行处理，简化了消息处理逻辑的组织。</p>
+
+<h2 id="集成kafka">集成Kafka</h2>
+
+<p>JMS是JavaEE的标准消息接口，Artemis是一个JMS实现产品，AMQP是跨语言的一个标准消息接口，RabbitMQ是一个AMQP实现产品。</p>
+
+<p>Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，那么Kafka实现了什么标准消息接口呢？</p>
+
+<p>Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。</p>
+
+<p>Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过Kafka的客户端使用网络来与之通信。从逻辑上讲，Kafka设计非常简单，它只有一种类似JMS的Topic的消息通道：</p>
+
+<pre><code class="language-ascii">                           ┌──────────┐
+                       ┌──▶│Consumer-1│
+                       │   └──────────┘
+┌────────┐    ┌─────┐  │   ┌──────────┐
+│Producer│───▶│Topic│──┼──▶│Consumer-2│
+└────────┘    └─────┘  │   └──────────┘
+                       │   ┌──────────┐
+                       └──▶│Consumer-3│
+                           └──────────┘
+</code></pre>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
