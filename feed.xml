@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-16T20:25:03+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-17T21:18:25+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2970,9 +2970,7 @@ queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, su
 
 <p>JMS是JavaEE的标准消息接口，Artemis是一个JMS实现产品，AMQP是跨语言的一个标准消息接口，RabbitMQ是一个AMQP实现产品。</p>
 
-<p>Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，那么Kafka实现了什么标准消息接口呢？</p>
-
-<p>Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。</p>
+<p>Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。</p>
 
 <p>Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过Kafka的客户端使用网络来与之通信。从逻辑上讲，Kafka设计非常简单，它只有一种类似JMS的Topic的消息通道：</p>
 
@@ -2985,7 +2983,30 @@ queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, su
                        │   ┌──────────┐
                        └──▶│Consumer-3│
                            └──────────┘
-</code></pre>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+</code></pre>
+
+<p>Kafka的一个Topic可以有一个至多个Partition，并且可以分布到多台机器上：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+             Topic
+            │                   │
+                ┌───────────┐        ┌──────────┐
+            │┌─▶│Partition-1│──┐│┌──▶│Consumer-1│
+             │  └───────────┘  │ │   └──────────┘
+┌────────┐  ││  ┌───────────┐  │││   ┌──────────┐
+│Producer│───┼─▶│Partition-2│──┼─┼──▶│Consumer-2│
+└────────┘  ││  └───────────┘  │││   └──────────┘
+             │  ┌───────────┐  │ │   ┌──────────┐
+            │└─▶│Partition-3│──┘│└──▶│Consumer-3│
+                └───────────┘        └──────────┘
+            └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+</code></pre></div></div>
+
+<p>Kafka只保证<strong>在一个Partition内部，消息是有序的</strong>，但是，存在多个Partition的情况下，Producer发送的3个消息会依次发送到Partition-1、Partition-2和Partition-3，Consumer从3个Partition接收的消息并不一定是Producer发送的顺序，因此，多个Partition只能保证接收消息大概率按发送时间有序，并不能保证完全按Producer发送的顺序。这一点在使用Kafka作为消息服务器时要特别注意，对发送顺序有严格要求的Topic只能有一个Partition。</p>
+
+<p>Kafka的另一个特点是消息发送和接收都尽量使用批处理，一次处理几十甚至上百条消息，比一次一条效率要高很多。</p>
+
+<p>最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的offsetId，再次上线后按上次的offsetId查询。offsetId是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
