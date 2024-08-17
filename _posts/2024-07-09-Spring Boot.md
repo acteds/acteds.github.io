@@ -2999,9 +2999,7 @@ public class QueueMessageListener {
 
 JMS是JavaEE的标准消息接口，Artemis是一个JMS实现产品，AMQP是跨语言的一个标准消息接口，RabbitMQ是一个AMQP实现产品。
 
-Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，那么Kafka实现了什么标准消息接口呢？
-
-Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。
+Kafka也是一个消息服务器，它的特点一是快，二是有巨大的吞吐量，Kafka没有实现任何标准的消息接口，它自己提供的API就是Kafka的接口。
 
 Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过Kafka的客户端使用网络来与之通信。从逻辑上讲，Kafka设计非常简单，它只有一种类似JMS的Topic的消息通道：
 
@@ -3016,3 +3014,27 @@ Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过
                        └──▶│Consumer-3│
                            └──────────┘
 ```
+
+Kafka的一个Topic可以有一个至多个Partition，并且可以分布到多台机器上：
+
+```
+            ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+             Topic
+            │                   │
+                ┌───────────┐        ┌──────────┐
+            │┌─▶│Partition-1│──┐│┌──▶│Consumer-1│
+             │  └───────────┘  │ │   └──────────┘
+┌────────┐  ││  ┌───────────┐  │││   ┌──────────┐
+│Producer│───┼─▶│Partition-2│──┼─┼──▶│Consumer-2│
+└────────┘  ││  └───────────┘  │││   └──────────┘
+             │  ┌───────────┐  │ │   ┌──────────┐
+            │└─▶│Partition-3│──┘│└──▶│Consumer-3│
+                └───────────┘        └──────────┘
+            └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+```
+
+Kafka只保证**在一个Partition内部，消息是有序的**，但是，存在多个Partition的情况下，Producer发送的3个消息会依次发送到Partition-1、Partition-2和Partition-3，Consumer从3个Partition接收的消息并不一定是Producer发送的顺序，因此，多个Partition只能保证接收消息大概率按发送时间有序，并不能保证完全按Producer发送的顺序。这一点在使用Kafka作为消息服务器时要特别注意，对发送顺序有严格要求的Topic只能有一个Partition。
+
+Kafka的另一个特点是消息发送和接收都尽量使用批处理，一次处理几十甚至上百条消息，比一次一条效率要高很多。
+
+最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的offsetId，再次上线后按上次的offsetId查询。offsetId是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。
