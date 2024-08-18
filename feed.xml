@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-17T21:18:25+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-18T21:18:41+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -3006,7 +3006,158 @@ queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, su
 
 <p>Kafka的另一个特点是消息发送和接收都尽量使用批处理，一次处理几十甚至上百条消息，比一次一条效率要高很多。</p>
 
-<p>最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的offsetId，再次上线后按上次的offsetId查询。offsetId是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
+<p>最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的offsetId，再次上线后按上次的offsetId查询。offsetId是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。</p>
+
+<p><strong>安装Kafka</strong></p>
+
+<p>首先从Kafka官网<a href="https://kafka.apache.org/downloads">下载</a>最新版Kafaka，解压后在<code class="language-plaintext highlighter-rouge">bin</code>目录找到两个文件：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">zookeeper-server-start.sh</code>：启动ZooKeeper（已内置在Kafka中）；</li>
+  <li><code class="language-plaintext highlighter-rouge">kafka-server-start.sh</code>：启动Kafka。</li>
+</ul>
+
+<p>先启动ZooKeeper：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./zookeeper-server-start.sh ../config/zookeeper.properties 
+</code></pre></div></div>
+
+<p>再启动Kafka：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./kafka-server-start.sh ../config/server.properties
+</code></pre></div></div>
+
+<p>看到如下输出表示启动成功：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>... INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+</code></pre></div></div>
+
+<p>如果要关闭Kafka和ZooKeeper，依次按Ctrl-C退出即可。</p>
+
+<p><strong>使用Kafka</strong></p>
+
+<p>在Spring Boot中使用Kafka，首先要引入依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.kafka<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-kafka<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>注意这个依赖是<code class="language-plaintext highlighter-rouge">spring-kafka</code>项目提供的。</p>
+
+<p>然后，在<code class="language-plaintext highlighter-rouge">application.yml</code>中添加Kafka配置：</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">kafka</span><span class="pi">:</span>
+    <span class="na">bootstrap-servers</span><span class="pi">:</span> <span class="s">localhost:9092</span>
+    <span class="na">consumer</span><span class="pi">:</span>
+      <span class="na">auto-offset-reset</span><span class="pi">:</span> <span class="s">latest</span>
+      <span class="na">max-poll-records</span><span class="pi">:</span> <span class="m">100</span>
+      <span class="na">max-partition-fetch-bytes</span><span class="pi">:</span> <span class="m">1000000</span>
+</code></pre></div></div>
+
+<p>除了<code class="language-plaintext highlighter-rouge">bootstrap-servers</code>必须指定外，<code class="language-plaintext highlighter-rouge">consumer</code>相关的配置项均为调优选项。例如，<code class="language-plaintext highlighter-rouge">max-poll-records</code>表示一次最多抓取100条消息。如果要查看配置名称，可以在IDE里定义一个<code class="language-plaintext highlighter-rouge">KafkaProperties.Consumer</code>的变量：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">KafkaProperties</span><span class="o">.</span><span class="na">Consumer</span> <span class="n">c</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>然后按住Ctrl查看源码即可。</p>
+
+<p><strong>发送消息</strong></p>
+
+<p>Spring Boot自动创建了一个<code class="language-plaintext highlighter-rouge">KafkaTemplate</code>用于发送消息。这是一个泛型类，而默认配置总是使用<code class="language-plaintext highlighter-rouge">String</code>作为Kafka消息的类型，所以注入<code class="language-plaintext highlighter-rouge">KafkaTemplate&lt;String, String&gt;</code>即可：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessagingService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span> <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span> <span class="nc">KafkaTemplate</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">kafkaTemplate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendRegistrationMessage</span><span class="o">(</span><span class="nc">RegistrationMessage</span> <span class="n">msg</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="n">send</span><span class="o">(</span><span class="s">"topic_registration"</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sendLoginMessage</span><span class="o">(</span><span class="nc">LoginMessage</span> <span class="n">msg</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="n">send</span><span class="o">(</span><span class="s">"topic_login"</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">send</span><span class="o">(</span><span class="nc">String</span> <span class="n">topic</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">msg</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">ProducerRecord</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">pr</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ProducerRecord</span><span class="o">&lt;&gt;(</span><span class="n">topic</span><span class="o">,</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">msg</span><span class="o">));</span>
+        <span class="n">pr</span><span class="o">.</span><span class="na">headers</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="s">"type"</span><span class="o">,</span> <span class="n">msg</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">getBytes</span><span class="o">(</span><span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">));</span>
+        <span class="n">kafkaTemplate</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">pr</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>发送消息时，需指定Topic名称，消息正文。为了发送一个JavaBean，这里没有使用<code class="language-plaintext highlighter-rouge">MessageConverter</code>来转换JavaBean，而是直接把消息类型作为Header添加到消息中，Header名称为<code class="language-plaintext highlighter-rouge">type</code>，值为Class全名。消息正文是序列化的JSON。</p>
+
+<p><strong>接收消息</strong></p>
+
+<p>接收消息可以使用<code class="language-plaintext highlighter-rouge">@KafkaListener</code>注解：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TopicMessageListener</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">());</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+
+    <span class="nd">@KafkaListener</span><span class="o">(</span><span class="n">topics</span> <span class="o">=</span> <span class="s">"topic_registration"</span><span class="o">,</span> <span class="n">groupId</span> <span class="o">=</span> <span class="s">"group1"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRegistrationMessage</span><span class="o">(</span><span class="nd">@Payload</span> <span class="nc">String</span> <span class="n">message</span><span class="o">,</span> <span class="nd">@Header</span><span class="o">(</span><span class="s">"type"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">type</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">RegistrationMessage</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">message</span><span class="o">,</span> <span class="n">getType</span><span class="o">(</span><span class="n">type</span><span class="o">));</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"received registration message: {}"</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@KafkaListener</span><span class="o">(</span><span class="n">topics</span> <span class="o">=</span> <span class="s">"topic_login"</span><span class="o">,</span> <span class="n">groupId</span> <span class="o">=</span> <span class="s">"group1"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onLoginMessage</span><span class="o">(</span><span class="nd">@Payload</span> <span class="nc">String</span> <span class="n">message</span><span class="o">,</span> <span class="nd">@Header</span><span class="o">(</span><span class="s">"type"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">type</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">LoginMessage</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">message</span><span class="o">,</span> <span class="n">getType</span><span class="o">(</span><span class="n">type</span><span class="o">));</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"received login message: {}"</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@KafkaListener</span><span class="o">(</span><span class="n">topics</span> <span class="o">=</span> <span class="s">"topic_login"</span><span class="o">,</span> <span class="n">groupId</span> <span class="o">=</span> <span class="s">"group2"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processLoginMessage</span><span class="o">(</span><span class="nd">@Payload</span> <span class="nc">String</span> <span class="n">message</span><span class="o">,</span> <span class="nd">@Header</span><span class="o">(</span><span class="s">"type"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">type</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">LoginMessage</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">message</span><span class="o">,</span> <span class="n">getType</span><span class="o">(</span><span class="n">type</span><span class="o">));</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"process login message: {}"</span><span class="o">,</span> <span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">getType</span><span class="o">(</span><span class="nc">String</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO: use cache:</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;)</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">type</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">ClassNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在接收消息的方法中，使用<code class="language-plaintext highlighter-rouge">@Payload</code>表示传入的是消息正文，使用<code class="language-plaintext highlighter-rouge">@Header</code>可传入消息的指定Header，这里传入<code class="language-plaintext highlighter-rouge">@Header("type")</code>，就是我们发送消息时指定的Class全名。接收消息时，我们需要根据Class全名来反序列化获得JavaBean。</p>
+
+<p>上述代码一共定义了3个Listener，其中有两个方法监听的是同一个Topic，但它们的Group ID不同。假设Producer发送的消息流是A、B、C、D，Group ID不同表示这是<strong>两个不同的Consumer</strong>，它们将分别收取完整的消息流，即各自均收到A、B、C、D。Group ID相同的多个Consumer实际上被视作<strong>一个</strong>Consumer，即如果有两个Group ID相同的Consumer，那么它们各自收到的很可能是A、C和B、D。</p>
+
+<p>运行应用程序，注册新用户后：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>try register by bob@example.com...
+user registered: bob@example.com
+ received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
+</code></pre></div></div>
+
+<p>用户登录后，观察日志输出：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>try login by bob@example.com...
+received login message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+process login message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
+</code></pre></div></div>
+
+<p>因为Group ID不同，同一个消息被两个Consumer分别独立接收。如果把Group ID改为相同，那么同一个消息只会被两者之一接收。</p>
+
+<p>在Kafka中是如何创建Topic的？又如何指定某个Topic的分区数量？</p>
+
+<p>实际上开发使用的Kafka默认允许自动创建Topic，创建Topic时默认的分区数量是2，可以通过<code class="language-plaintext highlighter-rouge">server.properties</code>修改默认分区数量。</p>
+
+<p>在生产环境中通常会关闭自动创建功能，Topic需要由运维人员先创建好。和RabbitMQ相比，Kafka并不提供网页版管理后台，管理Topic需要使用命令行，比较繁琐，只有云服务商通常会提供更友好的管理后台。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring</title><link href="/2024/06/05/Spring/" rel="alternate" type="text/html" title="Spring" /><published>2024-06-05T00:00:00+08:00</published><updated>2024-06-05T00:00:00+08:00</updated><id>/2024/06/05/Spring</id><content type="html" xml:base="/2024/06/05/Spring/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring、Spring MVC框架笔记，包括IoC、AOP、使用JDBC、事务、集成Hibernate、Mybatis、JPA，REST风格代码、集成Filter、使用Interceptor、处理异常、跨域、国际化、集成WebSocket、JavaMail、JMS、JMX、使用Scheduler。</p>
 
 <h1 id="spring">Spring</h1>
