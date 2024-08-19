@@ -2976,16 +2976,11 @@ public class QueueMessageListener {
 ```
 
 解释：
-
 - **`@RabbitListener(queues = {...})`**:  这个注解用于声明该类监听哪些队列的消息。在这个示例中，`QueueMessageListener` 类监听 `QUEUE_APP`、`QUEUE_MAIL` 和 `QUEUE_SMS` 三个队列的消息。当这些队列有新消息到达时，该类会被触发。
-  
 - **`@RabbitHandler`**:  该注解用于标记处理消息的方法。一个类可以有多个 `@RabbitHandler` 方法，它们会根据消息的类型来自动选择对应的方法进行处理。
-
 - **`onRegistrationMessage(Message messageOriginal, RegistrationMessage message)`**:  是一个处理注册消息的方法。`@RabbitHandler` 注解表明这个方法会处理 `RegistrationMessage` 类型的消息。
   - **`Message messageOriginal`**:  这个参数是原始的 RabbitMQ 消息对象，包含消息的元数据（如消息属性、队列名等）。
-    
   - **`RegistrationMessage message`**:  这是实际的消息体，Spring 会自动将消息反序列化为 `RegistrationMessage` 对象。
-    
   - **`queueName`**:  使用 `messageOriginal.getMessageProperties().getConsumerQueue()` 获取当前消息来自的队列名称。这在日志中用于记录消息来自哪个队列。
 
 当 RabbitMQ 中的 `q_mail`、`q_sms` 或 `q_app` 队列有新消息时，`QueueMessageListener` 会自动接收消息。Spring AMQP 框架根据消息的类型（例如 `RegistrationMessage` 或 `LoginMessage`）来选择合适的 `@RabbitHandler` 方法处理消息。
