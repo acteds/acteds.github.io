@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-18T21:18:41+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-19T11:02:49+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -2933,26 +2933,14 @@ queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, su
 </code></pre></div></div>
 
 <p>解释：</p>
-
 <ul>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">@RabbitListener(queues = {...})</code></strong>:  这个注解用于声明该类监听哪些队列的消息。在这个示例中，<code class="language-plaintext highlighter-rouge">QueueMessageListener</code> 类监听 <code class="language-plaintext highlighter-rouge">QUEUE_APP</code>、<code class="language-plaintext highlighter-rouge">QUEUE_MAIL</code> 和 <code class="language-plaintext highlighter-rouge">QUEUE_SMS</code> 三个队列的消息。当这些队列有新消息到达时，该类会被触发。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">@RabbitHandler</code></strong>:  该注解用于标记处理消息的方法。一个类可以有多个 <code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 方法，它们会根据消息的类型来自动选择对应的方法进行处理。</p>
-  </li>
-  <li>
-    <p><strong><code class="language-plaintext highlighter-rouge">onRegistrationMessage(Message messageOriginal, RegistrationMessage message)</code></strong>:  是一个处理注册消息的方法。<code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 注解表明这个方法会处理 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 类型的消息。</p>
+  <li><strong><code class="language-plaintext highlighter-rouge">@RabbitListener(queues = {...})</code></strong>:  这个注解用于声明该类监听哪些队列的消息。在这个示例中，<code class="language-plaintext highlighter-rouge">QueueMessageListener</code> 类监听 <code class="language-plaintext highlighter-rouge">QUEUE_APP</code>、<code class="language-plaintext highlighter-rouge">QUEUE_MAIL</code> 和 <code class="language-plaintext highlighter-rouge">QUEUE_SMS</code> 三个队列的消息。当这些队列有新消息到达时，该类会被触发。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@RabbitHandler</code></strong>:  该注解用于标记处理消息的方法。一个类可以有多个 <code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 方法，它们会根据消息的类型来自动选择对应的方法进行处理。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">onRegistrationMessage(Message messageOriginal, RegistrationMessage message)</code></strong>:  是一个处理注册消息的方法。<code class="language-plaintext highlighter-rouge">@RabbitHandler</code> 注解表明这个方法会处理 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 类型的消息。
     <ul>
-      <li>
-        <p><strong><code class="language-plaintext highlighter-rouge">Message messageOriginal</code></strong>:  这个参数是原始的 RabbitMQ 消息对象，包含消息的元数据（如消息属性、队列名等）。</p>
-      </li>
-      <li>
-        <p><strong><code class="language-plaintext highlighter-rouge">RegistrationMessage message</code></strong>:  这是实际的消息体，Spring 会自动将消息反序列化为 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 对象。</p>
-      </li>
-      <li>
-        <p><strong><code class="language-plaintext highlighter-rouge">queueName</code></strong>:  使用 <code class="language-plaintext highlighter-rouge">messageOriginal.getMessageProperties().getConsumerQueue()</code> 获取当前消息来自的队列名称。这在日志中用于记录消息来自哪个队列。</p>
-      </li>
+      <li><strong><code class="language-plaintext highlighter-rouge">Message messageOriginal</code></strong>:  这个参数是原始的 RabbitMQ 消息对象，包含消息的元数据（如消息属性、队列名等）。</li>
+      <li><strong><code class="language-plaintext highlighter-rouge">RegistrationMessage message</code></strong>:  这是实际的消息体，Spring 会自动将消息反序列化为 <code class="language-plaintext highlighter-rouge">RegistrationMessage</code> 对象。</li>
+      <li><strong><code class="language-plaintext highlighter-rouge">queueName</code></strong>:  使用 <code class="language-plaintext highlighter-rouge">messageOriginal.getMessageProperties().getConsumerQueue()</code> 获取当前消息来自的队列名称。这在日志中用于记录消息来自哪个队列。</li>
     </ul>
   </li>
 </ul>
