@@ -7,7 +7,9 @@ keywords: Java
 ---
 
 # 引言
-Spring Boot笔记
+Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。
+
+
 
 
 # Spring Boot
@@ -195,11 +197,11 @@ public class Application {
 
 启动Spring Boot应用程序只需要一行代码加上一个注解`@SpringBootApplication`，该注解实际上又包含了：
 
-- @SpringBootConfiguration
-  - @Configuration
-- @EnableAutoConfiguration
-  - @AutoConfigurationPackage
-- @ComponentScan
+- `@SpringBootConfiguration`
+  - `@Configuration`
+- `@EnableAutoConfiguration`
+  - `@AutoConfigurationPackage`
+- `@ComponentScan`
 
 这样一个注解就相当于启动了自动配置和自动扫描。
 
@@ -310,7 +312,7 @@ class TestController{
 }
 ```
 
-test.html:
+`test.html`:
 
 ```html
 <!DOCTYPE html>
@@ -685,12 +687,10 @@ Spring Boot提供了一个开发者工具，可以监控classpath路径上的文
 如果没有效果，那需要修改以下设置：
 
 1. 设置IDEA的编译器：
-
    - File->Settings…->Build,Execution,Deployment->Compiler，勾选"Build project automatically"
    - 文件->设置...->构建、执行、部署->编译器，勾选"自动构建项目"
 
 2. 应用程序运行时允许编译器自动生成：
-
    - 在IntellijIDEA中：按Ctrl+Shift+a，然后键入“注册表”并点击它。然后启用选项“compiler.Automake.Allow.When.app.Running”。
    - 在新版本这个选项已经被移到了高级设置中，文件->设置...->高级设置->编译器栏->“即使开发的应用程序当前正在运行，也允许自动make启动”。
 
@@ -926,7 +926,7 @@ java -jar springboot-exec-jar-1.0-SNAPSHOT.jar
 这个`spring-boot-thin-launcher`在启动时搜索的默认目录是用户主目录的`.m2`，也可以指定下载目录，例如，将下载目录指定为当前目录：
 
 ```bash
-$ java -Dthin.root=. -jar spring-boot-hello-1.0-SNAPSHOT.jar
+java -Dthin.root=. -jar spring-boot-hello-1.0-SNAPSHOT.jar
 ```
 
 上述命令通过环境变量`thin.root`传入当前目录，执行后发现当前目录下自动生成了一个`repository`目录，这和Maven的默认下载目录`~/.m2/repository`的结构是完全一样的，只是它仅包含`spring-boot-hello-1.0-SNAPSHOT.jar`所需的运行期依赖项。
@@ -1358,7 +1358,7 @@ storage:
     max-size: 102400
 ```
 
-在某个FileUploader里，需要获取该配置，可使用`@Value`注入：
+在某个`FileUploader`里，需要获取该配置，可使用`@Value`注入：
 
 ```java
 @Component
@@ -1965,7 +1965,7 @@ class RoutingAspect {
 }
 ```
 
-Application.java:
+`Application.java`:
 
 ```java
 @MapperScan("com.aotmd")
@@ -2076,7 +2076,7 @@ registrationBean.addServletNames("myServlet");
 registrationBean.setOrder(1);
 ```
 
-7. **`setDispatcherTypes(EnumSet<DispatcherType> dispatcherTypes)`**：设置过滤器的分发类型（如 REQUEST、FORWARD、INCLUDE 等）。
+7. **`setDispatcherTypes(EnumSet<DispatcherType> dispatcherTypes)`**：设置过滤器的分发类型（如 `REQUEST`、`FORWARD`、`INCLUDE` 等）。
 ```java
 registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
 ```
@@ -2425,7 +2425,7 @@ public class ApiController {
 
 运行后访问`http://127.0.0.1:8080/doc.html`即可。
 
-## Redis
+## 集成Redis
 
 在Spring Boot中，要访问Redis，可以直接引入`spring-boot-starter-data-redis`依赖，它实际上是Spring Data的一个子项目——Spring Data Redis，主要用到了这几个组件：
 
@@ -2786,7 +2786,7 @@ AMQP协议和JMS协议有所不同。在JMS中，有两种类型的消息通道�
 
 而AMQP协议比JMS要复杂一点，它只有Queue，没有Topic，并且引入了Exchange的概念。当Producer想要发送消息的时候，它将消息发送给Exchange，由Exchange将消息根据各种规则投递到一个或多个Queue：
 
-```
+```ascii
                                     ┌───────┐
                                 ┌──▶│Queue-1│
                   ┌──────────┐  │   └───────┘
@@ -2921,7 +2921,7 @@ public class QueueMessageListener {
 
 启动应用程序，注册一个新用户，然后发送一条`RegistrationMessage`消息。此时，根据`registration`这个Exchange的设定，会在两个Queue收到消息：
 
-```plain
+```text
 try register by bob@example.com...
 user registered: bob@example.com
 queue q_mail received registration message: [RegistrationMessage: email=bob@example.com, name=Bob]
@@ -2930,14 +2930,14 @@ queue q_sms received registration message: [RegistrationMessage: email=bob@examp
 
 当登录失败时，发送`LoginMessage`并设定Routing Key为`login_failed`，此时，只有`q_sms`会收到消息：
 
-```plain
+```text
 try login by bob@example.com...
 queue q_sms received message: [LoginMessage: email=bob@example.com, name=(unknown), success=false]
 ```
 
 登录成功后，发送`LoginMessage`，此时，`q_mail`和`q_app`将收到消息：
 
-```plain
+```text
 try login by bob@example.com...
 queue q_mail received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
 queue q_app received message: [LoginMessage: email=bob@example.com, name=Bob, success=true]
@@ -3012,7 +3012,7 @@ Kafka本身是Scala编写的，运行在JVM之上。Producer和Consumer都通过
 
 Kafka的一个Topic可以有一个至多个Partition，并且可以分布到多台机器上：
 
-```
+```ascii
             ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
              Topic
             │                   │
@@ -3032,7 +3032,7 @@ Kafka只保证**在一个Partition内部，消息是有序的**，但是，存�
 
 Kafka的另一个特点是消息发送和接收都尽量使用批处理，一次处理几十甚至上百条消息，比一次一条效率要高很多。
 
-最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的offsetId，再次上线后按上次的offsetId查询。offsetId是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。
+最后要注意的是消息的持久性。Kafka总是将消息写入Partition对应的文件，消息保存多久取决于服务器的配置，可以按照时间删除（默认3天），也可以按照文件大小删除，因此，只要Consumer在离线期内的消息还没有被删除，再次上线仍然可以接收到完整的消息流。这一功能实际上是客户端自己实现的，客户端会存储它接收到的最后一个消息的`offsetId`，再次上线后按上次的`offsetId`查询。`offsetId`是Kafka标识某个Partion的每一条消息的递增整数，客户端通常将它存储在ZooKeeper中。
 
 **安装Kafka**
 
