@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-20T18:00:24+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-22T14:55:12+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
@@ -13451,7 +13451,7 @@ Connection: Upgrade
 
 <p>直接在<code class="language-plaintext highlighter-rouge">AppConfig</code>中加上<code class="language-plaintext highlighter-rouge">@EnableScheduling</code>就开启了定时任务的支持。</p>
 
-<p>接下来，我们可以直接在一个Bean中编写一个<code class="language-plaintext highlighter-rouge">public void</code>无参数方法，然后加上<code class="language-plaintext highlighter-rouge">@Scheduled</code>注解：</p>
+<p>接下来，可以直接在一个Bean中编写一个<code class="language-plaintext highlighter-rouge">public void</code>无参数方法，然后加上<code class="language-plaintext highlighter-rouge">@Scheduled</code>注解：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
 <span class="kd">class</span> <span class="nc">TaskService</span> <span class="o">{</span>
@@ -13503,7 +13503,7 @@ Connection: Upgrade
 
 <p><strong>使用Cron任务</strong></p>
 
-<p>还有一类定时任务，它不是简单的重复执行，而是按时间触发，我们把这类任务称为Cron任务，例如：</p>
+<p>还有一类定时任务，它不是简单的重复执行，而是按时间触发，这类任务称为Cron任务，例如：</p>
 
 <ul>
   <li>每天凌晨2:15执行报表任务；</li>
@@ -13595,26 +13595,17 @@ Connection: Upgrade
 
 <p>使用JMX不需要安装任何额外组件，也不需要第三方库，因为MBeanServer已经内置在JavaSE标准库中了。JavaSE还提供了一个<code class="language-plaintext highlighter-rouge">jconsole</code>程序，用于通过RMI连接到MBeanServer，这样就可以管理整个Java进程。</p>
 
-<p>除了JVM会把自身的各种资源以MBean注册到JMX中，我们自己的配置、监控信息也可以作为MBean注册到JMX，这样，管理程序就可以直接控制我们暴露的MBean。因此，应用程序使用JMX，只需要两步：</p>
+<p>除了JVM会把自身的各种资源以MBean注册到JMX中，我们自己的配置、监控信息也可以作为MBean注册到JMX，这样，管理程序就可以直接控制我们暴露的MBean。</p>
 
-<ol>
-  <li>编写MBean提供管理接口和监控数据；</li>
-  <li>注册MBean。</li>
-</ol>
+<p>因此，应用程序使用JMX，只需要编写MBean提供管理接口和监控数据，以及注册MBean。</p>
 
-<p>而在Spring应用程序中，使用JMX只需要一步：</p>
-
-<ol>
-  <li>编写MBean提供管理接口和监控数据。</li>
-</ol>
-
-<p>第二步注册的过程由Spring自动完成。</p>
+<p>而在Spring应用程序中，使用JMX只需要编写MBean提供管理接口和监控数据。第二步注册的过程由Spring自动完成。</p>
 
 <p>首先在<code class="language-plaintext highlighter-rouge">AppConfig</code>中加上<code class="language-plaintext highlighter-rouge">@EnableMBeanExport</code>注解，告诉Spring自动注册MBean。</p>
 
 <p>剩下的全部工作就是编写MBean。以实际问题为例，假设我们希望给应用程序添加一个IP黑名单功能，凡是在黑名单中的IP禁止访问，传统的做法是定义一个配置文件，启动的时候读取：</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># blacklist.txt
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># blacklist.txt
 1.2.3.4
 5.6.7.8
 2.2.3.4
@@ -13715,9 +13706,9 @@ Connection: Upgrade
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>下一步就是正常启动Web应用程序，不要关闭它，我们打开另一个命令行窗口，输入<code class="language-plaintext highlighter-rouge">jconsole</code>启动JavaSE自带的一个JMX客户端程序：</p>
+<p>然后正常启动Web应用程序，不要关闭。再打开另一个命令行窗口，输入<code class="language-plaintext highlighter-rouge">jconsole</code>启动JavaSE自带的一个JMX客户端程序。</p>
 
-<p>通过jconsole连接到一个Java进程最简单的方法是直接在Local Process中找到正在运行的<code class="language-plaintext highlighter-rouge">AppConfig</code>，点击Connect即可连接到当前正在运行的Web应用，在jconsole中可直接看到内存、CPU等资源的监控。</p>
+<p>通过jconsole连接到一个Java进程最简单的方法是：直接在Local Process中找到正在运行的<code class="language-plaintext highlighter-rouge">AppConfig</code>，点击Connect即可连接到当前正在运行的Web应用，在jconsole中可直接看到内存、CPU等资源的监控。</p>
 
 <p>点击MBean，左侧按分类列出所有MBean，在<code class="language-plaintext highlighter-rouge">sample</code>中可以看到我们自己的MBean，点击可查看属性<code class="language-plaintext highlighter-rouge">blacklist</code>。</p>
 
@@ -13739,11 +13730,10 @@ Connection: Upgrade
 
 <p>使用jconsole直接通过Local Process连接JVM有个限制，就是jconsole和正在运行的JVM必须在同一台机器。如果要远程连接，首先要打开JMX端口。在启动<code class="language-plaintext highlighter-rouge">AppConfig</code>时，需要传入以下JVM启动参数：</p>
 
-<ul>
-  <li>-Dcom.sun.management.jmxremote.port=19999</li>
-  <li>-Dcom.sun.management.jmxremote.authenticate=false</li>
-  <li>-Dcom.sun.management.jmxremote.ssl=false</li>
-</ul>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">-</span><span class="nc">Dcom</span><span class="o">.</span><span class="na">sun</span><span class="o">.</span><span class="na">management</span><span class="o">.</span><span class="na">jmxremote</span><span class="o">.</span><span class="na">port</span><span class="o">=</span><span class="mi">19999</span>
+<span class="o">-</span><span class="nc">Dcom</span><span class="o">.</span><span class="na">sun</span><span class="o">.</span><span class="na">management</span><span class="o">.</span><span class="na">jmxremote</span><span class="o">.</span><span class="na">authenticate</span><span class="o">=</span><span class="kc">false</span>
+<span class="o">-</span><span class="nc">Dcom</span><span class="o">.</span><span class="na">sun</span><span class="o">.</span><span class="na">management</span><span class="o">.</span><span class="na">jmxremote</span><span class="o">.</span><span class="na">ssl</span><span class="o">=</span><span class="kc">false</span>
+</code></pre></div></div>
 
 <p>第一个参数表示在19999端口监听JMX连接，第二个和第三个参数表示无需验证，不使用SSL连接，在开发测试阶段比较方便，生产环境必须指定验证方式并启用SSL。详细参数可参考Oracle<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/management/agent.html#gdeum">官方文档</a>。这样jconsole可以用<code class="language-plaintext highlighter-rouge">ip:19999</code>的远程方式连接JMX。连接后的操作是完全一样的。</p>
 
