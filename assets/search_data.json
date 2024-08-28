@@ -417,6 +417,14 @@
     } ,
   
     {
+      "title"    : "Spring Cloud",
+      "category" : "Java",
+      
+      "url"      : "/2024/08/26/Spring-Clud/",
+      "keywords" : "Java"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
