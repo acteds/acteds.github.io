@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-28T20:13:09+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Cloud</title><link href="/2024/08/26/Spring-Clud/" rel="alternate" type="text/html" title="Spring Cloud" /><published>2024-08-26T00:00:00+08:00</published><updated>2024-08-26T00:00:00+08:00</updated><id>/2024/08/26/Spring%20Clud</id><content type="html" xml:base="/2024/08/26/Spring-Clud/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-29T19:24:42+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Cloud</title><link href="/2024/08/26/Spring-Clud/" rel="alternate" type="text/html" title="Spring Cloud" /><published>2024-08-26T00:00:00+08:00</published><updated>2024-08-26T00:00:00+08:00</updated><id>/2024/08/26/Spring%20Clud</id><content type="html" xml:base="/2024/08/26/Spring-Clud/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Clud笔记。</p>
 
 <h1 id="spring-cloud">Spring Cloud</h1>
@@ -190,7 +190,81 @@
 <p>最后，将所有模块导入IDE，可正常开发、编译、运行。如果要在命令行模式下运行，进入<code class="language-plaintext highlighter-rouge">build</code>文件夹使用Maven编译即可：</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mvn clean package
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+</code></pre></div></div>
+
+<hr />
+
+<p><strong>本地开发环境</strong></p>
+
+<p>在本地开发时，需要经常调试代码。除了安装JDK，选择一个IDE外，还需要在本地运行MySQL、Redis、Kafka，以及Kafka依赖的ZooKeeper服务。</p>
+
+<p>可以使用<a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a>来运行这些基础服务，需要在<code class="language-plaintext highlighter-rouge">build</code>目录下编写一个<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件定义要运行的所有服务：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">zookeeper</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">bitnami/zookeeper:3.5</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">zookeeper</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">2181:2181"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ALLOW_ANONYMOUS_LOGIN=yes</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/zookeeper-data:/bitnami"</span>
+
+  <span class="na">kafka</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">bitnami/kafka:3.0</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">kafka</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9092:9092"</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">KAFKA_BROKER_ID=1</span>
+      <span class="pi">-</span> <span class="s">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092</span>
+      <span class="pi">-</span> <span class="s">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span>
+      <span class="pi">-</span> <span class="s">KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181</span>
+      <span class="pi">-</span> <span class="s">KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true</span>
+      <span class="pi">-</span> <span class="s">ALLOW_PLAINTEXT_LISTENER=yes</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/kafka-data:/bitnami"</span>
+
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:6.2</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">redis</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">6379:6379"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/redis-data:/data"</span>
+
+  <span class="na">mysql</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mysql:8.0</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">mysql</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">3306:3306"</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">--default-authentication-plugin=mysql_native_password</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">MYSQL_ROOT_PASSWORD=password</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">./sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro"</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/mysql-data:/var/lib/mysql"</span>
+</code></pre></div></div>
+
+<p>在上述<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件中，定义了MySQL、Redis、Kafka以及Kafka依赖的ZooKeeper服务，各服务均暴露标准端口，且MySQL的<code class="language-plaintext highlighter-rouge">root</code>口令设置为<code class="language-plaintext highlighter-rouge">password</code>，第一次启动MySQL时，使用<code class="language-plaintext highlighter-rouge">sql/schema.sql</code>文件初始化数据库表结构。所有数据盘均挂载到<code class="language-plaintext highlighter-rouge">build</code>目录下的<code class="language-plaintext highlighter-rouge">docker</code>目录。</p>
+
+<p>在<code class="language-plaintext highlighter-rouge">build</code>目录下运行<code class="language-plaintext highlighter-rouge">docker-compose up -d</code>即可启动容器：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>build $ docker-compose up -d
+Creating network "build_default" with the default driver
+Creating zookeeper ... done
+Creating mysql     ... done
+Creating redis     ... done
+Creating kafka     ... done
+</code></pre></div></div>
+
+<p>在Docker Desktop中也可看到运行状态。</p>
+
+<p>如果要删除开发环境的所有数据，首先停止运行Docker容器进程并删除，然后删除<code class="language-plaintext highlighter-rouge">build</code>目录下的<code class="language-plaintext highlighter-rouge">docker</code>目录，重新运行<code class="language-plaintext highlighter-rouge">docker-compose</code>即可。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
