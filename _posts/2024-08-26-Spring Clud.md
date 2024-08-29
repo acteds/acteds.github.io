@@ -205,3 +205,79 @@ Spring Clud笔记。
 ```bash
 mvn clean package
 ```
+
+------
+
+**本地开发环境**
+
+在本地开发时，需要经常调试代码。除了安装JDK，选择一个IDE外，还需要在本地运行MySQL、Redis、Kafka，以及Kafka依赖的ZooKeeper服务。
+
+可以使用[Docker Desktop](https://www.docker.com/products/docker-desktop/)来运行这些基础服务，需要在`build`目录下编写一个`docker-compose.yml`文件定义要运行的所有服务：
+
+```yaml
+version: "3"
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.5
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - "./docker/zookeeper-data:/bitnami"
+
+  kafka:
+    image: bitnami/kafka:3.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - "./docker/kafka-data:/bitnami"
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./docker/redis-data:/data"
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - "./sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro"
+      - "./docker/mysql-data:/var/lib/mysql"
+```
+
+在上述`docker-compose.yml`文件中，定义了MySQL、Redis、Kafka以及Kafka依赖的ZooKeeper服务，各服务均暴露标准端口，且MySQL的`root`口令设置为`password`，第一次启动MySQL时，使用`sql/schema.sql`文件初始化数据库表结构。所有数据盘均挂载到`build`目录下的`docker`目录。
+
+在`build`目录下运行`docker-compose up -d`即可启动容器：
+
+```text
+build $ docker-compose up -d
+Creating network "build_default" with the default driver
+Creating zookeeper ... done
+Creating mysql     ... done
+Creating redis     ... done
+Creating kafka     ... done
+```
+
+在Docker Desktop中也可看到运行状态。
+
+如果要删除开发环境的所有数据，首先停止运行Docker容器进程并删除，然后删除`build`目录下的`docker`目录，重新运行`docker-compose`即可。
