@@ -281,3 +281,76 @@ Creating kafka     ... done
 在Docker Desktop中也可看到运行状态。
 
 如果要删除开发环境的所有数据，首先停止运行Docker容器进程并删除，然后删除`build`目录下的`docker`目录，重新运行`docker-compose`即可。
+
+## Spring Cloud Config
+
+Spring Cloud Config是Spring Cloud的一个子项目，它的主要目的是解决多个Spring Boot应用启动时，应该如何读取配置文件的问题。
+
+对于单体应用，即一个独立的Spring Boot应用，我们会把配置写在`application.yml`文件中。如果配置需要针对多个环境，可以用`---`分隔并标注好环境：
+
+```yaml
+# application.yml
+# 通用配置:
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/test
+
+---
+
+# test profile:
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://172.16.0.100/test
+```
+
+这种配置方式针对单个Spring Boot应用是可行的，但是，针对分布式应用，有多个Spring Boot应用需要启动时，分散在各个应用中的配置既不便于管理，也不便于复用相同的配置。
+
+Spring Cloud Config提供了一个通用的分布式应用的配置解决方案。它把配置分为两部分：
+
+- Config Server：配置服务器，负责读取所有配置；
+- Config Client：嵌入到各个Spring Boot应用中，**本地无配置信息**，启动时向服务器请求配置。
+
+要搭建一个Spring Cloud Config Server，即配置服务器，首先，在`config`模块中引入`spring-cloud-config-server`依赖：
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+</dependency>
+```
+
+然后，编写一个`ConfigApplication`入口，标注`@EnableConfigServer`：
+
+```java
+@EnableConfigServer
+@SpringBootApplication
+public class ConfigApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigApplication.class, args);
+    }
+}
+```
+
+最后，在`application.yml`中设置如何搜索配置。Spring Cloud Config支持多种配置方式，包括从本地文件、Git仓库、数据库等多个地方读取配置。这里选择以本地文件的方式读取配置文件，这也是最简单的一种配置方式：
+
+```yaml
+# 配置服务器的端口，通常设置为8888:
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    # 从文件读取配置时，Config Server激活的profile必须设定为native:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # 设置配置文件的搜索路径:
+          search-locations: file:./config-repo, file:../config-repo, file:../../config-repo
+```
