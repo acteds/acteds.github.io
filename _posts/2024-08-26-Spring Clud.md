@@ -354,3 +354,126 @@ spring:
           # 设置配置文件的搜索路径:
           search-locations: file:./config-repo, file:../config-repo, file:../../config-repo
 ```
+
+在`config-repo`目录下，存放的就是一系列配置文件：
+
+```
+config-repo/
+├── application-default.yml
+├── application-test.yml
+├── application.yml
+├── push.yml
+├── quotation.yml
+├── trading-api.yml
+├── trading-engine.yml
+├── trading-sequencer.yml
+├── ui-default.yml
+└── ui.yml
+```
+
+至此，配置服务器就完成了，直接运行`ConfigApplication`即可启动配置服务器。在开发过程中，保持配置服务器在后台运行即可。
+
+接下来，对于每个负责业务的Spring Boot应用，需要从Spring Cloud Config Server读取配置。读取配置并不是说本地零配置，还是需要一点基础配置信息。以`ui`项目为例，编写`application.yml`如下：
+
+```yaml
+spring:
+  application:
+    # 设置app名称:
+    name: ui
+  config:
+    # 导入Config Server地址:
+    import: configserver:${CONFIG_SERVER:http://localhost:8888}
+```
+
+上述默认的Config Server配置为`http://localhost:8888`，也可以通过环境变量指定Config Server的地址。
+
+下一步是在`ui`模块的`pom.xml`中添加依赖：
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+
+接下来正常启动`UIApplication`，该应用就会自动从Config Server读取配置。由于指定了应用的名称是`ui`，且默认的`profile`是`default`，因此，Config Server将返回以下4个配置文件：
+
+- `ui-default.yml`
+- `application-default.yml`
+- `ui.yml`
+- `application.yml`
+
+前面的配置文件优先级较高，后面的配置文件优先级较低。如果出现相同的配置项，则在优先级高的配置生效。
+
+可以在浏览器访问`http://localhost:8888/ui/default`看到Config Server返回的配置，它是一个JSON文件：
+
+```json
+{
+    "name": "ui",
+    "profiles": [
+        "default"
+    ],
+    "label": null,
+    "version": null,
+    "state": null,
+    "propertySources": [
+        {
+            "name": "file:../config-repo/ui-default.yml",
+            "source": {...}
+        },
+        {
+            "name": "file:../config-repo/application-default.yml",
+            "source": {...}
+        },
+        {
+            "name": "file:../config-repo/ui.yml",
+            "source": {...}
+        },
+        {
+            "name": "file:../config-repo/application.yml",
+            "source": {...}
+        }
+    ]
+}
+```
+
+如果启动`UIApplication`时传入`SPRING_PROFILES_ACTIVE=test`，将profile设置为`test`，则Config Server返回的文件如下：
+
+- `ui-test.yml`
+- `application-test.yml`
+- `ui.yml`
+- `application.yml`
+
+可以通过`http://localhost:8888/ui/test`查看返回的配置。由于文件`ui-test.yml`不存在，因此，实际配置由3个文件合并而成。
+
+可以很容易地看到，一个Spring Boot应用在启动时，首先要设置自己的`name`并导入Config Server的URL，再根据当前活动的`profile`，由Config Server返回多个配置文件：
+
+- `{name}-{profile}.yml`
+- `application-{profile}.yml`
+- `{name}.yml`
+- `application.yml`
+
+其中，`{name}-{xxx}.yml`是针对某个应用+某个`profile`的特定配置，`{name}.yml`是针对某个应用+所有profile的配置，`application-{profile}.yml`是针对某个`profile`的全局配置，`application.yml`是所有应用的全局配置。搭配各种配置文件就可以灵活组合配置。一般来说，全局默认的配置放在`application.yml`中，例如数据库连接：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/test
+```
+
+这样保证了默认连接到本地数据库，在生产环境中会直接报错而不是连接到错误的数据库。
+
+在生产环境，例如`profile`设置为`prod`，则可以将数据库连接写在`application-prod.yml`中，使得所有生产环境的应用读取到的数据库连接是一致的：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://172.16.0.100/prod_db
+```
+
+某个应用自己特定的配置则应当放到`{name}.yml`和`{name}-{profile}.yml`中。
+
+在设置好各个配置文件后，应当通过浏览器检查Config Server返回的配置是否符合预期。
+
+Spring Cloud Config还支持配置多个profile，以及从加密的配置源读取配置等。如果遇到更复杂的需求，可参考[Spring Cloud Config的文档](https://spring.io/projects/spring-cloud-config#learn)。
+
