@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-08-31T20:49:59+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Cloud</title><link href="/2024/08/26/Spring-Clud/" rel="alternate" type="text/html" title="Spring Cloud" /><published>2024-08-26T00:00:00+08:00</published><updated>2024-08-26T00:00:00+08:00</updated><id>/2024/08/26/Spring%20Clud</id><content type="html" xml:base="/2024/08/26/Spring-Clud/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-07T00:56:27+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Spring Cloud</title><link href="/2024/08/26/Spring-Clud/" rel="alternate" type="text/html" title="Spring Cloud" /><published>2024-08-26T00:00:00+08:00</published><updated>2024-08-26T00:00:00+08:00</updated><id>/2024/08/26/Spring%20Clud</id><content type="html" xml:base="/2024/08/26/Spring-Clud/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Clud笔记。</p>
 
 <h1 id="spring-cloud">Spring Cloud</h1>
@@ -457,7 +457,131 @@ Creating kafka     ... done
 
 <p>在设置好各个配置文件后，应当通过浏览器检查Config Server返回的配置是否符合预期。</p>
 
-<p>Spring Cloud Config还支持配置多个profile，以及从加密的配置源读取配置等。如果遇到更复杂的需求，可参考<a href="https://spring.io/projects/spring-cloud-config#learn">Spring Cloud Config的文档</a>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
+<p>Spring Cloud Config还支持配置多个profile，以及从加密的配置源读取配置等。如果遇到更复杂的需求，可参考<a href="https://spring.io/projects/spring-cloud-config#learn">Spring Cloud Config的文档</a>。</p>
+
+<h2 id="consul">consul</h2>
+
+<p>Consul 是一个开源的服务发现和配置管理工具，由 HashiCorp 开发。它主要用于微服务架构中，提供服务注册、服务发现、健康检查和配置管理等功能。Consul 的主要特点包括：</p>
+
+<ol>
+  <li><strong>服务发现</strong></li>
+</ol>
+
+<p>Consul 允许服务在集群中进行注册和发现。服务可以向 Consul 注册其网络地址和其他元数据，其他服务可以通过查询 Consul 来找到这些服务。这样，服务间的通信就不再依赖硬编码的地址，而是通过 Consul 的服务发现功能进行动态定位。</p>
+
+<ol>
+  <li><strong>健康检查</strong></li>
+</ol>
+
+<p>Consul 提供了内置的健康检查机制，确保注册的服务实例处于健康状态。Consul 可以定期执行 HTTP、TCP、或者自定义命令的健康检查，并根据检查结果决定是否将服务实例从服务列表中移除。这样可以确保负载均衡器只将请求发送到健康的服务实例。</p>
+
+<ol>
+  <li><strong>服务注册和注销</strong></li>
+</ol>
+
+<p>服务可以在启动时向 Consul 注册自己，并在关闭时注销自己。Consul 维护一个最新的服务列表，并自动更新服务的状态。服务注册可以包括服务的元数据，如版本号、环境等信息。</p>
+
+<ol>
+  <li><strong>配置管理</strong></li>
+</ol>
+
+<p>Consul 提供了一个键值存储系统，允许应用程序存储和读取配置数据。配置可以被组织成层次结构，并且支持动态更新。应用程序可以在运行时从 Consul 中读取配置，并在配置变更时进行调整。</p>
+
+<ol>
+  <li><strong>多数据中心支持</strong></li>
+</ol>
+
+<p>Consul 支持跨数据中心的服务发现和配置管理，允许在多个地理位置的数据中心中运行 Consul 实例，并进行数据同步。这使得跨地域的微服务架构可以更容易地进行管理。</p>
+
+<ol>
+  <li><strong>安全性</strong></li>
+</ol>
+
+<p>Consul 提供了安全特性，如访问控制、加密和身份验证。它支持使用 TLS 对服务之间的通信进行加密，并允许通过 ACL（访问控制列表）来控制对 Consul 数据的访问权限。</p>
+
+<hr />
+
+<p>以下是如何在 Spring Boot 应用程序中使用 Consul 进行服务发现的基本步骤：</p>
+
+<p><strong>添加依赖</strong></p>
+
+<p>在 <code class="language-plaintext highlighter-rouge">pom.xml</code> 文件中添加 Consul 相关的依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-consul-discovery<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p><strong>配置 Consul</strong></p>
+
+<p>在 <code class="language-plaintext highlighter-rouge">application.yml</code> 文件中配置 Consul 相关的设置：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">cloud</span><span class="pi">:</span>
+    <span class="na">consul</span><span class="pi">:</span>
+      <span class="na">host</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="m">8500</span>
+      <span class="na">discovery</span><span class="pi">:</span>
+        <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+        <span class="na">service-name</span><span class="pi">:</span> <span class="s">my-service</span>
+</code></pre></div></div>
+
+<p><strong>使用 Consul 进行服务发现</strong></p>
+
+<p>在应用程序中，可以使用 <code class="language-plaintext highlighter-rouge">@LoadBalanced</code> 注解和 <code class="language-plaintext highlighter-rouge">RestTemplate</code> 进行服务发现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+    <span class="nd">@LoadBalanced</span>
+    <span class="kd">public</span> <span class="nc">RestTemplate</span> <span class="nf">restTemplate</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">RestTemplate</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyController</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">RestTemplate</span> <span class="n">restTemplate</span><span class="o">;</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/call-service"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">callService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// 使用服务名称进行调用</span>
+        <span class="k">return</span> <span class="n">restTemplate</span><span class="o">.</span><span class="na">getForObject</span><span class="o">(</span><span class="s">"http://my-service/some-endpoint"</span><span class="o">,</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>相关命令</strong></p>
+
+<p>启动 Consul 服务器（开发模式）：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul agent <span class="nt">-dev</span>
+</code></pre></div></div>
+
+<p>注册一个服务到 Consul：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-service"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"primary"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul services register service.json
+</code></pre></div></div>
+
+<p>查询服务：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul catalog services
+</code></pre></div></div>
+
+<p>Consul 提供了一整套解决方案来管理微服务的生命周期和配置，使得微服务架构的管理变得更加高效和可靠。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Spring Boot</title><link href="/2024/07/09/Spring-Boot/" rel="alternate" type="text/html" title="Spring Boot" /><published>2024-07-09T00:00:00+08:00</published><updated>2024-07-09T00:00:00+08:00</updated><id>/2024/07/09/Spring%20Boot</id><content type="html" xml:base="/2024/07/09/Spring-Boot/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。</p>
 
 <h1 id="spring-boot">Spring Boot</h1>
