@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-21T12:47:27+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-21T19:46:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>。</p>
@@ -9,14 +9,7 @@
 
 <h3 id="准备环境">准备环境</h3>
 
-<table>
-  <tbody>
-    <tr>
-      <td>首先下载Seata：[Seata Java Download</td>
-      <td>Apache Seata](https://seata.apache.org/zh-cn/unversioned/download/seata-server/)，选择二进制版本。</td>
-    </tr>
-  </tbody>
-</table>
+<p>首先下载Seata：<a href="https://seata.apache.org/zh-cn/unversioned/download/seata-server/">Seata Java Download  Apache Seata</a>，选择二进制版本。</p>
 
 <p>修改<code class="language-plaintext highlighter-rouge">conf\application.yml</code>，注册到consul，并使用mysql做为存储方式：</p>
 
