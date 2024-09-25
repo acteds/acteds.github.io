@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-21T19:46:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-25T19:33:40+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
-<p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>。</p>
+<p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
 
 <h1 id="seata">Seata</h1>
 
@@ -241,6 +241,7 @@
   <li>还可以记录一些重要的上下文信息（例如订单 ID），以便在后续的 <code class="language-plaintext highlighter-rouge">commit</code> 或 <code class="language-plaintext highlighter-rouge">rollback</code> 阶段使用。</li>
   <li>这个阶段的操作<strong>必须是可补偿的</strong>（即可以撤销的）。</li>
   <li>如果这个阶段失败，整个事务将被终止，不会继续执行 <code class="language-plaintext highlighter-rouge">commit</code> 或 <code class="language-plaintext highlighter-rouge">rollback</code>。</li>
+  <li>如果在这个阶段出现异常抛出，则会进入<code class="language-plaintext highlighter-rouge">rollback</code>阶段。</li>
 </ul>
 
 <p>在上面的示例， <code class="language-plaintext highlighter-rouge">prepareCreateOrder</code> 方法中，订单服务会创建一个“待确认”的订单，其状态通常是 <code class="language-plaintext highlighter-rouge">PENDING</code> 或类似状态。</p>
@@ -287,8 +288,6 @@
 <p><strong><code class="language-plaintext highlighter-rouge">@LocalTCC</code></strong></p>
 
 <p><code class="language-plaintext highlighter-rouge">@LocalTCC</code> 注解用于标识一个实现了 TCC 模式的本地事务服务。它通常不需要参数，它的主要作用是标识类中哪些方法是需要支持 TCC 事务的。Seata 会扫描带有 <code class="language-plaintext highlighter-rouge">@LocalTCC</code> 注解的类，并自动将它们纳入 TCC 事务管理范围。</p>
-
-<p><code class="language-plaintext highlighter-rouge">@LocalTCC</code> 注解并不是强制性的，它用于明确表示一个类实现了本地 TCC 事务。如果你的类中已经使用了 <code class="language-plaintext highlighter-rouge">@TwoPhaseBusinessAction</code> 注解来标记 TCC 事务的各个阶段方法，Seata 也可以识别并处理这些方法。</p>
 
 <hr />
 
@@ -727,7 +726,121 @@
 
 <p><code class="language-plaintext highlighter-rouge">@Transactional</code> 确保方法内部抛出的运行时异常（unchecked exception）会导致事务回滚。这样可以保证在遇到异常时，所有的数据库操作都能够被回滚到操作之前的状态，保持数据的一致性。</p>
 
-<p>虽然 TCC 模式主要处理分布式事务的协调，<strong>但在每个本地事务中，使用 <code class="language-plaintext highlighter-rouge">@Transactional</code> 注解仍然是确保数据一致性的关键。</strong></p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Git的拆分与删除</title><link href="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/" rel="alternate" type="text/html" title="Git的拆分与删除" /><published>2024-09-18T00:00:00+08:00</published><updated>2024-09-18T00:00:00+08:00</updated><id>/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4</id><content type="html" xml:base="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/"><![CDATA[<h1 id="引言">引言</h1>
+<p>虽然 TCC 模式主要处理分布式事务的协调，<strong>但在每个本地事务中，使用 <code class="language-plaintext highlighter-rouge">@Transactional</code> 注解仍然是确保数据一致性的关键。</strong></p>
+
+<h3 id="事务幂等悬挂和空回滚">事务幂等、悬挂和空回滚</h3>
+
+<p><strong>空回滚</strong></p>
+
+<p>当某分支事务的try阶段<strong>阻塞</strong>时，可能导致全局事务超时而触发二阶段的cancel操作。在未执行try操作时先执行了cancel操作，这时cancel不能做回滚，就是<strong>空回滚</strong>。</p>
+
+<p>执行cancel操作时，应当判断try是否已经执行，如果尚未执行，则应该空回滚。</p>
+
+<p><strong>业务悬挂</strong></p>
+
+<p>对于已经空回滚的业务，之前被阻塞的try操作恢复，继续执行try，就永远不可能confirm或cancel ，事务一直处于中间状态，这就是<strong>业务悬挂</strong>。</p>
+
+<p>执行try操作时，应当判断cancel是否已经执行过了，如果已经执行，应当阻止空回滚后的try操作，避免悬挂</p>
+
+<hr />
+
+<p>TCC 模式中存在的三大问题是幂等、悬挂和空回滚，而新版seata解决了上述问题：<a href="https://seata.apache.org/zh-cn/blog/seata-tcc-fence/">链接</a>。</p>
+
+<p>在 Seata1.5.1 版本中，增加了一张事务控制表，表名是 <code class="language-plaintext highlighter-rouge">tcc_fence_log</code> 来解决这个问题。 <code class="language-plaintext highlighter-rouge">@TwoPhaseBusinessAction</code> 注解中有一个属性 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 就是来指定是否开启这个机制，这个属性值默认是 <code class="language-plaintext highlighter-rouge">false</code>。</p>
+
+<p>首先，在自己的数据库添加一个事务控制表：<code class="language-plaintext highlighter-rouge">tcc_fence_log</code>， 建表语句如下（MySQL 语法）：</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="nv">`tcc_fence_log`</span>
+<span class="p">(</span>
+    <span class="nv">`xid`</span>           <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>  <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'global id'</span><span class="p">,</span>
+    <span class="nv">`branch_id`</span>     <span class="nb">BIGINT</span>        <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'branch id'</span><span class="p">,</span>
+    <span class="nv">`action_name`</span>   <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'action name'</span><span class="p">,</span>
+    <span class="nv">`status`</span>        <span class="nb">TINYINT</span>       <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'status(tried:1;committed:2;rollbacked:3;suspended:4)'</span><span class="p">,</span>
+    <span class="nv">`gmt_create`</span>    <span class="nb">DATETIME</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'create time'</span><span class="p">,</span>
+    <span class="nv">`gmt_modified`</span>  <span class="nb">DATETIME</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'update time'</span><span class="p">,</span>
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="nv">`xid`</span><span class="p">,</span> <span class="nv">`branch_id`</span><span class="p">),</span>
+    <span class="k">KEY</span> <span class="nv">`idx_gmt_modified`</span> <span class="p">(</span><span class="nv">`gmt_modified`</span><span class="p">),</span>
+    <span class="k">KEY</span> <span class="nv">`idx_status`</span> <span class="p">(</span><span class="nv">`status`</span><span class="p">)</span>
+<span class="p">)</span> <span class="n">ENGINE</span> <span class="o">=</span> <span class="n">InnoDB</span>
+<span class="k">DEFAULT</span> <span class="n">CHARSET</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>然后在<code class="language-plaintext highlighter-rouge">@TwoPhaseBusinessAction</code>，开启<code class="language-plaintext highlighter-rouge">useTCCFence</code>即可。</p>
+
+<p>开启<code class="language-plaintext highlighter-rouge">useTCCFence</code>后，TCC阶段的转换逻辑会发生变化：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>阶段</th>
+      <th>useTCCFence</th>
+      <th>异常</th>
+      <th>程序停止</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>try</td>
+      <td>true</td>
+      <td>暂停</td>
+      <td>无操作</td>
+    </tr>
+    <tr>
+      <td>Confirm</td>
+      <td>true</td>
+      <td>重试</td>
+      <td>无操作</td>
+    </tr>
+    <tr>
+      <td>Cancel</td>
+      <td>true</td>
+      <td>重试</td>
+      <td>重试</td>
+    </tr>
+    <tr>
+      <td>try</td>
+      <td>false</td>
+      <td>多次执行Cancel</td>
+      <td>无操作/还原（加本地事务）</td>
+    </tr>
+    <tr>
+      <td>Confirm</td>
+      <td>false</td>
+      <td>多次重试</td>
+      <td>无操作</td>
+    </tr>
+    <tr>
+      <td>Cancel</td>
+      <td>false</td>
+      <td>多次重试</td>
+      <td>无操作</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>开启 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 后的行为主要与解决 TCC 模式下的悬挂问题有关。悬挂问题指的是在 TCC 模式下，当 Confirm 或 Cancel 阶段因为某种原因没有被执行时，可能会导致资源长时间处于锁定状态，影响系统的正常运行。<code class="language-plaintext highlighter-rouge">useTCCFence</code> 就是用来防止这类问题的发生。</p>
+
+<p>以下是开启 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 后的行为总结：</p>
+
+<ol>
+  <li>
+    <p><strong>记录尝试操作</strong>：当开启 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 后，在执行 TCC 的 Try 阶段时，Seata 会记录这次操作，并将其持久化到数据库中。</p>
+  </li>
+  <li>
+    <p><strong>检查确认/取消请求</strong>：在 Confirm 或 Cancel 阶段到来之前，Seata 会先检查是否有对应的 Try 操作记录存在。如果没有找到匹配的 Try 记录，则认为这是一个非法的请求，可能是由于网络重试或其他异常情况导致的重复调用。</p>
+  </li>
+  <li>
+    <p><strong>避免悬挂事务</strong>：通过上述机制，可以有效地避免因 Confirm 或 Cancel 请求丢失而造成的悬挂事务问题。如果系统重启或服务宕机后恢复，未完成的 TCC 事务可以通过这些记录来进行补偿处理。</p>
+  </li>
+  <li>
+    <p><strong>清理过期记录</strong>：对于那些已经完成了 Confirm 或 Cancel 操作的 Try 记录，Seata 会在一段时间之后自动清理它们以节省存储空间并保持系统清洁。</p>
+  </li>
+  <li>
+    <p><strong>提高系统稳定性</strong>：整体而言，启用 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 能够帮助增强 TCC 模式的鲁棒性，减少由外部因素引起的服务不稳定状况，确保分布式事务能够按照预期的方式正确地执行完毕。</p>
+  </li>
+</ol>
+
+<p>需要注意的是，使用 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 功能可能需要对现有的 TCC 业务代码进行一些调整，并且要保证相应的存储支持持久化记录的能力。此外，还需要合理配置超时时间等参数以适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Git的拆分与删除</title><link href="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/" rel="alternate" type="text/html" title="Git的拆分与删除" /><published>2024-09-18T00:00:00+08:00</published><updated>2024-09-18T00:00:00+08:00</updated><id>/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4</id><content type="html" xml:base="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/"><![CDATA[<h1 id="引言">引言</h1>
 <p>拆分仓库可以减少单个仓库的体积，提高开发效率。Git 仓库的历史记录会随着项目的发展而膨胀。拆分仓库有助于删除不必要的历史记录，只保留当前需要的部分，减少仓库的冗余数据。对于删除来说也是如此，在全部的提交中删除不需要的文件或文件夹可以减少仓库的体积。</p>
 
 <h1 id="git">Git</h1>
@@ -11846,6 +11959,61 @@ User{id=1, email='2@qq.com', password='123456', name='小华', createdAt=1718607
 </code></pre></div></div>
 
 <p>同样的，可以使用<code class="language-plaintext highlighter-rouge">@JsonProperty(access = Access.READ_ONLY)</code>允许输出，不允许输入。</p>
+
+<h2 id="取值注解">取值注解</h2>
+
+<p>在 Spring MVC 中，除了 <code class="language-plaintext highlighter-rouge">@PathVariable</code> 和 <code class="language-plaintext highlighter-rouge">@RequestBody</code>，还有许多其他用于处理请求参数的取值注解。以下是一些常用的取值注解：</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@RequestParam</code></strong>：用于从请求参数中提取值，通常用于获取 URL 查询字符串中的参数。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getData"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">(</span><span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"id"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dataService</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@RequestHeader</code></strong>：用于从请求头中提取值。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getData"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">(</span><span class="nd">@RequestHeader</span><span class="o">(</span><span class="s">"Authorization"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">authHeader</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dataService</span><span class="o">.</span><span class="na">findByAuthHeader</span><span class="o">(</span><span class="n">authHeader</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@RequestAttribute</code></strong>：用于从请求属性中提取值，这些属性通常是在请求处理过程中设置的。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getData"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">(</span><span class="nd">@RequestAttribute</span><span class="o">(</span><span class="s">"userId"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">userId</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dataService</span><span class="o">.</span><span class="na">findByUserId</span><span class="o">(</span><span class="n">userId</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@CookieValue</code></strong>：用于从 Cookie 中提取值。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getData"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">(</span><span class="nd">@CookieValue</span><span class="o">(</span><span class="s">"sessionId"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">sessionId</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dataService</span><span class="o">.</span><span class="na">findBySessionId</span><span class="o">(</span><span class="n">sessionId</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@ModelAttribute</code></strong>：用于将请求参数绑定到模型对象中，通常用于表单提交。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/submitForm"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Wrapper</span> <span class="nf">submitForm</span><span class="o">(</span><span class="nd">@ModelAttribute</span> <span class="nc">FormData</span> <span class="n">formData</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">formService</span><span class="o">.</span><span class="na">processForm</span><span class="o">(</span><span class="n">formData</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">@ResponseBody</code></strong>：用于将方法的返回值直接作为响应体输出，通常与 RESTful API 一起使用。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/submitData"</span><span class="o">)</span>
+<span class="nd">@ResponseBody</span>
+<span class="kd">public</span> <span class="nc">Data</span> <span class="nf">submitData</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dataService</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这些注解提供了灵活的方式来从 HTTP 请求中提取数据，使得 Spring MVC 的控制器能够处理各种输入数据。</p>
 
 <h2 id="集成filter">集成Filter</h2>
 
