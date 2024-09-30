@@ -435,6 +435,14 @@
     } ,
   
     {
+      "title"    : "OpenFeign的使用",
+      "category" : "Java",
+      
+      "url"      : "/2024/09/18/OpenFeign/",
+      "keywords" : "Java"
+    } ,
+  
+    {
       "title"    : "Git的拆分与删除",
       "category" : "Git",
       
