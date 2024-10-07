@@ -451,6 +451,14 @@
     } ,
   
     {
+      "title"    : "GitLabSSH认证",
+      "category" : "Git",
+      
+      "url"      : "/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/",
+      "keywords" : "Git, GitLab"
+    } ,
+  
+    {
       "title"    : "多个Git托管平台的配置",
       "category" : "Git",
       
