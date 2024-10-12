@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-09T19:43:27+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-12T23:43:14+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
@@ -1350,7 +1350,55 @@ and the repository exists.
 
 <p><strong>优点</strong>：避免了在服务 <code class="language-plaintext highlighter-rouge">B</code> 中定义 <code class="language-plaintext highlighter-rouge">ProductInventory</code> 类。</p>
 
-<p><strong>缺点</strong>：使用 <code class="language-plaintext highlighter-rouge">Map</code> 或 <code class="language-plaintext highlighter-rouge">JSONObject</code> 使代码的类型检查变得不那么严格，容易出错，并且不如直接使用实体类那么清晰和安全。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Git的拆分与删除</title><link href="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/" rel="alternate" type="text/html" title="Git的拆分与删除" /><published>2024-09-18T00:00:00+08:00</published><updated>2024-09-18T00:00:00+08:00</updated><id>/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4</id><content type="html" xml:base="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/"><![CDATA[<h1 id="引言">引言</h1>
+<p><strong>缺点</strong>：使用 <code class="language-plaintext highlighter-rouge">Map</code> 或 <code class="language-plaintext highlighter-rouge">JSONObject</code> 使代码的类型检查变得不那么严格，容易出错，并且不如直接使用实体类那么清晰和安全。</p>
+
+<h2 id="批量带header">批量带<code class="language-plaintext highlighter-rouge">Header</code></h2>
+
+<p>要在Feign调用中为所有的方法添加多个header，可以使用 <code class="language-plaintext highlighter-rouge">RequestInterceptor</code>。下面是如何实现的步骤：</p>
+
+<ol>
+  <li><strong>创建一个RequestInterceptor</strong>：</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">feign.RequestInterceptor</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">feign.RequestTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeignConfig</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">RequestInterceptor</span> <span class="nf">requestInterceptor</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">RequestInterceptor</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">apply</span><span class="o">(</span><span class="nc">RequestTemplate</span> <span class="n">template</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-1"</span><span class="o">,</span> <span class="s">"HeaderValue1"</span><span class="o">);</span>
+                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-2"</span><span class="o">,</span> <span class="s">"HeaderValue2"</span><span class="o">);</span>
+                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-3"</span><span class="o">,</span> <span class="s">"HeaderValue3"</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ol>
+  <li><strong>在FeignClient中引用FeignConfig</strong>：</li>
+</ol>
+
+<p>确保在你的 <code class="language-plaintext highlighter-rouge">@FeignClient</code> 注解中引入配置类。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FeignClient</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"demo-service"</span><span class="o">,</span> <span class="n">fallback</span> <span class="o">=</span> <span class="nc">DemoServiceFeignFallBack</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="nc">FeignConfig</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DemoServiceFeign</span> <span class="o">{</span>
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/pi/getAll"</span><span class="o">)</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">ProductInventory</span><span class="o">&gt;</span> <span class="nf">getAllUsers</span><span class="o">();</span>
+    
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/pi/add"</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">ProductInventory</span> <span class="n">productInventory</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>通过这种方式，所有的Feign调用将自动带上你在 <code class="language-plaintext highlighter-rouge">RequestInterceptor</code> 中定义的header。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Git的拆分与删除</title><link href="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/" rel="alternate" type="text/html" title="Git的拆分与删除" /><published>2024-09-18T00:00:00+08:00</published><updated>2024-09-18T00:00:00+08:00</updated><id>/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4</id><content type="html" xml:base="/2024/09/18/git%E7%9A%84%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%A0%E9%99%A4/"><![CDATA[<h1 id="引言">引言</h1>
 <p>拆分仓库可以减少单个仓库的体积，提高开发效率。Git 仓库的历史记录会随着项目的发展而膨胀。拆分仓库有助于删除不必要的历史记录，只保留当前需要的部分，减少仓库的冗余数据。对于删除来说也是如此，在全部的提交中删除不需要的文件或文件夹可以减少仓库的体积。</p>
 
 <h1 id="git">Git</h1>
