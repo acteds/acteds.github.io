@@ -288,3 +288,48 @@ public class FeignTestController {
 
 **缺点**：使用 `Map` 或 `JSONObject` 使代码的类型检查变得不那么严格，容易出错，并且不如直接使用实体类那么清晰和安全。
 
+## 批量带`Header`
+
+要在Feign调用中为所有的方法添加多个header，可以使用 `RequestInterceptor`。下面是如何实现的步骤：
+
+1. **创建一个RequestInterceptor**：
+
+```java
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class FeignConfig {
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return new RequestInterceptor() {
+            @Override
+            public void apply(RequestTemplate template) {
+                template.header("Header-Name-1", "HeaderValue1");
+                template.header("Header-Name-2", "HeaderValue2");
+                template.header("Header-Name-3", "HeaderValue3");
+            }
+        };
+    }
+}
+```
+
+2. **在FeignClient中引用FeignConfig**：
+
+确保在你的 `@FeignClient` 注解中引入配置类。
+
+```java
+@FeignClient(name = "demo-service", fallback = DemoServiceFeignFallBack.class, configuration = FeignConfig.class)
+public interface DemoServiceFeign {
+    @GetMapping("/pi/getAll")
+    List<ProductInventory> getAllUsers();
+    
+    @PostMapping("/pi/add")
+    int addUser(@RequestBody ProductInventory productInventory);
+}
+```
+
+通过这种方式，所有的Feign调用将自动带上你在 `RequestInterceptor` 中定义的header。
