@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-12T23:43:14+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-15T19:04:05+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
@@ -840,8 +840,21 @@
   </li>
 </ol>
 
-<p>需要注意的是，使用 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 功能可能需要对现有的 TCC 业务代码进行一些调整，并且要保证相应的存储支持持久化记录的能力。此外，还需要合理配置超时时间等参数以适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">GitLabSSH认证</title><link href="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/" rel="alternate" type="text/html" title="GitLabSSH认证" /><published>2024-09-19T00:00:00+08:00</published><updated>2024-09-19T00:00:00+08:00</updated><id>/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81</id><content type="html" xml:base="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/"><![CDATA[<h1 id="引言">引言</h1>
+<p>需要注意的是，使用 <code class="language-plaintext highlighter-rouge">useTCCFence</code> 功能可能需要对现有的 TCC 业务代码进行一些调整，并且要保证相应的存储支持持久化记录的能力。此外，还需要合理配置超时时间等参数以适应不同的业务场景。</p>
 
+<h3 id="部署">部署</h3>
+
+<p>要将seata部署到k8s上：</p>
+
+<ul>
+  <li>首先下载doker镜像</li>
+  <li>新建容器设置好端口并运行</li>
+  <li>然后修改<code class="language-plaintext highlighter-rouge">seata-server.resources/application.yml</code>文件为你需要的配置。</li>
+  <li>将容器打包为镜像：<code class="language-plaintext highlighter-rouge">docker commit [容器ID] [镜像名称:tag]</code></li>
+  <li>注意镜像名称，如果要推送到harbor，则需要添加前缀：<code class="language-plaintext highlighter-rouge">local.harbor/</code>。</li>
+  <li>推送到harbor：<code class="language-plaintext highlighter-rouge">docker push [name:tag]</code></li>
+  <li>使用k8s配置拉取镜像，并保留相应的接口即可</li>
+</ul>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">GitLabSSH认证</title><link href="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/" rel="alternate" type="text/html" title="GitLabSSH认证" /><published>2024-09-19T00:00:00+08:00</published><updated>2024-09-19T00:00:00+08:00</updated><id>/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81</id><content type="html" xml:base="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/"><![CDATA[<h1 id="引言">引言</h1>
 <p>对于GitLab的SSH认证，和GitHub认证步骤差不多，主要是SSH密钥可能需要指定的版本。</p>
 
 <h1 id="gitlab">GitLab</h1>
