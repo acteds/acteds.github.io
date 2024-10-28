@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-24T21:43:05+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-28T12:49:38+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
@@ -854,7 +854,167 @@
   <li>注意镜像名称，如果要推送到harbor，则需要添加前缀：<code class="language-plaintext highlighter-rouge">local.harbor/</code>。</li>
   <li>推送到harbor：<code class="language-plaintext highlighter-rouge">docker push [name:tag]</code></li>
   <li>使用k8s配置拉取镜像，并保留相应的接口即可</li>
-</ul>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">GitLabSSH认证</title><link href="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/" rel="alternate" type="text/html" title="GitLabSSH认证" /><published>2024-09-19T00:00:00+08:00</published><updated>2024-09-19T00:00:00+08:00</updated><id>/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81</id><content type="html" xml:base="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/"><![CDATA[<h1 id="引言">引言</h1>
+</ul>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">分布式锁的使用</title><link href="/2024/09/20/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="alternate" type="text/html" title="分布式锁的使用" /><published>2024-09-20T00:00:00+08:00</published><updated>2024-09-20T00:00:00+08:00</updated><id>/2024/09/20/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8</id><content type="html" xml:base="/2024/09/20/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>Consul 的分布式锁机制是一种基于键值存储 (KV) 和会话 (Session) 的乐观锁机制，通常用于协调多个分布式系统或微服务之间的并发访问，确保资源的一致性和避免冲突。</p>
+
+<h1 id="consul分布式锁">Consul分布式锁</h1>
+
+<p>Consul 分布式锁的原理</p>
+
+<ol>
+  <li>
+    <p><strong>KV 键值存储</strong>：Consul 的 KV 存储用于保存锁的状态，锁的持有者会在特定的 KV 键上写入锁相关的信息（如会话 ID）。</p>
+  </li>
+  <li>
+    <p><strong>会话 (Session)</strong>：会话是 Consul 锁机制的核心。每个锁与一个会话相关联，会话可以有一个 TTL（超时时间）。如果持有锁的客户端失去连接，Consul 会自动释放锁（即删除相关会话）。这避免了“死锁”问题。</p>
+  </li>
+  <li>
+    <p><strong>锁的获取</strong>：客户端在尝试获取锁时，需要创建一个 Consul 会话，并使用 <code class="language-plaintext highlighter-rouge">PUT</code> 操作尝试在指定的 KV 键上绑定会话 ID。Consul 会将这个 <code class="language-plaintext highlighter-rouge">PUT</code> 操作视为一次原子性的操作。如果 KV 键已经存在且被其他会话占用，当前操作将失败。</p>
+  </li>
+  <li>
+    <p><strong>锁的释放</strong>：锁持有者可以手动删除绑定的 KV 键或者销毁会话来释放锁。一旦会话销毁，锁将自动释放，其他客户端可以再次尝试获取锁。</p>
+  </li>
+</ol>
+
+<p>Consul 分布式锁的流程</p>
+
+<ol>
+  <li>
+    <p><strong>创建会话</strong>：锁的持有者需要先向 Consul 注册一个会话 (<code class="language-plaintext highlighter-rouge">SessionCreate</code>)。会话可以有一个 TTL，表示持有锁的最长时间。</p>
+  </li>
+  <li><strong>获取锁</strong>：
+    <ul>
+      <li>使用 <code class="language-plaintext highlighter-rouge">PUT</code> 请求将会话 ID 绑定到特定的 KV 键上。</li>
+      <li>如果绑定成功，客户端持有锁；如果该 KV 键已经绑定到其他会话 ID，则锁获取失败。</li>
+    </ul>
+  </li>
+  <li><strong>自动释放锁</strong>：
+    <ul>
+      <li>如果持有锁的客户端未在会话的 TTL 内刷新会话，Consul 会自动销毁会话并释放锁。</li>
+      <li>这确保了如果客户端崩溃或掉线，锁不会长时间被占用。</li>
+    </ul>
+  </li>
+  <li><strong>手动释放锁</strong>：
+    <ul>
+      <li>客户端可以显式销毁会话 (<code class="language-plaintext highlighter-rouge">SessionDestroy</code>) 或删除与锁关联的 KV 键来释放锁。</li>
+    </ul>
+  </li>
+</ol>
+
+<p>实现 Consul 分布式锁的关键 API</p>
+
+<p><strong>Session Create (创建会话)</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">--request</span> PUT <span class="se">\</span>
+  <span class="nt">--data</span> <span class="s1">'{"LockDelay": "15s", "TTL": "10s", "Name": "my-lock"}'</span> <span class="se">\</span>
+  http://localhost:8500/v1/session/create
+</code></pre></div></div>
+<p>会话的 TTL 表示锁的持有者必须在这个时间范围内继续保持活跃。</p>
+
+<p><strong>Lock (获取锁)</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">--request</span> PUT <span class="se">\</span>
+  <span class="nt">--data</span> <span class="s1">'my-session-id'</span> <span class="se">\</span>
+  http://localhost:8500/v1/kv/my-key?acquire<span class="o">=</span>my-session-id
+</code></pre></div></div>
+<p>通过这个命令，客户端尝试获取与 <code class="language-plaintext highlighter-rouge">my-key</code> 相关的锁。</p>
+
+<p><strong>Release (释放锁)</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">--request</span> PUT <span class="se">\</span>
+  <span class="nt">--data</span> <span class="s1">'my-session-id'</span> <span class="se">\</span>
+  http://localhost:8500/v1/kv/my-key?release<span class="o">=</span>my-session-id
+</code></pre></div></div>
+<p>通过释放命令，客户端可以显式地释放锁。</p>
+
+<p><strong>Session Destroy (销毁会话)</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">--request</span> PUT <span class="se">\</span>
+  http://localhost:8500/v1/session/destroy/my-session-id
+</code></pre></div></div>
+<p>销毁会话后，锁自动被释放，其他客户端可以获取该锁。</p>
+
+<p><strong>优点</strong></p>
+
+<ul>
+  <li><strong>自动锁释放</strong>：通过 TTL 和会话机制，Consul 可以自动处理锁的释放，避免死锁。</li>
+  <li><strong>可扩展性</strong>：Consul 作为一个分布式服务注册和发现系统，天然具有扩展能力，因此其锁机制可以用于分布式系统中的并发控制。</li>
+  <li><strong>透明性</strong>：锁的状态可以通过 Consul UI 或 API 查询，便于监控。</li>
+</ul>
+
+<hr />
+
+<p>以下是基于 Java 的 Consul 分布式锁实现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsulLockService</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ConsulClient</span> <span class="n">consulClient</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">ConsulClient</span> <span class="n">consulClient</span><span class="o">;</span>
+
+	<span class="cm">/**
+     * 获取分布式锁
+     * @param lockKey
+     * @return
+     */</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">acquireLock</span><span class="o">(</span><span class="nc">String</span> <span class="n">lockKey</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Step 1: 创建一个会话</span>
+        <span class="nc">NewSession</span> <span class="n">newSession</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NewSession</span><span class="o">();</span>
+        <span class="n">newSession</span><span class="o">.</span><span class="na">setTtl</span><span class="o">(</span><span class="s">"10s"</span><span class="o">);</span>  <span class="c1">// 设置TTL (Time to Live)，表示锁的有效期</span>
+        <span class="n">newSession</span><span class="o">.</span><span class="na">setLockDelay</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span> <span class="c1">// 立即释放锁</span>
+
+        <span class="c1">// 创建 Session，并获取 sessionId</span>
+        <span class="nc">Response</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">sessionResponse</span> <span class="o">=</span> <span class="n">consulClient</span><span class="o">.</span><span class="na">sessionCreate</span><span class="o">(</span><span class="n">newSession</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">sessionId</span> <span class="o">=</span> <span class="n">sessionResponse</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+
+        <span class="c1">// Step 2: 尝试加锁</span>
+        <span class="nc">PutParams</span> <span class="n">putParams</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PutParams</span><span class="o">();</span>
+        <span class="n">putParams</span><span class="o">.</span><span class="na">setAcquireSession</span><span class="o">(</span><span class="n">sessionId</span><span class="o">);</span> <span class="c1">// 通过 Session 来加锁</span>
+
+        <span class="nc">Response</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">&gt;</span> <span class="n">lockResponse</span> <span class="o">=</span> <span class="n">consulClient</span><span class="o">.</span><span class="na">setKVValue</span><span class="o">(</span><span class="n">lockKey</span><span class="o">,</span> <span class="s">"locked"</span><span class="o">,</span> <span class="n">putParams</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nc">Boolean</span><span class="o">.</span><span class="na">TRUE</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">lockResponse</span><span class="o">.</span><span class="na">getValue</span><span class="o">()))</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">sessionId</span><span class="o">=</span><span class="n">sessionId</span><span class="o">;</span>
+            <span class="k">return</span> <span class="n">sessionId</span><span class="o">;</span> <span class="c1">// 锁定成功，返回 sessionId</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">consulClient</span><span class="o">.</span><span class="na">sessionDestroy</span><span class="o">(</span><span class="n">sessionId</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span> <span class="c1">// 锁定失败，销毁会话</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"无法获取锁: "</span> <span class="o">+</span> <span class="n">lockKey</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 释放分布式锁
+     * @param lockKey
+     * @param sessionId
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">releaseLock</span><span class="o">(</span><span class="nc">String</span> <span class="n">lockKey</span><span class="o">,</span> <span class="nc">String</span> <span class="n">sessionId</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 删除 KV 键值</span>
+        <span class="n">consulClient</span><span class="o">.</span><span class="na">deleteKVValue</span><span class="o">(</span><span class="n">lockKey</span><span class="o">);</span>
+        <span class="c1">// 销毁会话，释放锁</span>
+        <span class="n">consulClient</span><span class="o">.</span><span class="na">sessionDestroy</span><span class="o">(</span><span class="n">sessionId</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>使用场景</strong></p>
+
+<ol>
+  <li><strong>数据库写操作</strong>：当多个微服务实例需要同时更新同一个数据库记录时，使用分布式锁可以确保只有一个实例可以进行写操作。</li>
+  <li><strong>任务调度</strong>：分布式系统中的多个节点可能会尝试执行相同的定时任务，使用分布式锁可以确保每个任务只被执行一次。</li>
+  <li><strong>资源访问控制</strong>：在分布式环境中，多个微服务可能会同时请求同一个共享资源，锁可以确保资源不会被多个实例同时修改。</li>
+</ol>
+
+<p><strong>注意事项</strong></p>
+
+<ol>
+  <li><strong>锁争抢问题</strong>：由于 Consul 锁基于乐观锁实现，如果锁竞争激烈，可能会有大量的锁获取失败，建议在应用层添加重试机制。</li>
+  <li><strong>锁超时问题</strong>：会话 TTL 失效可能导致锁提前释放，因此需要适当地设置 TTL 并确保客户端保持活跃。</li>
+  <li><strong>性能与延迟</strong>：由于锁依赖于 Consul 的 KV 存储，延迟和 Consul 的性能会影响锁的响应速度，建议在并发场景中测试锁的性能。</li>
+</ol>
+
+<p>Consul 的分布式锁是一种简洁高效的锁机制，尤其适合在分布式环境中确保资源的一致性和避免并发冲突。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">GitLabSSH认证</title><link href="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/" rel="alternate" type="text/html" title="GitLabSSH认证" /><published>2024-09-19T00:00:00+08:00</published><updated>2024-09-19T00:00:00+08:00</updated><id>/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81</id><content type="html" xml:base="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/"><![CDATA[<h1 id="引言">引言</h1>
 <p>对于GitLab的SSH认证，和GitHub认证步骤差不多，主要是SSH密钥可能需要指定的版本。</p>
 
 <h1 id="gitlab">GitLab</h1>
@@ -15986,372 +16146,4 @@ Connection: Upgrade
    └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
 </code></pre>
 
-<p>其中，App自身和JVM的的统计数据都通过JMX收集并发送给本机的一个Agent，Agent再将数据发送至监控服务器，最后以可视化的形式将监控数据通过Web等形式展示给用户。常用的监控系统有开源的<a href="https://prometheus.io/">Prometheus</a>和以云服务方式提供的<a href="https://www.datadoghq.com/">DataDog</a>等。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">简单实现@GetMapping</title><link href="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/" rel="alternate" type="text/html" title="简单实现@GetMapping" /><published>2024-05-17T00:00:00+08:00</published><updated>2024-05-17T00:00:00+08:00</updated><id>/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping</id><content type="html" xml:base="/2024/05/17/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0@GetMapping/"><![CDATA[<h1 id="简单实现getmapping">简单实现@GetMapping</h1>
-
-<p>首先写个<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>，URL路径为：<code class="language-plaintext highlighter-rouge">/</code>,表示所有没有指定<code class="language-plaintext highlighter-rouge">Servlet</code>处理的URL，都映射到此Servlet，然后<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>再根据路径执行特定的方法。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@WebServlet</span><span class="o">(</span><span class="n">urlPatterns</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DispatcherServlet</span> <span class="kd">extends</span> <span class="nc">HttpServlet</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Get</span><span class="o">&gt;</span> <span class="n">getMappings</span><span class="o">;</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// todo 扫描注解</span>
-    <span class="o">}</span>
-    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doGet</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="n">resp</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">"text/html"</span><span class="o">);</span>
-        <span class="n">resp</span><span class="o">.</span><span class="na">setCharacterEncoding</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
-        <span class="c1">// 根据路径查找GetDispatcher:</span>
-        <span class="nc">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="na">getRequestURI</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">getContextPath</span><span class="o">().</span><span class="na">length</span><span class="o">());</span>
-        <span class="nc">Get</span> <span class="n">get</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getMappings</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">get</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 未找到返回404:</span>
-            <span class="n">resp</span><span class="o">.</span><span class="na">sendError</span><span class="o">(</span><span class="mi">404</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="nc">String</span> <span class="n">s</span><span class="o">;</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="cm">/*调用使用反射的方法*/</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">get</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="n">resp</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InvocationTargetException</span> <span class="o">|</span> <span class="nc">IllegalAccessException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">s</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"redirect:"</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">resp</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">9</span><span class="o">));</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="cm">/*todo 其他处理*/</span>
-        <span class="n">req</span><span class="o">.</span><span class="na">getRequestDispatcher</span><span class="o">(</span><span class="n">s</span><span class="o">).</span><span class="na">forward</span><span class="o">(</span><span class="n">req</span><span class="o">,</span><span class="n">resp</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>然后写个Get类用于通过反射执行指定方法，还需要传入指定方法需要的形参类型的实例，如果形参名字对的上key就尝试获取值：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Get</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">Object</span> <span class="n">instance</span><span class="o">;</span> <span class="c1">// Controller实例</span>
-    <span class="kd">private</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">;</span> <span class="c1">// Controller方法</span>
-    <span class="kd">private</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">parameterNames</span><span class="o">;</span> <span class="c1">// 方法参数名称</span>
-    <span class="kd">private</span> <span class="nc">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">parameterClasses</span><span class="o">;</span> <span class="c1">// 方法参数类型</span>
-
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">invoke</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">InvocationTargetException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
-        <span class="nc">Object</span><span class="o">[]</span> <span class="n">arguments</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="n">parameterClasses</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">parameterClasses</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">String</span> <span class="n">parameterName</span> <span class="o">=</span> <span class="n">parameterNames</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-            <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">parameterClass</span> <span class="o">=</span> <span class="n">parameterClasses</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="nc">HttpServletRequest</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="nc">HttpServletResponse</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="nc">HttpSession</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getSession</span><span class="o">();</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">getOrDefault</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">parameterName</span><span class="o">,</span> <span class="s">"0"</span><span class="o">));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="kt">long</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="nc">Long</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">getOrDefault</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">parameterName</span><span class="o">,</span> <span class="s">"0"</span><span class="o">));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="kt">boolean</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="nc">Boolean</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">getOrDefault</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">parameterName</span><span class="o">,</span> <span class="s">"false"</span><span class="o">));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterClass</span> <span class="o">==</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">arguments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">getOrDefault</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">parameterName</span><span class="o">,</span> <span class="s">""</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"缺少类型的处理程序: "</span> <span class="o">+</span> <span class="n">parameterClass</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="k">this</span><span class="o">.</span><span class="na">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">instance</span><span class="o">,</span> <span class="n">arguments</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">getOrDefault</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">String</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">s</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">defaultValue</span> <span class="o">:</span> <span class="n">s</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setInstance</span><span class="o">(</span><span class="nc">Object</span> <span class="n">instance</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">instance</span> <span class="o">=</span> <span class="n">instance</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMethod</span><span class="o">(</span><span class="nc">Method</span> <span class="n">method</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setParameterNames</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">parameterNames</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">parameterNames</span> <span class="o">=</span> <span class="n">parameterNames</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setParameterClasses</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">parameterClasses</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">parameterClasses</span> <span class="o">=</span> <span class="n">parameterClasses</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>再之后就是写注解了：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Retention</span><span class="o">(</span><span class="no">RUNTIME</span><span class="o">)</span>
-<span class="nd">@Target</span><span class="o">(</span><span class="no">METHOD</span><span class="o">)</span>
-<span class="kd">public</span> <span class="nd">@interface</span> <span class="nc">GetMapping</span> <span class="o">{</span>
-    <span class="nc">String</span> <span class="nf">value</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>然后需要一个根据指定包扫描注解对应的类，方法，和方法参数：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Scan</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Get</span><span class="o">&gt;</span> <span class="n">getMappings</span><span class="o">=</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">classes</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
-    <span class="kd">public</span> <span class="nf">Scan</span><span class="o">(</span><span class="nc">String</span> <span class="n">packageName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">scanClassFile</span><span class="o">(</span><span class="n">packageName</span><span class="o">);</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">workAnnotations</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InstantiationException</span> <span class="o">|</span> <span class="nc">IllegalAccessException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">String</span> <span class="nf">getClasspath</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nc">ClassLoader</span> <span class="n">classLoader</span> <span class="o">=</span> <span class="nc">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
-        <span class="no">URL</span> <span class="n">resource</span> <span class="o">=</span> <span class="n">classLoader</span><span class="o">.</span><span class="na">getResource</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">resource</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">resource</span><span class="o">.</span><span class="na">getPath</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 找全部class
-     * @param packageName
-     */</span>
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">scanClassFile</span><span class="o">(</span><span class="nc">String</span> <span class="n">packageName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">String</span> <span class="n">basePath</span><span class="o">=</span> <span class="n">packageName</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="sc">'.'</span><span class="o">,</span><span class="sc">'/'</span><span class="o">);</span>
-        <span class="nc">String</span> <span class="n">classpath</span> <span class="o">=</span> <span class="n">getClasspath</span><span class="o">();</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">File</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-        <span class="nc">File</span> <span class="n">baseDir</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">classpath</span><span class="o">,</span> <span class="n">basePath</span><span class="o">);</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">baseDir</span><span class="o">);</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">();</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">File</span> <span class="n">file</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">file</span><span class="o">.</span><span class="na">exists</span><span class="o">())</span> <span class="k">continue</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">listFiles</span><span class="o">()));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">".class"</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nc">String</span> <span class="n">className</span> <span class="o">=</span> <span class="n">packageName</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">file</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">replace</span><span class="o">(</span><span class="s">".class"</span><span class="o">,</span> <span class="s">""</span><span class="o">);</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">className</span><span class="o">);</span>
-                    <span class="n">classes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">ClassNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 处理异常</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">workAnnotations</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">InstantiationException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
-        <span class="cm">/*过滤掉接口*/</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">collect</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">filter</span><span class="o">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="o">!</span><span class="n">x</span><span class="o">.</span><span class="na">isInterface</span><span class="o">()).</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">aClass</span> <span class="o">:</span> <span class="n">collect</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">Object</span> <span class="n">o</span><span class="o">=</span><span class="kc">null</span><span class="o">;</span>
-            <span class="nc">Method</span><span class="o">[]</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">aClass</span><span class="o">.</span><span class="na">getDeclaredMethods</span><span class="o">();</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nc">Method</span> <span class="n">method</span> <span class="o">:</span> <span class="n">methods</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Annotation</span><span class="o">[]</span> <span class="n">annotations</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getAnnotations</span><span class="o">();</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nc">Annotation</span> <span class="n">annotation</span> <span class="o">:</span> <span class="n">annotations</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">annotation</span> <span class="k">instanceof</span> <span class="nc">GetMapping</span><span class="o">){</span>
-                        <span class="cm">/*共享实例，不然实例变量无效了（因为每个方法都实例化了一个实例对象）*/</span>
-                        <span class="n">o</span><span class="o">=</span><span class="n">getMappingWork</span><span class="o">(</span><span class="n">aClass</span><span class="o">,</span> <span class="n">method</span><span class="o">,</span> <span class="o">(</span><span class="nc">GetMapping</span><span class="o">)</span> <span class="n">annotation</span><span class="o">,</span><span class="n">o</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-
-    <span class="kd">private</span> <span class="nc">Object</span> <span class="nf">getMappingWork</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">aClass</span><span class="o">,</span> <span class="nc">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nc">GetMapping</span> <span class="n">annotation</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">InstantiationException</span><span class="o">,</span> <span class="nc">IllegalAccessException</span> <span class="o">{</span>
-        <span class="nc">Parameter</span><span class="o">[]</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getParameters</span><span class="o">();</span>
-        <span class="nc">String</span><span class="o">[]</span> <span class="n">parameterNames</span><span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="n">parameters</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
-        <span class="nc">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">parameterClasses</span><span class="o">=</span> <span class="k">new</span> <span class="nc">Class</span><span class="o">[</span><span class="n">parameters</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">parameters</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">Parameter</span> <span class="n">parameter</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-            <span class="n">parameterNames</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">parameter</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
-            <span class="n">parameterClasses</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">parameter</span><span class="o">.</span><span class="na">getType</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">==</span><span class="kc">null</span><span class="o">)</span> <span class="n">o</span> <span class="o">=</span> <span class="n">aClass</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
-        <span class="nc">Get</span> <span class="n">getDispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Get</span><span class="o">();</span>
-        <span class="n">getDispatcher</span><span class="o">.</span><span class="na">setInstance</span><span class="o">(</span><span class="n">o</span><span class="o">);</span>
-        <span class="n">getDispatcher</span><span class="o">.</span><span class="na">setMethod</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
-        <span class="n">getDispatcher</span><span class="o">.</span><span class="na">setParameterClasses</span><span class="o">(</span><span class="n">parameterClasses</span><span class="o">);</span>
-        <span class="n">getDispatcher</span><span class="o">.</span><span class="na">setParameterNames</span><span class="o">(</span><span class="n">parameterNames</span><span class="o">);</span>
-        <span class="n">getMappings</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">annotation</span><span class="o">.</span><span class="na">value</span><span class="o">(),</span><span class="n">getDispatcher</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">o</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Get</span><span class="o">&gt;</span> <span class="nf">getGetMappings</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">getMappings</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>最后整合进<code class="language-plaintext highlighter-rouge">DispatcherServlet</code>：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
-    <span class="c1">// todo 扫描注解</span>
-    <span class="nc">Scan</span> <span class="n">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scan</span><span class="o">(</span><span class="s">"servlet"</span><span class="o">);</span>
-    <span class="k">this</span><span class="o">.</span><span class="na">getMappings</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="na">getGetMappings</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>这样就扫描了<code class="language-plaintext highlighter-rouge">servlet</code>包下的所有<code class="language-plaintext highlighter-rouge">@GetMapping</code>注解。测试：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/test"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">test</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">HttpSession</span> <span class="n">session</span><span class="o">){</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-        <span class="n">session</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span><span class="n">key</span><span class="o">);</span>
-        <span class="k">return</span> <span class="s">"redirect:index.jsp"</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">index.jsp</code>:</p>
-
-<div class="language-jsp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;h1&gt;</span>你好!<span class="nt">&lt;c:out </span><span class="na">value=</span><span class="s">"</span><span class="si">${</span><span class="n">user</span><span class="si">}</span><span class="s">"</span><span class="nt">/&gt;&lt;/h1&gt;</span>
-</code></pre></div></div>
-
-<p>设置程序编译参数：<code class="language-plaintext highlighter-rouge">-parameters</code>，它的作用是在编译后的类文件中<strong>保留方法参数的名称</strong>。默认情况下，Java编译器在编译过程中会丢弃方法参数的名称，而只保留参数的顺序。</p>
-
-<p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/test?key=bob</code>正常使用。</p>
-
-<hr />
-
-<p>还可以使用模板引擎渲染内容：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- https://mvnrepository.com/artifact/io.pebbletemplates/pebble --&gt;</span>
-<span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>io.pebbletemplates<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>pebble<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.2.2<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ViewEngine</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">PebbleEngine</span> <span class="n">engine</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nf">ViewEngine</span><span class="o">(</span><span class="nc">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 定义一个ServletLoader用于加载模板:</span>
-        <span class="nc">ServletLoader</span> <span class="n">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ServletLoader</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
-        <span class="c1">// 模板编码:</span>
-        <span class="n">loader</span><span class="o">.</span><span class="na">setCharset</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
-        <span class="c1">// 模板前缀，这里默认模板必须放在`/WEB-INF/templates`目录:</span>
-        <span class="n">loader</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/templates"</span><span class="o">);</span>
-        <span class="c1">// 模板后缀:</span>
-        <span class="n">loader</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
-        <span class="c1">// 创建Pebble实例:</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PebbleEngine</span><span class="o">.</span><span class="na">Builder</span><span class="o">()</span>
-                <span class="o">.</span><span class="na">autoEscaping</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="c1">// 默认打开HTML字符转义，防止XSS攻击</span>
-                <span class="o">.</span><span class="na">cacheActive</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span> <span class="c1">// 禁用缓存使得每次修改模板可以立刻看到效果</span>
-                <span class="o">.</span><span class="na">loader</span><span class="o">(</span><span class="n">loader</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">render</span><span class="o">(</span><span class="nc">ModelAndView</span> <span class="n">mv</span><span class="o">,</span> <span class="nc">Writer</span> <span class="n">writer</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="c1">// 查找模板:</span>
-        <span class="nc">PebbleTemplate</span> <span class="n">template</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">engine</span><span class="o">.</span><span class="na">getTemplate</span><span class="o">(</span><span class="n">mv</span><span class="o">.</span><span class="na">getView</span><span class="o">());</span>
-        <span class="c1">// 渲染:</span>
-        <span class="n">template</span><span class="o">.</span><span class="na">evaluate</span><span class="o">(</span><span class="n">writer</span><span class="o">,</span> <span class="n">mv</span><span class="o">.</span><span class="na">getModel</span><span class="o">());</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>存储页面URL和映射表：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ModelAndView</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">model</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">view</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">getModel</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setModel</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">model</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getView</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">view</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setView</span><span class="o">(</span><span class="nc">String</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">view</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>因此，返回值需要从<code class="language-plaintext highlighter-rouge">String</code>修改为<code class="language-plaintext highlighter-rouge">ModelAndView</code>：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@WebServlet</span><span class="o">(</span><span class="n">urlPatterns</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DispatcherServlet</span> <span class="kd">extends</span> <span class="nc">HttpServlet</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Get</span><span class="o">&gt;</span> <span class="n">getMappings</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="nc">ViewEngine</span> <span class="n">viewEngine</span><span class="o">;</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// todo 扫描注解</span>
-        <span class="nc">Scan</span> <span class="n">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scan</span><span class="o">(</span><span class="s">"servlet2"</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">getMappings</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="na">getGetMappings</span><span class="o">();</span>
-        <span class="c1">// 模板引擎初始化</span>
-        <span class="n">viewEngine</span><span class="o">=</span><span class="k">new</span> <span class="nc">ViewEngine</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getServletContext</span><span class="o">());</span>
-    <span class="o">}</span>
-    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doGet</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">ServletException</span> <span class="o">{</span>
-        <span class="n">resp</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">"text/html"</span><span class="o">);</span>
-        <span class="n">resp</span><span class="o">.</span><span class="na">setCharacterEncoding</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">);</span>
-        <span class="c1">// 根据路径查找GetDispatcher:</span>
-        <span class="nc">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="na">getRequestURI</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">getContextPath</span><span class="o">().</span><span class="na">length</span><span class="o">());</span>
-        <span class="nc">Get</span> <span class="n">get</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getMappings</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">get</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 未找到返回404:</span>
-            <span class="n">resp</span><span class="o">.</span><span class="na">sendError</span><span class="o">(</span><span class="mi">404</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="nc">ModelAndView</span> <span class="n">mv</span><span class="o">;</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">mv</span> <span class="o">=</span> <span class="n">get</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="n">resp</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InvocationTargetException</span> <span class="o">|</span> <span class="nc">IllegalAccessException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 允许返回null:</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">mv</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 允许返回`redirect:`开头的view表示重定向:</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">mv</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"redirect:"</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">resp</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="n">mv</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="mi">9</span><span class="o">));</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 将模板引擎渲染的内容写入响应:</span>
-        <span class="nc">PrintWriter</span> <span class="n">pw</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="na">getWriter</span><span class="o">();</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">viewEngine</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="n">mv</span><span class="o">,</span> <span class="n">pw</span><span class="o">);</span>
-        <span class="n">pw</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>测试：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/test"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">test</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">){</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-        <span class="nc">ModelAndView</span> <span class="n">modelAndView</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ModelAndView</span><span class="o">();</span>
-        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">=</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span><span class="n">key</span><span class="o">);</span>
-        <span class="n">modelAndView</span><span class="o">.</span><span class="na">setModel</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
-        <span class="n">modelAndView</span><span class="o">.</span><span class="na">setView</span><span class="o">(</span><span class="s">"test.html"</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">modelAndView</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">/WEB-INF/templates/test.html</code>内用双大括号引用变量<code class="language-plaintext highlighter-rouge">user</code>即：</p>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-</code></pre></div></div>
-
-<p>访问：<code class="language-plaintext highlighter-rouge">http://localhost:8080/test?key=bob</code>正常使用。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+<p>其中，App自身和JVM的的统计数据都通过JMX收集并发送给本机的一个Agent，Agent再将数据发送至监控服务器，最后以可视化的形式将监控数据通过Web等形式展示给用户。常用的监控系统有开源的<a href="https://prometheus.io/">Prometheus</a>和以云服务方式提供的<a href="https://www.datadoghq.com/">DataDog</a>等。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
