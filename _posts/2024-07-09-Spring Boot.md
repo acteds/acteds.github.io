@@ -1630,7 +1630,236 @@ public class Application {
 
 现在，Spring Boot不再自动创建`DataSource`、`JdbcTemplate`和`DataSourceTransactionManager`了。
 
+还可以通过配置文件禁用：
+
+```yaml
+spring:
+  autoconfigure:
+    exclude: 
+      - com.example.autoconfig.MyAutoConfiguration
+```
+
+## 使用自动配置
+
+`spring.factories `这个文件的作用是配置 Spring Boot 的自动配置机制，通过指定自定义的配置类，使得 Spring Boot 能够在应用启动时自动加载和配置该类中的 beans 和相关设置。
+
+具体作用包括：
+
+1. **自定义配置**：允许开发者定义应用启动时需要的自定义 bean 和配置信息，确保应用具备所需的功能。
+
+2. **简化配置**：通过自动配置，减少手动配置的复杂性，提供开箱即用的功能，提升开发效率。
+
+3. **模块化**：可以将应用的不同功能模块分开，方便管理和维护。例如，将与事件传输相关的配置放在 `TransmitterConfig` 中。
+
+4. **与 Spring Boot 生态兼容**：可以方便地与其他 Spring Boot 自动配置模块结合使用，提供一致的开发体验。
+
+通常，在应用中使用自动配置能够使得设置更为简洁且易于理解。
+
 ------
+
+**在自己的模块使用**
+
+假设启动类为：`com.test.TestApplication`，现在，新建了一个类：`com.test2.Demo`:
+
+```java
+package com.test2;
+public class Demo {}
+```
+
+想要将这个类注入IOC容器有以下方法：
+
+- 在启动类上打上注释`@Import(Demo.class)` ，然后可以为`Demo`打上注释`@Configuration`，这是可选的。
+
+- 为`Demo`打上注释`@Component`或其他同类注释，然后在主启动类上指定扫描路径`@ComponentScan(basePackages = {"com.test", "com.test2"})`。
+
+- 使用XMl配置。`<beans><bean id="demo" class="com.test2.Demo"/></beans>`
+
+- 在resources下面创建`META-INF/spring.factories`文件，内容为：
+
+  ```text
+  org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+   com.test2.Demo
+  ```
+
+------
+
+使用 Spring Boot 的自动配置机制，如果其他项目引入了你的包，它会根据 `spring.factories` 文件中的配置自动加载你定义的配置类。这是 Spring Boot 的一个重要特性，使得你的模块可以开箱即用。
+
+当主启动类上使用了 `@EnableAutoConfiguration` 时，Spring Boot 会在启动过程中读取依赖包中的 `spring.factories` 文件，以确定需要自动装配哪些配置类。主启动类通常会使用 `@SpringBootApplication` 注解，其中包含了 `@EnableAutoConfiguration`。
+
+- 在应用启动时，Spring Boot 会扫描类路径下的所有 JAR 包，查找 `META-INF/spring.factories` 文件。这个文件中列出了所有需要自动配置的类。
+- Spring Boot 会根据 `spring.factories` 文件中的配置，尝试加载列出的自动配置类。这些类通常使用条件注解来判断是否应该被实例化和配置。
+- 自动配置类中的条件注解（如 `@ConditionalOnClass`、`@ConditionalOnMissingBean` 等）会根据当前环境的条件进行评估，决定是否创建相应的 Beans。
+
+
+
+**关系与优先级**
+
+在 Spring Boot 中，依赖包内的 `application.yml` 和主模块的 `application.yml` 之间的关系主要体现在配置的优先级和覆盖规则上。
+
+Spring Boot 会按照一定的顺序加载配置文件，通常包括：
+
+- 主模块的 `src/main/resources/application.yml`
+- 依赖包中的 `META-INF/application.yml`
+- 依赖包中的 `application.yml`
+
+**优先级**：
+
+- 主模块中的 `application.yml` 通常具有更高的优先级，意味着如果同一个属性在主模块的配置文件和依赖包的配置文件中都有定义，主模块中的值将覆盖依赖包中的值。
+- 这使得主模块能够定制或修改依赖包提供的默认配置。
+
+
+
+**注解的使用**
+
+可以在依赖包中使用 `@SpringBootApplication`。在创建自定义 Spring Boot Starter 时，可以在 Starter 内部使用 `@SpringBootApplication`，但通常建议将其放在主应用中，而不是依赖包中。
+
+**注意事项**
+
+- **包扫描**：`@SpringBootApplication` 注解默认会扫描该注解所在包及其子包。如果在依赖包中使用，确保该包结构与主应用的包结构相符，以便能够正确加载所有组件。
+- **启动类冲突**：如果多个依赖包中都有 `@SpringBootApplication` 注解的启动类，可能会导致启动冲突。在这种情况下，通常建议只有一个启动类。
+- **避免不必要的复杂性**：如果你的依赖包只是提供一些组件或服务，建议不在依赖包中使用 `@SpringBootApplication`，而是在主应用中使用，并通过配置类或其他方式来加载依赖包中的组件。
+
+基本上你可以在依赖包中使用所有的 Spring Boot 注解，一般情况下，只会使用 `@ComponentScan`指定包扫描注解。
+
+
+
+------
+
+要创建一个自定义的自动配置类，可以按照以下步骤进行：
+
+**创建配置类**：首先，定义一个配置类，并添加 `@Configuration` 注解。这将告知 Spring Boot 这是一个配置类。
+
+```java
+package com.example.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MyCustomConfig {
+    
+    @Bean
+    public MyService myService() {
+        return new MyService();
+    }
+
+    // 可以添加更多的 bean
+}
+```
+
+**定义自动配置类**：创建一个自动配置类，通常与其他配置文件放在同一包下，或放在 `spring.factories` 文件中指定的路径中。
+
+```java
+package com.example.autoconfig;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MyAutoConfiguration {
+    // 可选择定义 @Bean 方法
+}
+```
+
+**创建 `spring.factories` 文件**：在 `src/main/resources/META-INF` 目录下创建 `spring.factories` 文件，指定自动配置类。
+
+```properties
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.example.autoconfig.MyAutoConfiguration
+```
+
+------
+
+如果你有多个配置类，并希望它们都能作为自动配置的一部分，可以按照以下方式组织和实现：
+
+**创建多个配置类**：为每个配置功能创建独立的配置类，并使用 `@Configuration` 注解标记。
+
+```java
+package com.example.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MyServiceConfig {
+    @Bean
+    public MyService myService() {
+        return new MyService();
+    }
+}
+
+@Configuration
+public class AnotherServiceConfig {
+    @Bean
+    public AnotherService anotherService() {
+        return new AnotherService();
+    }
+}
+```
+
+**自动配置类**：创建一个主的自动配置类，将所有其他配置类导入到该类中。
+
+```java
+package com.example.autoconfig;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import({MyServiceConfig.class, AnotherServiceConfig.class})
+public class MyAutoConfiguration {
+    // 可以选择定义更多的 bean
+}
+```
+
+**`spring.factories` 文件**：确保在 `spring.factories` 文件中仅指向主自动配置类。
+
+```properties
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.example.autoconfig.MyAutoConfiguration
+```
+
+**条件加载（可选）**：如果需要根据特定条件加载某些配置类，可以在配置类中使用条件注解，如 `@ConditionalOnProperty`、`@ConditionalOnClass` 等。
+
+```java
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+@Configuration
+@ConditionalOnProperty(name = "my.feature.enabled", havingValue = "true")
+public class MyFeatureConfig {
+    @Bean
+    public MyFeature myFeature() {
+        return new MyFeature();
+    }
+}
+```
+
+------
+
+**使用多个启动配置**
+
+如果你想在 `spring.factories` 文件中定义多个自动配置类，可以在同一行中用逗号分隔多个类名，或者在新的一行中列出它们。以下是几种常见的写法：
+
+方法一：用逗号分隔
+
+```properties
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.example.autoconfig.FirstAutoConfiguration,\
+  com.example.autoconfig.SecondAutoConfiguration
+```
+
+方法二：逐行列出
+
+```properties
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.example.autoconfig.FirstAutoConfiguration
+com.example.autoconfig.SecondAutoConfiguration
+```
+
+自动配置的顺序可能会影响行为，确保在定义时考虑到各个配置类之间的依赖关系。
+
+## 主从数据库
 
 要实现主从数据库支持，首先需要把主从数据库配置写到`application.yml`中，仍然按照Spring Boot默认的格式写，但`datasource`改为`datasource-master`和`datasource-slave`：
 
@@ -1990,6 +2219,8 @@ public class Application {
 ```
 
 访问数据库可以用之前的。
+
+
 
 ## Filter
 
