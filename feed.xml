@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-10-28T12:49:38+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-02T18:07:44+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
@@ -3976,7 +3976,240 @@ INFO 13510 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomc
 
 <p>现在，Spring Boot不再自动创建<code class="language-plaintext highlighter-rouge">DataSource</code>、<code class="language-plaintext highlighter-rouge">JdbcTemplate</code>和<code class="language-plaintext highlighter-rouge">DataSourceTransactionManager</code>了。</p>
 
+<p>还可以通过配置文件禁用：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">autoconfigure</span><span class="pi">:</span>
+    <span class="na">exclude</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">com.example.autoconfig.MyAutoConfiguration</span>
+</code></pre></div></div>
+
+<h2 id="使用自动配置">使用自动配置</h2>
+
+<p><code class="language-plaintext highlighter-rouge">spring.factories </code>这个文件的作用是配置 Spring Boot 的自动配置机制，通过指定自定义的配置类，使得 Spring Boot 能够在应用启动时自动加载和配置该类中的 beans 和相关设置。</p>
+
+<p>具体作用包括：</p>
+
+<ol>
+  <li>
+    <p><strong>自定义配置</strong>：允许开发者定义应用启动时需要的自定义 bean 和配置信息，确保应用具备所需的功能。</p>
+  </li>
+  <li>
+    <p><strong>简化配置</strong>：通过自动配置，减少手动配置的复杂性，提供开箱即用的功能，提升开发效率。</p>
+  </li>
+  <li>
+    <p><strong>模块化</strong>：可以将应用的不同功能模块分开，方便管理和维护。例如，将与事件传输相关的配置放在 <code class="language-plaintext highlighter-rouge">TransmitterConfig</code> 中。</p>
+  </li>
+  <li>
+    <p><strong>与 Spring Boot 生态兼容</strong>：可以方便地与其他 Spring Boot 自动配置模块结合使用，提供一致的开发体验。</p>
+  </li>
+</ol>
+
+<p>通常，在应用中使用自动配置能够使得设置更为简洁且易于理解。</p>
+
 <hr />
+
+<p><strong>在自己的模块使用</strong></p>
+
+<p>假设启动类为：<code class="language-plaintext highlighter-rouge">com.test.TestApplication</code>，现在，新建了一个类：<code class="language-plaintext highlighter-rouge">com.test2.Demo</code>:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.test2</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Demo</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>想要将这个类注入IOC容器有以下方法：</p>
+
+<ul>
+  <li>
+    <p>在启动类上打上注释<code class="language-plaintext highlighter-rouge">@Import(Demo.class)</code> ，然后可以为<code class="language-plaintext highlighter-rouge">Demo</code>打上注释<code class="language-plaintext highlighter-rouge">@Configuration</code>，这是可选的。</p>
+  </li>
+  <li>
+    <p>为<code class="language-plaintext highlighter-rouge">Demo</code>打上注释<code class="language-plaintext highlighter-rouge">@Component</code>或其他同类注释，然后在主启动类上指定扫描路径<code class="language-plaintext highlighter-rouge">@ComponentScan(basePackages = {"com.test", "com.test2"})</code>。</p>
+  </li>
+  <li>
+    <p>使用XMl配置。<code class="language-plaintext highlighter-rouge">&lt;beans&gt;&lt;bean id="demo" class="com.test2.Demo"/&gt;&lt;/beans&gt;</code></p>
+  </li>
+  <li>
+    <p>在resources下面创建<code class="language-plaintext highlighter-rouge">META-INF/spring.factories</code>文件，内容为：</p>
+
+    <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ com.test2.Demo
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<p>使用 Spring Boot 的自动配置机制，如果其他项目引入了你的包，它会根据 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件中的配置自动加载你定义的配置类。这是 Spring Boot 的一个重要特性，使得你的模块可以开箱即用。</p>
+
+<p>当主启动类上使用了 <code class="language-plaintext highlighter-rouge">@EnableAutoConfiguration</code> 时，Spring Boot 会在启动过程中读取依赖包中的 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件，以确定需要自动装配哪些配置类。主启动类通常会使用 <code class="language-plaintext highlighter-rouge">@SpringBootApplication</code> 注解，其中包含了 <code class="language-plaintext highlighter-rouge">@EnableAutoConfiguration</code>。</p>
+
+<ul>
+  <li>在应用启动时，Spring Boot 会扫描类路径下的所有 JAR 包，查找 <code class="language-plaintext highlighter-rouge">META-INF/spring.factories</code> 文件。这个文件中列出了所有需要自动配置的类。</li>
+  <li>Spring Boot 会根据 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件中的配置，尝试加载列出的自动配置类。这些类通常使用条件注解来判断是否应该被实例化和配置。</li>
+  <li>自动配置类中的条件注解（如 <code class="language-plaintext highlighter-rouge">@ConditionalOnClass</code>、<code class="language-plaintext highlighter-rouge">@ConditionalOnMissingBean</code> 等）会根据当前环境的条件进行评估，决定是否创建相应的 Beans。</li>
+</ul>
+
+<p><strong>关系与优先级</strong></p>
+
+<p>在 Spring Boot 中，依赖包内的 <code class="language-plaintext highlighter-rouge">application.yml</code> 和主模块的 <code class="language-plaintext highlighter-rouge">application.yml</code> 之间的关系主要体现在配置的优先级和覆盖规则上。</p>
+
+<p>Spring Boot 会按照一定的顺序加载配置文件，通常包括：</p>
+
+<ul>
+  <li>主模块的 <code class="language-plaintext highlighter-rouge">src/main/resources/application.yml</code></li>
+  <li>依赖包中的 <code class="language-plaintext highlighter-rouge">META-INF/application.yml</code></li>
+  <li>依赖包中的 <code class="language-plaintext highlighter-rouge">application.yml</code></li>
+</ul>
+
+<p><strong>优先级</strong>：</p>
+
+<ul>
+  <li>主模块中的 <code class="language-plaintext highlighter-rouge">application.yml</code> 通常具有更高的优先级，意味着如果同一个属性在主模块的配置文件和依赖包的配置文件中都有定义，主模块中的值将覆盖依赖包中的值。</li>
+  <li>这使得主模块能够定制或修改依赖包提供的默认配置。</li>
+</ul>
+
+<p><strong>注解的使用</strong></p>
+
+<p>可以在依赖包中使用 <code class="language-plaintext highlighter-rouge">@SpringBootApplication</code>。在创建自定义 Spring Boot Starter 时，可以在 Starter 内部使用 <code class="language-plaintext highlighter-rouge">@SpringBootApplication</code>，但通常建议将其放在主应用中，而不是依赖包中。</p>
+
+<p><strong>注意事项</strong></p>
+
+<ul>
+  <li><strong>包扫描</strong>：<code class="language-plaintext highlighter-rouge">@SpringBootApplication</code> 注解默认会扫描该注解所在包及其子包。如果在依赖包中使用，确保该包结构与主应用的包结构相符，以便能够正确加载所有组件。</li>
+  <li><strong>启动类冲突</strong>：如果多个依赖包中都有 <code class="language-plaintext highlighter-rouge">@SpringBootApplication</code> 注解的启动类，可能会导致启动冲突。在这种情况下，通常建议只有一个启动类。</li>
+  <li><strong>避免不必要的复杂性</strong>：如果你的依赖包只是提供一些组件或服务，建议不在依赖包中使用 <code class="language-plaintext highlighter-rouge">@SpringBootApplication</code>，而是在主应用中使用，并通过配置类或其他方式来加载依赖包中的组件。</li>
+</ul>
+
+<p>基本上你可以在依赖包中使用所有的 Spring Boot 注解，一般情况下，只会使用 <code class="language-plaintext highlighter-rouge">@ComponentScan</code>指定包扫描注解。</p>
+
+<hr />
+
+<p>要创建一个自定义的自动配置类，可以按照以下步骤进行：</p>
+
+<p><strong>创建配置类</strong>：首先，定义一个配置类，并添加 <code class="language-plaintext highlighter-rouge">@Configuration</code> 注解。这将告知 Spring Boot 这是一个配置类。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.config</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomConfig</span> <span class="o">{</span>
+    
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">MyService</span> <span class="nf">myService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MyService</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 可以添加更多的 bean</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>定义自动配置类</strong>：创建一个自动配置类，通常与其他配置文件放在同一包下，或放在 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件中指定的路径中。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.autoconfig</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyAutoConfiguration</span> <span class="o">{</span>
+    <span class="c1">// 可选择定义 @Bean 方法</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>创建 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件</strong>：在 <code class="language-plaintext highlighter-rouge">src/main/resources/META-INF</code> 目录下创建 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件，指定自动配置类。</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="p">=</span><span class="se">\
+</span><span class="s">com.example.autoconfig.MyAutoConfiguration</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>如果你有多个配置类，并希望它们都能作为自动配置的一部分，可以按照以下方式组织和实现：</p>
+
+<p><strong>创建多个配置类</strong>：为每个配置功能创建独立的配置类，并使用 <code class="language-plaintext highlighter-rouge">@Configuration</code> 注解标记。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.config</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyServiceConfig</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">MyService</span> <span class="nf">myService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MyService</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnotherServiceConfig</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">AnotherService</span> <span class="nf">anotherService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">AnotherService</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>自动配置类</strong>：创建一个主的自动配置类，将所有其他配置类导入到该类中。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.example.autoconfig</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Import</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="nd">@Import</span><span class="o">({</span><span class="nc">MyServiceConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">AnotherServiceConfig</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyAutoConfiguration</span> <span class="o">{</span>
+    <span class="c1">// 可以选择定义更多的 bean</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">spring.factories</code> 文件</strong>：确保在 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件中仅指向主自动配置类。</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="p">=</span><span class="se">\
+</span><span class="s">com.example.autoconfig.MyAutoConfiguration</span>
+</code></pre></div></div>
+
+<p><strong>条件加载（可选）</strong>：如果需要根据特定条件加载某些配置类，可以在配置类中使用条件注解，如 <code class="language-plaintext highlighter-rouge">@ConditionalOnProperty</code>、<code class="language-plaintext highlighter-rouge">@ConditionalOnClass</code> 等。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.condition.ConditionalOnProperty</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="nd">@ConditionalOnProperty</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"my.feature.enabled"</span><span class="o">,</span> <span class="n">havingValue</span> <span class="o">=</span> <span class="s">"true"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFeatureConfig</span> <span class="o">{</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">MyFeature</span> <span class="nf">myFeature</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MyFeature</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p><strong>使用多个启动配置</strong></p>
+
+<p>如果你想在 <code class="language-plaintext highlighter-rouge">spring.factories</code> 文件中定义多个自动配置类，可以在同一行中用逗号分隔多个类名，或者在新的一行中列出它们。以下是几种常见的写法：</p>
+
+<p>方法一：用逗号分隔</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="p">=</span><span class="se">\
+</span>  <span class="s">com.example.autoconfig.FirstAutoConfiguration,</span><span class="se">\
+</span>  <span class="s">com.example.autoconfig.SecondAutoConfiguration</span>
+</code></pre></div></div>
+
+<p>方法二：逐行列出</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span><span class="p">=</span><span class="se">\
+</span>  <span class="s">com.example.autoconfig.FirstAutoConfiguration</span>
+<span class="err">com.example.autoconfig.SecondAutoConfiguration</span>
+</code></pre></div></div>
+
+<p>自动配置的顺序可能会影响行为，确保在定义时考虑到各个配置类之间的依赖关系。</p>
+
+<h2 id="主从数据库">主从数据库</h2>
 
 <p>要实现主从数据库支持，首先需要把主从数据库配置写到<code class="language-plaintext highlighter-rouge">application.yml</code>中，仍然按照Spring Boot默认的格式写，但<code class="language-plaintext highlighter-rouge">datasource</code>改为<code class="language-plaintext highlighter-rouge">datasource-master</code>和<code class="language-plaintext highlighter-rouge">datasource-slave</code>：</p>
 
@@ -7977,13 +8210,13 @@ com.aotmd.test.$Proxy5
       <td>方法<strong>入参</strong>切点函数</td>
       <td><code class="language-plaintext highlighter-rouge">args()</code></td>
       <td><strong>类名</strong></td>
-      <td>通过判别目标类方法运行时入参对象的类型定义指定连接点。如<code class="language-plaintext highlighter-rouge">args(com.baobaotao.Waiter)</code>表示所有有且仅有一个按类型匹配于Waiter的入参的方法。</td>
+      <td>通过判别目标类方法运行时<strong>入参对象的类型</strong>定义指定连接点。如<code class="language-plaintext highlighter-rouge">args(com.baobaotao.Waiter)</code>表示所有有且仅有一个按类型匹配于Waiter的入参的方法。</td>
     </tr>
     <tr>
       <td>同上</td>
       <td><code class="language-plaintext highlighter-rouge">@args()</code></td>
       <td>类型<strong>注解类名</strong></td>
-      <td>通过判别目标方法的运行时入参对象的类是否标注特定注解来指定连接点。如<code class="language-plaintext highlighter-rouge">@args(com.baobaotao.Monitorable)</code>表示任何这样的一个目标方法：它有一个入参且入参对象的类标注<code class="language-plaintext highlighter-rouge">@Monitorable</code>注解。</td>
+      <td>通过判别目标方法的运行时<strong>入参对象的类是否标注特定注解</strong>来指定连接点。如<code class="language-plaintext highlighter-rouge">@args(com.baobaotao.Monitorable)</code>表示任何这样的一个目标方法：它有一个入参且入参对象的类标注<code class="language-plaintext highlighter-rouge">@Monitorable</code>注解。</td>
     </tr>
     <tr>
       <td>目标类切点函数</td>
@@ -8001,13 +8234,13 @@ com.aotmd.test.$Proxy5
       <td>同上</td>
       <td><code class="language-plaintext highlighter-rouge">@within()</code></td>
       <td>类型<strong>注解类名</strong></td>
-      <td>假如目标类按类型匹配于某个类A，且类A标注了特定注解，则目标类的所有连接点匹配这个切点。如<code class="language-plaintext highlighter-rouge">@within(com.baobaotao.Monitorable)</code>定义的切点，假如<code class="language-plaintext highlighter-rouge">Waiter</code>类标注了<code class="language-plaintext highlighter-rouge">@Monitorable</code>注解，则<code class="language-plaintext highlighter-rouge">Waiter</code>以及<code class="language-plaintext highlighter-rouge">Waiter</code>实现类<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>类的所有连接点都匹配。</td>
+      <td>假如目标类按类型匹配于某个类A，且类A标注了特定注解，则目标类的所有连接点匹配这个切点。如<code class="language-plaintext highlighter-rouge">@within(com.baobaotao.Monitorable)</code>定义的切点，假如<code class="language-plaintext highlighter-rouge">Waiter</code>类标注了<code class="language-plaintext highlighter-rouge">@Monitorable</code>注解，则<code class="language-plaintext highlighter-rouge">Waiter</code>以及<code class="language-plaintext highlighter-rouge">Waiter</code>实现类<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>类的所有连接点都匹配。<strong><code class="language-plaintext highlighter-rouge">@within</code>会匹配到标注了指定注解的类，并且在该类的子类中，那些没有重写的父类方法也会被匹配到。</strong></td>
     </tr>
     <tr>
       <td>同上</td>
       <td><code class="language-plaintext highlighter-rouge">@target()</code></td>
       <td>类型<strong>注解类名</strong></td>
-      <td>目标类标注了特定注解，则目标类所有连接点匹配该切点。如<code class="language-plaintext highlighter-rouge">@target(com.baobaotao.Monitorable)</code>，假如<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>标注了<code class="language-plaintext highlighter-rouge">@Monitorable</code>，则<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>所有连接点匹配切点。</td>
+      <td>目标类标注了特定注解，则目标类所有连接点匹配该切点。如<code class="language-plaintext highlighter-rouge">@target(com.baobaotao.Monitorable)</code>，假如<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>标注了<code class="language-plaintext highlighter-rouge">@Monitorable</code>，则<code class="language-plaintext highlighter-rouge">NaiveWaiter</code>所有连接点匹配切点。<strong><code class="language-plaintext highlighter-rouge">@target</code>只匹配标注了指定注解的类。不涉及任何其他类。</strong></td>
     </tr>
     <tr>
       <td><strong>代理类</strong>切点函数</td>
@@ -8481,6 +8714,147 @@ com.aotmd.test.$Proxy5
 删除
 修改123
 [Metrics] class com.aotmd.test.TDemo7-&gt;modify: 4ms
+</code></pre></div></div>
+
+<h3 id="使用aop精准获取入参值">使用AOP精准获取入参值</h3>
+
+<p>添加依赖：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-aop<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>启动类添加注解：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@EnableAspectJAutoProxy</span>
+</code></pre></div></div>
+
+<p>AOP：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Aspect</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CollectionIdAspect</span> <span class="o">{</span>
+    <span class="cm">/**
+     * 本地线程存储，记录集合ID
+     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">ThreadLocal</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">collectionIdHolder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ThreadLocal</span><span class="o">&lt;&gt;();</span>
+
+    <span class="cm">/**
+     * 增强方法，记录被@CollectionID标注的指定入参值。
+     *
+     * 此方法使用 AOP 拦截标注了 @CollectionIdRequired 注解的方法，
+     * 获取并存储参数中被 @CollectionID 注解标注的值到 ThreadLocal 中。
+     *
+     * @param joinPoint 包含连接点信息的对象，提供方法的签名和参数等信息。
+     * @return 被增强方法的返回值。
+     * @throws Throwable 可能抛出的异常，供上层处理。
+     */</span>
+    <span class="nd">@Around</span><span class="o">(</span><span class="s">"@annotation(CollectionIdRequired)"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">around</span><span class="o">(</span><span class="nc">ProceedingJoinPoint</span> <span class="n">joinPoint</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Throwable</span> <span class="o">{</span>
+        <span class="c1">// 获取当前方法的签名，包含方法名、参数类型等信息</span>
+        <span class="nc">MethodSignature</span> <span class="n">signature</span> <span class="o">=</span> <span class="o">(</span><span class="nc">MethodSignature</span><span class="o">)</span> <span class="n">joinPoint</span><span class="o">.</span><span class="na">getSignature</span><span class="o">();</span>
+
+        <span class="c1">// 获取当前被拦截的方法</span>
+        <span class="nc">Method</span> <span class="n">method</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="na">getMethod</span><span class="o">();</span>
+
+        <span class="c1">// 获取方法的参数列表</span>
+        <span class="nc">Parameter</span><span class="o">[]</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getParameters</span><span class="o">();</span>
+
+        <span class="c1">// 获取被拦截方法的实际参数值</span>
+        <span class="nc">Object</span><span class="o">[]</span> <span class="n">args</span> <span class="o">=</span> <span class="n">joinPoint</span><span class="o">.</span><span class="na">getArgs</span><span class="o">();</span>
+
+        <span class="c1">// 初始化集合ID</span>
+        <span class="nc">String</span> <span class="n">collectionID</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="c1">// 遍历参数列表，查找被 @CollectionID 注解标注的参数</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">parameters</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="c1">// 检查当前参数是否有 @CollectionID 注解</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">parameters</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="nc">CollectionID</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c1">// 获取对应的实际参数值</span>
+                <span class="nc">Object</span> <span class="n">arg</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+                <span class="c1">// 将参数值转换为字符串，赋值给 collectionID</span>
+                <span class="n">collectionID</span> <span class="o">=</span> <span class="n">arg</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">arg</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// 将获取到的 collectionID 设置到 ThreadLocal 中</span>
+            <span class="n">collectionIdHolder</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">collectionID</span><span class="o">);</span>
+
+            <span class="c1">// 执行被增强的方法，并返回其结果</span>
+            <span class="k">return</span> <span class="n">joinPoint</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="c1">// 清理 ThreadLocal 中的值，以避免内存泄漏</span>
+            <span class="n">collectionIdHolder</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 获取本地线程存储内的集合ID
+     * @return
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">String</span> <span class="nf">getCollectionID</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">collectionIdHolder</span><span class="o">.</span><span class="na">get</span><span class="o">();</span> <span class="c1">// 获取当前线程的 COLLECTION_ID</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>作用于方法的注解，用来标注需要环绕处理的方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Target</span><span class="o">(</span><span class="nc">ElementType</span><span class="o">.</span><span class="na">METHOD</span><span class="o">)</span>
+<span class="nd">@Retention</span><span class="o">(</span><span class="nc">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="nc">CollectionIdRequired</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>作用于方法入参的注解，用来标注需要获取方法入参的形参：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Target</span><span class="o">(</span><span class="nc">ElementType</span><span class="o">.</span><span class="na">PARAMETER</span><span class="o">)</span> <span class="c1">// 该注解用于参数</span>
+<span class="nd">@Retention</span><span class="o">(</span><span class="nc">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span> <span class="c1">// 在运行时可访问</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="nc">CollectionID</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>注解使用示例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 向指定的表单（collectionName）中，插入一条新的数据。
+ *
+ * @param tenantID     租户ID
+ * @param collectionID 表名、集合名
+ * @param dataJson     新数据
+ * @param author       操作人
+ * @return 插入影响行数
+ * @throws IOException
+ */</span>
+<span class="nd">@Override</span>
+<span class="nd">@CollectionIdRequired</span>
+<span class="kd">public</span> <span class="nc">Wrapper</span> <span class="nf">insertFormData</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantID</span><span class="o">,</span> <span class="nd">@CollectionID</span> <span class="nc">String</span> <span class="n">collectionID</span><span class="o">,</span> <span class="nc">String</span> <span class="n">dataJson</span><span class="o">,</span> <span class="nc">String</span> <span class="n">author</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>这样就将<code class="language-plaintext highlighter-rouge">collectionID</code>的值放到本地线程存储中了，要获取就通过：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">collectionID</span> <span class="o">=</span> <span class="nc">CollectionIdAspect</span><span class="o">.</span><span class="na">getCollectionID</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>若还有拿入参名称的需求，请保留入参名称：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;build&gt;</span>
+    <span class="nt">&lt;plugins&gt;</span>
+        <span class="nt">&lt;plugin&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>3.8.1<span class="nt">&lt;/version&gt;</span> <span class="c">&lt;!-- 或你的适当版本 --&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="nt">&lt;source&gt;</span>1.8<span class="nt">&lt;/source&gt;</span>
+                <span class="nt">&lt;target&gt;</span>1.8<span class="nt">&lt;/target&gt;</span>
+                <span class="nt">&lt;compilerArgs&gt;</span>
+                    <span class="nt">&lt;arg&gt;</span>-parameters<span class="nt">&lt;/arg&gt;</span> <span class="c">&lt;!-- 保留参数名称 --&gt;</span>
+                <span class="nt">&lt;/compilerArgs&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;/plugin&gt;</span>
+    <span class="nt">&lt;/plugins&gt;</span>
+<span class="nt">&lt;/build&gt;</span>
 </code></pre></div></div>
 
 <h3 id="aop原理">AOP原理</h3>
