@@ -483,6 +483,14 @@
     } ,
   
     {
+      "title"    : "MongoDB",
+      "category" : "Java",
+      
+      "url"      : "/2024/09/23/MongoDB/",
+      "keywords" : "Java"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
