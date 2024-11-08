@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-06T01:34:31+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB</title><link href="/2024/09/23/MongoDB/" rel="alternate" type="text/html" title="MongoDB" /><published>2024-09-23T00:00:00+08:00</published><updated>2024-09-23T00:00:00+08:00</updated><id>/2024/09/23/MongoDB</id><content type="html" xml:base="/2024/09/23/MongoDB/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-08T22:59:34+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB</title><link href="/2024/09/23/MongoDB/" rel="alternate" type="text/html" title="MongoDB" /><published>2024-09-23T00:00:00+08:00</published><updated>2024-09-23T00:00:00+08:00</updated><id>/2024/09/23/MongoDB</id><content type="html" xml:base="/2024/09/23/MongoDB/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>MongoDB是一个非关系型数据库。</p>
 
@@ -1999,7 +1999,952 @@
 
 <p>这样可以轻松处理多个字段的转换和聚合。</p>
 
-<p>这样打印的值是科学计数法，如果需要打印普通值，则需要使用：<code class="language-plaintext highlighter-rouge">totalAmount.bigDecimalValue().toPlainString()</code>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
+<p>这样打印的值是科学计数法，如果需要打印普通值，则需要使用：<code class="language-plaintext highlighter-rouge">totalAmount.bigDecimalValue().toPlainString()</code>。</p>
+
+<h2 id="专有document与map的区别">专有Document与Map的区别</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Document</code> 和 <code class="language-plaintext highlighter-rouge">Map</code> 在 MongoDB 中有一些相似性，但它们在使用和语义上有显著的区别。以下是它们的主要区别：</p>
+
+<ol>
+  <li><strong>类型和设计目的</strong></li>
+</ol>
+
+<p><strong><code class="language-plaintext highlighter-rouge">Document</code></strong>：在 MongoDB 中，<code class="language-plaintext highlighter-rouge">Document</code> 是一个封装了 BSON 数据的对象，通常用来表示一个文档（即 MongoDB 中的一条记录）。<code class="language-plaintext highlighter-rouge">Document</code> 允许你以键值对的形式存储和查询数据，同时支持嵌套结构，数据的序列化和反序列化是 MongoDB 的核心功能之一。<code class="language-plaintext highlighter-rouge">Document</code> 是 MongoDB Java 驱动中的一个重要类，继承自 <code class="language-plaintext highlighter-rouge">BsonDocument</code>，它是为与 MongoDB 交互而设计的。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 是 Java 中的一个接口，表示一个映射关系，即将键映射到值的集合。<code class="language-plaintext highlighter-rouge">Map</code> 支持多种实现，如 <code class="language-plaintext highlighter-rouge">HashMap</code>、<code class="language-plaintext highlighter-rouge">TreeMap</code> 等，通常用于存储任意的键值对数据。</p>
+
+<ol>
+  <li><strong>嵌套结构支持</strong></li>
+</ol>
+
+<p><strong><code class="language-plaintext highlighter-rouge">Document</code></strong>：<code class="language-plaintext highlighter-rouge">Document</code> 本身是一个高度结构化的对象，能够嵌套其他 <code class="language-plaintext highlighter-rouge">Document</code> 或 <code class="language-plaintext highlighter-rouge">List</code> 等类型。这意味着你可以轻松地表示复杂的层次化数据结构。例如，可以存储一个嵌套的对象，表示 MongoDB 中的嵌套文档。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Document</span><span class="o">();</span>
+<span class="n">person</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"John Doe"</span><span class="o">);</span>
+<span class="n">person</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"address"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Document</span><span class="o">(</span><span class="s">"street"</span><span class="o">,</span> <span class="s">"123 Main St"</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"Anytown"</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>这个 <code class="language-plaintext highlighter-rouge">Document</code> 会被存储为一个 MongoDB 文档，<code class="language-plaintext highlighter-rouge">address</code> 是一个子文档。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 只是一个简单的键值对集合，默认没有内建的方式来表示嵌套结构。如果你想在 <code class="language-plaintext highlighter-rouge">Map</code> 中表示嵌套结构，需要手动创建嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 或使用其他数据结构。例如：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">personMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">addressMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">addressMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"street"</span><span class="o">,</span> <span class="s">"123 Main St"</span><span class="o">);</span>
+<span class="n">addressMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"Anytown"</span><span class="o">);</span>
+<span class="n">personMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"John Doe"</span><span class="o">);</span>
+<span class="n">personMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"address"</span><span class="o">,</span> <span class="n">addressMap</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>虽然你可以在 <code class="language-plaintext highlighter-rouge">Map</code> 中嵌套 <code class="language-plaintext highlighter-rouge">Map</code>，但是 <code class="language-plaintext highlighter-rouge">Map</code> 本身并不专门设计来处理 MongoDB 的 BSON 类型数据，它只是通用的 Java 数据结构。</p>
+
+<ol>
+  <li><strong>数据类型支持</strong>
+<strong><code class="language-plaintext highlighter-rouge">Document</code></strong>：<code class="language-plaintext highlighter-rouge">Document</code> 是专为 MongoDB 的 BSON 数据设计的，因此它支持 MongoDB 支持的所有数据类型，包括 <code class="language-plaintext highlighter-rouge">ObjectId</code>、<code class="language-plaintext highlighter-rouge">Decimal128</code>、<code class="language-plaintext highlighter-rouge">Binary</code>、<code class="language-plaintext highlighter-rouge">Date</code>、<code class="language-plaintext highlighter-rouge">Timestamp</code> 等。你可以在 <code class="language-plaintext highlighter-rouge">Document</code> 中使用这些类型，而无需显式地进行转换。</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">document</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Document</span><span class="o">();</span>
+<span class="n">document</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"createdAt"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Date</span><span class="o">());</span>
+<span class="n">document</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"userId"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ObjectId</span><span class="o">());</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 是一个通用的数据结构，可以存储任何类型的数据，但不会自动处理 MongoDB 特有的数据类型。你需要手动处理类型转换，尤其是对于 MongoDB 特有的数据类型（如 <code class="language-plaintext highlighter-rouge">ObjectId</code>、<code class="language-plaintext highlighter-rouge">Date</code> 等），在 <code class="language-plaintext highlighter-rouge">Map</code> 中只能存储普通的 Java 对象。</p>
+
+<ol>
+  <li>
+    <p><strong>序列化与反序列化</strong>
+<strong><code class="language-plaintext highlighter-rouge">Document</code></strong>：<code class="language-plaintext highlighter-rouge">Document</code> 在 MongoDB Java 驱动中与 BSON 数据紧密结合，提供了方便的序列化和反序列化功能。你可以直接将 <code class="language-plaintext highlighter-rouge">Document</code> 存储到 MongoDB 中，MongoDB 驱动会自动将 <code class="language-plaintext highlighter-rouge">Document</code> 转换为 BSON 格式，反之亦然。
+<strong><code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 是 Java 的标准集合类，没有内建的 MongoDB 序列化支持。你需要手动将 <code class="language-plaintext highlighter-rouge">Map</code> 转换为 <code class="language-plaintext highlighter-rouge">Document</code>，并在需要时进行反序列化。</p>
+  </li>
+  <li>
+    <p><strong>性能与使用场景</strong>
+<strong><code class="language-plaintext highlighter-rouge">Document</code></strong>：<code class="language-plaintext highlighter-rouge">Document</code> 是 MongoDB 数据库中数据的本地表示，适用于需要嵌套结构并且需要与 MongoDB 直接交互的场景。它具有 MongoDB 驱动提供的优化和功能支持，可以有效处理复杂的数据结构和 MongoDB 特定类型的数据。
+<strong><code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 更通用，适用于 Java 应用中存储任何类型的键值对，尤其是对于不特定于 MongoDB 的场景。在 MongoDB 中插入数据时，<code class="language-plaintext highlighter-rouge">Map</code> 需要转换为 <code class="language-plaintext highlighter-rouge">Document</code>。</p>
+  </li>
+</ol>
+
+<p>示例对比</p>
+
+<p>使用 <code class="language-plaintext highlighter-rouge">Document</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Document</span><span class="o">();</span>
+<span class="n">doc</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"John Doe"</span><span class="o">);</span>
+<span class="n">doc</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"address"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Document</span><span class="o">(</span><span class="s">"street"</span><span class="o">,</span> <span class="s">"123 Main St"</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"Anytown"</span><span class="o">));</span>
+</code></pre></div></div>
+
+<p>使用 <code class="language-plaintext highlighter-rouge">Map</code>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"John Doe"</span><span class="o">);</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">addressMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">addressMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"street"</span><span class="o">,</span> <span class="s">"123 Main St"</span><span class="o">);</span>
+<span class="n">addressMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"Anytown"</span><span class="o">);</span>
+
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"address"</span><span class="o">,</span> <span class="n">addressMap</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h2 id="反序列化">反序列化</h2>
+
+<p>在 MongoDB 中，反序列化是指将存储在数据库中的 BSON 数据转换为 Java 对象的过程。对于 <code class="language-plaintext highlighter-rouge">Document</code> 和 <code class="language-plaintext highlighter-rouge">Map</code>，反序列化的方式和适用场景有所不同。</p>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">Document</code> 反序列化</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">Document</code> 是 MongoDB Java 驱动专门为 BSON 数据设计的类，因此，MongoDB 驱动会自动将 BSON 数据转换为 <code class="language-plaintext highlighter-rouge">Document</code> 对象，并且 <code class="language-plaintext highlighter-rouge">Document</code> 对象本身提供了灵活的 API 来处理 BSON 数据。</p>
+
+<p><strong>反序列化到 <code class="language-plaintext highlighter-rouge">Document</code></strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 假设 MongoDB 集合中存储的文档是 { "name": "John Doe", "address": { "street": "123 Main St", "city": "Anytown" } }</span>
+<span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Document</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">doc</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"name"</span><span class="o">));</span>  <span class="c1">// 输出 "John Doe"</span>
+<span class="nc">Document</span> <span class="n">address</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Document</span><span class="o">)</span> <span class="n">doc</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"address"</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">address</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"street"</span><span class="o">));</span>  <span class="c1">// 输出 "123 Main St"</span>
+</code></pre></div></div>
+
+<p><strong>反序列化到自定义 Java 类</strong></p>
+
+<p>如果你希望将 MongoDB 中的文档反序列化为自定义的 Java 类，可以使用 MongoTemplate 提供的 <code class="language-plaintext highlighter-rouge">findById</code> 或 <code class="language-plaintext highlighter-rouge">find</code> 方法，并将返回类型指定为 Java 类：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Address</span> <span class="n">address</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Address</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">street</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">city</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+
+<span class="c1">// 查询文档并反序列化为 Person 对象</span>
+<span class="nc">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>  <span class="c1">// 输出 "John Doe"</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getAddress</span><span class="o">().</span><span class="na">getStreet</span><span class="o">());</span>  <span class="c1">// 输出 "123 Main St"</span>
+</code></pre></div></div>
+
+<p>MongoDB 驱动会自动将 BSON 文档中的 <code class="language-plaintext highlighter-rouge">address</code> 字段反序列化为 <code class="language-plaintext highlighter-rouge">Address</code> 对象。为了实现反序列化，MongoDB Java 驱动会使用 JavaBean 反射机制，将 BSON 文档的字段映射到 Java 类的字段。</p>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">Map</code> 反序列化</strong></p>
+
+<p>对于 <code class="language-plaintext highlighter-rouge">Map</code>，MongoDB Java 驱动不会自动将 BSON 数据转换为 Java 对象。如果你使用 <code class="language-plaintext highlighter-rouge">Map</code>，需要自己手动处理反序列化过程。</p>
+
+<p>反序列化到 <code class="language-plaintext highlighter-rouge">Map</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 假设 MongoDB 集合中存储的文档是 { "name": "John Doe", "address": { "street": "123 Main St", "city": "Anytown" } }</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"name"</span><span class="o">));</span>  <span class="c1">// 输出 "John Doe"</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">address</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;)</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"address"</span><span class="o">);</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">address</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"street"</span><span class="o">));</span>  <span class="c1">// 输出 "123 Main St"</span>
+</code></pre></div></div>
+
+<p>在这个例子中，MongoDB 驱动会将 BSON 文档反序列化为 <code class="language-plaintext highlighter-rouge">Map</code> 类型，字段名会映射到 <code class="language-plaintext highlighter-rouge">Map</code> 中的键。</p>
+
+<h3 id="反序列化与嵌套结构">反序列化与嵌套结构</h3>
+
+<p>无论是使用 <code class="language-plaintext highlighter-rouge">Document</code> 还是 <code class="language-plaintext highlighter-rouge">Map</code>，MongoDB 支持嵌套数据结构，所以反序列化时，如果字段包含嵌套的文档或数组，驱动会根据相应的结构转换为 Java 中对应的对象。</p>
+
+<p>使用 <code class="language-plaintext highlighter-rouge">Document</code> 处理嵌套结构</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Address</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">street</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">city</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Address</span> <span class="n">address</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+
+<span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Document</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">();</span>
+<span class="n">person</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">doc</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"name"</span><span class="o">));</span>
+
+<span class="nc">Document</span> <span class="n">addressDoc</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Document</span><span class="o">)</span> <span class="n">doc</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"address"</span><span class="o">);</span>
+<span class="nc">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Address</span><span class="o">();</span>
+<span class="n">address</span><span class="o">.</span><span class="na">setStreet</span><span class="o">(</span><span class="n">addressDoc</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"street"</span><span class="o">));</span>
+<span class="n">address</span><span class="o">.</span><span class="na">setCity</span><span class="o">(</span><span class="n">addressDoc</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"city"</span><span class="o">));</span>
+<span class="n">person</span><span class="o">.</span><span class="na">setAddress</span><span class="o">(</span><span class="n">address</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">Map</code> 处理嵌套结构</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"name"</span><span class="o">);</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">addressMap</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;)</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"address"</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">street</span> <span class="o">=</span> <span class="n">addressMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"street"</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">city</span> <span class="o">=</span> <span class="n">addressMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"city"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="反序列化时处理复杂数据类型">反序列化时处理复杂数据类型</h3>
+
+<p>对于 MongoDB 中的特定数据类型（如 <code class="language-plaintext highlighter-rouge">ObjectId</code>、<code class="language-plaintext highlighter-rouge">Date</code>、<code class="language-plaintext highlighter-rouge">Decimal128</code> 等），<code class="language-plaintext highlighter-rouge">Document</code> 会自动处理这些类型的转换。而 <code class="language-plaintext highlighter-rouge">Map</code> 需要手动转换这些特殊类型。</p>
+
+<p>反序列化 <code class="language-plaintext highlighter-rouge">ObjectId</code> 类型</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Document</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">ObjectId</span> <span class="n">objectId</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="na">getObjectId</span><span class="o">(</span><span class="s">"_id"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>反序列化 <code class="language-plaintext highlighter-rouge">Date</code> 类型</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Document</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">Date</span> <span class="n">createdAt</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="na">getDate</span><span class="o">(</span><span class="s">"createdAt"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>反序列化 <code class="language-plaintext highlighter-rouge">Decimal128</code> 类型</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">"someId"</span><span class="o">,</span> <span class="nc">Document</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">Decimal128</span> <span class="n">price</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"price"</span><span class="o">,</span> <span class="nc">Decimal128</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</code></pre></div></div>
+
+<ol>
+  <li><strong>总结</strong></li>
+</ol>
+
+<ul>
+  <li>
+    <p><strong>使用 <code class="language-plaintext highlighter-rouge">Document</code></strong>：<code class="language-plaintext highlighter-rouge">Document</code> 是 MongoDB Java 驱动中为 BSON 数据设计的类，MongoDB 会自动将 BSON 数据反序列化为 <code class="language-plaintext highlighter-rouge">Document</code> 对象，支持复杂的嵌套结构和 MongoDB 特有的数据类型（如 <code class="language-plaintext highlighter-rouge">ObjectId</code>、<code class="language-plaintext highlighter-rouge">Date</code>、<code class="language-plaintext highlighter-rouge">Decimal128</code> 等）。在需要直接与 MongoDB 数据交互时，使用 <code class="language-plaintext highlighter-rouge">Document</code> 是更方便的选择。</p>
+  </li>
+  <li>
+    <p><strong>使用 <code class="language-plaintext highlighter-rouge">Map</code></strong>：<code class="language-plaintext highlighter-rouge">Map</code> 是 Java 中的通用数据结构，用来存储键值对，但没有内建的 MongoDB 数据类型支持。如果你使用 <code class="language-plaintext highlighter-rouge">Map</code> 来存储 MongoDB 中的文档数据，MongoDB 驱动会自动将 BSON 数据反序列化为 <code class="language-plaintext highlighter-rouge">Map</code>，但是你需要手动处理数据类型转换，尤其是对于 MongoDB 特有的数据类型。<code class="language-plaintext highlighter-rouge">Map</code> 不适合用于直接处理 MongoDB 中的数据类型。</p>
+  </li>
+  <li>
+    <p><strong>嵌套结构</strong>：<code class="language-plaintext highlighter-rouge">Document</code> 可以轻松处理嵌套文档，并支持自动映射到嵌套的 Java 对象。而对于 <code class="language-plaintext highlighter-rouge">Map</code>，嵌套数据需要手动处理，将嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 转换为相应的 Java 对象。</p>
+  </li>
+</ul>
+
+<p>在实际开发中，使用 <code class="language-plaintext highlighter-rouge">Document</code> 反序列化 MongoDB 文档通常是更方便且高效的做法，特别是在处理复杂数据结构和 MongoDB 特有的数据类型时。</p>
+
+<h2 id="dto注解">DTO注解</h2>
+
+<p>在 Java 中，MongoDB 提供了一些注解，尤其是当你使用 <strong>Spring Data MongoDB</strong> 时，这些注解用于帮助你将 Java 对象（DTO）映射到 MongoDB 中的文档（BSON）格式。下面是一些常见的 MongoDB 注解：</p>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Document</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@Document</code> 注解用于标识一个 Java 类是 MongoDB 的文档类。它告诉 Spring Data MongoDB 这个类应该被映射到 MongoDB 的某个集合。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Document</span><span class="o">;</span>
+
+<span class="nd">@Document</span><span class="o">(</span><span class="n">collection</span> <span class="o">=</span> <span class="s">"people"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">collection</code></strong> 属性指定了 MongoDB 集合的名称。如果不指定，默认使用类名的小写形式作为集合名。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Id</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@Id</code> 注解用于标识文档的主键字段，通常对应 MongoDB 文档中的 <code class="language-plaintext highlighter-rouge">_id</code> 字段。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Id</code> 用于指定哪个字段在 MongoDB 中是文档的唯一标识符，通常对应 <code class="language-plaintext highlighter-rouge">_id</code> 字段。可以使用 <code class="language-plaintext highlighter-rouge">String</code>、<code class="language-plaintext highlighter-rouge">ObjectId</code> 或其他数据类型来表示主键。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Field</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@Field</code> 注解用于指定文档中的字段与 Java 类的属性之间的映射关系。它常用于字段名与 Java 属性名不同的情况。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Field</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="s">"full_name"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>这个注解指定了 MongoDB 文档中的字段名（<code class="language-plaintext highlighter-rouge">full_name</code>）与 Java 类中的属性名（<code class="language-plaintext highlighter-rouge">name</code>）之间的映射关系。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Transient</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@Transient</code> 注解用于标识一个字段不应当被持久化到 MongoDB 中。也就是说，这个字段不会被存储到数据库中，但仍然可以在应用程序中使用。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Transient</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@Transient</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">temporaryField</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Transient</code> 注解的字段不会被持久化到数据库中，适用于临时数据或计算字段。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@DBRef</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@DBRef</code> 注解用于处理 MongoDB 中的引用关系，它用于将一个文档与另一个文档关联。例如，如果你有两个集合，其中一个集合中的文档引用另一个集合中的文档，可以使用 <code class="language-plaintext highlighter-rouge">@DBRef</code> 来建立引用关系。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.DBRef</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Post</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+
+    <span class="nd">@DBRef</span>
+    <span class="kd">private</span> <span class="nc">Author</span> <span class="n">author</span><span class="o">;</span>  <span class="c1">// 引用其他文档</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@DBRef</code> 会在 MongoDB 中保存一个文档的引用，而不是将整个文档嵌入到当前文档中。这对于处理一对多或多对多关系时非常有用。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@CreatedDate</code> 和 <code class="language-plaintext highlighter-rouge">@LastModifiedDate</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@CreatedDate</code> 和 <code class="language-plaintext highlighter-rouge">@LastModifiedDate</code> 注解用于自动填充文档的创建时间和最后修改时间。它们通常与 <code class="language-plaintext highlighter-rouge">@EnableMongoAuditing</code> 一起使用来启用审计功能。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.CreatedDate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.annotation.LastModifiedDate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@CreatedDate</span>
+    <span class="kd">private</span> <span class="nc">Date</span> <span class="n">createdDate</span><span class="o">;</span>
+
+    <span class="nd">@LastModifiedDate</span>
+    <span class="kd">private</span> <span class="nc">Date</span> <span class="n">lastModifiedDate</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@CreatedDate</code> 注解会自动填充文档的创建时间，而 <code class="language-plaintext highlighter-rouge">@LastModifiedDate</code> 注解会在文档被修改时自动更新最后修改时间。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Version</code></strong></li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">@Version</code> 注解用于乐观锁控制（Optimistic Locking）。在并发场景下，如果多个线程同时尝试更新同一个文档，可以通过版本号来检测冲突。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Version</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@Version</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">version</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Version</code> 会自动为文档添加一个版本号字段，在每次更新时，版本号会递增。如果版本号不匹配（即文档已被修改），则会抛出 <code class="language-plaintext highlighter-rouge">OptimisticLockingFailureException</code>。</li>
+</ul>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Aggregation</code> 和 <code class="language-plaintext highlighter-rouge">@Query</code></strong></li>
+</ol>
+
+<p>虽然 <code class="language-plaintext highlighter-rouge">@Aggregation</code> 和 <code class="language-plaintext highlighter-rouge">@Query</code> 注解不直接用于 DTO 类，但它们对于在 MongoRepository 接口中进行自定义查询非常有用。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.repository.Aggregation</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.repository.Query</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">PersonRepository</span> <span class="kd">extends</span> <span class="nc">MongoRepository</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Query</span><span class="o">(</span><span class="s">"{'name': ?0}"</span><span class="o">)</span>
+    <span class="nc">Person</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">);</span>
+
+    <span class="nd">@Aggregation</span><span class="o">(</span><span class="n">pipeline</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="s">"{ '$match': { 'age': { '$gt': ?0 } } }"</span><span class="o">,</span>
+        <span class="s">"{ '$group': { '_id': '$name', 'total': { '$sum': 1 } } }"</span>
+    <span class="o">})</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">PersonSummary</span><span class="o">&gt;</span> <span class="nf">findPersonSummariesByAgeGreaterThan</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Query</code> 注解用于定义 MongoDB 查询。</li>
+  <li><code class="language-plaintext highlighter-rouge">@Aggregation</code> 注解用于定义聚合查询管道。</li>
+</ul>
+
+<hr />
+
+<p>总结</p>
+
+<p>常用的 MongoDB 注解主要集中在数据映射和持久化操作上。对于 DTO 类（Data Transfer Object）来说，通常使用的注解包括：</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Document</code></strong>：指定文档类和集合的映射。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Id</code></strong>：标识主键字段。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Field</code></strong>：指定字段与 MongoDB 文档中的字段映射关系。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Transient</code></strong>：标记不持久化的字段。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@DBRef</code></strong>：处理文档之间的引用关系。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@CreatedDate</code> 和 <code class="language-plaintext highlighter-rouge">@LastModifiedDate</code></strong>：自动填充时间字段。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Version</code></strong>：启用乐观锁。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">@Query</code> 和 <code class="language-plaintext highlighter-rouge">@Aggregation</code></strong>：在 <code class="language-plaintext highlighter-rouge">MongoRepository</code> 中定义查询。</li>
+</ul>
+
+<p><strong>实例：</strong></p>
+
+<p>假设我有如下的数据结构：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015635"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"creator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"纽约"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="mi">60000</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"工程师"</span><span class="p">,</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目A"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目B"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"测试"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"有经验的开发人员和工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T09:55:04.671Z"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"last_modified_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T10:01:26.232Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>设计如下 DTO 类：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Field</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Document</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="nd">@Document</span><span class="o">(</span><span class="n">collection</span> <span class="o">=</span> <span class="s">"your_collection_name"</span><span class="o">)</span> <span class="c1">// 指定 MongoDB 集合名称</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">YourDto</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span> <span class="c1">// MongoDB _id 字段</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="s">"tenant_id"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">tenantId</span><span class="o">;</span> <span class="c1">// tenant_id 字段</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">creator</span><span class="o">;</span> <span class="c1">// 操作员字段</span>
+
+    <span class="kd">private</span> <span class="nc">Data</span> <span class="n">data</span><span class="o">;</span> <span class="c1">// 嵌套的 data 对象</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="s">"create_time"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">createTime</span><span class="o">;</span> <span class="c1">// 创建时间字段</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">lastModifiedBy</span><span class="o">;</span> <span class="c1">// 最后修改人字段</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="s">"update_time"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">updateTime</span><span class="o">;</span> <span class="c1">// 更新时间字段</span>
+
+    <span class="c1">// Getter 和 Setter 方法</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="nc">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getTenantId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTenantId</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantId</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">tenantId</span> <span class="o">=</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCreator</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreator</span><span class="o">(</span><span class="nc">String</span> <span class="n">creator</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">creator</span> <span class="o">=</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCreateTime</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">createTime</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreateTime</span><span class="o">(</span><span class="nc">String</span> <span class="n">createTime</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">createTime</span> <span class="o">=</span> <span class="n">createTime</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getLastModifiedBy</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">lastModifiedBy</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLastModifiedBy</span><span class="o">(</span><span class="nc">String</span> <span class="n">lastModifiedBy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">lastModifiedBy</span> <span class="o">=</span> <span class="n">lastModifiedBy</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getUpdateTime</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">updateTime</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUpdateTime</span><span class="o">(</span><span class="nc">String</span> <span class="n">updateTime</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">updateTime</span> <span class="o">=</span> <span class="n">updateTime</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 内部类 Data 用来表示嵌套的 data 对象</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Data</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">status</span><span class="o">;</span> <span class="c1">// 状态字段</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span> <span class="c1">// 姓名字段</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span> <span class="c1">// 年龄字段</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">city</span><span class="o">;</span> <span class="c1">// 城市字段</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">job</span><span class="o">;</span> <span class="c1">// 职业字段</span>
+        <span class="kd">private</span> <span class="kt">double</span> <span class="n">salary</span><span class="o">;</span> <span class="c1">// 薪水字段</span>
+        <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tags</span><span class="o">;</span> <span class="c1">// 标签列表字段</span>
+        <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Project</span><span class="o">&gt;</span> <span class="n">projects</span><span class="o">;</span> <span class="c1">// 项目列表字段</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">description</span><span class="o">;</span> <span class="c1">// 描述字段</span>
+        <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">isActive</span><span class="o">;</span> <span class="c1">// 活跃状态字段</span>
+
+        <span class="c1">// Getter 和 Setter 方法</span>
+
+        <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isStatus</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">status</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setStatus</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">status</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">age</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCity</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">city</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCity</span><span class="o">(</span><span class="nc">String</span> <span class="n">city</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">city</span> <span class="o">=</span> <span class="n">city</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getJob</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">job</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setJob</span><span class="o">(</span><span class="nc">String</span> <span class="n">job</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">job</span> <span class="o">=</span> <span class="n">job</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">double</span> <span class="nf">getSalary</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">salary</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setSalary</span><span class="o">(</span><span class="kt">double</span> <span class="n">salary</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="n">salary</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getTags</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">tags</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTags</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tags</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Project</span><span class="o">&gt;</span> <span class="nf">getProjects</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">projects</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setProjects</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Project</span><span class="o">&gt;</span> <span class="n">projects</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">projects</span> <span class="o">=</span> <span class="n">projects</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getDescription</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">description</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDescription</span><span class="o">(</span><span class="nc">String</span> <span class="n">description</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">description</span> <span class="o">=</span> <span class="n">description</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isActive</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">isActive</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setActive</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">active</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">isActive</span> <span class="o">=</span> <span class="n">active</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 内部类 Project 用来表示嵌套的项目对象</span>
+        <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Project</span> <span class="o">{</span>
+            <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span> <span class="c1">// 项目名称</span>
+            <span class="kd">private</span> <span class="nc">String</span> <span class="n">role</span><span class="o">;</span> <span class="c1">// 角色</span>
+
+            <span class="c1">// Getter 和 Setter 方法</span>
+
+            <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getRole</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">role</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRole</span><span class="o">(</span><span class="nc">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="na">role</span> <span class="o">=</span> <span class="n">role</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>解释</strong></p>
+
+<ol>
+  <li><strong>字段映射：</strong> 使用 <code class="language-plaintext highlighter-rouge">@Field</code> 注解来显式地映射 MongoDB 中的字段。例如，<code class="language-plaintext highlighter-rouge">tenant_id</code> 字段通过 <code class="language-plaintext highlighter-rouge">@Field("tenant_id")</code> 映射到 <code class="language-plaintext highlighter-rouge">tenantId</code> 字段。</li>
+  <li><strong>嵌套对象：</strong> <code class="language-plaintext highlighter-rouge">data</code> 是一个嵌套对象，表示为内部的静态类 <code class="language-plaintext highlighter-rouge">Data</code>。这允许你在 DTO 中表示嵌套的复杂数据结构。</li>
+  <li><strong>数组和列表：</strong> <code class="language-plaintext highlighter-rouge">tags</code> 和 <code class="language-plaintext highlighter-rouge">projects</code> 分别是数组和嵌套对象列表，使用 <code class="language-plaintext highlighter-rouge">List</code> 来表示。</li>
+  <li><strong>时间字段：</strong> <code class="language-plaintext highlighter-rouge">create_time</code> 和 <code class="language-plaintext highlighter-rouge">update_time</code> 使用 <code class="language-plaintext highlighter-rouge">@Field</code> 注解映射 MongoDB 中的时间字段，字段名与类中字段名称不一致时使用此注解指定。</li>
+  <li><strong>操作符字段：</strong> 在实际的数据库交互中（例如查询），MongoDB 中的操作符（如 <code class="language-plaintext highlighter-rouge">$gt</code>）通常不会在 DTO 中表示，但如果需要进行查询时可以通过 <code class="language-plaintext highlighter-rouge">Criteria</code> 来构造条件。</li>
+</ol>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">MongoTemplate</code> 或 <code class="language-plaintext highlighter-rouge">MongoRepository</code></strong></p>
+
+<ol>
+  <li><strong>MongoTemplate：</strong></li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Autowired</span>
+<span class="kd">private</span> <span class="nc">MongoTemplate</span> <span class="n">mongoTemplate</span><span class="o">;</span>
+
+<span class="c1">// 保存数据</span>
+<span class="n">mongoTemplate</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">yourDto</span><span class="o">);</span>
+
+<span class="c1">// 查询数据</span>
+<span class="nc">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Query</span><span class="o">(</span><span class="nc">Criteria</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="s">"tenant_id"</span><span class="o">).</span><span class="na">is</span><span class="o">(</span><span class="s">"***************"</span><span class="o">));</span>
+<span class="nc">YourDto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">findOne</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="nc">YourDto</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</code></pre></div></div>
+
+<ol>
+  <li><strong>MongoRepository：</strong></li>
+</ol>
+
+<p>如果你使用 <code class="language-plaintext highlighter-rouge">MongoRepository</code>，可以直接定义一个接口：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">java复制代码import</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">mongodb</span><span class="o">.</span><span class="na">repository</span><span class="o">.</span><span class="na">MongoRepository</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">YourDtoRepository</span> <span class="kd">extends</span> <span class="nc">MongoRepository</span><span class="o">&lt;</span><span class="nc">YourDto</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">YourDto</span><span class="o">&gt;</span> <span class="nf">findByTenantId</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantId</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>总结</strong></p>
+
+<ul>
+  <li>DTO 类应该与 MongoDB 的数据结构匹配，使用 <code class="language-plaintext highlighter-rouge">@Field</code> 来映射字段名。</li>
+  <li>对于嵌套对象和数组，使用嵌套类和 <code class="language-plaintext highlighter-rouge">List</code> 来表示。</li>
+  <li>使用 <code class="language-plaintext highlighter-rouge">MongoTemplate</code> 或 <code class="language-plaintext highlighter-rouge">MongoRepository</code> 来进行数据库操作。</li>
+</ul>
+
+<h2 id="索引">索引</h2>
+
+<p><code class="language-plaintext highlighter-rouge">@Indexed</code> 注解是 Spring Data MongoDB 中的一个用于指定 MongoDB 索引的注解，它可以应用于字段、类等，用来加速查询性能。通过使用 <code class="language-plaintext highlighter-rouge">@Indexed</code> 注解，Spring Data MongoDB 会自动在对应的字段上创建索引，以提高查询效率。</p>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">@Indexed</code> 注解</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">@Indexed</code> 可以应用于类的字段上，并允许你指定索引的类型、排序等。</p>
+
+<p><strong>在字段上使用 <code class="language-plaintext highlighter-rouge">@Indexed</code></strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.index.Indexed</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Document</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="nd">@Document</span><span class="o">(</span><span class="n">collection</span> <span class="o">=</span> <span class="s">"your_collection_name"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">YourDto</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Indexed</span> <span class="c1">// 默认会创建升序索引</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">tenantId</span><span class="o">;</span> <span class="c1">// tenant_id 字段将被索引</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">creator</span><span class="o">;</span>
+
+    <span class="nd">@Indexed</span><span class="o">(</span><span class="n">unique</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="c1">// 唯一索引，确保这个字段的值是唯一的</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">creatorId</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">Data</span> <span class="n">data</span><span class="o">;</span>
+
+    <span class="c1">// 其他字段省略...</span>
+
+    <span class="c1">// Getter 和 Setter 方法</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="nc">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getTenantId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTenantId</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantId</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">tenantId</span> <span class="o">=</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCreator</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreator</span><span class="o">(</span><span class="nc">String</span> <span class="n">creator</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">creator</span> <span class="o">=</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 内部类 Data 省略...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>在类上使用 <code class="language-plaintext highlighter-rouge">@Indexed</code>（适用于复合索引）</strong></p>
+
+<p>如果你需要创建复合索引（即基于多个字段的索引），你可以使用 <code class="language-plaintext highlighter-rouge">@CompoundIndexes</code> 注解来定义。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.index.CompoundIndex</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.index.CompoundIndexes</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Document</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+
+<span class="nd">@Document</span><span class="o">(</span><span class="n">collection</span> <span class="o">=</span> <span class="s">"your_collection_name"</span><span class="o">)</span>
+<span class="nd">@CompoundIndexes</span><span class="o">({</span>
+    <span class="nd">@CompoundIndex</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"tenant_creator_index"</span><span class="o">,</span> <span class="n">def</span> <span class="o">=</span> <span class="s">"{'tenantId': 1, 'creator': 1}"</span><span class="o">)</span> <span class="c1">// 创建一个基于 tenantId 和 creator 的复合索引</span>
+<span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">YourDto</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">tenantId</span><span class="o">;</span> <span class="c1">// 将会参与复合索引</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">creator</span><span class="o">;</span> <span class="c1">// 将会参与复合索引</span>
+
+    <span class="c1">// 其他字段和方法省略...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>其他 <code class="language-plaintext highlighter-rouge">@Indexed</code> 配置选项</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">unique = true</code>：用于创建唯一索引。对于这个字段，MongoDB 会确保每个值都是唯一的，常用于 <code class="language-plaintext highlighter-rouge">email</code>、<code class="language-plaintext highlighter-rouge">username</code> 等字段。</li>
+  <li><code class="language-plaintext highlighter-rouge">direction</code>：控制索引的顺序，<code class="language-plaintext highlighter-rouge">ASC</code>（升序）或 <code class="language-plaintext highlighter-rouge">DESC</code>（降序）。默认为 <code class="language-plaintext highlighter-rouge">ASC</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">dropDups = true</code>：删除重复的文档。只有在创建唯一索引时才有意义，用于清除已经存在的重复数据。</li>
+  <li><code class="language-plaintext highlighter-rouge">sparse = true</code>：当你有很多字段为空时，可以选择创建稀疏索引。这个选项会确保只有有值的文档会被索引，而为空的文档不会占用索引空间。</li>
+</ul>
+
+<p>示例：使用 <code class="language-plaintext highlighter-rouge">@Indexed</code> 注解</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.index.Indexed</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.mapping.Document</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="nd">@Document</span><span class="o">(</span><span class="n">collection</span> <span class="o">=</span> <span class="s">"your_collection_name"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">YourDto</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Indexed</span><span class="o">(</span><span class="n">unique</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="c1">// 唯一索引，确保该字段的值是唯一的</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+
+    <span class="nd">@Indexed</span><span class="o">(</span><span class="n">direction</span> <span class="o">=</span> <span class="nc">IndexDirection</span><span class="o">.</span><span class="na">ASC</span><span class="o">)</span> <span class="c1">// 升序索引</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">tenantId</span><span class="o">;</span>
+
+    <span class="nd">@Indexed</span><span class="o">(</span><span class="n">sparse</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="c1">// 创建稀疏索引</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">;</span> <span class="c1">// 仅对有值的文档建立索引</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">creator</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">Data</span> <span class="n">data</span><span class="o">;</span>
+
+    <span class="c1">// Getter 和 Setter 方法</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="nc">String</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getEmail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setEmail</span><span class="o">(</span><span class="nc">String</span> <span class="n">email</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getTenantId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTenantId</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantId</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">tenantId</span> <span class="o">=</span> <span class="n">tenantId</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getPhoneNumber</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">phoneNumber</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPhoneNumber</span><span class="o">(</span><span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phoneNumber</span> <span class="o">=</span> <span class="n">phoneNumber</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getCreator</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCreator</span><span class="o">(</span><span class="nc">String</span> <span class="n">creator</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">creator</span> <span class="o">=</span> <span class="n">creator</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Data</span> <span class="nf">getData</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setData</span><span class="o">(</span><span class="nc">Data</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 内部类 Data 省略...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>动态创建索引</strong></p>
+
+<p>除了在 DTO 类中使用 <code class="language-plaintext highlighter-rouge">@Indexed</code> 注解来创建索引外，还可以使用 <code class="language-plaintext highlighter-rouge">MongoTemplate</code> 来动态创建索引。使用 <code class="language-plaintext highlighter-rouge">MongoTemplate</code> 可以更加灵活地管理索引：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.MongoTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.index.Index</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.mongodb.core.query.Query</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IndexService</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">MongoTemplate</span> <span class="n">mongoTemplate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createIndexes</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">indexOps</span><span class="o">(</span><span class="nc">YourDto</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">ensureIndex</span><span class="o">(</span><span class="k">new</span> <span class="nc">Index</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="s">"tenantId"</span><span class="o">,</span> <span class="nc">Index</span><span class="o">.</span><span class="na">Direction</span><span class="o">.</span><span class="na">ASC</span><span class="o">));</span>
+        <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">indexOps</span><span class="o">(</span><span class="nc">YourDto</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">ensureIndex</span><span class="o">(</span><span class="k">new</span> <span class="nc">Index</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="s">"email"</span><span class="o">,</span> <span class="nc">Index</span><span class="o">.</span><span class="na">Direction</span><span class="o">.</span><span class="na">ASC</span><span class="o">).</span><span class="na">unique</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>总结</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@Indexed</code> 用于创建单字段索引，增强查询性能。</li>
+  <li>可以在字段上指定 <code class="language-plaintext highlighter-rouge">unique</code>、<code class="language-plaintext highlighter-rouge">sparse</code>、<code class="language-plaintext highlighter-rouge">direction</code> 等选项来定制索引。</li>
+  <li><code class="language-plaintext highlighter-rouge">@CompoundIndexes</code> 用于定义复合索引，可以基于多个字段创建复合索引。</li>
+  <li>使用 <code class="language-plaintext highlighter-rouge">MongoTemplate</code> 可以动态创建和管理索引。</li>
+</ul>
+
+<p>通过合理使用 <code class="language-plaintext highlighter-rouge">@Indexed</code> 和其他索引相关配置，可以显著提高数据库查询的性能，特别是在大量数据和频繁查询的场景中。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Seata分布式事务</title><link href="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="alternate" type="text/html" title="Seata分布式事务" /><published>2024-09-21T00:00:00+08:00</published><updated>2024-09-21T00:00:00+08:00</updated><id>/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1</id><content type="html" xml:base="/2024/09/21/Seata%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><![CDATA[<h1 id="引言">引言</h1>
 <p>Seata 是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式，为用户打造一站式的分布式解决方案。</p>
 
 <p>官方网站：<a href="https://seata.apache.org/zh-cn/">Apache Seata</a>，Demo1：<a href="https://github.com/apache/incubator-seata-samples/tree/master">apache/incubator-seata-sample</a>，Demo2：<a href="https://github.com/Kerry2019/seata-tcc-demo">Kerry2019/seata-tcc-demo</a>，扩展：<a href="https://seata.apache.org/zh-cn/docs/user/appendix/global-transaction-status">事务状态</a>，<a href="https://seata.apache.org/zh-cn/docs/user/appendix/isolation">事务隔离</a>。。</p>
