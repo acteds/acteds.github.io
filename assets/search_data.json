@@ -491,6 +491,14 @@
     } ,
   
     {
+      "title"    : "Redis",
+      "category" : "Java",
+      
+      "url"      : "/2024/09/26/Redis/",
+      "keywords" : "Java"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       

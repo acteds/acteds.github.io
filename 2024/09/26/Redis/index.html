@@ -1,0 +1,673 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>Redis &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2024/09/26/Redis/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="Redis"><meta name="keywords" content="Java"><meta name="og:keywords" content="Java"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2024/09/26/Redis/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2024-09-26"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="Redis"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">Redis</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2024/09/26 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 23341 字，约 67 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>Redis是一个内存数据库。</p><h1 id="redis">Redis</h1><p>redis在各大操作系统中的安装使用都非常简单，默认配置就是监听<code class="language-plaintext highlighter-rouge">127.0.0.1:6379</code>，且无帐号密码。</p><p><a href="https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/">在windows通过虚拟机安装redis</a>，或通过doker镜像运行：</p><div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull redis
+docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 6379:6379 <span class="nt">-d</span> redis
+</code></pre></div></div><p>也可以使用<a href="https://github.com/microsoftarchive/redis">古早版本</a>，输入：<code class="language-plaintext highlighter-rouge">redis-server redis.windows.conf</code> 即可启动redis。</p><p>如果要部署Redis为windows下的服务，可以输入：<code class="language-plaintext highlighter-rouge">redis-server --service-install redis.windows.conf</code>。</p><p>其他常用命令：</p><ul><li>卸载服务：<code class="language-plaintext highlighter-rouge">redis-server --service-uninstall</code></li><li>开启服务：<code class="language-plaintext highlighter-rouge">redis-server --service-start</code></li><li>停止服务：<code class="language-plaintext highlighter-rouge">redis-server --service-stop</code></li></ul><p>测试：</p><p>可以通过set、get指令查看是否成功启动：</p><pre><code class="language-cmd">C:\Redis&gt;redis-cli
+127.0.0.1:6379&gt;set A 123
+127.0.0.1:6379&gt;get A
+</code></pre><h2 id="通常用法">通常用法</h2><p>在Spring Boot中，要访问Redis，可以直接引入<code class="language-plaintext highlighter-rouge">spring-boot-starter-data-redis</code>依赖，它实际上是Spring Data的一个子项目——Spring Data Redis，主要用到了这几个组件：</p><ul><li>Lettuce：一个基于Netty的高性能Redis客户端；</li><li>RedisTemplate：一个类似于JdbcTemplate的接口，用于简化Redis的操作。</li></ul><p>因为Spring Data Redis引入的依赖项很多，如果只是为了使用Redis，完全可以只引入Lettuce，剩下的操作都自己来完成。</p><h3 id="直接使用lettuce">直接使用Lettuce</h3><p>如何把一个第三方组件引入到Spring Boot中：</p><p>首先，添加必要的几个依赖项：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>io.lettuce<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>lettuce-core<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.commons<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>commons-pool2<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>在<code class="language-plaintext highlighter-rouge">spring-boot-starter-parent</code>中已经把常用组件的版本号确定下来了，因此不需要显式设置版本号。</p><p>第一步是在配置文件<code class="language-plaintext highlighter-rouge">application.yml</code>中添加Redis的相关配置：</p><div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">${REDIS_HOST:localhost}</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">${REDIS_PORT:6379}</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">${REDIS_PASSWORD:}</span>
+    <span class="na">ssl</span><span class="pi">:</span> <span class="s">${REDIS_SSL:false}</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="s">${REDIS_DATABASE:0}</span>
+</code></pre></div></div><p>然后，通过<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>来加载它：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"spring.redis"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfiguration</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="nc">String</span> <span class="n">host</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">port</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">database</span><span class="o">;</span>
+
+    <span class="c1">// getters and setters...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>再编写一个<code class="language-plaintext highlighter-rouge">@Bean</code>方法来创建<code class="language-plaintext highlighter-rouge">RedisClient</code>，可以直接放在<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>中：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"spring.redis"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfiguration</span> <span class="o">{</span>
+    <span class="o">...</span>
+
+    <span class="nd">@Bean</span>
+    <span class="nc">RedisClient</span> <span class="nf">redisClient</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="s">""</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">password</span><span class="o">.</span><span class="na">trim</span><span class="o">()))</span> <span class="o">{</span>
+     		<span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+        <span class="nc">RedisURI</span> <span class="n">uri</span> <span class="o">=</span> <span class="nc">RedisURI</span><span class="o">.</span><span class="na">Builder</span><span class="o">.</span><span class="na">redis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">host</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">port</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">withPassword</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">password</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">withDatabase</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">database</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="k">return</span> <span class="nc">RedisClient</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">uri</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在启动入口引入该配置：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootApplication</span>
+<span class="nd">@Import</span><span class="o">(</span><span class="nc">RedisConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="c1">// 加载Redis配置</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>如果在<code class="language-plaintext highlighter-rouge">RedisConfiguration</code>中标注<code class="language-plaintext highlighter-rouge">@Configuration</code>，则可通过Spring Boot的自动扫描机制自动加载，否则需要使用<code class="language-plaintext highlighter-rouge">@Import</code>手动加载。</p><p>用一个<code class="language-plaintext highlighter-rouge">RedisService</code>来封装所有的Redis操作。基础代码如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">RedisClient</span> <span class="n">redisClient</span><span class="o">;</span>
+
+    <span class="nc">GenericObjectPool</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">redisConnectionPool</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;&gt;();</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnReturn</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span> <span class="o">=</span> <span class="nc">ConnectionPoolSupport</span><span class="o">.</span><span class="na">createGenericObjectPool</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">redisClient</span><span class="o">.</span><span class="na">connect</span><span class="o">(),</span> <span class="n">poolConfig</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PreDestroy</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shutdown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisClient</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>上述代码引入了Commons Pool的一个对象池，用于缓存Redis连接。因为Lettuce本身是基于Netty的异步驱动，在异步访问时并不需要创建连接池，但基于Servlet模型的同步访问时，连接池是有必要的。连接池在<code class="language-plaintext highlighter-rouge">@PostConstruct</code>方法中初始化，在<code class="language-plaintext highlighter-rouge">@PreDestroy</code>方法中关闭。</p><p>下一步，是在<code class="language-plaintext highlighter-rouge">RedisService</code>中添加Redis访问方法。为了简化代码，仿照<code class="language-plaintext highlighter-rouge">JdbcTemplate.execute(ConnectionCallback)</code>方法，传入回调函数，可大幅减少样板代码。</p><p>首先定义回调函数接口<code class="language-plaintext highlighter-rouge">SyncCommandCallback</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 在此操作Redis:</span>
+    <span class="no">T</span> <span class="nf">doInConnection</span><span class="o">(</span><span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>编写<code class="language-plaintext highlighter-rouge">executeSync</code>方法，在该方法中，获取Redis连接，利用callback操作Redis，最后释放连接，并返回操作结果：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">executeSync</span><span class="o">(</span><span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">(</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">redisConnectionPool</span><span class="o">.</span><span class="na">borrowObject</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">setAutoFlushCommands</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="nc">RedisCommands</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="na">doInConnection</span><span class="o">(</span><span class="n">commands</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"executeSync redis failed."</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>可以针对常用操作把它封装一下，例如<code class="language-plaintext highlighter-rouge">set</code>和<code class="language-plaintext highlighter-rouge">get</code>命令：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div><p>类似的，<code class="language-plaintext highlighter-rouge">hget</code>和<code class="language-plaintext highlighter-rouge">hset</code>操作如下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hset</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">hget</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="nf">hgetall</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">hgetall</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div><p>常用命令可以提供方法接口，如果要执行任意复杂的操作，就可以通过<code class="language-plaintext highlighter-rouge">executeSync(SyncCommandCallback&lt;T&gt;)</code>来完成。</p><p>完成了<code class="language-plaintext highlighter-rouge">RedisService</code>后，就可以使用Redis了。例如，在<code class="language-plaintext highlighter-rouge">UserController</code>中，在Session中只存放登录用户的ID，用户信息存放到Redis，提供两个方法用于读写：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Controller</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">KEY_USER_ID</span> <span class="o">=</span> <span class="s">"__userid__"</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">KEY_USERS</span> <span class="o">=</span> <span class="s">"__users__"</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span> <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+    <span class="nd">@Autowired</span> <span class="nc">RedisService</span> <span class="n">redisService</span><span class="o">;</span>
+
+    <span class="c1">// 把User写入Redis:</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">putUserIntoRedis</span><span class="o">(</span><span class="nc">User</span> <span class="n">user</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="n">redisService</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="no">KEY_USERS</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">user</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 从Redis读取User:</span>
+    <span class="kd">private</span> <span class="nc">User</span> <span class="nf">getUserFromRedis</span><span class="o">(</span><span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">Long</span> <span class="n">id</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Long</span><span class="o">)</span> <span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="no">KEY_USER_ID</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">id</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">redisService</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="no">KEY_USERS</span><span class="o">,</span> <span class="n">id</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">s</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="nc">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><p>用户登录成功后，把ID放入Session，把<code class="language-plaintext highlighter-rouge">User</code>实例放入Redis：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/signin"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">doSignin</span><span class="o">(</span><span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"email"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">email</span><span class="o">,</span> <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"password"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">password</span><span class="o">,</span> <span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">userService</span><span class="o">.</span><span class="na">signin</span><span class="o">(</span><span class="n">email</span><span class="o">,</span> <span class="n">password</span><span class="o">);</span>
+        <span class="n">session</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="no">KEY_USER_ID</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="n">putUserIntoRedis</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"signin.html"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"email"</span><span class="o">,</span> <span class="n">email</span><span class="o">,</span> <span class="s">"error"</span><span class="o">,</span> <span class="s">"Signin failed"</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"redirect:/profile"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>需要获取<code class="language-plaintext highlighter-rouge">User</code>时，从Redis取出：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/profile"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">profile</span><span class="o">(</span><span class="nc">HttpSession</span> <span class="n">session</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nc">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">getUserFromRedis</span><span class="o">(</span><span class="n">session</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">user</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"redirect:/signin"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="s">"profile.html"</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span> <span class="n">user</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></div></div><p>从Redis读写Java对象时，序列化和反序列化是应用程序的工作，上述代码使用JSON作为序列化方案，简单可靠。也可将相关序列化操作封装到<code class="language-plaintext highlighter-rouge">RedisService</code>中，这样可以提供更加通用的方法：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div><hr /><h3 id="lettuce-自定义序列化">Lettuce 自定义序列化</h3><p>Lettuce 提供了序列化接口，可以通过 <code class="language-plaintext highlighter-rouge">RedisCodec</code> 自定义序列化规则。以下展示如何使用 Lettuce 自定义序列化和反序列化对象：</p><p>自定义 <code class="language-plaintext highlighter-rouge">RedisCodec</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.core.JsonProcessingException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.lettuce.core.RedisClient</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.lettuce.core.api.StatefulRedisConnection</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.lettuce.core.codec.RedisCodec</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.ByteBuffer</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">JsonRedisCodec</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="nc">RedisCodec</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">JsonRedisCodec</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">objectMapper</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectMapper</span><span class="o">();</span>  <span class="c1">// Jackson 序列化器</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">clazz</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">decodeKey</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">bytes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">String</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">array</span><span class="o">());</span>  <span class="c1">// 解码键</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="no">T</span> <span class="nf">decodeValue</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">bytes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">array</span><span class="o">(),</span> <span class="n">clazz</span><span class="o">);</span>  <span class="c1">// 将字节数组反序列化为对象</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">ByteBuffer</span> <span class="nf">encodeKey</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ByteBuffer</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>  <span class="c1">// 编码键</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">ByteBuffer</span> <span class="nf">encodeValue</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nc">ByteBuffer</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="n">objectMapper</span><span class="o">.</span><span class="na">writeValueAsBytes</span><span class="o">(</span><span class="n">value</span><span class="o">));</span>  <span class="c1">// 将对象序列化为字节数组</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">JsonProcessingException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div><p>使用自定义 Codec 操作 Redis：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">io.lettuce.core.RedisClient</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.lettuce.core.api.StatefulRedisConnection</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisServiceLettuce</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">RedisClient</span> <span class="n">redisClient</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">MyObject</span><span class="o">&gt;</span> <span class="n">connection</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">RedisServiceLettuce</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisClient</span> <span class="o">=</span> <span class="nc">RedisClient</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="s">"redis://localhost:6379"</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">connection</span> <span class="o">=</span> <span class="n">redisClient</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="k">new</span> <span class="nc">JsonRedisCodec</span><span class="o">&lt;&gt;(</span><span class="nc">MyObject</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>  <span class="c1">// 使用自定义 Codec</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 存储对象</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setObject</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">MyObject</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">object</span><span class="o">);</span>  <span class="c1">// 使用自定义序列化</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 获取对象</span>
+    <span class="kd">public</span> <span class="nc">MyObject</span> <span class="nf">getObject</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="na">sync</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>  <span class="c1">// 使用自定义反序列化</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 关闭连接</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">close</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">redisClient</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在这个例子中，<code class="language-plaintext highlighter-rouge">JsonRedisCodec</code> 类实现了 Lettuce 的 <code class="language-plaintext highlighter-rouge">RedisCodec</code> 接口，用于自定义键和值的序列化和反序列化规则。</p><hr /><p>因此可以对之前的代码做修改为：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">RedisClient</span> <span class="n">redisClient</span><span class="o">;</span>
+
+    <span class="nc">GenericObjectPool</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">redisConnectionPool</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;</span><span class="nc">StatefulRedisConnection</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;&gt;();</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnReturn</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span> <span class="o">=</span> <span class="nc">ConnectionPoolSupport</span><span class="o">.</span><span class="na">createGenericObjectPool</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">redisClient</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="k">new</span> <span class="nc">JsonRedisCodec</span><span class="o">&lt;&gt;(</span><span class="nc">MyObject</span><span class="o">.</span><span class="na">class</span><span class="o">)),</span> <span class="n">poolConfig</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PreDestroy</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shutdown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">redisClient</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>也就是在：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="o">.</span><span class="na">redisConnectionPool</span> <span class="o">=</span> <span class="nc">ConnectionPoolSupport</span><span class="o">.</span><span class="na">createGenericObjectPool</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">redisClient</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="k">new</span> <span class="nc">JsonRedisCodec</span><span class="o">&lt;&gt;(</span><span class="nc">MyObject</span><span class="o">.</span><span class="na">class</span><span class="o">)),</span> <span class="n">poolConfig</span><span class="o">);</span>
+</code></pre></div></div><p>这行进行了修改。</p><h3 id="直接使用jedis">直接使用jedis</h3><p>引入依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>redis.clients<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jedis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>准备连接池：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="nc">JedisPool</span> <span class="nf">jedisPool</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">JedisPoolConfig</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JedisPoolConfig</span><span class="o">();</span>
+    <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+    <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+    <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnBorrow</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+    <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">JedisPool</span><span class="o">(</span><span class="n">poolConfig</span><span class="o">,</span> <span class="n">host</span><span class="o">,</span> <span class="n">port</span><span class="o">,</span> <span class="mi">2000</span><span class="o">,</span> <span class="n">password</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">password</span><span class="o">,</span> <span class="n">database</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">JedisPool</code> 就是 Jedis 的连接池，用于管理 Redis 连接的池化操作。</p><p>这里通过 <code class="language-plaintext highlighter-rouge">JedisPoolConfig</code> 配置了最大连接数 (<code class="language-plaintext highlighter-rouge">setMaxTotal</code>) 和最大空闲连接数 (<code class="language-plaintext highlighter-rouge">setMaxIdle</code>)，并启用了连接的健康检查（<code class="language-plaintext highlighter-rouge">setTestOnBorrow</code> 和 <code class="language-plaintext highlighter-rouge">setTestWhileIdle</code>），确保借用连接时是有效的。</p><p><code class="language-plaintext highlighter-rouge">RedisService</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">JedisPool</span> <span class="n">jedisPool</span><span class="o">;</span>
+
+    <span class="nd">@FunctionalInterface</span>
+    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="c1">// 在此操作Redis:</span>
+        <span class="no">T</span> <span class="nf">doInConnection</span><span class="o">(</span><span class="nc">Jedis</span> <span class="n">jedis</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">executeSync</span><span class="o">(</span><span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">Jedis</span> <span class="n">jedis</span> <span class="o">=</span> <span class="n">jedisPool</span><span class="o">.</span><span class="na">getResource</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="na">doInConnection</span><span class="o">(</span><span class="n">jedis</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"executeSync redis failed."</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">setex</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span><span class="kt">long</span> <span class="n">seconds</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">){</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">((</span><span class="n">jedis</span><span class="o">)-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">setex</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">seconds</span><span class="o">),</span> <span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">keys</span><span class="o">(</span><span class="nc">String</span> <span class="n">pattern</span><span class="o">){</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">strings</span> <span class="o">=</span> <span class="n">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">keys</span><span class="o">(</span><span class="n">pattern</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">strings</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteKeys</span><span class="o">(</span><span class="nc">String</span> <span class="n">pattern</span><span class="o">){</span>
+        <span class="n">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keysToDelete</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">jedis</span><span class="o">.</span><span class="na">keys</span><span class="o">(</span><span class="n">pattern</span><span class="o">));</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">keysToDelete</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">jedis</span><span class="o">.</span><span class="na">del</span><span class="o">(</span><span class="n">keysToDelete</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="mi">0</span><span class="o">]));</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">exists</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">){</span>
+        <span class="nc">Boolean</span> <span class="n">b</span> <span class="o">=</span> <span class="n">executeSync</span><span class="o">(</span><span class="n">redisCommands</span> <span class="o">-&gt;</span> <span class="n">redisCommands</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+        <span class="k">return</span> <span class="n">b</span> <span class="o">?</span> <span class="mi">1L</span> <span class="o">:</span> <span class="mi">0L</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">del</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span><span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">del</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hset</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="o">==</span> <span class="mi">1L</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hget</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="nf">hgetall</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hgetAll</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>Jedis需要手动处理对象的序列化和反序列化，可以使用 Jackson、Gson 等工具。</p><h3 id="自定义连接池">自定义连接池</h3><p>如果希望使用 <code class="language-plaintext highlighter-rouge">commons-pool2</code> 来管理 <code class="language-plaintext highlighter-rouge">Jedis</code> 连接池，而不是直接使用 <code class="language-plaintext highlighter-rouge">JedisPool</code>，可以通过 <code class="language-plaintext highlighter-rouge">GenericObjectPool</code> 来实现类似于 Lettuce 的方式。可以手动创建 <code class="language-plaintext highlighter-rouge">Jedis</code> 的连接池，管理 <code class="language-plaintext highlighter-rouge">Jedis</code> 对象的借用和归还。以下是使用 <code class="language-plaintext highlighter-rouge">commons-pool2</code> 来实现 <code class="language-plaintext highlighter-rouge">Jedis</code> 连接池的示例：</p><p>引入依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.commons<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>commons-pool2<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">RedisService</code>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">RedisConfig</span> <span class="n">redisConfig</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">GenericObjectPool</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="n">jedisConnectionPool</span><span class="o">;</span>
+
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericObjectPoolConfig</span><span class="o">&lt;&gt;();</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>  <span class="c1">// 设置最大连接数</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>    <span class="c1">// 设置最大空闲连接数</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnBorrow</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>  <span class="c1">// 借用连接时进行健康检查</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span> <span class="c1">// 空闲时进行健康检查</span>
+        <span class="c1">// 创建连接池</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">jedisConnectionPool</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericObjectPool</span><span class="o">&lt;&gt;(</span><span class="k">new</span> <span class="nc">JedisFactory</span><span class="o">(),</span> <span class="n">poolConfig</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PreDestroy</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shutdown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">jedisConnectionPool</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">jedisConnectionPool</span><span class="o">.</span><span class="na">close</span><span class="o">();</span> <span class="c1">// 关闭连接池</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">class</span> <span class="nc">JedisFactory</span> <span class="kd">extends</span> <span class="nc">BasePooledObjectFactory</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="nc">Jedis</span> <span class="nf">create</span><span class="o">()</span> <span class="o">{</span>
+            <span class="c1">// 设置连接超时和读取超时为2000毫秒,以及 SSL</span>
+            <span class="nc">Jedis</span> <span class="n">jedis</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Jedis</span><span class="o">(</span><span class="n">redisConfig</span><span class="o">.</span><span class="na">getHost</span><span class="o">(),</span> <span class="n">redisConfig</span><span class="o">.</span><span class="na">getPort</span><span class="o">(),</span> <span class="mi">2000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">,</span> <span class="n">redisConfig</span><span class="o">.</span><span class="na">isSsl</span><span class="o">());</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">redisConfig</span><span class="o">.</span><span class="na">getPassword</span><span class="o">().</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">jedis</span><span class="o">.</span><span class="na">auth</span><span class="o">(</span><span class="n">redisConfig</span><span class="o">.</span><span class="na">getPassword</span><span class="o">());</span> <span class="c1">// 设置密码</span>
+            <span class="o">}</span>
+            <span class="n">jedis</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">redisConfig</span><span class="o">.</span><span class="na">getDatabase</span><span class="o">());</span> <span class="c1">// 选择数据库</span>
+            <span class="k">return</span> <span class="n">jedis</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="nc">PooledObject</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="nf">wrap</span><span class="o">(</span><span class="nc">Jedis</span> <span class="n">jedis</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nc">DefaultPooledObject</span><span class="o">&lt;&gt;(</span><span class="n">jedis</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">validateObject</span><span class="o">(</span><span class="nc">PooledObject</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="n">pooledObject</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">Jedis</span> <span class="n">jedis</span> <span class="o">=</span> <span class="n">pooledObject</span><span class="o">.</span><span class="na">getObject</span><span class="o">();</span>
+            <span class="c1">// 在此处可以验证 Jedis 实例的有效性，例如发送 PING 命令</span>
+            <span class="k">return</span> <span class="s">"PONG"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">jedis</span><span class="o">.</span><span class="na">ping</span><span class="o">());</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">destroyObject</span><span class="o">(</span><span class="nc">PooledObject</span><span class="o">&lt;</span><span class="nc">Jedis</span><span class="o">&gt;</span> <span class="n">pooledObject</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">pooledObject</span><span class="o">.</span><span class="na">getObject</span><span class="o">().</span><span class="na">close</span><span class="o">();</span> <span class="c1">// 关闭 Jedis 实例</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">executeSync</span><span class="o">(</span><span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">(</span><span class="nc">Jedis</span> <span class="n">jedis</span> <span class="o">=</span> <span class="n">jedisConnectionPool</span><span class="o">.</span><span class="na">borrowObject</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="na">doInConnection</span><span class="o">(</span><span class="n">jedis</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"executeSync redis failed."</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+	<span class="cm">/*以下逻辑不变*/</span>
+    <span class="nd">@FunctionalInterface</span>
+    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="c1">// 在此操作Redis:</span>
+        <span class="no">T</span> <span class="nf">doInConnection</span><span class="o">(</span><span class="nc">Jedis</span> <span class="n">jedis</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">commands</span> <span class="o">-&gt;</span> <span class="n">commands</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><ol><li><strong>JedisFactory</strong>：用来创建 <code class="language-plaintext highlighter-rouge">Jedis</code> 实例，类似于工厂模式。</li><li><strong>GenericObjectPoolConfig</strong>：设置连接池的配置，如最大连接数和最大空闲连接数，以及健康检查的配置。</li><li><strong>借用与归还连接</strong>：通过 <code class="language-plaintext highlighter-rouge">jedisConnectionPool.borrowObject()</code> 来借用 <code class="language-plaintext highlighter-rouge">Jedis</code> 实例，执行完操作后，<code class="language-plaintext highlighter-rouge">try-with-resources</code> 结构确保 <code class="language-plaintext highlighter-rouge">Jedis</code> 实例自动归还给连接池。</li><li><strong>资源管理</strong>：在 <code class="language-plaintext highlighter-rouge">@PreDestroy</code> 中关闭连接池，确保资源被正确释放。</li></ol><h3 id="使用redistemplate">使用<code class="language-plaintext highlighter-rouge">RedisTemplate</code></h3><p>要通过 <code class="language-plaintext highlighter-rouge">spring-boot-starter-data-redis</code> 使用 Redis，配置和使用方式相对简单。</p><p>添加依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>io.lettuce<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>lettuce-core<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>redis.clients<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jedis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p>这里使用了 <code class="language-plaintext highlighter-rouge">Jedis</code> 作为 Redis 客户端。如果需要使用 Lettuce，只需移除 <code class="language-plaintext highlighter-rouge">Jedis</code> 依赖。</p><p>配置 Redis 连接：</p><div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">localhost</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span> <span class="c1"># 如果不需要密码则留空</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="m">0</span>
+    <span class="na">timeout</span><span class="pi">:</span> <span class="m">6000</span> <span class="c1"># 连接超时</span>
+    <span class="na">jedis</span><span class="pi">:</span>
+      <span class="na">pool</span><span class="pi">:</span>
+        <span class="na">max-active</span><span class="pi">:</span> <span class="m">20</span> <span class="c1"># 最大连接数</span>
+        <span class="na">max-idle</span><span class="pi">:</span> <span class="m">5</span> <span class="c1"># 最大空闲连接</span>
+        <span class="na">min-idle</span><span class="pi">:</span> <span class="m">1</span> <span class="c1"># 最小空闲连接</span>
+</code></pre></div></div><p>使用 <code class="language-plaintext highlighter-rouge">RedisTemplate</code>：</p><p><code class="language-plaintext highlighter-rouge">RedisTemplate</code> 是 Spring 提供的高层封装，可以用来执行 Redis 操作。可以通过自动注入来使用：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.redis.core.RedisTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Service</span><span class="o">;</span>
+
+<span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">RedisTemplate</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">redisTemplate</span><span class="o">;</span>
+
+    <span class="c1">// 设置值</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 获取值</span>
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">getValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 删除值</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">redisTemplate</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p><strong><code class="language-plaintext highlighter-rouge">RedisTemplate</code> 自定义序列化</strong></p><p>默认的 <code class="language-plaintext highlighter-rouge">RedisTemplate</code> 使用 <code class="language-plaintext highlighter-rouge">JdkSerializationRedisSerializer</code> 进行序列化，可以根据需要更改为 <code class="language-plaintext highlighter-rouge">StringRedisSerializer</code> 或 <code class="language-plaintext highlighter-rouge">Jackson2JsonRedisSerializer</code>。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.redis.connection.RedisConnectionFactory</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.redis.core.RedisTemplate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.data.redis.serializer.StringRedisSerializer</span><span class="o">;</span>
+
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfig</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">RedisTemplate</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">redisTemplate</span><span class="o">(</span><span class="nc">RedisConnectionFactory</span> <span class="n">factory</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">RedisTemplate</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">template</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RedisTemplate</span><span class="o">&lt;&gt;();</span>
+        <span class="n">template</span><span class="o">.</span><span class="na">setConnectionFactory</span><span class="o">(</span><span class="n">factory</span><span class="o">);</span>
+
+        <span class="c1">// 使用 String 序列化键</span>
+        <span class="n">template</span><span class="o">.</span><span class="na">setKeySerializer</span><span class="o">(</span><span class="k">new</span> <span class="nc">StringRedisSerializer</span><span class="o">());</span>
+        <span class="n">template</span><span class="o">.</span><span class="na">setHashKeySerializer</span><span class="o">(</span><span class="k">new</span> <span class="nc">StringRedisSerializer</span><span class="o">());</span>
+
+        <span class="c1">// 使用 JSON 序列化值</span>
+        <span class="n">template</span><span class="o">.</span><span class="na">setValueSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nc">StringRedisSerializer</span><span class="o">());</span>
+        <span class="n">template</span><span class="o">.</span><span class="na">setHashValueSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nc">StringRedisSerializer</span><span class="o">());</span>
+
+        <span class="k">return</span> <span class="n">template</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>通过这些配置，你的应用可以方便地通过 <code class="language-plaintext highlighter-rouge">spring-boot-starter-data-redis</code> 来使用 Redis，并且可以结合 Spring 缓存注解来优化性能。</p><h2 id="注解用法">注解用法</h2><p>引入依赖：</p><div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>io.lettuce<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>lettuce-core<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>redis.clients<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jedis<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-cache<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">spring-boot-starter-cache</code> 是 Spring Boot 提供的一个启动器，旨在简化缓存的使用。它集成了 Spring 的缓存抽象和多种缓存实现，如 EhCache、Caffeine、Hazelcast、Redis 等。以下是该启动器的一些关键特性：</p><ul><li><p><strong>自动配置</strong>：只需在应用程序中添加依赖，并在主类上添加 <code class="language-plaintext highlighter-rouge">@EnableCaching</code> 注解，Spring Boot 会自动配置缓存功能。</p></li><li><p><strong>缓存抽象</strong>：Spring 提供了一套统一的缓存抽象，使得开发者可以使用相同的 API 操作不同的缓存实现。</p></li><li><p><strong>注解支持</strong>：可以使用 <code class="language-plaintext highlighter-rouge">@Cacheable</code>、<code class="language-plaintext highlighter-rouge">@CachePut</code> 和 <code class="language-plaintext highlighter-rouge">@CacheEvict</code> 等注解轻松进行缓存操作。</p><ul><li><p><code class="language-plaintext highlighter-rouge">@Cacheable</code>: 指定方法的返回值应缓存。</p></li><li><p><code class="language-plaintext highlighter-rouge">@CachePut</code>: 更新缓存而不影响方法执行。</p></li><li><p><code class="language-plaintext highlighter-rouge">@CacheEvict</code>: 从缓存中移除指定的缓存项。</p></li></ul></li><li><p><strong>支持多种缓存实现</strong>：通过配置可以选择不同的缓存实现，例如使用 Redis 作为缓存存储。</p></li><li><p><strong>灵活配置</strong>：可以在 <code class="language-plaintext highlighter-rouge">application.properties</code> 或 <code class="language-plaintext highlighter-rouge">application.yml</code> 中配置缓存属性，如 TTL、最大容量等。</p></li></ul><p>Spring 的缓存注解提供了简化缓存管理的手段，主要包括 <code class="language-plaintext highlighter-rouge">@Cacheable</code>、<code class="language-plaintext highlighter-rouge">@CachePut</code>、<code class="language-plaintext highlighter-rouge">@CacheEvict</code> 和 <code class="language-plaintext highlighter-rouge">@Caching</code>。这些注解通过指定缓存策略，可以决定缓存如何存取、更新或清除。</p><p><strong><code class="language-plaintext highlighter-rouge">@Cacheable</code></strong>：<strong>添加缓存</strong>，<code class="language-plaintext highlighter-rouge">cacheNames</code> 和 <code class="language-plaintext highlighter-rouge">key</code> 都必须填，如果不填 <code class="language-plaintext highlighter-rouge">key</code> ，默认的 <code class="language-plaintext highlighter-rouge">key</code> 是当前的方法名。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="o">{</span><span class="s">"cacheName"</span><span class="o">},</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#root.methodName"</span><span class="o">)</span>
+</code></pre></div></div><p>该注解用于缓存方法的<strong>返回值</strong>。在方法执行前，会先检查缓存是否存在指定的值，如果存在则直接返回缓存数据，不再执行方法；如果不存在，则执行方法并将返回值存入缓存。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductById</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 假设这是一个耗时的数据库查询</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>这里表示，设置<code class="language-plaintext highlighter-rouge">products</code>为<code class="language-plaintext highlighter-rouge">key</code>前缀，并将形参<code class="language-plaintext highlighter-rouge">id</code>的值做为<code class="language-plaintext highlighter-rouge">key</code>，此时实际key类似：<code class="language-plaintext highlighter-rouge">products:key</code>。</p><p><strong><code class="language-plaintext highlighter-rouge">@CachePut</code></strong>：更新缓存</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CachePut</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="o">{</span><span class="s">"cacheName"</span><span class="o">},</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#root.methodName"</span><span class="o">)</span>
+</code></pre></div></div><p>该注解会强制更新缓存，即无论缓存中是否存在数据，方法都会被执行，执行后的返回值会被存入缓存。这适用于需要更新缓存但又希望保留方法原始行为的场景。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CachePut</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#product.id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">updateProduct</span><span class="o">(</span><span class="nc">Product</span> <span class="n">product</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">product</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><strong><code class="language-plaintext highlighter-rouge">@CacheEvict</code></strong>：删除缓存</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CacheEvict</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="o">{</span><span class="s">"cacheName"</span><span class="o">},</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#root.methodName"</span><span class="o">,</span> <span class="n">allEntries</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="n">beforeInvocation</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+</code></pre></div></div><p>该注解用于清除缓存，支持清除指定的缓存项或清除整个缓存。<code class="language-plaintext highlighter-rouge">allEntries</code> 属性表示是否清空缓存中的所有条目，<code class="language-plaintext highlighter-rouge">beforeInvocation</code> 属性则决定清除操作是在方法执行前还是执行后进行。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CacheEvict</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteProduct</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">productRepository</span><span class="o">.</span><span class="na">deleteById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><strong><code class="language-plaintext highlighter-rouge">@Caching</code></strong>：聚合操作</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Caching</span><span class="o">(</span><span class="n">cacheable</span> <span class="o">=</span> <span class="o">{</span><span class="nd">@Cacheable</span><span class="o">(</span><span class="s">"cacheName"</span><span class="o">)},</span> <span class="n">put</span> <span class="o">=</span> <span class="o">{</span><span class="nd">@CachePut</span><span class="o">(</span><span class="s">"cacheName"</span><span class="o">)},</span> <span class="n">evict</span> <span class="o">=</span> <span class="o">{</span><span class="nd">@CacheEvict</span><span class="o">(</span><span class="s">"cacheName"</span><span class="o">)})</span>
+</code></pre></div></div><p>该注解允许对一个方法同时应用多个缓存操作。例如，可以在同一个方法上同时执行缓存查询、缓存更新和缓存清除等操作。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Caching</span><span class="o">(</span>
+    <span class="n">cacheable</span> <span class="o">=</span> <span class="o">{</span> <span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#id"</span><span class="o">)</span> <span class="o">},</span>
+    <span class="n">put</span> <span class="o">=</span> <span class="o">{</span> <span class="nd">@CachePut</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#result.id"</span><span class="o">)</span> <span class="o">},</span>
+    <span class="n">evict</span> <span class="o">=</span> <span class="o">{</span> <span class="nd">@CacheEvict</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"cacheName"</span><span class="o">,</span> <span class="n">allEntries</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span> <span class="o">}</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">handleProductCache</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><strong>参数详解</strong></p><ul><li><strong><code class="language-plaintext highlighter-rouge">value</code></strong>：缓存名称，可以是单个值或者数组，指定要使用的缓存区域。</li><li><strong><code class="language-plaintext highlighter-rouge">key</code></strong>：指定缓存条目的键，支持 SpEL（Spring 表达式语言）。默认是方法的所有参数，例如，方法参数只有一个<code class="language-plaintext highlighter-rouge">id=10</code>，那么<code class="language-plaintext highlighter-rouge">key</code>就是<code class="language-plaintext highlighter-rouge">10</code>，如果有两个：<code class="language-plaintext highlighter-rouge">id=10，name="a1"</code>，那么<code class="language-plaintext highlighter-rouge">key</code>就是<code class="language-plaintext highlighter-rouge">[10,"a1"]</code>。</li><li><strong><code class="language-plaintext highlighter-rouge">condition</code></strong>：缓存条件，支持 SpEL，用于决定是否缓存某个条目。</li><li><strong><code class="language-plaintext highlighter-rouge">unless</code></strong>：条件表达式，返回 <code class="language-plaintext highlighter-rouge">true</code> 时不缓存结果。</li><li><strong><code class="language-plaintext highlighter-rouge">sync</code></strong>：默认为 <code class="language-plaintext highlighter-rouge">false</code>，如果设置为 <code class="language-plaintext highlighter-rouge">true</code>，则会以同步模式生成缓存条目，避免并发问题。</li></ul><p>通过这些注解，可以轻松实现缓存的存取、更新和删除策略，提升应用性能。</p><h3 id="缓存区域">缓存区域</h3><p><code class="language-plaintext highlighter-rouge">value</code> 也可以统一写在类上面， <code class="language-plaintext highlighter-rouge">@CacheConfig(value= "product")</code> ，具体的方法上就不用写。</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CacheConfig</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"product"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BuyerOrderService</span> <span class="o">{</span>
+	<span class="nd">@CachePut</span><span class="o">(</span><span class="n">key</span> <span class="o">=</span> <span class="s">"order"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">ResultVO</span> <span class="nf">cancel</span><span class="o">(</span><span class="nc">String</span> <span class="n">openid</span><span class="o">,</span><span class="nc">String</span> <span class="n">orderId</span><span class="o">){</span>
+        <span class="n">buyerService</span><span class="o">.</span><span class="na">cancelOrder</span><span class="o">(</span><span class="n">openid</span><span class="o">,</span> <span class="n">orderId</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nc">ResultVOUtils</span><span class="o">.</span><span class="na">success</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">value</code> 属性在缓存注解中用于指定缓存的名称，也可以理解为标识缓存的“命名空间”。这是为了区分不同的缓存存储区域，可以有多个缓存区域来存储不同类型或用途的数据。</p><p><strong>使用一个缓存区域</strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductById</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">value = "products"</code> 表示，<code class="language-plaintext highlighter-rouge">getProductById</code> 方法的返回值会被存储在名为 <code class="language-plaintext highlighter-rouge">products</code> 的缓存空间中。下次调用该方法时，Spring 会先去 <code class="language-plaintext highlighter-rouge">products</code> 这个缓存空间查看是否有对应的缓存条目。</p><p><strong>多个缓存区域</strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="o">{</span><span class="s">"products"</span><span class="o">,</span> <span class="s">"mainCache"</span><span class="o">})</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductById</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p><code class="language-plaintext highlighter-rouge">value = {"products", "mainCache"}</code> 表示该方法的结果会同时缓存到 <code class="language-plaintext highlighter-rouge">products</code> 和 <code class="language-plaintext highlighter-rouge">mainCache</code> 这两个缓存空间中。这样在不同的缓存区域都可以找到缓存的结果。</p><p><strong>完整的缓存键：</strong></p><p>在 Spring 缓存中，<code class="language-plaintext highlighter-rouge">value</code> 和 <code class="language-plaintext highlighter-rouge">key</code> 的组合确实会形成一个完整的缓存键，但它的实际表现形式取决于使用的缓存实现（如 Redis、Ehcache 等）。</p><p>假设你设置了：<code class="language-plaintext highlighter-rouge">value = "products"</code>，<code class="language-plaintext highlighter-rouge">key = "key1"</code></p><p><strong>Redis</strong>：</p><ul><li>Redis 通常会使用 <code class="language-plaintext highlighter-rouge">value</code> 作为命名空间（或者称为“前缀”），而 <code class="language-plaintext highlighter-rouge">key</code> 是具体的键值。</li><li>实际上，当你查询 Redis 时，可能会看到类似这样的键格式：<code class="language-plaintext highlighter-rouge">products::key1</code> 或 <code class="language-plaintext highlighter-rouge">products:key1</code>。</li><li>具体的分隔符和格式依赖于你的配置，通常是由 Redis 客户端或 Spring 的 Redis 相关配置决定的。</li></ul><p><strong>Ehcache</strong>：</p><ul><li>在 Ehcache 中，通常会将 <code class="language-plaintext highlighter-rouge">value</code> 作为缓存名称，而 <code class="language-plaintext highlighter-rouge">key</code> 则是缓存条目的唯一标识。</li><li>在这种情况下，它会将 <code class="language-plaintext highlighter-rouge">products</code> 作为缓存名称，<code class="language-plaintext highlighter-rouge">key1</code> 作为唯一标识，实际使用的缓存键不会有像 <code class="language-plaintext highlighter-rouge">:</code> 这样的分隔符。</li></ul><h3 id="自定义-key-内容">自定义 <code class="language-plaintext highlighter-rouge">key</code> 内容</h3><p>如果默认生成的 <code class="language-plaintext highlighter-rouge">key</code> 不能满足需求，或者你希望使用自定义的键，可以通过 <code class="language-plaintext highlighter-rouge">key</code> 属性指定。例如，使用 Spring 表达式语言 (SpEL) 自定义键的生成方式。</p><p><strong>使用单个参数作为 <code class="language-plaintext highlighter-rouge">key</code></strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductById</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>通过 <code class="language-plaintext highlighter-rouge">key = "#id"</code>，指定 <code class="language-plaintext highlighter-rouge">id</code> 参数为缓存键，避免了默认的参数组合行为。</p><p><strong>基于多个参数生成 <code class="language-plaintext highlighter-rouge">key</code></strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#id + '_' + #name"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductByIdAndName</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findByIdAndName</span><span class="o">(</span><span class="n">id</span><span class="o">,</span> <span class="n">name</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在这个例子中，缓存键被自定义为 <code class="language-plaintext highlighter-rouge">id</code> 和 <code class="language-plaintext highlighter-rouge">name</code> 的组合，例如：<code class="language-plaintext highlighter-rouge">"42_exampleProduct"</code>。这样可以避免参数组合时的不必要复杂性。</p><p><strong>使用方法名称和参数生成 <code class="language-plaintext highlighter-rouge">key</code></strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Cacheable</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#root.methodName + '_' + #id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">getProductById</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>通过 <code class="language-plaintext highlighter-rouge">#root.methodName</code> 可以引用方法名，并结合参数生成缓存键。例如，对于 <code class="language-plaintext highlighter-rouge">getProductById(42)</code> 调用，缓存键会是 <code class="language-plaintext highlighter-rouge">"getProductById_42"</code>。</p><p><strong>使用返回值作为 <code class="language-plaintext highlighter-rouge">key</code>（在 <code class="language-plaintext highlighter-rouge">@CachePut</code> 或 <code class="language-plaintext highlighter-rouge">@CacheEvict</code> 中常用）</strong>：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@CachePut</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"products"</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"#result.id"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nc">Product</span> <span class="nf">updateProduct</span><span class="o">(</span><span class="nc">Product</span> <span class="n">product</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">product</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div><p>在 <code class="language-plaintext highlighter-rouge">@CachePut</code> 中，可以通过 <code class="language-plaintext highlighter-rouge">#result</code> 引用方法的返回值，并将其 <code class="language-plaintext highlighter-rouge">id</code> 属性作为缓存键。</p><h1 id="集群环境">集群环境</h1><p>要将当前的 Redis 单节点配置修改为集群配置，需要更新 <code class="language-plaintext highlighter-rouge">spring.redis</code> 的配置和 Java 配置类来支持 Redis 集群。</p><ol><li><code class="language-plaintext highlighter-rouge">application.yml</code> 配置文件修改：</li></ol><div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">cluster</span><span class="pi">:</span>
+      <span class="na">nodes</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">192.168.1.1:6379</span>
+        <span class="pi">-</span> <span class="s">192.168.1.2:6379</span>
+        <span class="pi">-</span> <span class="s">192.168.1.3:6379</span>
+      <span class="na">max-redirects</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">${REDIS_PASSWORD:}</span>
+</code></pre></div></div><ol><li>修改 Java 配置类：</li></ol><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="s">"spring.redis"</span><span class="o">)</span>
+<span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisConfig</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">clusterNodes</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">password</span><span class="o">;</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">JedisCluster</span> <span class="nf">jedisCluster</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">HostAndPort</span><span class="o">&gt;</span> <span class="n">nodes</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">node</span> <span class="o">:</span> <span class="n">clusterNodes</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span><span class="o">[]</span> <span class="n">parts</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">":"</span><span class="o">);</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">HostAndPort</span><span class="o">(</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">])));</span>
+        <span class="o">}</span>
+
+        <span class="nc">JedisPoolConfig</span> <span class="n">poolConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">JedisPoolConfig</span><span class="o">();</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setMaxIdle</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestOnBorrow</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">poolConfig</span><span class="o">.</span><span class="na">setTestWhileIdle</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JedisCluster</span><span class="o">(</span><span class="n">nodes</span><span class="o">,</span> <span class="mi">2000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="n">password</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">password</span><span class="o">,</span> <span class="n">poolConfig</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><ul><li><code class="language-plaintext highlighter-rouge">clusterNodes</code> 是集群的节点列表，使用逗号或空格分隔多个 IP 和端口。</li><li><code class="language-plaintext highlighter-rouge">JedisCluster</code> 用于替代 <code class="language-plaintext highlighter-rouge">JedisPool</code> 来处理 Redis 集群。</li><li>可以设置最大重定向次数，来处理 Redis 集群中的请求重定向。</li></ul><p>这样就可以连接并使用 Redis 集群。</p><p>要将 <code class="language-plaintext highlighter-rouge">RedisService</code> 类适配为 Redis 集群模式，您需要将 <code class="language-plaintext highlighter-rouge">JedisPool</code> 替换为 <code class="language-plaintext highlighter-rouge">JedisCluster</code>。下面是修改后的代码示例：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">JedisCluster</span> <span class="n">jedisCluster</span><span class="o">;</span>
+
+    <span class="nd">@FunctionalInterface</span>
+    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="no">T</span> <span class="nf">doInConnection</span><span class="o">(</span><span class="nc">JedisCluster</span> <span class="n">jedis</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">executeSync</span><span class="o">(</span><span class="nc">SyncCommandCallback</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">callback</span><span class="o">.</span><span class="na">doInConnection</span><span class="o">(</span><span class="n">jedisCluster</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"executeSync redis failed."</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">set</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">setex</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="kt">long</span> <span class="n">seconds</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">setex</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">seconds</span><span class="o">),</span> <span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">keys</span><span class="o">(</span><span class="nc">String</span> <span class="n">pattern</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Redis Cluster 不支持 keys 命令，建议使用 SCAN</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="nc">String</span> <span class="n">cursor</span> <span class="o">=</span> <span class="s">"0"</span><span class="o">;</span>
+        <span class="k">do</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">finalCursor</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">;</span>
+            <span class="nc">ScanResult</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">scanResult</span> <span class="o">=</span> <span class="n">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">scan</span><span class="o">(</span><span class="n">finalCursor</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ScanParams</span><span class="o">().</span><span class="na">match</span><span class="o">(</span><span class="n">pattern</span><span class="o">)));</span>
+            <span class="n">keys</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">scanResult</span><span class="o">.</span><span class="na">getResult</span><span class="o">());</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">scanResult</span><span class="o">.</span><span class="na">getCursor</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">while</span> <span class="o">(!</span><span class="n">cursor</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"0"</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">keys</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteKeys</span><span class="o">(</span><span class="nc">String</span> <span class="n">pattern</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keysToDelete</span> <span class="o">=</span> <span class="n">keys</span><span class="o">(</span><span class="n">pattern</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">keysToDelete</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">jedis</span><span class="o">.</span><span class="na">del</span><span class="o">(</span><span class="n">keysToDelete</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="mi">0</span><span class="o">]));</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">exists</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">del</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">del</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hset</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">,</span> <span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hset</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="o">==</span> <span class="mi">1L</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hget</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">String</span> <span class="n">field</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hget</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">field</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="nf">hgetall</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">executeSync</span><span class="o">(</span><span class="n">jedis</span> <span class="o">-&gt;</span> <span class="n">jedis</span><span class="o">.</span><span class="na">hgetAll</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>修改说明：</p><ol><li><strong>替换 <code class="language-plaintext highlighter-rouge">JedisPool</code> 为 <code class="language-plaintext highlighter-rouge">JedisCluster</code></strong>：更新了依赖注入和 <code class="language-plaintext highlighter-rouge">executeSync</code> 方法的签名。</li><li><strong>使用 <code class="language-plaintext highlighter-rouge">SCAN</code> 代替 <code class="language-plaintext highlighter-rouge">KEYS</code></strong>：由于 Redis 集群不支持 <code class="language-plaintext highlighter-rouge">KEYS</code> 命令，所以在 <code class="language-plaintext highlighter-rouge">keys</code> 方法中使用 <code class="language-plaintext highlighter-rouge">SCAN</code> 命令。</li><li><strong>保持原有的逻辑和方法</strong>：其余方法的逻辑保持不变。</li></ol><p>这样修改后，<code class="language-plaintext highlighter-rouge">RedisService</code> 就可以适配 Redis 集群环境。</p><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2024/09/26/Redis/" target="_blank">https://acteds.github.io/2024/09/26/Redis/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1731506489', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
