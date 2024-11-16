@@ -1,4 +1,1345 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-13T22:01:23+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Redis</title><link href="/2024/09/26/Redis/" rel="alternate" type="text/html" title="Redis" /><published>2024-09-26T00:00:00+08:00</published><updated>2024-09-26T00:00:00+08:00</updated><id>/2024/09/26/Redis</id><content type="html" xml:base="/2024/09/26/Redis/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-16T21:35:44+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB条件解析器</title><link href="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB条件解析器" /><published>2024-10-15T00:00:00+08:00</published><updated>2024-10-15T00:00:00+08:00</updated><id>/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>一个将Map转换为<code class="language-plaintext highlighter-rouge">mongoTemplate</code>条件的类。</p>
+
+<h1 id="mongodb">MongoDB</h1>
+
+<h2 id="mongodb条件解析器">MongoDB条件解析器</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**实际主键名称*/</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">PRIMARY_KEY</span> <span class="o">=</span> <span class="s">"_id"</span><span class="o">;</span>
+<span class="cm">/**
+ * 数据返回后映射的主键名称
+ */</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">MAP_PRIMARY_KEY</span> <span class="o">=</span> <span class="s">"_id"</span><span class="o">;</span>
+<span class="cm">/**租户ID字段名称*/</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">TENANT_ID</span> <span class="o">=</span> <span class="s">"tenant_id"</span><span class="o">;</span>
+
+<span class="cm">/**乐观锁字段名称*/</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">OPTIMISTIC_LOCK_FIELD</span><span class="o">=</span><span class="s">"version"</span><span class="o">;</span>
+<span class="cm">/**假删除标记*/</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">DELETE_STATUS</span> <span class="o">=</span> <span class="s">"deleteStatus"</span><span class="o">;</span>
+<span class="cm">/**实际非系统数据所在对象字段名称*/</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">DATA_NAME</span> <span class="o">=</span> <span class="s">"data"</span><span class="o">;</span>
+<span class="cm">/** 条件构建解析类线程存储 */</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">ThreadLocal</span><span class="o">&lt;</span><span class="nc">ConditionBuild</span><span class="o">&gt;</span> <span class="no">CONDITION_BUILD_THREAD_LOCAL</span> <span class="o">=</span> <span class="nc">ThreadLocal</span><span class="o">.</span><span class="na">withInitial</span><span class="o">(</span><span class="nl">ConditionBuild:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+
+<span class="cm">/**
+ * 开始条件构建解析，保证线程安全
+ * @return 条件构建解析类
+ */</span>
+<span class="kd">private</span> <span class="nc">ConditionBuild</span> <span class="nf">startConditionBuild</span><span class="o">(){</span>
+    <span class="nc">ConditionBuild</span> <span class="n">conditionBuild</span> <span class="o">=</span> <span class="no">CONDITION_BUILD_THREAD_LOCAL</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+    <span class="n">conditionBuild</span><span class="o">.</span><span class="na">init</span><span class="o">();</span>
+    <span class="k">return</span> <span class="n">conditionBuild</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * 条件构建解析器
+ * @author aotmd
+ * @version 3.0
+ * @date 2024/10/15 17:34
+ */</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ConditionBuild</span> <span class="o">{</span>
+    <span class="cm">/**主键字段名*/</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">PRIMARY_KEY</span> <span class="o">=</span> <span class="s">"_id"</span><span class="o">;</span>
+    <span class="cm">/**高级操作符，对象数组符合条件*/</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">ELEM_MATCH</span> <span class="o">=</span> <span class="s">"$elemMatch"</span><span class="o">;</span>
+    <span class="cm">/**
+     * 条件数组堆栈
+     */</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;&gt;</span> <span class="n">criteriaStack</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="cm">/**
+     * 堆栈深度
+     */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">stackDepth</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="cm">/**
+     * 初始化构建器
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"init检测到堆栈深度不为0，请检查上次调用是否正常"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 清空条件</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">criteriaStack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">criteriaList</span> <span class="o">:</span> <span class="n">criteriaStack</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="n">criteriaList</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">criteriaList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// 如果列表为空，初始化一个新的 ArrayList</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span>
+        <span class="o">}</span>
+        <span class="cm">/*重置堆栈深度*/</span>
+        <span class="n">stackDepth</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*------------------------------开放方法------------------------------*/</span>
+    <span class="cm">/**
+     * 添加Criteria条件
+     * @param criteria Criteria条件
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">add</span><span class="o">(</span><span class="nc">Criteria</span> <span class="n">criteria</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 假删除条件
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">fakeDeletionCondition</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"假删除条件只能在堆栈深度为 0 时调用"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Criteria</span><span class="o">().</span><span class="na">orOperator</span><span class="o">(</span>
+                <span class="n">where</span><span class="o">(</span><span class="no">DELETE_STATUS</span><span class="o">).</span><span class="na">is</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+                <span class="n">where</span><span class="o">(</span><span class="no">DELETE_STATUS</span><span class="o">).</span><span class="na">exists</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+        <span class="o">);</span>
+        <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 多租户条件
+     * @param tenantID 租户ID
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">tenantCondition</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantID</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"多租户条件只能在堆栈深度为 0 时调用"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">where</span><span class="o">(</span><span class="no">TENANT_ID</span><span class="o">).</span><span class="na">is</span><span class="o">(</span><span class="n">tenantID</span><span class="o">);</span>
+        <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 乐观锁条件
+     * @param version 乐观锁当前版本号
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">optimisticLocks</span><span class="o">(</span><span class="kt">int</span> <span class="n">version</span><span class="o">){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"乐观锁条件只能在堆栈深度为 0 时调用"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">where</span><span class="o">(</span><span class="no">OPTIMISTIC_LOCK_FIELD</span><span class="o">).</span><span class="na">is</span><span class="o">(</span><span class="n">version</span><span class="o">);</span>
+        <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+
+    <span class="cm">/**
+     * 条件解析器
+     * condition 是一个包含条件的 JSON 字符串,该方法会为条件字段添加前缀，例如：
+     * {
+     * "status": true,
+     * "name": "John Doe",
+     * "age": { "$gt": 25 }
+     * }
+     * @param condition  条件字符串
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">conditionParsing</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">condition</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">conditionParsing</span><span class="o">(</span><span class="n">condition</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 条件解析器
+     * condition 是一个包含条件的 JSON 字符串，例如：
+     * {
+     * "status": true,
+     * "name": "John Doe",
+     * "age": { "$gt": 25 }
+     * }
+     * @param condition  条件字符串
+     * @param addPrefix 是否添加前缀
+     * @return 自身
+     */</span>
+    <span class="kd">public</span> <span class="nc">ConditionBuild</span> <span class="nf">conditionParsing</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">condition</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">addPrefix</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 根据 condition 构建查询条件</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">condition</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="c1">// 高级嵌套查询构建</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">advancedNestedQueries</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span><span class="n">addPrefix</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">keyNameMapping</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="c1">// 将条件映射到 data 里面，外面的都是系统字段，不应暴露</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">addPrefix</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">addKeyPrefix</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// 简单逻辑查询构建</span>
+            <span class="n">simpleLogicalQueries</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*------------------------------重要业务逻辑------------------------------*/</span>
+
+    <span class="cm">/**
+     * 高级嵌套逻辑（$or,$and,$elemMatch）
+     * $or、$and 只能出现在具体属性外，即控制符前
+     * $elemMatch 只能出现在具体属性下。
+     *
+     * @param key       键
+     * @param value     值
+     * @param addPrefix 是否添加前缀
+     * @return 是否跳过当前循环
+     */</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">advancedNestedQueries</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">addPrefix</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="s">"$or"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"$or控制符的值应为数组类型。"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// $or 条件</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">orConditionList</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;)</span> <span class="n">value</span><span class="o">;</span>
+            <span class="c1">// 结果集</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">orCriteriaList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+            <span class="c1">// 递归</span>
+            <span class="n">buildQueriesRecursively</span><span class="o">(</span><span class="n">orCriteriaList</span> <span class="o">,()-&gt;{</span>
+                <span class="c1">// 分别构建</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">andCondition</span> <span class="o">:</span> <span class="n">orConditionList</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">conditionParsing</span><span class="o">(</span><span class="n">andCondition</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="c1">// 处理完毕后通过or{}将结果包围</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">().</span><span class="na">orOperator</span><span class="o">(</span><span class="n">orCriteriaList</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">[</span><span class="mi">0</span><span class="o">])));</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="s">"$and"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"$and控制符的值应为数组类型。"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// $and 条件</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">andConditionList</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;)</span> <span class="n">value</span><span class="o">;</span>
+            <span class="c1">// 结果集</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">andCriteriaList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+            <span class="c1">// 递归</span>
+            <span class="n">buildQueriesRecursively</span><span class="o">(</span><span class="n">andCriteriaList</span><span class="o">,()-&gt;{</span>
+                <span class="c1">// 分别构建</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">andCondition</span> <span class="o">:</span> <span class="n">andConditionList</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">conditionParsing</span><span class="o">(</span><span class="n">andCondition</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="c1">// 处理完毕后通过and{}将结果包围</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">().</span><span class="na">andOperator</span><span class="o">(</span><span class="n">andCriteriaList</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">[</span><span class="mi">0</span><span class="o">])));</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+
+
+        <span class="cm">/*该操作流程需要涉及字段，因此需要判断是否添加字段前缀。*/</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">Map</span> <span class="o">&amp;&amp;</span> <span class="o">((</span><span class="nc">Map</span><span class="o">)</span> <span class="n">value</span><span class="o">).</span><span class="na">containsKey</span><span class="o">(</span><span class="no">ELEM_MATCH</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// 变为强类型</span>
+            <span class="nc">Map</span> <span class="n">value1</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">)</span> <span class="n">value</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!(</span><span class="n">value1</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">ELEM_MATCH</span><span class="o">)</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"$elemMatch控制符的值应为键值对类型。"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// $elemMatch 条件</span>
+            <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">elemMatchCondition</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;)</span> <span class="n">value1</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">ELEM_MATCH</span><span class="o">);</span>
+            <span class="c1">// 结果集</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">elemMatchCriteriaList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+            <span class="c1">// 递归</span>
+            <span class="n">buildQueriesRecursively</span><span class="o">(</span><span class="n">elemMatchCriteriaList</span><span class="o">,()-&gt;</span> <span class="o">{</span>
+                <span class="c1">// 对象数组内部条件，不不要加前缀。</span>
+                <span class="n">conditionParsing</span><span class="o">(</span><span class="n">elemMatchCondition</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="o">});</span>
+            <span class="c1">// $elemMatch这边也涉及字段，需要根据条件添加前缀。</span>
+
+            <span class="c1">// ID 映射为 _id 字段，并跳过添加前缀逻辑。</span>
+            <span class="nc">String</span> <span class="n">newKey</span><span class="o">=</span><span class="n">key</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="no">MAP_PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">newKey</span> <span class="o">=</span> <span class="no">PRIMARY_KEY</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">// 将条件映射到 data 里面，外面的都是系统字段，不应暴露</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">addPrefix</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">newKey</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">newKey</span> <span class="o">=</span> <span class="n">addKeyPrefix</span><span class="o">(</span><span class="n">newKey</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// 处理完毕后通过elemMatch{and{}}将结果包围</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span>
+                    <span class="n">where</span><span class="o">(</span><span class="n">newKey</span><span class="o">).</span><span class="na">elemMatch</span><span class="o">(</span>
+                            <span class="k">new</span> <span class="nf">Criteria</span><span class="o">().</span><span class="na">andOperator</span><span class="o">(</span>
+                                    <span class="n">elemMatchCriteriaList</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">[</span><span class="mi">0</span><span class="o">])</span>
+                            <span class="o">)</span>
+                    <span class="o">)</span>
+            <span class="o">);</span>
+            <span class="c1">// 执行完毕后删除$elemMatch,注意会改变原condition,因此弃用，改为在简单条件逻辑构建器置空对应操作。</span>
+            <span class="c1">//value1.remove("$elemMatch");</span>
+            <span class="cm">/*对于存在$elemMatch的Map的平行key，可以继续处理*/</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">//若都没有执行则放行，执行后续逻辑</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 简单条件逻辑构建器（$gt、$lt、$gte、$lte、$ne、$eq、$in、$nin、$regex、$exists、
+     * $size、$mod、$typ、e$all、$isNull）
+     * 复杂类型：$not、$notRegex
+     * 只允许出现在具体属性下。
+     * @param key 键，一般为字段名称
+     * @param value   值，一般为控制符Map
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">simpleLogicalQueries</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 处理控制操作符 (如 $gt, $lt)</span>
+            <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">operationMap</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;)</span> <span class="n">value</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">operationMap</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+                <span class="nc">String</span> <span class="n">operator</span><span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+                <span class="nc">Object</span> <span class="n">operatorValue</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+                <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">where</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+                <span class="k">switch</span> <span class="o">(</span><span class="n">operator</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">case</span> <span class="s">"$gt"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">gt</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 大于</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$lt"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">lt</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 小于</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$gte"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">gte</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 大于等于</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$lte"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">lte</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 小于等于</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$ne"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">ne</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 不等于操作符</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$eq"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">is</span><span class="o">(</span><span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 等于操作符</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$in"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">in</span><span class="o">((</span><span class="nc">Collection</span><span class="o">&lt;?&gt;)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// in 操作符</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$nin"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">nin</span><span class="o">((</span><span class="nc">Collection</span><span class="o">&lt;?&gt;)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// not in 操作符</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$regex"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">regex</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 正则表达式</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$exists"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">exists</span><span class="o">((</span><span class="kt">boolean</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 字段存在性检查</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$size"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">size</span><span class="o">((</span><span class="nc">Integer</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 数组大小匹配</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$mod"</span><span class="o">:</span>
+                        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;)</span> <span class="n">operatorValue</span><span class="o">;</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">mod</span><span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">),</span> <span class="n">list</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span> <span class="c1">// 取模操作</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$type"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">type</span><span class="o">((</span><span class="nc">Integer</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 类型匹配,参阅https://www.mongodb.com/zh-cn/docs/manual/reference/operator/query/type/</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$all"</span><span class="o">:</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">all</span><span class="o">((</span><span class="nc">Collection</span><span class="o">&lt;?&gt;)</span> <span class="n">operatorValue</span><span class="o">);</span> <span class="c1">// 数组匹配</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$isNull"</span><span class="o">:</span><span class="c1">// 是否为空</span>
+                        <span class="k">if</span> <span class="o">((</span><span class="kt">boolean</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">){</span>
+                            <span class="n">criteria</span><span class="o">.</span><span class="na">is</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span> <span class="c1">// 空值匹配</span>
+
+                        <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+                            <span class="n">criteria</span><span class="o">.</span><span class="na">ne</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span><span class="c1">// 翻转</span>
+                        <span class="o">}</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$not"</span><span class="o">:</span> <span class="c1">// 反向操作符，应用于简单类型</span>
+                        <span class="n">criteria</span> <span class="o">=</span> <span class="n">notCondition</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">operatorValue</span><span class="o">);</span><span class="c1">// 传递字段名称，和操作符键值对</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="s">"$notRegex"</span><span class="o">:</span> <span class="c1">// 自造控制符，用以取反逻辑,用户可以使用，系统也可以使用</span>
+                        <span class="n">criteria</span><span class="o">.</span><span class="na">not</span><span class="o">().</span><span class="na">regex</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span> <span class="n">operatorValue</span><span class="o">);</span><span class="c1">// 反向正则表达式</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="k">case</span> <span class="nl">ELEM_MATCH:</span>
+                        <span class="c1">// 已在高级嵌套逻辑进行处理，这里置空,直接结束本轮添加</span>
+                        <span class="k">continue</span><span class="o">;</span>
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="c1">// 去除前缀，并提示操作符不存在</span>
+                        <span class="nc">String</span> <span class="n">operator0</span> <span class="o">=</span> <span class="n">removeKeyPrefix</span><span class="o">(</span><span class="n">operator</span><span class="o">);</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"存在无效控制条件："</span><span class="o">+</span><span class="n">operator0</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">){</span>
+            <span class="c1">// 简单条件无数组类型，因此提示错误</span>
+            <span class="nc">String</span> <span class="n">key0</span> <span class="o">=</span> <span class="n">removeKeyPrefix</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"存在无效控制条件："</span><span class="o">+</span> <span class="n">key0</span> <span class="o">+</span><span class="s">"，若该值为字段，下级应为键值对"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// 普通等值查询</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">where</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="na">is</span><span class="o">(</span><span class="n">value</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 反向操作，只允许出现在具体属性字段下。
+     *
+     * @param key   键，字段名称
+     * @param value $not下的控制符集合
+     * @return 生成好的Criteria
+     */</span>
+    <span class="kd">private</span> <span class="nc">Criteria</span> <span class="nf">notCondition</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"$not控制符的值应为键值对类型。"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="cm">/*强类型解析*/</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;)</span> <span class="n">value</span><span class="o">;</span>
+        <span class="c1">// 支持的简单操作符列表</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">supportedOperatorsList</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"$eq"</span><span class="o">,</span> <span class="s">"$gt"</span><span class="o">,</span> <span class="s">"$gte"</span><span class="o">,</span> <span class="s">"$lt"</span><span class="o">,</span> <span class="s">"$lte"</span><span class="o">,</span> <span class="s">"$ne"</span><span class="o">,</span> <span class="s">"$regex"</span><span class="o">);</span>
+        <span class="c1">// 检测操作符是否支持</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">operator</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">supportedOperatorsList</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">operator</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"$not 仅支持简单的比较操作符："</span> <span class="o">+</span> <span class="n">supportedOperatorsList</span> <span class="o">+</span> <span class="s">"，不支持："</span> <span class="o">+</span> <span class="n">operator</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="c1">// 操作符反向替代</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">inverseMap</span> <span class="o">=</span> <span class="n">operatorInverseOverride</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+        <span class="c1">// 去掉中间层$not,重新封装</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">notConditions</span><span class="o">=</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">notConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">inverseMap</span><span class="o">);</span>
+        <span class="c1">// 正常调用</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">notCriteria</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="c1">// 递归</span>
+        <span class="n">buildQueriesRecursively</span><span class="o">(</span><span class="n">notCriteria</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="c1">// 已添加过前缀，不再重复添加</span>
+            <span class="n">conditionParsing</span><span class="o">(</span><span class="n">notConditions</span><span class="o">,</span><span class="kc">false</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="c1">// 处理完毕后通过and{}将结果包围</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Criteria</span><span class="o">().</span><span class="na">andOperator</span><span class="o">(</span><span class="n">notCriteria</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">[</span><span class="mi">0</span><span class="o">]));</span>
+    <span class="o">}</span>
+
+
+    <span class="cm">/**
+     * 操作符反向替代集合
+     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="no">SUB_MAP</span><span class="o">;</span>
+    <span class="cm">/**通过静态代码块，只初始化一次*/</span>
+    <span class="kd">static</span> <span class="o">{</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">tempMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$eq"</span><span class="o">,</span> <span class="s">"$ne"</span><span class="o">);</span>       <span class="c1">// 等于 -&gt; 不等于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$ne"</span><span class="o">,</span> <span class="s">"$eq"</span><span class="o">);</span>       <span class="c1">// 不等于 -&gt; 等于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$gt"</span><span class="o">,</span> <span class="s">"$lte"</span><span class="o">);</span>      <span class="c1">// 大于 -&gt; 小于等于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$gte"</span><span class="o">,</span> <span class="s">"$lt"</span><span class="o">);</span>      <span class="c1">// 大于等于 -&gt; 小于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$lt"</span><span class="o">,</span> <span class="s">"$gte"</span><span class="o">);</span>      <span class="c1">// 小于 -&gt; 大于等于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$lte"</span><span class="o">,</span> <span class="s">"$gt"</span><span class="o">);</span>      <span class="c1">// 小于等于 -&gt; 大于</span>
+        <span class="n">tempMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$regex"</span><span class="o">,</span> <span class="s">"$notRegex"</span><span class="o">);</span> <span class="c1">// 正则匹配 -&gt; 取反正则匹配（自定义的取反逻辑）</span>
+        <span class="no">SUB_MAP</span> <span class="o">=</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">unmodifiableMap</span><span class="o">(</span><span class="n">tempMap</span><span class="o">);</span> <span class="c1">// 将临时 Map 转换为不可变 Map</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 操作符反向替代
+     * @param map 原操作符
+     * @return 反向替代后的操作符集合
+     */</span>
+    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">operatorInverseOverride</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 用来保存需要替换的键值对</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">inverseMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+
+        <span class="c1">// 迭代原始Map，找到需要替换的key</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">operator</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="c1">// 检查当前key是否需要替换</span>
+            <span class="k">if</span> <span class="o">(</span><span class="no">SUB_MAP</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">operator</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nc">String</span> <span class="n">newOperator</span> <span class="o">=</span> <span class="no">SUB_MAP</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">operator</span><span class="o">);</span>
+                <span class="c1">// 替换key不替换操作符</span>
+                <span class="n">inverseMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">newOperator</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>  <span class="c1">// 将替换后的键和值存入临时Map</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">inverseMap</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/*------------------------------终结方法------------------------------*/</span>
+    <span class="cm">/**
+     * 与条件组合，终结操作
+     * @return 条件Criteria
+     */</span>
+    <span class="kd">public</span> <span class="nc">Criteria</span> <span class="nf">andCriteriaBuild</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"andCriteriaBuild终结操作，只能在堆栈深度为 0 时调用"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="cm">/*Query机制问题，在第一层只能有一个and和or，因此套一层and就可以回避这个问题了*/</span>
+        <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Criteria</span><span class="o">().</span><span class="na">andOperator</span><span class="o">(</span><span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">Criteria</span><span class="o">[</span><span class="mi">0</span><span class="o">]));</span>
+        <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">clear</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">criteria</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 与条件组合,并添加到新条件查询器，终结操作
+     *
+     * @return Query
+     */</span>
+    <span class="kd">public</span> <span class="nc">Query</span> <span class="nf">andCriteriaQueryBuild</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"andCriteriaQueryBuild终结操作，只能在堆栈深度为 0 时调用"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nc">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Query</span><span class="o">();</span>
+        <span class="nc">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">andCriteriaBuild</span><span class="o">();</span>
+        <span class="n">query</span><span class="o">.</span><span class="na">addCriteria</span><span class="o">(</span><span class="n">criteria</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">query</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*------------------------------支撑方法------------------------------*/</span>
+
+    <span class="cm">/**
+     * 主键映射
+     * @param keyName 键列名
+     * @return
+     */</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">keyNameMapping</span><span class="o">(</span><span class="nc">String</span> <span class="n">keyName</span><span class="o">){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">keyName</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="no">MAP_PRIMARY_KEY</span><span class="o">)){</span>
+            <span class="k">return</span> <span class="no">PRIMARY_KEY</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">keyName</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 为键添加前缀，映射到指定对象
+     * @param key 键
+     * @return 映射后的key
+     */</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">addKeyPrefix</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">key</span><span class="o">)){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"出现空字符串"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 为主键则不添加前缀，如果加了前缀也不添加前缀</span>
+        <span class="k">if</span> <span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="o">||</span> <span class="n">key</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="no">DATA_NAME</span> <span class="o">+</span> <span class="s">"."</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">key</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="no">DATA_NAME</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">key</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 删除键被添加的前缀
+     * @param key 键
+     * @return 还原后的key
+     */</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">removeKeyPrefix</span><span class="o">(</span><span class="nc">String</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">key</span><span class="o">)){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"出现空字符串"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 为主键则不操作，如果没有加前缀也不删除前缀</span>
+        <span class="k">if</span> <span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="n">key</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="no">DATA_NAME</span> <span class="o">+</span> <span class="s">"."</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">key</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 去掉前缀并返回</span>
+        <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="na">substring</span><span class="o">((</span><span class="no">DATA_NAME</span> <span class="o">+</span> <span class="s">"."</span><span class="o">).</span><span class="na">length</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 递归构建条件
+     * @param resultCriteria 解析后的Criteria
+     * @param runnable 自定义操作
+     */</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">buildQueriesRecursively</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Criteria</span><span class="o">&gt;</span> <span class="n">resultCriteria</span><span class="o">,</span> <span class="nc">Runnable</span> <span class="n">runnable</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 加堆栈深度</span>
+        <span class="n">incrementDepth</span><span class="o">();</span>
+        <span class="n">runnable</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+        <span class="n">resultCriteria</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">));</span>
+        <span class="c1">// 减堆栈深度并清空</span>
+        <span class="n">decrementDepth</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 堆栈深度增加，不应该被调用，只会被buildQueriesRecursively调用
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">incrementDepth</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">stackDepth</span><span class="o">++;</span>
+        <span class="c1">// 判断当前深度是否已经存在对应的 List，如果没有则创建新的</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">criteriaStack</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">stackDepth</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span> <span class="c1">// 新增一个新的 list 用来存储该深度的条件</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 堆栈深度减少，并清空当前深度的列表，不应该被调用，只会被buildQueriesRecursively调用
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">decrementDepth</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">stackDepth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">criteriaStack</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">stackDepth</span><span class="o">).</span><span class="na">clear</span><span class="o">();</span> <span class="c1">// 清空当前深度的列表</span>
+            <span class="n">stackDepth</span><span class="o">--;</span>
+        <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"未成对出现的堆栈深度！"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="使用">使用</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 根据条件（condition），读取指定表单（collectionName）中的一条或多条数据详情，不通过缓存，直接从MongoDB中读取。
+ *
+ * @param tenantID 租户ID
+ * @param collectionName 表名、集合名
+ * @param condition      条件
+ * @return 查询结果
+ */</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="nf">getFormData</span><span class="o">(</span><span class="nc">String</span> <span class="n">tenantID</span><span class="o">,</span> <span class="nc">String</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">condition</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">startConditionBuild</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">conditionParsing</span><span class="o">(</span><span class="n">condition</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">tenantCondition</span><span class="o">(</span><span class="n">tenantID</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fakeDeletionCondition</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">andCriteriaQueryBuild</span><span class="o">();</span>
+    <span class="k">return</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">collectionName</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="测试用例">测试用例</h2>
+
+<p>MongoDB数据：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015635"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"creator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"纽约"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="mi">60000</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"工程师"</span><span class="p">,</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目A"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目B"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"测试"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"有经验的开发人员和工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T09:55:04.671Z"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"last_modified_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T10:01:26.232Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015636"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"creator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员2"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"李四"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"洛杉矶"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="mi">70000</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"开发人员"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目X"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目Z"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"辅助"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"科技公司首席开发人员"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T09:55:04.671Z"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"last_modified_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员2"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T10:01:26.232Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015637"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"creator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员3"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"王五"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"芝加哥"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"失业"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"经理"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目X"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"曾任经理，具有技术经验"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T09:55:04.671Z"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"last_modified_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员3"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T10:01:26.232Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015638"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"creator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员4"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"赵六"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"旧金山"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="mi">80000</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"工程师"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目A"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"项目B"</span><span class="p">,</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"辅助"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"具有AI经验的软件工程师"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T09:55:04.671Z"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"last_modified_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"操作员4"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-12T10:01:26.232Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">POST</code>-<code class="language-plaintext highlighter-rouge">Body</code>，主要看查询条件（<code class="language-plaintext highlighter-rouge">condition</code>）：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="nl">"tenantID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"collectionID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6705ea2b006a991a7ad4d848"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"dataID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015635"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">查询指定_id</span><span class="w">
+		</span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">查询状态为</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="err">的记录</span><span class="w">
+		</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$eq"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">查询名称为</span><span class="w"> </span><span class="s2">"张三"</span><span class="w"> </span><span class="err">的记录</span><span class="w">
+			</span><span class="nl">"$not"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">排除李开头</span><span class="p">,</span><span class="err">或者直接使用$notRegex控制符</span><span class="w">
+				</span><span class="nl">"$regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^李.*"</span><span class="w">
+			</span><span class="p">},</span><span class="w">
+			</span><span class="nl">"$type"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="err">//是字符串，数字代表的类型，参阅：https://www.mongodb.com/zh-cn/docs/manual/reference/operator/query/type/</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+		</span><span class="err">//若字段是一个对象，假设person是对象，现在想判断该对象的sex，那么可以写成：</span><span class="w">
+		</span><span class="err">//</span><span class="nl">"person.sex"</span><span class="p">:</span><span class="s2">"男"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">年龄范围条件</span><span class="w">
+			</span><span class="nl">"$gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">年龄大于或等于</span><span class="w"> </span><span class="mi">25</span><span class="w">
+			</span><span class="nl">"$lt"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">年龄小于</span><span class="w"> </span><span class="mi">50</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+		</span><span class="nl">"$or"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">或条件</span><span class="p">,</span><span class="err">必须先套一层</span><span class="p">[]</span><span class="w">
+			</span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">并且条件，两个条件同时满足</span><span class="w">
+					</span><span class="p">{</span><span class="w">
+						</span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"纽约"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">城市为</span><span class="w"> </span><span class="s2">"纽约"</span><span class="w">
+					</span><span class="p">},</span><span class="w">
+					</span><span class="p">{</span><span class="w">
+						</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">名称为</span><span class="w"> </span><span class="s2">"张三"</span><span class="w">
+					</span><span class="p">}</span><span class="w">
+				</span><span class="p">]</span><span class="w">
+			</span><span class="p">},</span><span class="w">
+			</span><span class="p">{</span><span class="w">
+				</span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"洛杉矶"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">或者城市为</span><span class="w"> </span><span class="s2">"洛杉矶"</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">],</span><span class="w">
+		</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">并且条件，两个条件同时满足</span><span class="p">,</span><span class="err">必须先套一层</span><span class="p">[]</span><span class="w">
+			</span><span class="p">{</span><span class="w">
+				</span><span class="nl">"job"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+					</span><span class="nl">"$ne"</span><span class="p">:</span><span class="w"> </span><span class="s2">"失业"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">职位不等于</span><span class="w"> </span><span class="s2">"失业"</span><span class="w">
+				</span><span class="p">}</span><span class="w">
+			</span><span class="p">},</span><span class="w">
+			</span><span class="p">{</span><span class="w">
+				</span><span class="nl">"salary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+					</span><span class="nl">"$gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">薪水大于或等于</span><span class="w"> </span><span class="mi">50000</span><span class="w">
+					</span><span class="nl">"$mod"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+						</span><span class="mi">4</span><span class="p">,</span><span class="w">
+						</span><span class="mi">0</span><span class="w">
+					</span><span class="p">]</span><span class="w"> </span><span class="err">//可以被</span><span class="mi">4</span><span class="err">整除</span><span class="w">
+				</span><span class="p">}</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">],</span><span class="w">
+		</span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">标签条件</span><span class="w">
+			</span><span class="nl">"$in"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">标签必须在这个数组中</span><span class="w">
+				</span><span class="s2">"工程师"</span><span class="p">,</span><span class="w">
+				</span><span class="s2">"开发人员"</span><span class="w">
+			</span><span class="p">],</span><span class="w">
+			</span><span class="nl">"$size"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">数组长度为</span><span class="mi">2</span><span class="w">
+			</span><span class="nl">"$all"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">//标签数组必须包含该数组的所有内容</span><span class="w">
+				</span><span class="s2">"工程师"</span><span class="p">,</span><span class="w">
+				</span><span class="s2">"开发人员"</span><span class="w">
+			</span><span class="p">],</span><span class="w">
+			</span><span class="nl">"$isNull"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">同</span><span class="w"> </span><span class="nl">"$ne"</span><span class="p">:</span><span class="kc">null</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+		</span><span class="nl">"projects"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目条件</span><span class="w">
+			</span><span class="nl">"$elemMatch"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//若要使用</span><span class="w"> </span><span class="err">$elemMatch</span><span class="p">,</span><span class="err">必须在$elemMatch前先套一层</span><span class="p">{}</span><span class="w">
+				</span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">查询项目中角色为</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w">
+			</span><span class="p">},</span><span class="w">
+			</span><span class="nl">"$size"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">数组长度为</span><span class="mi">2</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+		</span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">描述条件</span><span class="w">
+			</span><span class="nl">"$regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">".*开发人员.*"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">描述中包含</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="w"> </span><span class="err">字样</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+		</span><span class="nl">"isActive"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">活动状态</span><span class="w">
+			</span><span class="nl">"$exists"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">存在</span><span class="w"> </span><span class="err">isActive</span><span class="w"> </span><span class="err">字段</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>发送请求后，<code class="language-plaintext highlighter-rouge">MongoTemplate</code>日志：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">o.s.data.mongodb.core.MongoTemplate:</span><span class="w"> </span><span class="err">find</span><span class="w"> </span><span class="err">using</span><span class="w"> </span><span class="err">query:</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$oid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6708f5f8c7413f0001015635"</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.status"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"data.name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$not"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+					</span><span class="nl">"$regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^李.*"</span><span class="p">,</span><span class="w">
+					</span><span class="nl">"$options"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+				</span><span class="p">}</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$type"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.age"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.age"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$lt"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"$or"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"data.city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"纽约"</span><span class="w">
+			</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"data.name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"张三"</span><span class="w">
+			</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+		</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"data.city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"洛杉矶"</span><span class="w">
+		</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"data.job"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$ne"</span><span class="p">:</span><span class="w"> </span><span class="s2">"失业"</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"data.salary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"data.salary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$mod"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">]</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$in"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"工程师"</span><span class="p">,</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="w"> </span><span class="p">]</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$size"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$all"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"工程师"</span><span class="p">,</span><span class="w"> </span><span class="s2">"开发人员"</span><span class="w"> </span><span class="p">]</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$ne"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.projects"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$elemMatch"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+					</span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"主开发"</span><span class="w">
+				</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.projects"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$size"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.description"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">".*开发人员.*"</span><span class="p">,</span><span class="w">
+			</span><span class="nl">"$options"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"data.isActive"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"$exists"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"tenant_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"16889087066967307206"</span><span class="w">
+	</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"$or"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"deleteStatus"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+		</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nl">"deleteStatus"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+				</span><span class="nl">"$exists"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+	</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">fields:</span><span class="w"> </span><span class="err">Document</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="p">{}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">for</span><span class="w"> </span><span class="err">class:</span><span class="w"> </span><span class="err">interface</span><span class="w"> </span><span class="err">java.util.Map</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">collection:</span><span class="w"> </span><span class="err">co_common_test</span><span class="mi">1</span><span class="w">
+</span></code></pre></div></div>
+
+<hr />
+
+<p>若通过java代码构建，则样例代码为：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"dataID"</span><span class="o">,</span> <span class="s">"6708f5f8c7413f0001015635"</span><span class="o">);</span> <span class="c1">// 查询指定_id</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"status"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c1">// 查询状态为 true 的记录</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">nameConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">nameConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$eq"</span><span class="o">,</span> <span class="s">"张三"</span><span class="o">);</span> <span class="c1">// 查询名称为 "张三" 的记录</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">notCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">notCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$regex"</span><span class="o">,</span> <span class="s">"^李.*"</span><span class="o">);</span>
+<span class="n">nameConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$not"</span><span class="o">,</span> <span class="n">notCondition</span><span class="o">);</span> <span class="c1">// 排除李开头</span>
+<span class="n">nameConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$type"</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span> <span class="c1">// 是字符串</span>
+
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="n">nameConditions</span><span class="o">);</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">ageConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">ageConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$gte"</span><span class="o">,</span> <span class="mi">25</span><span class="o">);</span> <span class="c1">// 年龄大于或等于 25</span>
+<span class="n">ageConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$lt"</span><span class="o">,</span> <span class="mi">50</span><span class="o">);</span> <span class="c1">// 年龄小于 50</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"age"</span><span class="o">,</span> <span class="n">ageConditions</span><span class="o">);</span> <span class="c1">// 年龄范围条件</span>
+
+<span class="c1">// 处理 $or 条件</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">orConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">firstAndCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">firstAndConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="n">firstAndConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Collections</span><span class="o">.</span><span class="na">singletonMap</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"纽约"</span><span class="o">));</span> <span class="c1">// 城市为 "纽约"</span>
+<span class="n">firstAndConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Collections</span><span class="o">.</span><span class="na">singletonMap</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"张三"</span><span class="o">));</span> <span class="c1">// 名称为 "张三"</span>
+<span class="n">firstAndCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$and"</span><span class="o">,</span> <span class="n">firstAndConditions</span><span class="o">);</span>
+<span class="n">orConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">firstAndCondition</span><span class="o">);</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">secondOrCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">secondOrCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"city"</span><span class="o">,</span> <span class="s">"洛杉矶"</span><span class="o">);</span> <span class="c1">// 或者城市为 "洛杉矶"</span>
+<span class="n">orConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">secondOrCondition</span><span class="o">);</span>
+
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$or"</span><span class="o">,</span> <span class="n">orConditions</span><span class="o">);</span> <span class="c1">// 将 $or 条件添加到查询</span>
+
+<span class="c1">// 处理 $and 条件</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">andConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">firstAndJobCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">firstAndJobCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$ne"</span><span class="o">,</span> <span class="s">"失业"</span><span class="o">);</span> <span class="c1">// 职位不等于 "失业"</span>
+<span class="n">andConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Collections</span><span class="o">.</span><span class="na">singletonMap</span><span class="o">(</span><span class="s">"job"</span><span class="o">,</span> <span class="n">firstAndJobCondition</span><span class="o">));</span>
+
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">secondAndSalaryCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">secondAndSalaryCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$gte"</span><span class="o">,</span> <span class="mi">50000</span><span class="o">);</span> <span class="c1">// 薪水大于或等于 50000</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">modValues</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+<span class="n">secondAndSalaryCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$mod"</span><span class="o">,</span> <span class="n">modValues</span><span class="o">);</span> <span class="c1">// 可以被4整除</span>
+<span class="n">andConditions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Collections</span><span class="o">.</span><span class="na">singletonMap</span><span class="o">(</span><span class="s">"salary"</span><span class="o">,</span> <span class="n">secondAndSalaryCondition</span><span class="o">));</span>
+
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$and"</span><span class="o">,</span> <span class="n">andConditions</span><span class="o">);</span> <span class="c1">// 将 $and 条件添加到查询</span>
+
+<span class="c1">// 处理 tags 条件</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">tagsConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">tagsConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$in"</span><span class="o">,</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"工程师"</span><span class="o">,</span> <span class="s">"开发人员"</span><span class="o">));</span> <span class="c1">// 标签必须在这个数组中</span>
+<span class="n">tagsConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$size"</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span> <span class="c1">// 数组长度为2</span>
+<span class="n">tagsConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$all"</span><span class="o">,</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"工程师"</span><span class="o">,</span> <span class="s">"开发人员"</span><span class="o">));</span> <span class="c1">// 标签数组必须包含该数组的所有内容</span>
+<span class="n">tagsConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$isNull"</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span> <span class="c1">// 同 "$ne":null</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"tags"</span><span class="o">,</span> <span class="n">tagsConditions</span><span class="o">);</span> <span class="c1">// 将 tags 条件添加到查询</span>
+
+<span class="c1">// 处理 projects 条件</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">projectsConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">elemMatchCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">elemMatchCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"role"</span><span class="o">,</span> <span class="s">"主开发"</span><span class="o">);</span> <span class="c1">// 查询项目中角色为 "主开发"</span>
+<span class="n">projectsConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$elemMatch"</span><span class="o">,</span> <span class="n">elemMatchCondition</span><span class="o">);</span> <span class="c1">// 添加 $elemMatch 条件</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"projects"</span><span class="o">,</span> <span class="n">projectsConditions</span><span class="o">);</span> <span class="c1">// 将 projects 条件添加到查询</span>
+
+<span class="c1">// 处理 description 条件</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">descriptionConditions</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">descriptionConditions</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$regex"</span><span class="o">,</span> <span class="s">".*开发人员.*"</span><span class="o">);</span> <span class="c1">// 描述中包含 "开发人员" 字样</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"description"</span><span class="o">,</span> <span class="n">descriptionConditions</span><span class="o">);</span> <span class="c1">// 将 description 条件添加到查询</span>
+
+<span class="c1">// 处理 isActive 条件</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">isActiveCondition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">isActiveCondition</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"$exists"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c1">// 存在 isActive 字段</span>
+<span class="n">query</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"isActive"</span><span class="o">,</span> <span class="n">isActiveCondition</span><span class="o">);</span> <span class="c1">// 将 isActive 条件添加到查询</span>
+
+<span class="c1">// 输出构建的 Map</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">query</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>Map结构：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+	$and = [ {
+		job = {
+			$ne = 失业
+		}
+	}, {
+		salary = {
+			$gte = 50000,
+			$mod = [ 4, 0 ]
+		}
+	} ], projects = {
+		$elemMatch = {
+			role = 主开发
+		}
+	}, dataID = 6708f5f8c7413f0001015635, $or = [ {
+		$and = [ {
+			city = 纽约
+		}, {
+			name = 张三
+		} ]
+	}, {
+		city = 洛杉矶
+	} ], name = {
+		$eq = 张三,
+		$not = {
+			$regex = ^ 李.*
+		},
+		$type = 2
+	}, description = {
+		$regex = .*开发人员.*
+	}, isActive = {
+		$exists = true
+	}, age = {
+		$gte = 25,
+		$lt = 50
+	}, status = true, tags = {
+		$isNull = false,
+		$size = 2,
+		$in = [ 工程师, 开发人员 ],
+		$all = [ 工程师, 开发人员 ]
+	}
+}
+</code></pre></div></div>
+
+<h2 id="控制符文档">控制符文档</h2>
+
+<p><code class="language-plaintext highlighter-rouge">condition</code> 中使用的控制符及其对应的作用和 <code class="language-plaintext highlighter-rouge">value</code> 要求的文档说明。每个控制符包括其含义、<code class="language-plaintext highlighter-rouge">value</code> 类型要求以及示例。</p>
+
+<h3 id="适用于具体字段下的控制符">适用于具体字段下的控制符</h3>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$gt</code>（大于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值大于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 数字、日期等可比较类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "price": { "$gt": 100 } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$lt</code>（小于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值小于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 数字、日期等可比较类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "age": { "$lt": 30 } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$gte</code>（大于等于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值大于或等于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 数字、日期等可比较类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "score": { "$gte": 60 } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$lte</code>（小于等于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值小于或等于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 数字、日期等可比较类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "height": { "$lte": 180 } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$ne</code>（不等于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值不等于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 任意类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "status": { "$ne": "inactive" } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$eq</code>（等于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值等于指定值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 任意类型。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "username": { "$eq": "john_doe" } }</code></li>
+</ul>
+
+<p>可直接省略为<code class="language-plaintext highlighter-rouge">{ "username": "john_doe" }</code></p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$in</code>（包含于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值包含于给定的列表中的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个数组或集合。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "category": { "$in": ["electronics", "furniture"] } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$nin</code>（不包含于）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值不在给定列表中的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个数组或集合。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "department": { "$nin": ["HR", "Finance"] } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$regex</code>（正则表达式匹配）</strong></p>
+
+<ul>
+  <li>作用: 使用正则表达式匹配字段值。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 字符串，表示一个正则表达式。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "email": { "$regex": "^.+@example\\.com$" } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$exists</code>（字段存在性检查）</strong></p>
+
+<ul>
+  <li>作用: 检查某字段是否存在。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 布尔值，<code class="language-plaintext highlighter-rouge">true</code> 表示字段必须存在，<code class="language-plaintext highlighter-rouge">false</code> 表示字段不能存在。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "middle_name": { "$exists": false } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$size</code>（数组大小匹配）</strong></p>
+
+<ul>
+  <li>作用: 匹配数组字段的大小。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 整数，表示数组的长度。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "tags": { "$size": 3 } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$mod</code>（取模运算）</strong></p>
+
+<ul>
+  <li>作用: 对字段值进行取模运算，并匹配结果。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个包含两个整数的数组，第一个是除数，第二个是余数。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "quantity": { "$mod": [4, 0] } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$type</code>（类型匹配）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值的 BSON 数据类型。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个整数，表示 BSON 类型代码。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "created_at": { "$type": 9 } }</code></li>
+</ul>
+
+<p>可用类型：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">类型</th>
+      <th style="text-align: left">数值</th>
+      <th style="text-align: left">别名</th>
+      <th style="text-align: left">注意</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">double</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">double</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">字符串</td>
+      <td style="text-align: left">2</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">string</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">对象</td>
+      <td style="text-align: left">3</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">object</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">阵列</td>
+      <td style="text-align: left">4</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">array</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">二进制数据</td>
+      <td style="text-align: left">5</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">binData</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">未定义</td>
+      <td style="text-align: left">6</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">undefined</code></td>
+      <td style="text-align: left">已弃用。</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">ObjectId</td>
+      <td style="text-align: left">7</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">objectId</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">布尔</td>
+      <td style="text-align: left">8</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bool</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Date</td>
+      <td style="text-align: left">9</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">date</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">null</td>
+      <td style="text-align: left">10</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">null</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">正则表达式</td>
+      <td style="text-align: left">11</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">regex</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">数据库指针</td>
+      <td style="text-align: left">12</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">dbPointer</code></td>
+      <td style="text-align: left">已弃用。</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">JavaScript</td>
+      <td style="text-align: left">13</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">javascript</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">符号</td>
+      <td style="text-align: left">14</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">symbol</code></td>
+      <td style="text-align: left">已弃用。</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">32 位整数</td>
+      <td style="text-align: left">16</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">int</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">时间戳</td>
+      <td style="text-align: left">17</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">timestamp</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">64 位整型</td>
+      <td style="text-align: left">18</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">long</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Decimal128</td>
+      <td style="text-align: left">19</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">decimal</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Min key</td>
+      <td style="text-align: left">-1</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">minKey</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Max key</td>
+      <td style="text-align: left">127</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">maxKey</code></td>
+      <td style="text-align: left"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$all</code>（数组包含所有元素）</strong></p>
+
+<ul>
+  <li>作用: 匹配数组字段包含给定所有值的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个数组，表示必须匹配的所有值。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "skills": { "$all": ["java", "spring"] } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$isNull</code>（是否为空值）</strong></p>
+
+<ul>
+  <li>作用: 匹配字段值为空（<code class="language-plaintext highlighter-rouge">null</code>）或不为空的记录。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 布尔值，<code class="language-plaintext highlighter-rouge">true</code> 表示匹配空值，<code class="language-plaintext highlighter-rouge">false</code> 表示匹配非空值。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "middle_name": { "$isNull": true } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$not</code>（取反）</strong></p>
+
+<ul>
+  <li>作用: 对其他操作符的结果取反。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 必须是键值对的形式，支持的操作符有<code class="language-plaintext highlighter-rouge">$eq</code>、 <code class="language-plaintext highlighter-rouge">$gt</code>、 <code class="language-plaintext highlighter-rouge">$gte</code>、 <code class="language-plaintext highlighter-rouge">$lt</code>、 <code class="language-plaintext highlighter-rouge">$lte</code>、 <code class="language-plaintext highlighter-rouge">$ne</code>、 <code class="language-plaintext highlighter-rouge">$regex</code>。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "age": { "$not": { "$gt": 18 } } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$notRegex</code>（正则表达式取反）</strong></p>
+
+<ul>
+  <li>作用: 对正则表达式匹配结果取反。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 字符串，表示一个正则表达式。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "username": { "$notRegex": "^admin.*" } }</code></li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$elemMatch</code>（数组元素匹配）</strong></p>
+
+<ul>
+  <li>作用: 用于匹配对象数组中的元素是否满足多个条件，只有当数组中的<strong>某个元素满足所有给定条件时</strong>，该文档才会被匹配。</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> 要求: 一个对象，包含多个条件，每个条件都会被应用于对象数组的每个元素。</li>
+  <li>示例: <code class="language-plaintext highlighter-rouge">{ "comments": { "$elemMatch": { "user": "john", "score": { "$gt": 5 } } } }</code></li>
+  <li>注意：若<code class="language-plaintext highlighter-rouge">comments</code>的值在已经包含<code class="language-plaintext highlighter-rouge">$elemMatch</code>键的情况下，还有其他的平行键，则这些平行键都不会被执行解析。</li>
+</ul>
+
+<p>这条语句会匹配一个评论对象数组，其中 <code class="language-plaintext highlighter-rouge">user</code> 为 <code class="language-plaintext highlighter-rouge">john</code> 并且 <code class="language-plaintext highlighter-rouge">score</code> 大于 5 的文档。</p>
+
+<p><strong>错误处理</strong></p>
+
+<ul>
+  <li>如果条件中出现了无效的控制符，系统会抛出异常，并显示相关的无效控制符信息。</li>
+</ul>
+
+<p><strong>对象属性引用</strong></p>
+
+<p>假设<code class="language-plaintext highlighter-rouge">person</code>是对象，现在想判断该对象的<code class="language-plaintext highlighter-rouge">sex</code>，那么可以写成：<code class="language-plaintext highlighter-rouge">"person.sex":"男"</code>。</p>
+
+<h3 id="需直接使用的控制符">需直接使用的控制符</h3>
+
+<p>以下是 <code class="language-plaintext highlighter-rouge">$or</code> 和 <code class="language-plaintext highlighter-rouge">$and</code> 控制符的文档，包含其作用和 <code class="language-plaintext highlighter-rouge">value</code> 要求：</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$or</code></strong></p>
+
+<ul>
+  <li><strong>作用</strong>: 用于指定多个条件中的任何一个条件满足时匹配文档。只有当数组中的某个条件满足时，文档才会被匹配。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">value</code> 要求</strong>: <strong>一个数组</strong>，包含多个条件对象，每个对象可以是一个简单条件或复杂条件。</li>
+  <li>
+    <p><strong>示例</strong>:</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"$or"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+    <p>这条语句会匹配状态为 <code class="language-plaintext highlighter-rouge">active</code> 或年龄大于等于 30 的文档。</p>
+  </li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">$and</code></strong></p>
+
+<ul>
+  <li><strong>作用</strong>: 用于指定多个条件必须全部满足时匹配文档。只有当所有条件都满足时，文档才会被匹配。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">value</code> 要求</strong>: <strong>一个数组</strong>，包含多个条件对象，每个对象可以是一个简单条件或复杂条件。</li>
+  <li><strong>示例</strong>:
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"$and"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"$lt"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+    <p>这条语句会匹配状态为 <code class="language-plaintext highlighter-rouge">active</code> 且年龄小于 50 的文档。</p>
+  </li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">$and</code>与<code class="language-plaintext highlighter-rouge">$or</code>可互相嵌套。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Redis</title><link href="/2024/09/26/Redis/" rel="alternate" type="text/html" title="Redis" /><published>2024-09-26T00:00:00+08:00</published><updated>2024-09-26T00:00:00+08:00</updated><id>/2024/09/26/Redis</id><content type="html" xml:base="/2024/09/26/Redis/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Redis是一个内存数据库。</p>
 
@@ -5760,587 +7101,4 @@ git gc <span class="nt">--prune</span><span class="o">=</span>now <span class="n
 
 <p>卸载完失效的证书后，在<code class="language-plaintext highlighter-rouge">Charles</code>里生成新的证书，<code class="language-plaintext highlighter-rouge">Help</code>-<code class="language-plaintext highlighter-rouge">SSL Proxying</code>-<code class="language-plaintext highlighter-rouge">Reset Charles Root Certificate...</code>，然后重新安装证书：<code class="language-plaintext highlighter-rouge">Help</code>-<code class="language-plaintext highlighter-rouge">SSL Proxying</code>-<code class="language-plaintext highlighter-rouge">Install Charles Root Certificate</code>-<code class="language-plaintext highlighter-rouge">安装证书...</code>-选<code class="language-plaintext highlighter-rouge">当前用户</code>即可-<code class="language-plaintext highlighter-rouge">下一步</code>-<code class="language-plaintext highlighter-rouge">将所有的证书都放入下列存储</code>-<code class="language-plaintext highlighter-rouge">浏览...</code>-<code class="language-plaintext highlighter-rouge">选择受信任的根证书颁发机构</code>-<code class="language-plaintext highlighter-rouge">确定</code>-<code class="language-plaintext highlighter-rouge">下一步</code>-<code class="language-plaintext highlighter-rouge">完成</code>-若有警告点击确认。</p>
 
-<p>这样就完成了证书的更新操作，重启<code class="language-plaintext highlighter-rouge">Charles</code>后即可恢复正常。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[Charles证书更新]]></summary></entry><entry><title type="html">Spring Cloud</title><link href="/2024/08/26/Spring-Clud/" rel="alternate" type="text/html" title="Spring Cloud" /><published>2024-08-26T00:00:00+08:00</published><updated>2024-08-26T00:00:00+08:00</updated><id>/2024/08/26/Spring%20Clud</id><content type="html" xml:base="/2024/08/26/Spring-Clud/"><![CDATA[<h1 id="引言">引言</h1>
-<p>Spring Clud笔记。</p>
-
-<h1 id="spring-cloud">Spring Cloud</h1>
-
-<p>为了简化版本和依赖管理，用<code class="language-plaintext highlighter-rouge">parent</code>模块管理最基础的<code class="language-plaintext highlighter-rouge">pom.xml</code>，其他模块直接从<code class="language-plaintext highlighter-rouge">parent</code>继承，能大大简化各自的<code class="language-plaintext highlighter-rouge">pom.xml</code>。<code class="language-plaintext highlighter-rouge">parent</code>模块<code class="language-plaintext highlighter-rouge">pom.xml</code>内容如下：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
-    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-    <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>
-<span class="nt">&gt;</span>
-    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>com.test<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>parent<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
-
-    <span class="c">&lt;!-- 继承自SpringBoot Starter Parent --&gt;</span>
-    <span class="nt">&lt;parent&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="c">&lt;!-- SpringBoot版本 --&gt;</span>
-        <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;/parent&gt;</span>
-
-    <span class="nt">&lt;properties&gt;</span>
-        <span class="c">&lt;!-- 项目版本 --&gt;</span>
-        <span class="nt">&lt;project.version&gt;</span>1.0<span class="nt">&lt;/project.version&gt;</span>
-        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
-        <span class="nt">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.reporting.outputEncoding&gt;</span>
-
-        <span class="c">&lt;!-- Java编译和运行版本 --&gt;</span>
-        <span class="nt">&lt;maven.compiler.source&gt;</span>17<span class="nt">&lt;/maven.compiler.source&gt;</span>
-        <span class="nt">&lt;maven.compiler.target&gt;</span>17<span class="nt">&lt;/maven.compiler.target&gt;</span>
-        <span class="nt">&lt;java.version&gt;</span>17<span class="nt">&lt;/java.version&gt;</span>
-
-        <span class="c">&lt;!-- 定义第三方组件的版本 --&gt;</span>
-        <span class="nt">&lt;pebble.version&gt;</span>3.2.0<span class="nt">&lt;/pebble.version&gt;</span>
-        <span class="nt">&lt;springcloud.version&gt;</span>2022.0.0<span class="nt">&lt;/springcloud.version&gt;</span>
-        <span class="nt">&lt;springdoc.version&gt;</span>2.0.0<span class="nt">&lt;/springdoc.version&gt;</span>
-        <span class="nt">&lt;vertx.version&gt;</span>4.3.1<span class="nt">&lt;/vertx.version&gt;</span>
-    <span class="nt">&lt;/properties&gt;</span>
-
-    <span class="c">&lt;!-- 引入SpringCloud依赖 --&gt;</span>
-    <span class="nt">&lt;dependencyManagement&gt;</span>
-        <span class="nt">&lt;dependencies&gt;</span>
-            <span class="nt">&lt;dependency&gt;</span>
-                <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-                <span class="nt">&lt;artifactId&gt;</span>spring-cloud-dependencies<span class="nt">&lt;/artifactId&gt;</span>
-                <span class="nt">&lt;version&gt;</span>${springcloud.version}<span class="nt">&lt;/version&gt;</span>
-                <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
-                <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
-            <span class="nt">&lt;/dependency&gt;</span>
-        <span class="nt">&lt;/dependencies&gt;</span>
-    <span class="nt">&lt;/dependencyManagement&gt;</span>
-
-    <span class="c">&lt;!-- 共享的依赖管理 --&gt;</span>
-    <span class="nt">&lt;dependencies&gt;</span>
-        <span class="c">&lt;!-- 依赖JUnit5 --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-params<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-engine<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-        <span class="c">&lt;!-- 依赖SpringTest --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>spring-test<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-    <span class="nt">&lt;/dependencies&gt;</span>
-
-    <span class="nt">&lt;build&gt;</span>
-        <span class="nt">&lt;pluginManagement&gt;</span>
-            <span class="nt">&lt;plugins&gt;</span>
-                <span class="c">&lt;!-- 引入创建可执行Jar的插件 --&gt;</span>
-                <span class="nt">&lt;plugin&gt;</span>
-                    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-                    <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
-                <span class="nt">&lt;/plugin&gt;</span>
-            <span class="nt">&lt;/plugins&gt;</span>
-        <span class="nt">&lt;/pluginManagement&gt;</span>
-    <span class="nt">&lt;/build&gt;</span>
-<span class="nt">&lt;/project&gt;</span>
-</code></pre></div></div>
-
-<p>上述<code class="language-plaintext highlighter-rouge">pom.xml</code>中，除了写死的Spring Boot版本、Java运行版本、项目版本外，其他引入的版本均以<code class="language-plaintext highlighter-rouge">&lt;xxx.version&gt;1.23&lt;/xxx.version&gt;</code>的形式定义，以便后续可以用<code class="language-plaintext highlighter-rouge">${xxx.version}</code>引用版本号，避免了同一个组件出现多个写死的版本定义。</p>
-
-<p>对其他业务模块，引入<code class="language-plaintext highlighter-rouge">parent</code>的<code class="language-plaintext highlighter-rouge">pom.xml</code>可大大简化配置。以<code class="language-plaintext highlighter-rouge">ui</code>模块为例，其<code class="language-plaintext highlighter-rouge">pom.xml</code>如下：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
-    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-    <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>
-<span class="nt">&gt;</span>
-    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-
-    <span class="c">&lt;!-- 指定Parent --&gt;</span>
-    <span class="nt">&lt;parent&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>com.test<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>parent<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
-        <span class="c">&lt;!-- Parent POM的相对路径 --&gt;</span>
-        <span class="nt">&lt;relativePath&gt;</span>../parent/pom.xml<span class="nt">&lt;/relativePath&gt;</span>
-    <span class="nt">&lt;/parent&gt;</span>
-
-    <span class="c">&lt;!-- 当前模块名称 --&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>ui<span class="nt">&lt;/artifactId&gt;</span>
-
-    <span class="nt">&lt;dependencies&gt;</span>
-        <span class="c">&lt;!-- 依赖SpringCloud Config客户端 --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-config<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-
-        <span class="c">&lt;!-- 依赖SpringBoot Actuator --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-actuator<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-
-        <span class="c">&lt;!-- 依赖Common模块 --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>com.test<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>common<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;version&gt;</span>${project.version}<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-
-        <span class="c">&lt;!-- 依赖第三方模块 --&gt;</span>
-        <span class="nt">&lt;dependency&gt;</span>
-            <span class="nt">&lt;groupId&gt;</span>io.pebbletemplates<span class="nt">&lt;/groupId&gt;</span>
-            <span class="nt">&lt;artifactId&gt;</span>pebble-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;version&gt;</span>${pebble.version}<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;/dependency&gt;</span>
-    <span class="nt">&lt;/dependencies&gt;</span>
-
-    <span class="nt">&lt;build&gt;</span>
-        <span class="c">&lt;!-- 指定输出文件名 --&gt;</span>
-        <span class="nt">&lt;finalName&gt;</span>${project.artifactId}<span class="nt">&lt;/finalName&gt;</span>
-        <span class="c">&lt;!-- 创建SpringBoot可执行jar --&gt;</span>
-        <span class="nt">&lt;plugins&gt;</span>
-            <span class="nt">&lt;plugin&gt;</span>
-                <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-                <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
-            <span class="nt">&lt;/plugin&gt;</span>
-        <span class="nt">&lt;/plugins&gt;</span>
-    <span class="nt">&lt;/build&gt;</span>
-<span class="nt">&lt;/project&gt;</span>
-</code></pre></div></div>
-
-<p>在<code class="language-plaintext highlighter-rouge">parent</code>的<code class="language-plaintext highlighter-rouge">pom.xml</code>中引入了Spring Cloud的依赖管理，因此，无需指定相关组件的版本。只有自己编写的组件和未在Spring Boot和Spring Cloud中引入的组件，才需要指定版本。</p>
-
-<p>还需要一个<code class="language-plaintext highlighter-rouge">build</code>模块，把所有模块放到一起编译。建立<code class="language-plaintext highlighter-rouge">build</code>文件夹并创建<code class="language-plaintext highlighter-rouge">pom.xml</code>如下：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
-    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-    <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/maven-v4_0_0.xsd"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>com.test<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>build<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
-    <span class="nt">&lt;name&gt;</span>Warp Exchange<span class="nt">&lt;/name&gt;</span>
-
-    <span class="c">&lt;!-- 按相对路径列出所有模块 --&gt;</span>
-    <span class="nt">&lt;modules&gt;</span>
-        <span class="nt">&lt;module&gt;</span>../common<span class="nt">&lt;/module&gt;</span>
-        <span class="nt">&lt;module&gt;</span>../config<span class="nt">&lt;/module&gt;</span>
-        <span class="nt">&lt;module&gt;</span>../parent<span class="nt">&lt;/module&gt;</span>
-        <span class="nt">&lt;module&gt;</span>../ui<span class="nt">&lt;/module&gt;</span>
-    <span class="nt">&lt;/modules&gt;</span>
-<span class="nt">&lt;/project&gt;</span>
-</code></pre></div></div>
-
-<p>还需要创建目录<code class="language-plaintext highlighter-rouge">config-repo</code>来存储Spring Cloud Config服务器端的配置文件。</p>
-
-<p>最后，将所有模块导入IDE，可正常开发、编译、运行。如果要在命令行模式下运行，进入<code class="language-plaintext highlighter-rouge">build</code>文件夹使用Maven编译即可：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mvn clean package
-</code></pre></div></div>
-
-<hr />
-
-<p><strong>本地开发环境</strong></p>
-
-<p>在本地开发时，需要经常调试代码。除了安装JDK，选择一个IDE外，还需要在本地运行MySQL、Redis、Kafka，以及Kafka依赖的ZooKeeper服务。</p>
-
-<p>可以使用<a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a>来运行这些基础服务，需要在<code class="language-plaintext highlighter-rouge">build</code>目录下编写一个<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件定义要运行的所有服务：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">zookeeper</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">bitnami/zookeeper:3.5</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">zookeeper</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">2181:2181"</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">ALLOW_ANONYMOUS_LOGIN=yes</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/zookeeper-data:/bitnami"</span>
-
-  <span class="na">kafka</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">bitnami/kafka:3.0</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">kafka</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">9092:9092"</span>
-    <span class="na">depends_on</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">zookeeper</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">KAFKA_BROKER_ID=1</span>
-      <span class="pi">-</span> <span class="s">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092</span>
-      <span class="pi">-</span> <span class="s">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span>
-      <span class="pi">-</span> <span class="s">KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181</span>
-      <span class="pi">-</span> <span class="s">KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true</span>
-      <span class="pi">-</span> <span class="s">ALLOW_PLAINTEXT_LISTENER=yes</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/kafka-data:/bitnami"</span>
-
-  <span class="na">redis</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:6.2</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">redis</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">6379:6379"</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/redis-data:/data"</span>
-
-  <span class="na">mysql</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">mysql:8.0</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">mysql</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">3306:3306"</span>
-    <span class="na">command</span><span class="pi">:</span> <span class="s">--default-authentication-plugin=mysql_native_password</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">MYSQL_ROOT_PASSWORD=password</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">./sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro"</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">./docker/mysql-data:/var/lib/mysql"</span>
-</code></pre></div></div>
-
-<p>在上述<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件中，定义了MySQL、Redis、Kafka以及Kafka依赖的ZooKeeper服务，各服务均暴露标准端口，且MySQL的<code class="language-plaintext highlighter-rouge">root</code>口令设置为<code class="language-plaintext highlighter-rouge">password</code>，第一次启动MySQL时，使用<code class="language-plaintext highlighter-rouge">sql/schema.sql</code>文件初始化数据库表结构。所有数据盘均挂载到<code class="language-plaintext highlighter-rouge">build</code>目录下的<code class="language-plaintext highlighter-rouge">docker</code>目录。</p>
-
-<p>在<code class="language-plaintext highlighter-rouge">build</code>目录下运行<code class="language-plaintext highlighter-rouge">docker-compose up -d</code>即可启动容器：</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>build $ docker-compose up -d
-Creating network "build_default" with the default driver
-Creating zookeeper ... done
-Creating mysql     ... done
-Creating redis     ... done
-Creating kafka     ... done
-</code></pre></div></div>
-
-<p>在Docker Desktop中也可看到运行状态。</p>
-
-<p>如果要删除开发环境的所有数据，首先停止运行Docker容器进程并删除，然后删除<code class="language-plaintext highlighter-rouge">build</code>目录下的<code class="language-plaintext highlighter-rouge">docker</code>目录，重新运行<code class="language-plaintext highlighter-rouge">docker-compose</code>即可。</p>
-
-<h2 id="spring-cloud-config">Spring Cloud Config</h2>
-
-<p>Spring Cloud Config是Spring Cloud的一个子项目，它的主要目的是解决多个Spring Boot应用启动时，应该如何读取配置文件的问题。</p>
-
-<p>对于单体应用，即一个独立的Spring Boot应用，我们会把配置写在<code class="language-plaintext highlighter-rouge">application.yml</code>文件中。如果配置需要针对多个环境，可以用<code class="language-plaintext highlighter-rouge">---</code>分隔并标注好环境：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.yml</span>
-<span class="c1"># 通用配置:</span>
-<span class="na">spring</span><span class="pi">:</span>
-  <span class="na">datasource</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:mysql://localhost/test</span>
-
-<span class="nn">---</span>
-
-<span class="c1"># test profile:</span>
-<span class="na">spring</span><span class="pi">:</span>
-  <span class="na">config</span><span class="pi">:</span>
-    <span class="na">activate</span><span class="pi">:</span>
-      <span class="na">on-profile</span><span class="pi">:</span> <span class="s">test</span>
-  <span class="na">datasource</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:mysql://172.16.0.100/test</span>
-</code></pre></div></div>
-
-<p>这种配置方式针对单个Spring Boot应用是可行的，但是，针对分布式应用，有多个Spring Boot应用需要启动时，分散在各个应用中的配置既不便于管理，也不便于复用相同的配置。</p>
-
-<p>Spring Cloud Config提供了一个通用的分布式应用的配置解决方案。它把配置分为两部分：</p>
-
-<ul>
-  <li>Config Server：配置服务器，负责读取所有配置；</li>
-  <li>Config Client：嵌入到各个Spring Boot应用中，<strong>本地无配置信息</strong>，启动时向服务器请求配置。</li>
-</ul>
-
-<p>要搭建一个Spring Cloud Config Server，即配置服务器，首先，在<code class="language-plaintext highlighter-rouge">config</code>模块中引入<code class="language-plaintext highlighter-rouge">spring-cloud-config-server</code>依赖：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-config-server<span class="nt">&lt;/artifactId&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<p>然后，编写一个<code class="language-plaintext highlighter-rouge">ConfigApplication</code>入口，标注<code class="language-plaintext highlighter-rouge">@EnableConfigServer</code>：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@EnableConfigServer</span>
-<span class="nd">@SpringBootApplication</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConfigApplication</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">ConfigApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>最后，在<code class="language-plaintext highlighter-rouge">application.yml</code>中设置如何搜索配置。Spring Cloud Config支持多种配置方式，包括从本地文件、Git仓库、数据库等多个地方读取配置。这里选择以本地文件的方式读取配置文件，这也是最简单的一种配置方式：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 配置服务器的端口，通常设置为8888:</span>
-<span class="na">server</span><span class="pi">:</span>
-  <span class="na">port</span><span class="pi">:</span> <span class="m">8888</span>
-
-<span class="na">spring</span><span class="pi">:</span>
-  <span class="na">application</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">config-server</span>
-  <span class="na">profiles</span><span class="pi">:</span>
-    <span class="c1"># 从文件读取配置时，Config Server激活的profile必须设定为native:</span>
-    <span class="na">active</span><span class="pi">:</span> <span class="s">native</span>
-  <span class="na">cloud</span><span class="pi">:</span>
-    <span class="na">config</span><span class="pi">:</span>
-      <span class="na">server</span><span class="pi">:</span>
-        <span class="na">native</span><span class="pi">:</span>
-          <span class="c1"># 设置配置文件的搜索路径:</span>
-          <span class="na">search-locations</span><span class="pi">:</span> <span class="s">file:./config-repo, file:../config-repo, file:../../config-repo</span>
-</code></pre></div></div>
-
-<p>在<code class="language-plaintext highlighter-rouge">config-repo</code>目录下，存放的就是一系列配置文件：</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config-repo/
-├── application-default.yml
-├── application-test.yml
-├── application.yml
-├── push.yml
-├── quotation.yml
-├── trading-api.yml
-├── trading-engine.yml
-├── trading-sequencer.yml
-├── ui-default.yml
-└── ui.yml
-</code></pre></div></div>
-
-<p>至此，配置服务器就完成了，直接运行<code class="language-plaintext highlighter-rouge">ConfigApplication</code>即可启动配置服务器。在开发过程中，保持配置服务器在后台运行即可。</p>
-
-<p>接下来，对于每个负责业务的Spring Boot应用，需要从Spring Cloud Config Server读取配置。读取配置并不是说本地零配置，还是需要一点基础配置信息。以<code class="language-plaintext highlighter-rouge">ui</code>项目为例，编写<code class="language-plaintext highlighter-rouge">application.yml</code>如下：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
-  <span class="na">application</span><span class="pi">:</span>
-    <span class="c1"># 设置app名称:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">ui</span>
-  <span class="na">config</span><span class="pi">:</span>
-    <span class="c1"># 导入Config Server地址:</span>
-    <span class="na">import</span><span class="pi">:</span> <span class="s">configserver:${CONFIG_SERVER:http://localhost:8888}</span>
-</code></pre></div></div>
-
-<p>上述默认的Config Server配置为<code class="language-plaintext highlighter-rouge">http://localhost:8888</code>，也可以通过环境变量指定Config Server的地址。</p>
-
-<p>下一步是在<code class="language-plaintext highlighter-rouge">ui</code>模块的<code class="language-plaintext highlighter-rouge">pom.xml</code>中添加依赖：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-config<span class="nt">&lt;/artifactId&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<p>接下来正常启动<code class="language-plaintext highlighter-rouge">UIApplication</code>，该应用就会自动从Config Server读取配置。由于指定了应用的名称是<code class="language-plaintext highlighter-rouge">ui</code>，且默认的<code class="language-plaintext highlighter-rouge">profile</code>是<code class="language-plaintext highlighter-rouge">default</code>，因此，Config Server将返回以下4个配置文件：</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">ui-default.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application-default.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">ui.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application.yml</code></li>
-</ul>
-
-<p>前面的配置文件优先级较高，后面的配置文件优先级较低。如果出现相同的配置项，则在优先级高的配置生效。</p>
-
-<p>可以在浏览器访问<code class="language-plaintext highlighter-rouge">http://localhost:8888/ui/default</code>看到Config Server返回的配置，它是一个JSON文件：</p>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ui"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"profiles"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="s2">"default"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"state"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"propertySources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:../config-repo/ui-default.yml"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:../config-repo/application-default.yml"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:../config-repo/ui.yml"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:../config-repo/application.yml"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w">
-        </span><span class="p">}</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
-
-<p>如果启动<code class="language-plaintext highlighter-rouge">UIApplication</code>时传入<code class="language-plaintext highlighter-rouge">SPRING_PROFILES_ACTIVE=test</code>，将profile设置为<code class="language-plaintext highlighter-rouge">test</code>，则Config Server返回的文件如下：</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">ui-test.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application-test.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">ui.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application.yml</code></li>
-</ul>
-
-<p>可以通过<code class="language-plaintext highlighter-rouge">http://localhost:8888/ui/test</code>查看返回的配置。由于文件<code class="language-plaintext highlighter-rouge">ui-test.yml</code>不存在，因此，实际配置由3个文件合并而成。</p>
-
-<p>可以很容易地看到，一个Spring Boot应用在启动时，首先要设置自己的<code class="language-plaintext highlighter-rouge">name</code>并导入Config Server的URL，再根据当前活动的<code class="language-plaintext highlighter-rouge">profile</code>，由Config Server返回多个配置文件：</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">{name}-{profile}.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application-{profile}.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">{name}.yml</code></li>
-  <li><code class="language-plaintext highlighter-rouge">application.yml</code></li>
-</ul>
-
-<p>其中，<code class="language-plaintext highlighter-rouge">{name}-{xxx}.yml</code>是针对某个应用+某个<code class="language-plaintext highlighter-rouge">profile</code>的特定配置，<code class="language-plaintext highlighter-rouge">{name}.yml</code>是针对某个应用+所有profile的配置，<code class="language-plaintext highlighter-rouge">application-{profile}.yml</code>是针对某个<code class="language-plaintext highlighter-rouge">profile</code>的全局配置，<code class="language-plaintext highlighter-rouge">application.yml</code>是所有应用的全局配置。搭配各种配置文件就可以灵活组合配置。一般来说，全局默认的配置放在<code class="language-plaintext highlighter-rouge">application.yml</code>中，例如数据库连接：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
-  <span class="na">datasource</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:mysql://localhost/test</span>
-</code></pre></div></div>
-
-<p>这样保证了默认连接到本地数据库，在生产环境中会直接报错而不是连接到错误的数据库。</p>
-
-<p>在生产环境，例如<code class="language-plaintext highlighter-rouge">profile</code>设置为<code class="language-plaintext highlighter-rouge">prod</code>，则可以将数据库连接写在<code class="language-plaintext highlighter-rouge">application-prod.yml</code>中，使得所有生产环境的应用读取到的数据库连接是一致的：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
-  <span class="na">datasource</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:mysql://172.16.0.100/prod_db</span>
-</code></pre></div></div>
-
-<p>某个应用自己特定的配置则应当放到<code class="language-plaintext highlighter-rouge">{name}.yml</code>和<code class="language-plaintext highlighter-rouge">{name}-{profile}.yml</code>中。</p>
-
-<p>在设置好各个配置文件后，应当通过浏览器检查Config Server返回的配置是否符合预期。</p>
-
-<p>Spring Cloud Config还支持配置多个profile，以及从加密的配置源读取配置等。如果遇到更复杂的需求，可参考<a href="https://spring.io/projects/spring-cloud-config#learn">Spring Cloud Config的文档</a>。</p>
-
-<h2 id="consul">consul</h2>
-
-<p>Consul 是一个开源的服务发现和配置管理工具，由 HashiCorp 开发。它主要用于微服务架构中，提供服务注册、服务发现、健康检查和配置管理等功能。Consul 的主要特点包括：</p>
-
-<ol>
-  <li><strong>服务发现</strong></li>
-</ol>
-
-<p>Consul 允许服务在集群中进行注册和发现。服务可以向 Consul 注册其网络地址和其他元数据，其他服务可以通过查询 Consul 来找到这些服务。这样，服务间的通信就不再依赖硬编码的地址，而是通过 Consul 的服务发现功能进行动态定位。</p>
-
-<ol>
-  <li><strong>健康检查</strong></li>
-</ol>
-
-<p>Consul 提供了内置的健康检查机制，确保注册的服务实例处于健康状态。Consul 可以定期执行 HTTP、TCP、或者自定义命令的健康检查，并根据检查结果决定是否将服务实例从服务列表中移除。这样可以确保负载均衡器只将请求发送到健康的服务实例。</p>
-
-<ol>
-  <li><strong>服务注册和注销</strong></li>
-</ol>
-
-<p>服务可以在启动时向 Consul 注册自己，并在关闭时注销自己。Consul 维护一个最新的服务列表，并自动更新服务的状态。服务注册可以包括服务的元数据，如版本号、环境等信息。</p>
-
-<ol>
-  <li><strong>配置管理</strong></li>
-</ol>
-
-<p>Consul 提供了一个键值存储系统，允许应用程序存储和读取配置数据。配置可以被组织成层次结构，并且支持动态更新。应用程序可以在运行时从 Consul 中读取配置，并在配置变更时进行调整。</p>
-
-<ol>
-  <li><strong>多数据中心支持</strong></li>
-</ol>
-
-<p>Consul 支持跨数据中心的服务发现和配置管理，允许在多个地理位置的数据中心中运行 Consul 实例，并进行数据同步。这使得跨地域的微服务架构可以更容易地进行管理。</p>
-
-<ol>
-  <li><strong>安全性</strong></li>
-</ol>
-
-<p>Consul 提供了安全特性，如访问控制、加密和身份验证。它支持使用 TLS 对服务之间的通信进行加密，并允许通过 ACL（访问控制列表）来控制对 Consul 数据的访问权限。</p>
-
-<hr />
-
-<p>以下是如何在 Spring Boot 应用程序中使用 Consul 进行服务发现的基本步骤：</p>
-
-<p><strong>添加依赖</strong></p>
-
-<p>在 <code class="language-plaintext highlighter-rouge">pom.xml</code> 文件中添加 Consul 相关的依赖：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-consul-discovery<span class="nt">&lt;/artifactId&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<p><strong>配置 Consul</strong></p>
-
-<p>在 <code class="language-plaintext highlighter-rouge">application.yml</code> 文件中配置 Consul 相关的设置：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
-  <span class="na">cloud</span><span class="pi">:</span>
-    <span class="na">consul</span><span class="pi">:</span>
-      <span class="na">host</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
-      <span class="na">port</span><span class="pi">:</span> <span class="m">8500</span>
-      <span class="na">discovery</span><span class="pi">:</span>
-        <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
-        <span class="na">service-name</span><span class="pi">:</span> <span class="s">my-service</span>
-</code></pre></div></div>
-
-<p><strong>使用 Consul 进行服务发现</strong></p>
-
-<p>在应用程序中，可以使用 <code class="language-plaintext highlighter-rouge">@LoadBalanced</code> 注解和 <code class="language-plaintext highlighter-rouge">RestTemplate</code> 进行服务发现：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
-
-    <span class="nd">@Bean</span>
-    <span class="nd">@LoadBalanced</span>
-    <span class="kd">public</span> <span class="nc">RestTemplate</span> <span class="nf">restTemplate</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">RestTemplate</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="nd">@RestController</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyController</span> <span class="o">{</span>
-
-    <span class="nd">@Autowired</span>
-    <span class="kd">private</span> <span class="nc">RestTemplate</span> <span class="n">restTemplate</span><span class="o">;</span>
-
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/call-service"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">callService</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 使用服务名称进行调用</span>
-        <span class="k">return</span> <span class="n">restTemplate</span><span class="o">.</span><span class="na">getForObject</span><span class="o">(</span><span class="s">"http://my-service/some-endpoint"</span><span class="o">,</span> <span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>相关命令</strong></p>
-
-<p>启动 Consul 服务器（开发模式）：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul agent <span class="nt">-dev</span>
-</code></pre></div></div>
-
-<p>注册一个服务到 Consul：</p>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-service"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"primary"</span><span class="p">],</span><span class="w">
-    </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul services register service.json
-</code></pre></div></div>
-
-<p>查询服务：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>consul catalog services
-</code></pre></div></div>
-
-<p>Consul 提供了一整套解决方案来管理微服务的生命周期和配置，使得微服务架构的管理变得更加高效和可靠。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+<p>这样就完成了证书的更新操作，重启<code class="language-plaintext highlighter-rouge">Charles</code>后即可恢复正常。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[Charles证书更新]]></summary></entry></feed>
