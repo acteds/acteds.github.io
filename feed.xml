@@ -1,4 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-16T21:35:44+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB条件解析器</title><link href="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB条件解析器" /><published>2024-10-15T00:00:00+08:00</published><updated>2024-10-15T00:00:00+08:00</updated><id>/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-11-23T12:41:41+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多级Map连续取值</title><link href="/2024/10/28/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E5%8F%96%E5%80%BC/" rel="alternate" type="text/html" title="多级Map连续取值" /><published>2024-10-28T00:00:00+08:00</published><updated>2024-10-28T00:00:00+08:00</updated><id>/2024/10/28/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E5%8F%96%E5%80%BC</id><content type="html" xml:base="/2024/10/28/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E5%8F%96%E5%80%BC/"><![CDATA[<h1 id="引言">引言</h1>
+<p>一个简单的，连续获取Map值的方法。</p>
+
+<h1 id="map">Map</h1>
+
+<h2 id="多级map连续取值">多级Map连续取值</h2>
+
+<p>方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 通过路径连续获取值，分隔符为.号
+ * @param map 键值对
+ * @param path 路径
+ * @return
+ * @param &lt;T&gt; 返回类型(基本类型，非反序列化)
+ */</span>
+<span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">getValueByPath</span><span class="o">(</span><span class="nc">Map</span> <span class="n">map</span><span class="o">,</span> <span class="nc">String</span> <span class="n">path</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">String</span><span class="o">[]</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">"\\."</span><span class="o">);</span>
+
+    <span class="nc">Object</span> <span class="n">current</span> <span class="o">=</span> <span class="n">map</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">keys</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">current</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="o">((</span><span class="nc">Map</span><span class="o">&lt;?,</span> <span class="o">?&gt;)</span> <span class="n">current</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 如果当前不是 Map 类型，则返回 null</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="o">(</span><span class="no">T</span><span class="o">)</span> <span class="n">current</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>使用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span> <span class="n">map</span><span class="o">=...;</span>
+<span class="n">getValueByPath</span><span class="o">(</span><span class="n">map</span><span class="o">,</span><span class="s">"data.name"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>根据需要可以改变逻辑，当取不到值时抛出异常，而不是<code class="language-plaintext highlighter-rouge">null</code>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB条件解析器</title><link href="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB条件解析器" /><published>2024-10-15T00:00:00+08:00</published><updated>2024-10-15T00:00:00+08:00</updated><id>/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>一个将Map转换为<code class="language-plaintext highlighter-rouge">mongoTemplate</code>条件的类。</p>
 
@@ -7080,25 +7117,4 @@ git push origin <span class="nt">--force</span> <span class="nt">--tags</span>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">rm</span> <span class="nt">-rf</span> .git/refs/original/
 git reflog expire <span class="nt">--expire</span><span class="o">=</span>now <span class="nt">--all</span>
 git gc <span class="nt">--prune</span><span class="o">=</span>now <span class="nt">--aggressive</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Git" /><summary type="html"><![CDATA[Git的拆分与删除]]></summary></entry><entry><title type="html">Charles证书更新</title><link href="/2024/09/06/Charles%E8%AF%81%E4%B9%A6%E6%9B%B4%E6%96%B0/" rel="alternate" type="text/html" title="Charles证书更新" /><published>2024-09-06T00:00:00+08:00</published><updated>2024-09-06T00:00:00+08:00</updated><id>/2024/09/06/Charles%E8%AF%81%E4%B9%A6%E6%9B%B4%E6%96%B0</id><content type="html" xml:base="/2024/09/06/Charles%E8%AF%81%E4%B9%A6%E6%9B%B4%E6%96%B0/"><![CDATA[<h1 id="引言">引言</h1>
-<p>在某一天，正要抓包时，一直出现：</p>
-
-<p><code class="language-plaintext highlighter-rouge">SSL handshake with client failed: When access control was applied the certificate was rejected (access_denied)</code></p>
-
-<p>这就是证书失效了。</p>
-
-<h1 id="详解">详解</h1>
-
-<p>要解决这个问题，非常简单，首先要卸载失效的证书，有几种方式进入证书管理：</p>
-
-<ul>
-  <li>win+R：<code class="language-plaintext highlighter-rouge">Certmgr.msc</code>，这个是当前用户的证书。</li>
-  <li>按一次win，输入<code class="language-plaintext highlighter-rouge">cer</code>，可以看到一个<code class="language-plaintext highlighter-rouge">管理计算机证书</code>，这个就是管理应用于全部用户证书。</li>
-  <li>同上，还可以看到一个<code class="language-plaintext highlighter-rouge">管理用户证书</code>，这是当前用户的证书。</li>
-</ul>
-
-<p>通过哪种方式进入都可以，但这两个地方是不同的，可以都找找，侧栏点击一下最上面的<code class="language-plaintext highlighter-rouge">证书-本地计算机</code>，然后点击操作-查找证书-输入<code class="language-plaintext highlighter-rouge">Charles</code>，然后开始查找，找到的都删除，用户证书同理。</p>
-
-<p>卸载完失效的证书后，在<code class="language-plaintext highlighter-rouge">Charles</code>里生成新的证书，<code class="language-plaintext highlighter-rouge">Help</code>-<code class="language-plaintext highlighter-rouge">SSL Proxying</code>-<code class="language-plaintext highlighter-rouge">Reset Charles Root Certificate...</code>，然后重新安装证书：<code class="language-plaintext highlighter-rouge">Help</code>-<code class="language-plaintext highlighter-rouge">SSL Proxying</code>-<code class="language-plaintext highlighter-rouge">Install Charles Root Certificate</code>-<code class="language-plaintext highlighter-rouge">安装证书...</code>-选<code class="language-plaintext highlighter-rouge">当前用户</code>即可-<code class="language-plaintext highlighter-rouge">下一步</code>-<code class="language-plaintext highlighter-rouge">将所有的证书都放入下列存储</code>-<code class="language-plaintext highlighter-rouge">浏览...</code>-<code class="language-plaintext highlighter-rouge">选择受信任的根证书颁发机构</code>-<code class="language-plaintext highlighter-rouge">确定</code>-<code class="language-plaintext highlighter-rouge">下一步</code>-<code class="language-plaintext highlighter-rouge">完成</code>-若有警告点击确认。</p>
-
-<p>这样就完成了证书的更新操作，重启<code class="language-plaintext highlighter-rouge">Charles</code>后即可恢复正常。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[Charles证书更新]]></summary></entry></feed>
+</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Git" /><summary type="html"><![CDATA[Git的拆分与删除]]></summary></entry></feed>
