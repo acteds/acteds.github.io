@@ -120,6 +120,8 @@
   
   
   
+  
+  
 
   
     {
@@ -520,6 +522,14 @@
       
       "url"      : "/2024/10/28/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E5%8F%96%E5%80%BC/",
       "keywords" : "Java"
+    } ,
+  
+    {
+      "title"    : "ADB相关知识",
+      "category" : "Android",
+      
+      "url"      : "/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/",
+      "keywords" : "Android"
     } ,
   
     {

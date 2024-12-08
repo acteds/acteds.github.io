@@ -1,4 +1,121 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-04T21:54:01+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Map过滤器</title><link href="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="alternate" type="text/html" title="Map过滤器" /><published>2024-10-28T00:00:00+08:00</published><updated>2024-10-28T00:00:00+08:00</updated><id>/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8</id><content type="html" xml:base="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-08T19:02:50+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">ADB相关知识</title><link href="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" rel="alternate" type="text/html" title="ADB相关知识" /><published>2024-10-31T00:00:00+08:00</published><updated>2024-10-31T00:00:00+08:00</updated><id>/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86</id><content type="html" xml:base="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>ADB（Android Debug Bridge）是一个命令行工具，用于与 Android 设备进行交互和管理。它是 Android SDK 的一部分，主要用于开发和调试 Android 应用程序。</p>
+
+<h1 id="adb">ADB</h1>
+
+<p>ADB 提供了一个通用的命令接口，可以通过 USB 或 Wi-Fi 连接 Android 设备，允许开发者执行多种操作，包括：</p>
+
+<ol>
+  <li><strong>安装和卸载应用</strong>：可以通过命令行在设备上安装或卸载 APK 文件。</li>
+  <li><strong>设备管理</strong>：能够列出已连接的设备，检查设备状态，重启设备等。</li>
+  <li><strong>调试应用</strong>：开发者可以通过 ADB 向 Android 设备发送调试命令，查看日志（使用 <code class="language-plaintext highlighter-rouge">logcat</code>），捕获屏幕截图等。</li>
+  <li><strong>文件传输</strong>：可以通过 ADB 在电脑和 Android 设备之间传输文件。</li>
+  <li><strong>运行 shell 命令</strong>：可以直接在设备上执行 shell 命令，以进行更深入的管理。</li>
+</ol>
+
+<p>ADB 的基本使用示例：</p>
+
+<p><strong>列出连接的设备</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
+</code></pre></div></div>
+
+<p><strong>安装应用</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb <span class="nb">install </span>path/to/app.apk
+</code></pre></div></div>
+
+<p><strong>卸载应用</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb uninstall package.name
+</code></pre></div></div>
+
+<p><strong>查看设备日志</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb logcat
+</code></pre></div></div>
+
+<p><strong>进入设备的 shell</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell
+</code></pre></div></div>
+
+<p><strong>工作原理：</strong></p>
+
+<p>ADB 通过 TCP/IP 协议与 Android 设备通信。它通常在本地机器和 Android 设备之间建立一个客户端-服务器架构，其中 ADB 服务器在主机上运行，而 ADB 客户端在命令行中运行，Android 设备则充当服务器端。</p>
+
+<h2 id="adb服务器">ADB服务器</h2>
+
+<p>ADB 服务器（ADB Server）是 Android Debug Bridge（ADB）中的一个关键组件，用于管理与 Android 设备之间的通信。它作为一个后台进程在主机上运行，负责协调 ADB 客户端和连接的 Android 设备。以下是 ADB 服务器的主要功能和特点：</p>
+
+<ol>
+  <li>
+    <p><strong>设备管理</strong>：ADB 服务器维护已连接设备的状态信息，包括设备 ID、状态（如在线或离线）等。当通过 ADB 客户端发出命令时，ADB 服务器会判断当前连接的设备并执行相应操作。</p>
+  </li>
+  <li>
+    <p><strong>命令转发</strong>：当开发者在命令行中使用 ADB 命令时，这些命令首先被发送到 ADB 服务器。ADB 服务器会将这些命令转发到相应的 Android 设备，并将结果返回给客户端。</p>
+  </li>
+  <li>
+    <p><strong>多设备支持</strong>：<strong>ADB 服务器允许同时与多个 Android 设备进行通信</strong>。开发者可以通过不同的设备 ID 来区分不同的设备。</p>
+  </li>
+  <li>
+    <p><strong>简化连接</strong>：ADB 服务器管理与设备之间的 TCP/IP 连接，简化了开发者的连接流程。当开发者首次连接设备时，ADB 服务器会自动启动并进行设备发现。</p>
+  </li>
+</ol>
+
+<p><strong>工作原理</strong></p>
+
+<ul>
+  <li><strong>启动过程</strong>：当运行任何 ADB 命令时，ADB 客户端会首先检查 ADB 服务器是否在运行。如果未运行，ADB 客户端会启动 ADB 服务器。</li>
+  <li><strong>端口</strong>：默认情况下，ADB 服务器在 5037 端口上监听请求。可以通过 <code class="language-plaintext highlighter-rouge">adb -P &lt;port&gt;</code> 命令指定其他端口。</li>
+  <li><strong>连接方式</strong>：ADB 可以通过 USB 连接设备，也可以通过 Wi-Fi 连接。当设备通过 USB 连接时，ADB 服务器会在设备上启用调试模式，以便进行操作。</li>
+</ul>
+
+<p><strong>常见命令</strong></p>
+
+<p><strong>启动 ADB 服务器</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb start-server
+</code></pre></div></div>
+
+<p><strong>停止 ADB 服务器</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb kill-server
+</code></pre></div></div>
+
+<p><strong>查看已连接设备</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
+</code></pre></div></div>
+
+<p>ADB 服务器是开发和调试 Android 应用不可或缺的组件，它通过提供统一的接口简化了与设备的交互，帮助开发者高效地进行应用测试和管理。</p>
+
+<p><strong>重要事项</strong></p>
+
+<ol>
+  <li><strong>单一端口</strong>：同一时间内，ADB 服务器只能绑定到一个端口。如果尝试在<strong>同一端口</strong>上启动多个 ADB 实例，将导致冲突并出现错误。</li>
+  <li><strong>更改端口</strong>：如果你需要在多个实例之间切换，可以使用不同的端口。例如，你可以使用 <code class="language-plaintext highlighter-rouge">adb -L tcp:12345 fork-server server --reply-fd 688</code> 启动另一个 ADB 实例在端口 12345 上运行。</li>
+  <li><strong>服务器状态</strong>：如果需要重新启动 ADB 服务器，建议先停止现有的 ADB 实例，以避免端口占用冲突。可以使用 <code class="language-plaintext highlighter-rouge">adb kill-server</code> 命令来停止当前的 ADB 服务器。</li>
+</ol>
+
+<p><strong>一个安卓设备只能与一个 ADB 服务器建立连接。</strong>即使在不同的端口上启动多个 ADB 服务器，它们仍然无法同时连接到同一个设备。以下是一些相关细节：</p>
+
+<p><strong>原因</strong></p>
+
+<ol>
+  <li><strong>端口和通信</strong>：ADB 服务器通过 TCP/IP 协议与安卓设备通信，通常使用端口 5037。每个设备在同一时间只能被一个 ADB 服务器控制。</li>
+  <li><strong>设备状态</strong>：当一个 ADB 服务器连接到设备时，该设备的状态会被标记为 “device”。其他尝试连接的 ADB 服务器将收到设备 “offline” 或 “unauthorized” 的状态，因为设备已经与现有的 ADB 服务器建立了连接。</li>
+</ol>
+
+<p><strong>解决方案</strong></p>
+
+<ul>
+  <li><strong>ADB 代理</strong>：如果需要在多个环境中使用 ADB，可以考虑使用 ADB 代理来转发命令，但这会增加复杂性。</li>
+  <li><strong>连接管理</strong>：确保在启动新的 ADB 服务器之前，先通过 <code class="language-plaintext highlighter-rouge">adb kill-server</code> 停止当前的 ADB 服务器连接，确保只有一个 ADB 实例在与设备通信。</li>
+</ul>
+
+<p>每次只允许一个 ADB 服务器与安卓设备建立连接，尝试同时连接多个 ADB 服务器将会导致连接冲突，无法正常工作。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[安卓笔记]]></summary></entry><entry><title type="html">Map过滤器</title><link href="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="alternate" type="text/html" title="Map过滤器" /><published>2024-10-28T00:00:00+08:00</published><updated>2024-10-28T00:00:00+08:00</updated><id>/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8</id><content type="html" xml:base="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>一个过滤Map键的类，包括包含字段和排除字段，类似于<code class="language-plaintext highlighter-rouge">mongoTemplate</code>的字段过滤。</p>
 
@@ -6787,347 +6904,4 @@ and the repository exists.
 <p>其实在clone的时候就可以修改为别名了，这样就不需要再重新设置仓库源了：</p>
 
 <pre><code class="language-cmd">git clone git@github_x:user_x/blog.git
-</code></pre>]]></content><author><name>acteds</name></author><category term="Git" /><category term="GitLab" /><category term="Github" /><summary type="html"><![CDATA[GITLabSSH认证]]></summary></entry><entry><title type="html">OpenFeign的使用</title><link href="/2024/09/18/OpenFeign/" rel="alternate" type="text/html" title="OpenFeign的使用" /><published>2024-09-18T00:00:00+08:00</published><updated>2024-09-18T00:00:00+08:00</updated><id>/2024/09/18/OpenFeign</id><content type="html" xml:base="/2024/09/18/OpenFeign/"><![CDATA[<h1 id="引言">引言</h1>
-
-<p><strong>OpenFeign</strong> 是一个声明式的 HTTP 客户端，主要用于简化微服务之间的通信。它通过注解和接口的形式定义远程服务的调用，帮助开发者省去了编写大量 HTTP 请求的样板代码。在 Spring Cloud 中，OpenFeign 与 Spring Boot 和 Spring Cloud 集成良好，能够与负载均衡、断路器等组件搭配使用。</p>
-
-<h1 id="openfeign">OpenFeign</h1>
-
-<p>在微服务架构中，不同的服务通过 HTTP 进行通信。常规做法是手动使用 <code class="language-plaintext highlighter-rouge">RestTemplate</code> 或 <code class="language-plaintext highlighter-rouge">HttpClient</code> 发起 HTTP 请求，这样的代码通常冗长且容易出错。<strong>OpenFeign</strong> 的优势在于它通过接口与注解的形式，使得调用远程服务就像调用本地方法一样简单。</p>
-
-<p><strong>使用场景：</strong></p>
-
-<ul>
-  <li><strong>简化服务调用</strong>：你不需要手动构造 HTTP 请求，而是通过调用本地接口来完成服务的远程调用。</li>
-  <li><strong>更好的集成性</strong>：OpenFeign 可以与其他 Spring Cloud 组件（如 Ribbon、Hystrix 等）无缝集成，提供负载均衡、超时、断路器等功能。</li>
-</ul>
-
-<p><strong>OpenFeign 的优点</strong>：</p>
-
-<ol>
-  <li><strong>声明式的编程风格</strong>：使用注解（例如 <code class="language-plaintext highlighter-rouge">@FeignClient</code>、<code class="language-plaintext highlighter-rouge">@RequestMapping</code> 等）定义远程服务调用，使代码简洁、易读。调用远程服务就像调用本地方法一样，无需关心底层的 HTTP 请求细节。</li>
-  <li><strong>自动集成负载均衡</strong>：通过与 Spring Cloud Ribbon 集成，OpenFeign 可以自动实现对多个实例的负载均衡。你只需定义服务名，它会根据服务注册中心的实例列表选择目标。</li>
-  <li><strong>与 Hystrix 结合</strong>：OpenFeign 可以与 Hystrix 集成，实现熔断和降级策略。在微服务架构中，当某个服务不可用时，Hystrix 可以帮助服务调用快速失败，避免级联故障。</li>
-  <li><strong>与 Spring Boot 深度集成</strong>：OpenFeign 在 Spring Cloud 中具有很好的集成支持，能够通过注解、配置文件等方式轻松配置超时、重试等策略。</li>
-  <li><strong>自定义配置</strong>：OpenFeign 允许你自定义拦截器、编码器、解码器、日志等，来满足个性化需求。</li>
-</ol>
-
-<p><strong>OpenFeign 的缺点</strong>：</p>
-
-<ol>
-  <li><strong>依赖反射，性能稍差</strong>：OpenFeign 是基于反射的声明式框架，性能上比手写的 HTTP 客户端（如 <code class="language-plaintext highlighter-rouge">RestTemplate</code>、<code class="language-plaintext highlighter-rouge">HttpClient</code>）稍差，适用于业务较轻或中等的服务调用场景。</li>
-  <li><strong>缺少部分高级 HTTP 控制</strong>：OpenFeign 的简洁性是它的优势，但它也使得一些高级的 HTTP 请求控制（例如复杂的请求头操作、流式数据处理等）不如手动编写 HTTP 客户端灵活。</li>
-  <li><strong>调试相对复杂</strong>：在使用 OpenFeign 时，问题调试（例如网络问题、超时等）比手写 HTTP 请求更加抽象，出错时可能需要深入了解 Feign 的工作机制。</li>
-  <li><strong>依赖服务注册中心</strong>：在分布式系统中，OpenFeign 通常依赖服务注册中心（如 Eureka、Consul 等）来发现服务实例，因此在服务注册中心出现故障时可能会影响服务调用。</li>
-</ol>
-
-<hr />
-
-<p>导入依赖：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-openfeign<span class="nt">&lt;/artifactId&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<p>程序入口添加注解：<code class="language-plaintext highlighter-rouge">@EnableFeignClients</code>。</p>
-
-<p>可以配置超时时间：</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">feign</span><span class="pi">:</span>
-  <span class="na">client</span><span class="pi">:</span>
-    <span class="na">config</span><span class="pi">:</span>
-      <span class="na">default</span><span class="pi">:</span>
-        <span class="na">connectTimeout</span><span class="pi">:</span> <span class="m">20000</span> <span class="c1"># feign 的超时设置</span>
-        <span class="na">readTimeout</span><span class="pi">:</span> <span class="m">60000</span>
-</code></pre></div></div>
-
-<p>使用：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FeignClient</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"domainresourcesservice"</span><span class="o">,</span> <span class="n">fallback</span> <span class="o">=</span> <span class="nc">ResourcesServiceFallBack</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">configuration</span> <span class="o">=</span> <span class="o">{</span><span class="nc">FeginConfig</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ResourcesService</span> <span class="o">{</span>
-    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span><span class="s">"/resources/rolePersionInfo/savePersionRoleAndGroupV2"</span><span class="o">)</span>
-    <span class="nc">Wrapper</span> <span class="nf">savePersionRoleAndGroup</span><span class="o">(</span>
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"persionId"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">persionId</span><span class="o">,</span> 
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"groupIds"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">groupIds</span><span class="o">,</span> 
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"roleIds"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">roleIds</span><span class="o">,</span> 
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"jiean_projectName"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">jiean_projectName</span>
-    <span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>注意：<strong><code class="language-plaintext highlighter-rouge">@RequestMapping</code> 注解不能直接用于 <code class="language-plaintext highlighter-rouge">@FeignClient</code> 接口</strong>。<code class="language-plaintext highlighter-rouge">FeignClient</code> 接口不允许在类级别使用 <code class="language-plaintext highlighter-rouge">@RequestMapping</code>，应该仅在方法级别使用 <code class="language-plaintext highlighter-rouge">@GetMapping</code>、<code class="language-plaintext highlighter-rouge">@PostMapping</code>、<code class="language-plaintext highlighter-rouge">@RequestParam</code> 等注解来定义 HTTP 请求。</p>
-
-<p>配置类：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">feign.Logger</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
-
-<span class="nd">@Configuration</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeginConfig</span> <span class="o">{</span>
-    <span class="nd">@Bean</span>
-    <span class="nc">Logger</span><span class="o">.</span><span class="na">Level</span> <span class="nf">feignLoggerLevel</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nc">Logger</span><span class="o">.</span><span class="na">Level</span><span class="o">.</span><span class="na">FULL</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>回滚类：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Service</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResourcesServiceFallBack</span> <span class="kd">implements</span> <span class="nc">ResourcesService</span> <span class="o">{</span>
-    <span class="cm">/**
-     * 新增人员和角色关系表
-     * @param jiean_projectName
-     * @param persionId
-     * @param groupIds
-     * @return
-     */</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="nc">Wrapper</span> <span class="nf">savePersionRoleAndGroup</span><span class="o">(</span>
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"persionId"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">persionId</span><span class="o">,</span>
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"groupIds"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">groupIds</span><span class="o">,</span>
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"roleIds"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">roleIds</span><span class="o">,</span>
-        <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"jiean_projectName"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">jiean_projectName</span>
-    <span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nc">WrapMapper</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="mi">5001</span><span class="o">,</span><span class="s">"Feign 新增人员和角色关系失败"</span><span class="o">);</span>
-    <span class="o">}</span>   
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong><code class="language-plaintext highlighter-rouge">@FeignClient</code></strong>：用于声明一个 Feign 客户端，并指定该客户端要调用的服务。</p>
-
-<ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">name = "domainresourcesservice"</code></strong>：指定服务的名称。Feign 会根据这个名称从服务注册中心（如 Consul 或 Eureka）获取服务实例的地址，并发起请求。这个名字应该与注册中心中的服务名一致。</li>
-  <li><strong><code class="language-plaintext highlighter-rouge">fallback = ResourcesServiceFallBack.class</code></strong>：指定一个回退类，当远程调用失败时会执行 <code class="language-plaintext highlighter-rouge">ResourcesServiceFallBack</code> 中定义的回退逻辑。回退类通常用于实现熔断或降级功能，以提高服务的稳定性。</li>
-  <li><strong><code class="language-plaintext highlighter-rouge">configuration = {FeginConfig.class}</code></strong>：指定 Feign 客户端的配置类 <code class="language-plaintext highlighter-rouge">FeginConfig</code>，该类可以包含自定义的 Feign 配置，如超时时间、编码器、解码器、拦截器等。</li>
-</ul>
-
-<p><strong><code class="language-plaintext highlighter-rouge">@RequestMapping</code></strong>：表示这个接口方法对应的 HTTP 请求。<code class="language-plaintext highlighter-rouge">value = "/resources/rolePersionInfo/savePersionRoleAndGroupV2"</code> 表示该方法将发送到路径 <code class="language-plaintext highlighter-rouge">/resources/rolePersionInfo/savePersionRoleAndGroupV2</code> 的请求。</p>
-
-<ul>
-  <li>默认情况下，这是一个 <code class="language-plaintext highlighter-rouge">POST</code> 或 <code class="language-plaintext highlighter-rouge">GET</code> 请求（具体取决于 Feign 的配置），可以根据需求指定请求方法。</li>
-</ul>
-
-<p>这段代码是一个 Feign 客户端的接口，它用于调用名为 <code class="language-plaintext highlighter-rouge">domainresourcesservice</code> 的微服务下的 <code class="language-plaintext highlighter-rouge">/resources/rolePersionInfo/savePersionRoleAndGroupV2</code> 接口，执行保存某个用户的角色和组信息操作。</p>
-
-<hr />
-
-<p>在使用 Feign 客户端时，有以下几点需要特别注意：</p>
-
-<p><strong>服务名要一致</strong>：<code class="language-plaintext highlighter-rouge">@FeignClient(name = "domainresourcesservice")</code> 中指定的服务名称 <strong><code class="language-plaintext highlighter-rouge">domainresourcesservice</code></strong> 必须与服务注册中心（如 Consul、Eureka）中的服务名称一致。否则，Feign 客户端将无法找到目标服务的实例，导致请求失败。</p>
-
-<p><strong>回退类 <code class="language-plaintext highlighter-rouge">fallback</code></strong>：<code class="language-plaintext highlighter-rouge">fallback = ResourcesServiceFallBack.class</code> 指定了降级处理类，当远程服务不可用或者超时时，Feign 会自动调用回退方法。这有助于增强系统的容错性，防止服务故障蔓延到整个系统。</p>
-
-<ul>
-  <li>确保 <code class="language-plaintext highlighter-rouge">ResourcesServiceFallBack</code> 类已经实现了 <code class="language-plaintext highlighter-rouge">ResourcesService</code> 接口，并提供了具体的回退逻辑。</li>
-  <li>如果没有正确配置 Hystrix 或 Resilience4j 等熔断器，回退逻辑可能无法生效。</li>
-</ul>
-
-<p><strong>请求参数</strong></p>
-
-<ul>
-  <li><strong>参数类型</strong>：确保所有参数在远程服务的 API 中是匹配的。这里使用 <code class="language-plaintext highlighter-rouge">@RequestParam</code> 注解，表示参数会被作为查询参数或表单数据传递。对应的远程服务也应该相应处理这些参数。</li>
-  <li><strong>参数格式和验证</strong>：确保传递的参数格式正确。例如，<code class="language-plaintext highlighter-rouge">groupIds</code> 和 <code class="language-plaintext highlighter-rouge">roleIds</code> 可能是逗号分隔的字符串。如果后端要求某种特殊格式，确保在调用时传递的值是正确的。</li>
-</ul>
-
-<p><strong>自定义配置</strong></p>
-
-<p><strong>Feign 配置 <code class="language-plaintext highlighter-rouge">FeginConfig.class</code></strong>：如果你有自定义的 Feign 配置（如超时设置、重试机制、编码解码器等），确保 <code class="language-plaintext highlighter-rouge">FeginConfig</code> 配置正确，并且 Feign 客户端能够应用这些配置。</p>
-
-<p>比如，可以在 <code class="language-plaintext highlighter-rouge">FeginConfig</code> 中指定连接超时、读取超时等，以防止因网络延迟导致的请求失败。</p>
-
-<p><strong>错误处理</strong></p>
-
-<ul>
-  <li><strong>错误响应处理</strong>：<code class="language-plaintext highlighter-rouge">Wrapper</code> 是接口的返回类型，确保你能够处理远程服务可能返回的错误响应。需要检查 <code class="language-plaintext highlighter-rouge">Wrapper</code> 类是否能处理错误码、错误消息等，并且调用方能够正确处理错误。</li>
-  <li><strong>异常处理</strong>：Feign 在请求失败时可能抛出各种异常（如 <code class="language-plaintext highlighter-rouge">FeignException</code>、<code class="language-plaintext highlighter-rouge">ConnectException</code> 等），在接口的实现类中应做好异常捕获和处理，避免应用崩溃。</li>
-</ul>
-
-<p><strong>日志与调试</strong></p>
-
-<ul>
-  <li>
-    <p><strong>启用 Feign 日志</strong>：如果需要调试 Feign 请求，可以在配置中启用 Feign 的详细日志功能，查看请求和响应的完整信息。</p>
-
-    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">feign:</span>
-  <span class="nl">client:</span>
-    <span class="nl">config:</span>
-      <span class="k">default</span><span class="o">:</span>
-        <span class="nl">loggerLevel:</span> <span class="no">FULL</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>这样可以帮助你调试 Feign 请求的问题，尤其是遇到请求失败或响应不符合预期时。</p>
-  </li>
-</ul>
-
-<p><strong>超时和重试</strong></p>
-
-<ul>
-  <li><strong>超时设置</strong>：如果目标服务响应较慢，可能会导致 Feign 请求超时，导致熔断触发。确保 Feign 配置中设置了适当的超时时间，以平衡性能和可用性。
-    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Bean</span>
-<span class="kd">public</span> <span class="nc">Request</span><span class="o">.</span><span class="na">Options</span> <span class="nf">feignOptions</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nc">Request</span><span class="o">.</span><span class="na">Options</span><span class="o">(</span><span class="mi">5000</span><span class="o">,</span> <span class="mi">10000</span><span class="o">);</span> <span class="c1">// 连接超时 5 秒，读取超时 10 秒</span>
-<span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<p><strong>服务健康检查与负载均衡</strong></p>
-
-<ul>
-  <li><strong>服务健康检查</strong>：确保目标服务在注册中心是健康的，否则 Feign 会找不到可用的实例。可以定期检查目标服务的健康状态。</li>
-  <li><strong>负载均衡</strong>：Feign 通常与 Ribbon 一起使用，支持负载均衡调用多实例服务。确保注册中心中的服务实例都能够被正确负载均衡。</li>
-</ul>
-
-<p><strong>版本兼容性</strong></p>
-
-<ul>
-  <li><strong>服务接口版本兼容</strong>：远程服务的接口可能会发生变更，因此需要定期检查服务接口是否有变化，确保调用方和提供方之间的接口保持兼容性，尤其是请求参数或返回值格式的变化。</li>
-</ul>
-
-<p>确保这些关键点能够帮助你在使用 Feign 客户端时避免常见的错误，并确保系统的健壮性和可扩展性。</p>
-
-<hr />
-
-<p>一个简单的完整实例：</p>
-
-<p>假设服务<code class="language-plaintext highlighter-rouge">A</code>，有如下接口：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
-<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/pi"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProductInventoryController</span> <span class="o">{</span>
-    <span class="nd">@Autowired</span>
-    <span class="kd">private</span> <span class="nc">ProductInventoryMapper</span> <span class="n">productInventoryMapper</span><span class="o">;</span>
-
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getAll"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">ProductInventory</span><span class="o">&gt;</span> <span class="nf">getAllUsers</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">productInventoryMapper</span><span class="o">.</span><span class="na">selectAll</span><span class="o">();</span>
-    <span class="o">}</span>
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/add"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">ProductInventory</span> <span class="n">productInventory</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">productInventoryMapper</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">productInventory</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>则服务<code class="language-plaintext highlighter-rouge">B</code>，如果需要调用服务<code class="language-plaintext highlighter-rouge">A</code>的接口，可以这样定义Feign：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FeignClient</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"A"</span><span class="o">,</span> <span class="n">fallback</span> <span class="o">=</span> <span class="nc">DemoServiceFeignFallBack</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">configuration</span> <span class="o">=</span> <span class="o">{</span><span class="nc">FeginConfig</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DemoServiceFeign</span> <span class="o">{</span>
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/pi/getAll"</span><span class="o">)</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">ProductInventory</span><span class="o">&gt;</span> <span class="nf">getAllUsers</span><span class="o">();</span>
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/pi/add"</span><span class="o">)</span>
-    <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">ProductInventory</span> <span class="n">productInventory</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>注意<code class="language-plaintext highlighter-rouge">ProductInventory</code>类结构要保持一致。</p>
-
-<p>然后可以这样调用Feign：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
-<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/feign"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeignTestController</span> <span class="o">{</span>
-    <span class="nd">@Autowired</span>
-    <span class="kd">private</span> <span class="nc">DemoServiceFeign</span> <span class="n">demoServiceFeign</span><span class="o">;</span>
-
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getAll"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">ProductInventory</span><span class="o">&gt;</span> <span class="nf">getAllUsers</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">demoServiceFeign</span><span class="o">.</span><span class="na">getAllUsers</span><span class="o">();</span>
-    <span class="o">}</span>
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/add"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">ProductInventory</span> <span class="n">productInventory</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">demoServiceFeign</span><span class="o">.</span><span class="na">addUser</span><span class="o">(</span><span class="n">productInventory</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>如果不希望在服务 <code class="language-plaintext highlighter-rouge">B</code> 中创建 <code class="language-plaintext highlighter-rouge">ProductInventory</code> 类，可以使用 <code class="language-plaintext highlighter-rouge">Map&lt;String, Object&gt;</code> 或 <code class="language-plaintext highlighter-rouge">JSONObject</code> 来代替对象传递数据。这样，<code class="language-plaintext highlighter-rouge">Feign</code> 接口可以通过动态对象来进行调用。</p>
-
-<p>修改后的 Feign 接口：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FeignClient</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"A"</span><span class="o">,</span> <span class="n">fallback</span> <span class="o">=</span> <span class="nc">DemoServiceFeignFallBack</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="o">{</span><span class="nc">FeginConfig</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DemoServiceFeign</span> <span class="o">{</span>
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/pi/getAll"</span><span class="o">)</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="nf">getAllUsers</span><span class="o">();</span>  <span class="c1">// 使用 Map 代替 ProductInventory</span>
-
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/pi/add"</span><span class="o">)</span>
-    <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">productInventory</span><span class="o">);</span>  <span class="c1">// 使用 Map 传递数据</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>修改后的调用方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
-<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/feign"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeignTestController</span> <span class="o">{</span>
-    <span class="nd">@Autowired</span>
-    <span class="kd">private</span> <span class="nc">DemoServiceFeign</span> <span class="n">demoServiceFeign</span><span class="o">;</span>
-
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/getAll"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="nf">getAllUsers</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">demoServiceFeign</span><span class="o">.</span><span class="na">getAllUsers</span><span class="o">();</span>  <span class="c1">// 获取 Map 类型的结果</span>
-    <span class="o">}</span>
-
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/add"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">productInventory</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">demoServiceFeign</span><span class="o">.</span><span class="na">addUser</span><span class="o">(</span><span class="n">productInventory</span><span class="o">);</span>  <span class="c1">// 传递 Map 类型的数据</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>优点</strong>：避免了在服务 <code class="language-plaintext highlighter-rouge">B</code> 中定义 <code class="language-plaintext highlighter-rouge">ProductInventory</code> 类。</p>
-
-<p><strong>缺点</strong>：使用 <code class="language-plaintext highlighter-rouge">Map</code> 或 <code class="language-plaintext highlighter-rouge">JSONObject</code> 使代码的类型检查变得不那么严格，容易出错，并且不如直接使用实体类那么清晰和安全。</p>
-
-<h2 id="批量带header">批量带<code class="language-plaintext highlighter-rouge">Header</code></h2>
-
-<p>要在Feign调用中为所有的方法添加多个header，可以使用 <code class="language-plaintext highlighter-rouge">RequestInterceptor</code>。下面是如何实现的步骤：</p>
-
-<ol>
-  <li><strong>创建一个RequestInterceptor</strong>：</li>
-</ol>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">feign.RequestInterceptor</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">feign.RequestTemplate</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
-
-<span class="nd">@Configuration</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeignConfig</span> <span class="o">{</span>
-
-    <span class="nd">@Bean</span>
-    <span class="kd">public</span> <span class="nc">RequestInterceptor</span> <span class="nf">requestInterceptor</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">RequestInterceptor</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">apply</span><span class="o">(</span><span class="nc">RequestTemplate</span> <span class="n">template</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-1"</span><span class="o">,</span> <span class="s">"HeaderValue1"</span><span class="o">);</span>
-                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-2"</span><span class="o">,</span> <span class="s">"HeaderValue2"</span><span class="o">);</span>
-                <span class="n">template</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Header-Name-3"</span><span class="o">,</span> <span class="s">"HeaderValue3"</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<ol>
-  <li><strong>在FeignClient中引用FeignConfig</strong>：</li>
-</ol>
-
-<p>确保在你的 <code class="language-plaintext highlighter-rouge">@FeignClient</code> 注解中引入配置类。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@FeignClient</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"demo-service"</span><span class="o">,</span> <span class="n">fallback</span> <span class="o">=</span> <span class="nc">DemoServiceFeignFallBack</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="nc">FeignConfig</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DemoServiceFeign</span> <span class="o">{</span>
-    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/pi/getAll"</span><span class="o">)</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">ProductInventory</span><span class="o">&gt;</span> <span class="nf">getAllUsers</span><span class="o">();</span>
-    
-    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/pi/add"</span><span class="o">)</span>
-    <span class="kt">int</span> <span class="nf">addUser</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">ProductInventory</span> <span class="n">productInventory</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>通过这种方式，所有的Feign调用将自动带上你在 <code class="language-plaintext highlighter-rouge">RequestInterceptor</code> 中定义的header。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+</code></pre>]]></content><author><name>acteds</name></author><category term="Git" /><category term="GitLab" /><category term="Github" /><summary type="html"><![CDATA[GITLabSSH认证]]></summary></entry></feed>
