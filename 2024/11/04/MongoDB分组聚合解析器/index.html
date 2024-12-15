@@ -1,0 +1,297 @@
+<!DOCTYPE html><html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>MongoDB分组聚合解析器 &mdash; 个人博客</title><link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css"><link rel="stylesheet" href="/assets/css/components/collection.css"><link rel="stylesheet" href="/assets/css/components/repo-card.css"><link rel="stylesheet" href="/assets/css/sections/repo-list.css"><link rel="stylesheet" href="/assets/css/components/boxed-group.css"><link rel="stylesheet" href="/assets/css/globals/common.css"><link rel="stylesheet" href="/assets/css/globals/responsive.css"><link rel="stylesheet" href="/assets/css/posts/index.css"><link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css"><link rel="stylesheet" href="/assets/css/highlight/monokai.sublime.css"><link rel="canonical" href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><link rel="alternate" type="application/atom+xml" title="个人博客" href="/feed.xml"><link rel="shortcut icon" href="/favicon.ico"><meta property="og:title" content="MongoDB分组聚合解析器"><meta name="keywords" content="Java,MongoDB"><meta name="og:keywords" content="Java,MongoDB"><meta name="description" content="引言"><meta name="og:description" content="引言"><meta property="og:url" content="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><meta property="og:site_name" content="个人博客"><meta property="og:type" content="article"><meta property="og:locale" content="zh_CN" /><meta property="article:published_time" content="2024-11-04"> <script src="/assets/vendor/jquery/dist/jquery.min.js"></script> <script src="/assets/js/jquery-ui.js"></script> <script src="/assets/js/main.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80669434-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-80669434-1'); </script></head><body class="" data-mz=""><header class="site-header"><div class="container"><h1><a href="/" title="个人博客"><span class="octicon octicon-mark-github"></span> 个人博客</a></h1><button class="collapsed mobile-visible" type="button" onclick="toggleMenu();"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button><nav class="site-header-nav" role="navigation"> <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a> <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a> <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a> <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a></nav></div></header><section class="collection-head small geopattern" data-pattern-id="MongoDB分组聚合解析器"><div class="container"><div class="columns"><div class="column three-fourths"><div class="collection-title"><h1 class="collection-header">MongoDB分组聚合解析器</h1><div class="collection-info"> <span class="meta-info"> <span class="octicon octicon-calendar"></span> 2024/11/04 </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#Java" title="Java">Java</a> </span> <span class="meta-info"> <span class="octicon octicon-file-directory"></span> <a href="/categories/#MongoDB" title="MongoDB">MongoDB</a> </span> <span class="meta-info"> <span class="octicon octicon-clock"></span> 共 7930 字，约 23 分钟 </span></div></div></div><div class="column one-fourth mobile-hidden"><div class="collection-title"></div></div></div></div></section><section class="container content"><div class="columns"><div class="column three-fourths" ><article class="article-content markdown-body"><h1 id="引言">引言</h1><p>一个对MongoDB分组聚合操作的简单封装类。</p><h1 id="mongodb">MongoDB</h1><h2 id="mongodb分组聚合解析器">MongoDB分组聚合解析器</h2><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 分组聚合解析器
+ * @author aotmd
+ * @version 1.1
+ * @date 2024/10/30 10:34
+ */</span>
+<span class="kd">private</span> <span class="kd">class</span> <span class="nc">GroupAggregationGenerator</span><span class="o">{</span>
+    <span class="cm">/**字段转换后加的后缀*/</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">TO_DECIMAL</span> <span class="o">=</span> <span class="s">"ToDecimal"</span><span class="o">;</span>
+    <span class="cm">/**实际主键名称*/</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">PRIMARY_KEY</span> <span class="o">=</span> <span class="s">"_id"</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * 生成分组聚合操作
+     * @param groupBy 分组字段
+     * @param aggregations 聚合设置
+     * @return
+     */</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="nf">buildAggregationOperations</span><span class="o">(</span><span class="kd">final</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">&gt;</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 判断是否为空,分组字段和聚合字段都为空，则直接返回</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">aggregations</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">aggregations</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">==</span><span class="kc">null</span> <span class="o">||</span> <span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">0</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="o">}</span>
+        <span class="c1">// 分组字段空串检测</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"分组字段为空"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">aggregations</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"聚合设置为空"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="kt">boolean</span> <span class="n">b</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">groupBy</span><span class="o">).</span><span class="na">parallel</span><span class="o">().</span><span class="na">anyMatch</span><span class="o">(</span><span class="nl">StringUtil:</span><span class="o">:</span><span class="n">isBlank</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">b</span><span class="o">){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"分组字段出现空串"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 字段检测</span>
+        <span class="n">aggregations</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">::</span><span class="n">fieldChecks</span><span class="o">);</span>
+
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">operations</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+        <span class="c1">// 处理类型转换，使用投影操作进行转换</span>
+        <span class="c1">// 不重复转换</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">processedFields</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="nc">ProjectionOperation</span> <span class="n">project</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">project</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span> <span class="n">agg</span> <span class="o">:</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 处理类型转换，如果需要转换为Decimal</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">processedFields</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">())){</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">isConvertToDecimal</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span>
+                            <span class="nc">ConvertOperators</span><span class="o">.</span><span class="na">Convert</span><span class="o">.</span><span class="na">convertValueOf</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">())</span>
+                                    <span class="o">.</span><span class="na">to</span><span class="o">(</span><span class="s">"decimal"</span><span class="o">)</span>
+                                    <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+                                    <span class="o">.</span><span class="na">onNullReturn</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+                    <span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">()</span> <span class="o">+</span> <span class="no">TO_DECIMAL</span><span class="o">);</span>
+                    <span class="n">processedFields</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">());</span>
+                <span class="o">}</span>
+                <span class="c1">// 将原列也保留</span>
+                <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">()).</span><span class="na">as</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">groupBy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 将分组字段也保留</span>
+            <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">s</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 有转换才加入</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">processedFields</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">operations</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">project</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 分组操作</span>
+        <span class="nc">GroupOperation</span> <span class="n">group</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="n">groupBy</span><span class="o">);</span>
+
+        <span class="c1">// 添加聚合操作</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span> <span class="n">agg</span> <span class="o">:</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">String</span> <span class="n">field</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">isConvertToDecimal</span><span class="o">()){</span>
+                <span class="n">field</span> <span class="o">+=</span> <span class="no">TO_DECIMAL</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="nc">String</span> <span class="n">alias</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="na">getAlias</span><span class="o">();</span>
+            <span class="k">switch</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getType</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">case</span> <span class="s">"sum"</span><span class="o">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">sum</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="k">case</span> <span class="s">"avg"</span><span class="o">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">avg</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="k">case</span> <span class="s">"count"</span><span class="o">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">count</span><span class="o">().</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="k">case</span> <span class="s">"max"</span><span class="o">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="k">case</span> <span class="s">"min"</span><span class="o">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="k">default</span><span class="o">:</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"不支持的聚合类型： "</span> <span class="o">+</span> <span class="n">agg</span><span class="o">.</span><span class="na">getType</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="n">operations</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">group</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">operations</span><span class="o">;</span>
+    <span class="o">}</span>
+
+
+    <span class="cm">/**
+     * 聚合结果处理方法，将聚合结果处理为符合人类直觉的方式。
+     * @param result 聚合结果
+     * @param groupBy 分组依据
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">aggregateResultProcessing</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">,</span><span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">){</span>
+        <span class="n">result</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="n">map</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="c1">// mango特色：如果没有分组字段，则返回数据多出一个字段_id=null,</span>
+            <span class="c1">// 如果有一个分组字段，比如sex，则_id=sex字段的值，比如_id="男"，_id="女"</span>
+            <span class="c1">// 如果有两个以上的分组，比如age、sex，则就正常了，就是age=age的值，sex=sex的值。</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">0</span><span class="o">){</span>
+                <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">1</span><span class="o">){</span>
+                <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">groupBy</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+                <span class="c1">// 如果是主键，则不处理</span>
+                <span class="k">if</span> <span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">s</span><span class="o">)){</span><span class="k">return</span><span class="o">;}</span>
+                <span class="c1">// 去掉前缀</span>
+                <span class="nc">String</span> <span class="n">s0</span><span class="o">=</span><span class="n">removeKeyPrefix</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+                <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s0</span><span class="o">,</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">));</span>
+                <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 环绕方法，先生成分组聚合操作，然后执行后function得到结果，然后人性化处理结果。
+     * @param groupBy 分组依据
+     * @param aggregations 聚合设置
+     * @param function 执行方法
+     * @return 处理后的结果
+     */</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="nf">wrappingMethod</span><span class="o">(</span><span class="kd">final</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">&gt;</span> <span class="n">aggregations</span><span class="o">,</span><span class="nc">Function</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;&gt;</span> <span class="n">function</span><span class="o">){</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">aggregationOperationList</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">buildAggregationOperations</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">apply</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">aggregateResultProcessing</span><span class="o">(</span><span class="n">apply</span><span class="o">,</span><span class="n">groupBy</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">apply</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>入参：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**聚合设置*/</span>
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">AggregationField</span> <span class="o">{</span>
+    <span class="cm">/**要聚合的字段*/</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">field</span><span class="o">;</span>
+    <span class="cm">/**聚合类型（如 sum, avg 等）*/</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">type</span><span class="o">;</span>
+    <span class="cm">/**聚合结果列的别名*/</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">alias</span><span class="o">;</span>
+    <span class="cm">/**可选，默认为否，是否在聚合前需要进行 decimal 转换*/</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">convertToDecimal</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * 字段校验
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">fieldChecks</span><span class="o">(){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">field</span><span class="o">)||</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">type</span><span class="o">)||</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">alias</span><span class="o">)){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"聚合字段设置不全，必须包含字段：field、type、alias"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>使用方法：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">GroupAggregationGenerator</span> <span class="n">groupAggregationGenerator</span><span class="o">=</span> <span class="k">new</span> <span class="nc">GroupAggregationGenerator</span><span class="o">();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="n">groupAggregationGenerator</span><span class="o">.</span><span class="na">wrappingMethod</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">,</span> <span class="n">aggregationOperationList</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">criteria</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Aggregation</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">criteria</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
+    <span class="c1">// 创建聚合对象</span>
+    <span class="nc">Aggregation</span> <span class="n">aggregation</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">newAggregation</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+
+    <span class="c1">// 执行聚合查询</span>
+    <span class="nc">AggregationResults</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+    <span class="c1">// 获取并输出投影结果</span>
+    <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="na">getMappedResults</span><span class="o">();</span>
+<span class="o">});</span>
+</code></pre></div></div><p>其中，mongoTemplate还能封装一下：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * mongo服务层
+ * @author aotmd
+ * @version 1.0
+ * @date 2024/10/22 14:07
+ */</span>
+<span class="nd">@Service</span>
+<span class="nd">@Slf4j</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MongoService</span> <span class="o">{</span>
+    <span class="nd">@Autowired</span>
+    <span class="nc">MongoTemplate</span> <span class="n">mongoTemplate</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * 高级查询，泛型方法
+     *
+     * @param &lt;T&gt;                  泛型
+     * @param collectionName       表名
+     * @param valueType            返回值Class
+     * @param criteria             查询条件
+     * @param aggregationOperationList 集合参数，聚合用
+     * @return List
+     */</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">aggregate</span><span class="o">(</span><span class="nc">String</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">valueType</span><span class="o">,</span> <span class="nc">Criteria</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span>  <span class="n">aggregationOperationList</span><span class="o">){</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">criteria</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Aggregation</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">criteria</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
+        <span class="c1">// 创建聚合对象</span>
+        <span class="nc">Aggregation</span> <span class="n">aggregation</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">newAggregation</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+
+        <span class="c1">// 执行聚合查询</span>
+        <span class="nc">AggregationResults</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">collectionName</span><span class="o">,</span> <span class="n">valueType</span><span class="o">);</span>
+
+        <span class="c1">// 获取并输出投影结果</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="na">getMappedResults</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 高级查询，泛型方法
+     *
+     * @param &lt;T&gt;                  泛型
+     * @param collectionName       表名
+     * @param valueType            返回值Class
+     * @param criteria             查询条件
+     * @param aggregationOperation 可变参数，聚合用
+     * @return List
+     */</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">aggregate</span><span class="o">(</span><span class="nc">String</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">valueType</span><span class="o">,</span> <span class="nc">Criteria</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">AggregationOperation</span> <span class="o">...</span> <span class="n">aggregationOperation</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">collectionName</span><span class="o">,</span> <span class="n">valueType</span><span class="o">,</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">aggregationOperation</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div><p>简化为：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">GroupAggregationGenerator</span> <span class="n">groupAggregationGenerator</span><span class="o">=</span> <span class="k">new</span> <span class="nc">GroupAggregationGenerator</span><span class="o">();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="n">groupAggregationGenerator</span><span class="o">.</span><span class="na">wrappingMethod</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">,</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">mongoService</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">collectionName</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">criteria</span><span class="o">,</span> <span class="n">a</span><span class="o">));</span>
+</code></pre></div></div><p>特别注意：</p><p><strong><code class="language-plaintext highlighter-rouge">Decimal128</code> 最多只能表示 34 位有效数字（整数部分与小数部分合计）。如果超出这个范围，会导致精度丢失或舍入错误。</strong></p><p>对于聚合结果<code class="language-plaintext highlighter-rouge">Decimal128</code>类型，一般来说都是通过转换为字符串返回，此时可以对数值进行判断，如果超过了34位数字，<code class="language-plaintext highlighter-rouge">Decimal128</code>类型的值会变为科学计数法，实际上会从最后一位开始舍去，若已经舍去到整数位了，那么直接填0，形成类似：<code class="language-plaintext highlighter-rouge">12345678901234567890123456789012340000000000000000</code>，这样的数值。</p><p>应对方法为：可以在结果出来后，进行转换与精度判断：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 转换</span>
+<span class="n">systemFormData</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span>
+    <span class="n">item</span> <span class="o">-&gt;</span> <span class="n">item</span><span class="o">.</span><span class="na">forEach</span><span class="o">((</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="c1">//! Decimal128 最多只能表示 34 位有效数字。如果超出这个范围，可能会导致精度丢失或舍入错误。</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">Decimal128</span><span class="o">){</span>
+            <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">convertDecimal128ToString</span><span class="o">((</span><span class="nc">Decimal128</span><span class="o">)</span> <span class="n">value</span><span class="o">);</span>
+            <span class="n">item</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">})</span>
+<span class="o">);</span>
+</code></pre></div></div><p>方法：</p><div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * Decimal128转换为字符串
+ * @param decimal128 待转换数据
+ * @return
+ */</span>
+<span class="kd">private</span> <span class="nc">String</span> <span class="nf">convertDecimal128ToString</span><span class="o">(</span><span class="nc">Decimal128</span> <span class="n">decimal128</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">isDecimal128Overflow</span><span class="o">(</span><span class="n">decimal128</span><span class="o">)){</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"Decimal128精度丢失"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">decimal128</span><span class="o">.</span><span class="na">bigDecimalValue</span><span class="o">().</span><span class="na">toPlainString</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="cm">/**
+ * decimal128溢出判断
+ * @param decimal128 mongo数据类型
+ * @return
+ */</span>
+<span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isDecimal128Overflow</span><span class="o">(</span><span class="nc">Decimal128</span> <span class="n">decimal128</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">BigDecimal</span> <span class="n">bigDecimalValue</span> <span class="o">=</span> <span class="n">decimal128</span><span class="o">.</span><span class="na">bigDecimalValue</span><span class="o">();</span>
+
+    <span class="c1">// 定义 Decimal128 的范围</span>
+    <span class="nc">BigDecimal</span> <span class="n">lowerBound</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"-1.0E+34"</span><span class="o">);</span>
+    <span class="nc">BigDecimal</span> <span class="n">upperBound</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"1.0E+34"</span><span class="o">);</span>
+    <span class="c1">// 判断是否溢出</span>
+    <span class="k">return</span> <span class="n">bigDecimalValue</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">lowerBound</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">bigDecimalValue</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">upperBound</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div><h3 id="分组和聚合设置文档">分组和聚合设置文档</h3><p><strong><code class="language-plaintext highlighter-rouge">groupBy</code></strong></p><ul><li><strong>类型</strong>: 数组 (<code class="language-plaintext highlighter-rouge">Array</code>)</li><li><strong>描述</strong>: 分组依据，可以为空数组 (<code class="language-plaintext highlighter-rouge">[]</code>) 表示不进行分组，也可以包含多个字段名进行多字段分组。<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"groupBy"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"job"</span><span class="p">]</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">按照岗位进行分组</span><span class="w">
+</span></code></pre></div></div></li></ul><p><strong><code class="language-plaintext highlighter-rouge">aggregations</code></strong></p><ul><li><p><strong>类型</strong>: 数组 (<code class="language-plaintext highlighter-rouge">Array</code>)</p></li><li><p><strong>描述</strong>: 聚合设置，可以为空数组 (<code class="language-plaintext highlighter-rouge">[]</code>) 表示不进行任何聚合。每个聚合对象包含聚合字段、聚合类型和别名等信息。</p></li></ul><div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"aggregations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合字段列名</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sum"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合类型：sum、avg、min、max、count</span><span class="w">
+      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salarySum"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"avg"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryAvg"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"convertToDecimal"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">表示需要进行</span><span class="w"> </span><span class="err">decimal</span><span class="w"> </span><span class="err">转换，返回结果也为</span><span class="w"> </span><span class="err">Decimal</span><span class="w"> </span><span class="err">类型，因此为字符串</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"count"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryCount"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"max"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryMax"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"min"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryMin"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div><p><strong>聚合对象字段说明</strong></p><ul><li><strong><code class="language-plaintext highlighter-rouge">field</code></strong>:<ul><li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li><li><strong>描述</strong>: 需要进行聚合的字段名。</li></ul></li><li><strong><code class="language-plaintext highlighter-rouge">type</code></strong>:<ul><li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li><li><strong>描述</strong>: 指定聚合操作的类型，可以是以下之一：<ul><li><code class="language-plaintext highlighter-rouge">sum</code>：计算字段值的总和。</li><li><code class="language-plaintext highlighter-rouge">avg</code>：计算字段值的平均值。</li><li><code class="language-plaintext highlighter-rouge">min</code>：获取字段值的最小值。</li><li><code class="language-plaintext highlighter-rouge">max</code>：获取字段值的最大值。</li><li><code class="language-plaintext highlighter-rouge">count</code>：计算字段的数量。</li></ul></li></ul></li><li><strong><code class="language-plaintext highlighter-rouge">alias</code></strong>:<ul><li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li><li><strong>描述</strong>: 聚合结果的别名，用于在结果集中引用聚合值。</li></ul></li><li><strong><code class="language-plaintext highlighter-rouge">convertToDecimal</code></strong> (可选):<ul><li><strong>类型</strong>: 布尔 (<code class="language-plaintext highlighter-rouge">Boolean</code>)</li><li><strong>描述</strong>: 指定是否需要将聚合结果转换为 Decimal 类型。设置为 <code class="language-plaintext highlighter-rouge">true</code> 时，返回的结果将为 Decimal 类型，以字符串形式表示。</li></ul></li></ul><p>在执行聚合查询时，可以根据 <code class="language-plaintext highlighter-rouge">groupBy</code> 和 <code class="language-plaintext highlighter-rouge">aggregations</code> 字段的配置进行数据分组和聚合，生成所需的统计结果。此配置允许灵活处理多种聚合需求，适应不同的业务场景。</p><div style="margin-top:2em;padding:0 1.5em;border:1px solid #d3d3d3;background-color:#deebf7"><h3>文档信息</h3><ul><li>本文作者：<a href="" target="_blank">acteds</a></li><li>本文链接：<a href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/" target="_blank">https://acteds.github.io/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/</a></li><li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank">创意共享3.0许可证</a>）</li></ul></div></article><div class="share"></div><div class="comment"> <script src="https://beaudar.lipk.org/client.js" repo="mzlogin/blog-comments" issue-term="title" label="gitment" theme="github-light" comment-order="desc" input-position="top" crossorigin="anonymous" async> </script></div></div><div class="column one-fourth"><h3>Search</h3><div id="site_search"> <input style="width:96%" type="text" id="search_box" placeholder="Search"></div><ul id="search_results" style="font-size:14px;list-style-type:none;padding-top:10px;padding-left:10px;"></ul><script src="/assets/js/simple-jekyll-search.min.js"></script> <script type="text/javascript"> SimpleJekyllSearch({ searchInput: document.getElementById('search_box'), resultsContainer: document.getElementById('search_results'), json: '/assets/search_data.json?v=1734246804', searchResultTemplate: '<li><a href="{url}" title="{title}">{title}</a></li>', noResultsText: 'No results found', limit: 10, fuzzy: false, exclude: ['Welcome'] }) </script><h3 class="post-directory-title mobile-hidden">Table of Contents</h3><div id="post-directory-module" class="mobile-hidden"><section class="post-directory"><dl></dl></section></div><script src="/assets/js/jquery.toc.js"></script></div></div></section><footer class="container"><div class="site-footer" role="contentinfo"><div class="copyright left mobile-block"> © 2024 <span title="acteds">acteds</span> <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a></div><ul class="site-footer-links right mobile-hidden"><li> <a href="javascript:window.scrollTo(0,0)" >TOP</a></li></ul><a href="https://github.com/acteds/acteds.github.io" target="_blank" aria-label="view source code"> <span class="mega-octicon octicon-mark-github" title="GitHub"></span> </a><ul class="site-footer-links mobile-hidden"><li> <a href="/" title="首页" target="">首页</a></li><li> <a href="/categories/" title="分类" target="">分类</a></li><li> <a href="/wiki/" title="维基" target="">维基</a></li><li> <a href="/about/" title="关于" target="">关于</a></li><li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li></ul></div></footer><div class="tools-wrapper"> <a class="gotop" href="#" title="回到顶部"><span class="octicon octicon-arrow-up"></span></a></div><script src="/assets/js/geopattern.js"></script> <script> jQuery(document).ready(function($) { $('.geopattern').each(function(){ $(this).geopattern($(this).data('pattern-id')); }); /* hljs.initHighlightingOnLoad(); */ }); </script></body></html>
