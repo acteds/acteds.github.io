@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-15T15:13:18+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB分组聚合解析器</title><link href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB分组聚合解析器" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-20T23:37:18+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">MongoDB分组聚合解析器</title><link href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB分组聚合解析器" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>一个对MongoDB分组聚合操作的简单封装类。</p>
 
@@ -395,7 +395,105 @@
   </li>
 </ul>
 
-<p>在执行聚合查询时，可以根据 <code class="language-plaintext highlighter-rouge">groupBy</code> 和 <code class="language-plaintext highlighter-rouge">aggregations</code> 字段的配置进行数据分组和聚合，生成所需的统计结果。此配置允许灵活处理多种聚合需求，适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">ADB相关知识</title><link href="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" rel="alternate" type="text/html" title="ADB相关知识" /><published>2024-10-31T00:00:00+08:00</published><updated>2024-10-31T00:00:00+08:00</updated><id>/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86</id><content type="html" xml:base="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><![CDATA[<h1 id="引言">引言</h1>
+<p>在执行聚合查询时，可以根据 <code class="language-plaintext highlighter-rouge">groupBy</code> 和 <code class="language-plaintext highlighter-rouge">aggregations</code> 字段的配置进行数据分组和聚合，生成所需的统计结果。此配置允许灵活处理多种聚合需求，适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB排序解析方法</title><link href="/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95/" rel="alternate" type="text/html" title="MongoDB排序解析方法" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95</id><content type="html" xml:base="/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>一个对MongoDB排序操作的简单封装方法。</p>
+
+<h1 id="mongodb">MongoDB</h1>
+
+<h2 id="mongodb排序方法解析方法">MongoDB排序方法解析方法</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 排序设置解析并应用
+ * @param query 条件构建对象
+ * @param sortFields 排序设置
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">applySorting</span><span class="o">(</span><span class="nc">Query</span> <span class="n">query</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">SortField</span><span class="o">&gt;</span> <span class="n">sortFields</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 检查排序字段并构建排序对象</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">sortFields</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">sortFields</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">seenFields</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Sort</span><span class="o">.</span><span class="na">Order</span><span class="o">&gt;</span> <span class="n">orders</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">SortField</span> <span class="n">sortField</span> <span class="o">:</span> <span class="n">sortFields</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 验证排序字段</span>
+            <span class="n">sortField</span><span class="o">.</span><span class="na">sortChecks</span><span class="o">();</span>
+            <span class="nc">String</span> <span class="n">fieldName</span> <span class="o">=</span> <span class="n">sortField</span><span class="o">.</span><span class="na">getField</span><span class="o">();</span>
+
+            <span class="c1">// 检查重复字段</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">seenFields</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">fieldName</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"重复的排序字段: "</span> <span class="o">+</span> <span class="n">removeKeyPrefix</span><span class="o">(</span><span class="n">fieldName</span><span class="o">));</span>
+            <span class="o">}</span>
+            <span class="n">seenFields</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">fieldName</span><span class="o">);</span>
+
+            <span class="c1">// 根据排序类型添加排序条件</span>
+            <span class="n">orders</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">sortField</span><span class="o">.</span><span class="na">isSortType</span><span class="o">()</span> <span class="o">?</span>
+                    <span class="nc">Sort</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">asc</span><span class="o">(</span><span class="n">fieldName</span><span class="o">)</span> <span class="o">:</span>
+                    <span class="nc">Sort</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">desc</span><span class="o">(</span><span class="n">fieldName</span><span class="o">));</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 应用排序到查询中</span>
+        <span class="n">query</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="nc">Sort</span><span class="o">.</span><span class="na">by</span><span class="o">(</span><span class="n">orders</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>入参：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 排序设置
+ */</span>
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">SortField</span> <span class="o">{</span>
+    <span class="cm">/**排序字段*/</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">field</span><span class="o">;</span>
+    <span class="cm">/**true 为顺序，false为倒序,默认顺序*/</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">sortType</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sortChecks</span><span class="o">(){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">field</span><span class="o">)){</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"排序字段设置不全，必须包含字段：field"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>字段详细说明</strong></p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">field</code></strong> (String)：表示需要排序的字段名称。</p>
+
+<p>示例：<code class="language-plaintext highlighter-rouge">"status"</code>、<code class="language-plaintext highlighter-rouge">"salary"</code>。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">sortType</code></strong> (Boolean)：指定排序方式。</p>
+
+<p><code class="language-plaintext highlighter-rouge">true</code> 表示升序排序（从小到大）。</p>
+
+<p><code class="language-plaintext highlighter-rouge">false</code> 表示降序排序（从大到小）。</p>
+
+<p>示例：<code class="language-plaintext highlighter-rouge">true</code> 表示按照 <code class="language-plaintext highlighter-rouge">field</code> 升序排序，<code class="language-plaintext highlighter-rouge">false</code> 表示降序排序。</p>
+
+<p><strong>排序逻辑</strong></p>
+
+<ul>
+  <li><strong>主要排序关键字</strong>：<code class="language-plaintext highlighter-rouge">sortFields</code> 数组的第一个对象表示主要排序关键字，MongoDB 将首先根据这个字段对结果进行排序。</li>
+  <li><strong>次要排序关键字</strong>：如果主要排序关键字存在相同值，MongoDB 将继续根据下一个对象中的字段进行排序。</li>
+  <li>
+    <p><strong>示例排序顺序</strong>：给定以下示例设置：</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"sortFields"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"status"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sortType"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sortType"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>    </div>
+
+    <p>结果集将首先按 <code class="language-plaintext highlighter-rouge">status</code> 字段升序排列，对于具有相同 <code class="language-plaintext highlighter-rouge">status</code> 值的记录，将按 <code class="language-plaintext highlighter-rouge">salary</code> 字段降序排列。</p>
+  </li>
+</ul>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">ADB相关知识</title><link href="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" rel="alternate" type="text/html" title="ADB相关知识" /><published>2024-10-31T00:00:00+08:00</published><updated>2024-10-31T00:00:00+08:00</updated><id>/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86</id><content type="html" xml:base="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>ADB（Android Debug Bridge）是一个命令行工具，用于与 Android 设备进行交互和管理。它是 Android SDK 的一部分，主要用于开发和调试 Android 应用程序。</p>
 
@@ -7087,69 +7185,4 @@ docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 63
   <li><strong>性能与延迟</strong>：由于锁依赖于 Consul 的 KV 存储，延迟和 Consul 的性能会影响锁的响应速度，建议在并发场景中测试锁的性能。</li>
 </ol>
 
-<p>Consul 的分布式锁是一种简洁高效的锁机制，尤其适合在分布式环境中确保资源的一致性和避免并发冲突。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">GitLabSSH认证</title><link href="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/" rel="alternate" type="text/html" title="GitLabSSH认证" /><published>2024-09-19T00:00:00+08:00</published><updated>2024-09-19T00:00:00+08:00</updated><id>/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81</id><content type="html" xml:base="/2024/09/19/GitLabSSH%E8%AE%A4%E8%AF%81/"><![CDATA[<h1 id="引言">引言</h1>
-<p>对于GitLab的SSH认证，和GitHub认证步骤差不多，主要是SSH密钥可能需要指定的版本。</p>
-
-<h1 id="gitlab">GitLab</h1>
-
-<blockquote>
-  <p>要使用 SSH 与 GitLab 通信，您需要：</p>
-
-  <ul>
-    <li>OpenSSH 客户端，预装在 GNU/Linux、macOS 和 Windows 10 上。</li>
-    <li>SSH 版本 6.5 或更高版本。早期版本使用 MD5 签名，这并不安全。</li>
-  </ul>
-
-  <p>要查看系统上安装的 SSH 版本，请运行 <code class="language-plaintext highlighter-rouge">ssh -V</code>。</p>
-
-  <p>支持的 SSH 密钥类型</p>
-
-  <p>要与 GitLab 通信，您可以使用以下 SSH 密钥类型：</p>
-
-  <ul>
-    <li><a href="#ed25519-ssh-keys">ED25519</a></li>
-    <li><a href="#rsa-ssh-keys">RSA</a></li>
-    <li>DSA（在 11.0 版本中<a href="https://about.gitlab.com/releases/2018/06/22/gitlab-11-0-released/#support-for-dsa-ssh-keys">已弃用</a>。</li>
-    <li>ECDSA（如 <a href="https://leanpub.com/gocrypto/read#leanpub-auto-ecdsa">Practical Cryptography With Go</a> 中所述，与 DSA 相关的安全问题也适用于 ECDSA。</li>
-  </ul>
-
-</blockquote>
-
-<p>对于RSA算法，需要至少2048位密钥，首选ED25519算法。</p>
-
-<h2 id="生成ssh密钥对">生成SSH密钥对</h2>
-
-<p>对于 ED25519：</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen <span class="nt">-t</span> ed25519 <span class="nt">-C</span> <span class="s2">"&lt;comment&gt;"</span>
-</code></pre></div></div>
-
-<p>对于 2048 位 RSA：</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen <span class="nt">-t</span> rsa <span class="nt">-b</span> 2048 <span class="nt">-C</span> <span class="s2">"&lt;comment&gt;"</span>
-</code></pre></div></div>
-
-<h2 id="配置-ssh-以指向不同的目录">配置 SSH 以指向不同的目录</h2>
-
-<p>如果未将 SSH 密钥对保存在默认目录中，请将 SSH 客户端配置为指向存储私钥的目录。</p>
-
-<p>打开终端并运行以下命令：</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">eval</span> <span class="si">$(</span>ssh-agent <span class="nt">-s</span><span class="si">)</span>
-ssh-add &lt;directory to private SSH key&gt;
-</code></pre></div></div>
-
-<p>将这些设置保存在 ~/.ssh/config 文件中。例如：</p>
-
-<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># GitLab.com
-</span><span class="n">Host</span> <span class="n">gitlab</span>.<span class="n">com</span>
-  <span class="n">PreferredAuthentications</span> <span class="n">publickey</span>
-  <span class="n">IdentityFile</span> ~/.<span class="n">ssh</span>/<span class="n">gitlab_com_rsa</span>
-
-<span class="c"># Private GitLab instance
-</span><span class="n">Host</span> <span class="n">gitlab</span>.<span class="n">company</span>.<span class="n">com</span>
-  <span class="n">PreferredAuthentications</span> <span class="n">publickey</span>
-  <span class="n">IdentityFile</span> ~/.<span class="n">ssh</span>/<span class="n">example_com_rsa</span>
-</code></pre></div></div>
-
-<p>公共 SSH 密钥对于 GitLab 必须是唯一的，因为它们绑定到您的帐户。当使用 SSH 推送代码时，SSH 密钥是唯一标识符。它必须唯一地映射到单个用户。</p>]]></content><author><name>acteds</name></author><category term="Git" /><category term="GitLab" /><summary type="html"><![CDATA[GITLabSSH认证]]></summary></entry></feed>
+<p>Consul 的分布式锁是一种简洁高效的锁机制，尤其适合在分布式环境中确保资源的一致性和避免并发冲突。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
