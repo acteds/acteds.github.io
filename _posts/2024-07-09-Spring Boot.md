@@ -10,8 +10,6 @@ keywords: Java
 Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。
 
 
-
-
 # Spring Boot
 
 Spring框架，它的主要功能包括IoC容器、AOP支持、事务支持、MVC开发以及强大的第三方集成功能等。而Spring Boot是一个基于Spring的套件，它帮我们预组装了Spring的一系列组件，以便以尽可能少的代码和配置来开发基于Spring的Java应用程序。
@@ -3424,15 +3422,72 @@ process login message: [LoginMessage: email=bob@example.com, name=Bob, success=t
 
 在生产环境中通常会关闭自动创建功能，Topic需要由运维人员先创建好。和RabbitMQ相比，Kafka并不提供网页版管理后台，管理Topic需要使用命令行，比较繁琐，只有云服务商通常会提供更友好的管理后台。
 
+## 使用Undertow
 
+Undertow 和 Tomcat 都是优秀的嵌入式 Web 容器，但它们的实现方式不同：
 
+- **Tomcat** 传统上更稳定，功能更齐全，并且支持很多企业级应用的标准和协议。
+- **Undertow** 更轻量、响应更快，并且具有更高的吞吐量，特别适合高并发场景。它是非阻塞的，因此对于处理大量短连接、高并发的场景有很好的性能。
 
+Spring Boot 允许你自定义 Undertow 的配置。例如，如果你希望调整最大连接数、线程池等设置，可以在 `application.properties` 或 `application.yml` 中进行配置：
 
+```yaml
+server:
+  port: 9520
+  undertow:
+    # 每块buffer的空间大小，越小空间被利用越充分
+    # 不要设置太大，以免影响其他应用，合适即可
+    buffer-size: ${SERVER_UNDERTOW_BUFFER_SIZE:1024}
+    # 是否分配的直接内存(NIO直接分配的堆外内存)
+    # 默认false
+    direct-buffers: true
+    # HTTP POST请求最大的大小
+    # 默认0，无限制，可设置10M
+    max-http-post-size: 1GB
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接
+      # 默认值为8，建议设置每个CPU核心一个线程
+      io: ${SERVER_UNDERTOW_IO_THREADS:8}
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程
+      # 默认等于 io-threads*8，它的值设置取决于系统的负载，可适当调大该值6
+      worker: ${SERVER_UNDERTOW_WORKER_THREADS:128}
+    max-headers: 1024
+```
 
+添加 `spring-boot-starter-undertow` 依赖，并且 **删除** `spring-boot-starter-tomcat` 依赖（如果已经添加过）。这样做的目的是告诉 Spring Boot 使用 Undertow 作为嵌入式容器。
 
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-undertow</artifactId>
+</dependency>
+```
 
+**验证功能和性能**
 
+在更换容器之后，应该进行一些基本的验证和性能测试：
 
+- **功能验证**：确保你的应用在 Undertow 上正常运行，尤其是关键功能（如请求参数解析、RESTful API、会话管理等）。
+- **性能测试**：如果你的应用有高并发的需求，测试 Undertow 在并发场景下的性能。Undertow 在这方面可能会有更好的表现。
+
+**注意事项**
+- **兼容性问题**：虽然 Spring Boot 通过自动配置来帮助适配 Undertow，但在少数情况下，某些功能可能存在不同的行为。例如，Tomcat 和 Undertow 在连接池和线程管理上有所不同，如果你有自定义的连接池或线程池管理，可能需要根据容器的特性进行适当调整。
+- **会话管理**：Tomcat 和 Undertow 对 HTTP 会话的管理方式可能略有不同，确保在迁移时验证会话和 cookie 的管理。
+- **日志输出**：确保你的日志配置没有依赖于 Tomcat 特定的行为。通常，Spring Boot 会自动适配，但值得进行一次检查。
+
+总结
+
+更换容器为 Undertow 后，Spring Boot 会自动进行适配，并替换原有的 Tomcat 设置。你只需要修改 `pom.xml`，添加 Undertow 依赖，并删除 Tomcat 依赖。同时，你可以根据需要调整 Undertow 特定的配置来优化性能。大部分情况下，Spring Boot 会做最好的适配工作，但确保经过充分的测试，特别是在高并发和功能验证方面。
 
 
 

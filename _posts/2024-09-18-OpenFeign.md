@@ -11,7 +11,6 @@ keywords: Java
 **OpenFeign** 是一个声明式的 HTTP 客户端，主要用于简化微服务之间的通信。它通过注解和接口的形式定义远程服务的调用，帮助开发者省去了编写大量 HTTP 请求的样板代码。在 Spring Cloud 中，OpenFeign 与 Spring Boot 和 Spring Cloud 集成良好，能够与负载均衡、断路器等组件搭配使用。
 
 
-
 # OpenFeign
 
 在微服务架构中，不同的服务通过 HTTP 进行通信。常规做法是手动使用 `RestTemplate` 或 `HttpClient` 发起 HTTP 请求，这样的代码通常冗长且容易出错。**OpenFeign** 的优势在于它通过接口与注解的形式，使得调用远程服务就像调用本地方法一样简单。

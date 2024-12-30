@@ -10,7 +10,6 @@ keywords: Java
 Spring Clud笔记。
 
 
-
 # Spring Cloud
 
 为了简化版本和依赖管理，用`parent`模块管理最基础的`pom.xml`，其他模块直接从`parent`继承，能大大简化各自的`pom.xml`。`parent`模块`pom.xml`内容如下：

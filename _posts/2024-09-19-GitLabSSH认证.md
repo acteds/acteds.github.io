@@ -10,7 +10,6 @@ keywords: Git, GitLab
 对于GitLab的SSH认证，和GitHub认证步骤差不多，主要是SSH密钥可能需要指定的版本。
 
 
-
 # GitLab
 
 > 要使用 SSH 与 GitLab 通信，您需要：

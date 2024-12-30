@@ -6,8 +6,8 @@ description: Java笔记
 keywords: Java
 ---
 # 简单实现@GetMapping
-
 首先写个`DispatcherServlet`，URL路径为：`/`,表示所有没有指定`Servlet`处理的URL，都映射到此Servlet，然后`DispatcherServlet`再根据路径执行特定的方法。
+
 
 ```java
 @WebServlet(urlPatterns = "/")
