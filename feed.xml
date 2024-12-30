@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-27T20:16:19+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多级Map连续设值</title><link href="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/" rel="alternate" type="text/html" title="多级Map连续设值" /><published>2024-11-06T00:00:00+08:00</published><updated>2024-11-06T00:00:00+08:00</updated><id>/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC</id><content type="html" xml:base="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-12-30T22:58:54+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">多级Map连续设值</title><link href="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/" rel="alternate" type="text/html" title="多级Map连续设值" /><published>2024-11-06T00:00:00+08:00</published><updated>2024-11-06T00:00:00+08:00</updated><id>/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC</id><content type="html" xml:base="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/"><![CDATA[<h1 id="引言">引言</h1>
 <p>一个简单的，连续设置Map值的方法。</p>
 
 <h1 id="map">Map</h1>
@@ -59,7 +59,6 @@
 <span class="c1">// 打印结果</span>
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
 </code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB分组聚合解析器</title><link href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB分组聚合解析器" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>一个对MongoDB分组聚合操作的简单封装类。</p>
 
 <h1 id="mongodb">MongoDB</h1>
@@ -456,7 +455,6 @@
 </ul>
 
 <p>在执行聚合查询时，可以根据 <code class="language-plaintext highlighter-rouge">groupBy</code> 和 <code class="language-plaintext highlighter-rouge">aggregations</code> 字段的配置进行数据分组和聚合，生成所需的统计结果。此配置允许灵活处理多种聚合需求，适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB排序解析方法</title><link href="/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95/" rel="alternate" type="text/html" title="MongoDB排序解析方法" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95</id><content type="html" xml:base="/2024/11/04/MongoDB%E6%8E%92%E5%BA%8F%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>一个对MongoDB排序操作的简单封装方法。</p>
 
 <h1 id="mongodb">MongoDB</h1>
@@ -554,7 +552,6 @@
     <p>结果集将首先按 <code class="language-plaintext highlighter-rouge">status</code> 字段升序排列，对于具有相同 <code class="language-plaintext highlighter-rouge">status</code> 值的记录，将按 <code class="language-plaintext highlighter-rouge">salary</code> 字段降序排列。</p>
   </li>
 </ul>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">ADB相关知识</title><link href="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" rel="alternate" type="text/html" title="ADB相关知识" /><published>2024-10-31T00:00:00+08:00</published><updated>2024-10-31T00:00:00+08:00</updated><id>/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86</id><content type="html" xml:base="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>ADB（Android Debug Bridge）是一个命令行工具，用于与 Android 设备进行交互和管理。它是 Android SDK 的一部分，主要用于开发和调试 Android 应用程序。</p>
 
 <h1 id="adb">ADB</h1>
@@ -671,7 +668,6 @@
 </ul>
 
 <p>每次只允许一个 ADB 服务器与安卓设备建立连接，尝试同时连接多个 ADB 服务器将会导致连接冲突，无法正常工作。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[安卓笔记]]></summary></entry><entry><title type="html">Map过滤器</title><link href="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="alternate" type="text/html" title="Map过滤器" /><published>2024-10-28T00:00:00+08:00</published><updated>2024-10-28T00:00:00+08:00</updated><id>/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8</id><content type="html" xml:base="/2024/10/28/Map%E8%BF%87%E6%BB%A4%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>一个过滤Map键的类，包括包含字段和排除字段，类似于<code class="language-plaintext highlighter-rouge">mongoTemplate</code>的字段过滤。</p>
 
 <h1 id="map">Map</h1>
@@ -878,7 +874,6 @@
 </code></pre></div></div>
 
 <p>根据需要可以改变逻辑，当取不到值时抛出异常，而不是<code class="language-plaintext highlighter-rouge">null</code>。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB条件解析器</title><link href="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB条件解析器" /><published>2024-10-15T00:00:00+08:00</published><updated>2024-10-15T00:00:00+08:00</updated><id>/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/10/15/MongoDB%E6%9D%A1%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>一个将Map转换为<code class="language-plaintext highlighter-rouge">mongoTemplate</code>条件的类。</p>
 
 <h1 id="mongodb">MongoDB</h1>
@@ -2219,7 +2214,6 @@
 </ul>
 
 <p><code class="language-plaintext highlighter-rouge">$and</code>与<code class="language-plaintext highlighter-rouge">$or</code>可互相嵌套。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Redis</title><link href="/2024/09/26/Redis/" rel="alternate" type="text/html" title="Redis" /><published>2024-09-26T00:00:00+08:00</published><updated>2024-09-26T00:00:00+08:00</updated><id>/2024/09/26/Redis</id><content type="html" xml:base="/2024/09/26/Redis/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>Redis是一个内存数据库。</p>
 
 <h1 id="redis">Redis</h1>
@@ -3284,7 +3278,6 @@ docker run <span class="nt">--name</span> my-redis <span class="nt">-p</span> 63
 </ol>
 
 <p>这样修改后，<code class="language-plaintext highlighter-rouge">RedisService</code> 就可以适配 Redis 集群环境。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB</title><link href="/2024/09/23/MongoDB/" rel="alternate" type="text/html" title="MongoDB" /><published>2024-09-23T00:00:00+08:00</published><updated>2024-09-23T00:00:00+08:00</updated><id>/2024/09/23/MongoDB</id><content type="html" xml:base="/2024/09/23/MongoDB/"><![CDATA[<h1 id="引言">引言</h1>
-
 <p>MongoDB是一个非关系型数据库。</p>
 
 <h1 id="mongodb">MongoDB</h1>
