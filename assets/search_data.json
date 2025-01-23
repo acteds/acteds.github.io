@@ -465,7 +465,7 @@
       "category" : "Git",
       
       "url"      : "/2024/09/19/%E5%A4%9A%E4%B8%AAGit%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0%E7%9A%84%E9%85%8D%E7%BD%AE/",
-      "keywords" : "Git, GitLab, Github"
+      "keywords" : "Git, GitLab, GitHub"
     } ,
   
     {
@@ -489,7 +489,7 @@
       "category" : "Java",
       
       "url"      : "/2024/09/23/MongoDB/",
-      "keywords" : "Java"
+      "keywords" : "Java,MongoDB"
     } ,
   
     {
@@ -561,6 +561,14 @@
       "category" : "Java",
       
       "url"      : "/2024/11/07/%E5%B5%8C%E5%A5%97Map%E7%9A%84%E5%B9%B3%E9%93%BA%E4%BA%8E%E5%8F%8D%E5%90%91%E6%93%8D%E4%BD%9C/",
+      "keywords" : "Java"
+    } ,
+  
+    {
+      "title"    : "本地环境正常，k8s上中文乱码解决方法",
+      "category" : "Java",
+      
+      "url"      : "/2024/11/15/%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%AD%A3%E5%B8%B8-k8s%E4%B8%8A%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/",
       "keywords" : "Java"
     } ,
   
