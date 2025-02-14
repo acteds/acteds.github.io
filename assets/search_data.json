@@ -597,6 +597,14 @@
     } ,
   
     {
+      "title"    : "Elasticsearch",
+      "category" : "Java",
+      
+      "url"      : "/2024/12/05/elasticsearch/",
+      "keywords" : "Java,elasticsearch"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
