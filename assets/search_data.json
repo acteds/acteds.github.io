@@ -122,6 +122,8 @@
   
   
   
+  
+  
 
   
     {
@@ -602,6 +604,14 @@
       
       "url"      : "/2024/12/05/elasticsearch/",
       "keywords" : "Java,elasticsearch"
+    } ,
+  
+    {
+      "title"    : "IDEA的配置",
+      "category" : "Java",
+      
+      "url"      : "/2024/12/20/IDEA%E7%9A%84%E9%85%8D%E7%BD%AE/",
+      "keywords" : "Java,IDEA"
     } ,
   
     {

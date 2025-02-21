@@ -1,4 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-02-14T21:47:10+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Elasticsearch</title><link href="/2024/12/05/elasticsearch/" rel="alternate" type="text/html" title="Elasticsearch" /><published>2024-12-05T00:00:00+08:00</published><updated>2024-12-05T00:00:00+08:00</updated><id>/2024/12/05/elasticsearch</id><content type="html" xml:base="/2024/12/05/elasticsearch/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-02-21T21:40:58+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">IDEA的配置</title><link href="/2024/12/20/IDEA%E7%9A%84%E9%85%8D%E7%BD%AE/" rel="alternate" type="text/html" title="IDEA的配置" /><published>2024-12-20T00:00:00+08:00</published><updated>2024-12-20T00:00:00+08:00</updated><id>/2024/12/20/IDEA%E7%9A%84%E9%85%8D%E7%BD%AE</id><content type="html" xml:base="/2024/12/20/IDEA%E7%9A%84%E9%85%8D%E7%BD%AE/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>IDEA的常用配置</p>
+
+<h1 id="idea">IDEA</h1>
+
+<h2 id="热更新">热更新</h2>
+
+<p>鼠标移动到<code class="language-plaintext highlighter-rouge">运行</code>按钮所在<code class="language-plaintext highlighter-rouge">工具栏</code>-右键-<code class="language-plaintext highlighter-rouge">自定义工具栏..</code>-进入到<code class="language-plaintext highlighter-rouge">自定义导航栏工具栏</code>对话框。</p>
+
+<p>选择<code class="language-plaintext highlighter-rouge">导航工具栏</code>-<code class="language-plaintext highlighter-rouge">工具栏运行操作</code>-<code class="language-plaintext highlighter-rouge">运行/调试</code>-点击<code class="language-plaintext highlighter-rouge">添加操作</code>按钮-进入到<code class="language-plaintext highlighter-rouge">添加操作</code>对话框。</p>
+
+<p>查询 <code class="language-plaintext highlighter-rouge">编译并重新加载文件</code> ，然后选择，并确认添加该功能按钮。（若找不到，则手动定位：<code class="language-plaintext highlighter-rouge">调试器操作</code>-<code class="language-plaintext highlighter-rouge">编译并重新加载文件</code>）。</p>
+
+<p>查询<code class="language-plaintext highlighter-rouge">更新正在运行的应用程序</code>，然后选择，并确认添加该功能按钮。（若找不到，则手动定位：<code class="language-plaintext highlighter-rouge">主菜单</code>-<code class="language-plaintext highlighter-rouge">运行</code>-<code class="language-plaintext highlighter-rouge">调试器操作</code>-<code class="language-plaintext highlighter-rouge">更新正在运行的应用程序</code>）。</p>
+
+<p>查询<code class="language-plaintext highlighter-rouge">重新加载已更改的类</code>，然后选择，并确认添加该功能按钮。（若找不到，则手动定位：<code class="language-plaintext highlighter-rouge">主菜单</code>-<code class="language-plaintext highlighter-rouge">运行</code>-<code class="language-plaintext highlighter-rouge">调试器操作</code>-<code class="language-plaintext highlighter-rouge">重新加载已更改的类</code>）。</p>
+
+<p>查询<code class="language-plaintext highlighter-rouge">重新加载已更改的类</code>，然后选择，并确认添加该功能按钮。（若找不到，则手动定位：<code class="language-plaintext highlighter-rouge">主菜单</code>-<code class="language-plaintext highlighter-rouge">运行</code>-<code class="language-plaintext highlighter-rouge">调试器操作</code>-<code class="language-plaintext highlighter-rouge">重新加载已更改的类</code>）。</p>
+
+<h2 id="调试器">调试器</h2>
+
+<p>调试器没有强制步入等操作。</p>
+
+<p>打开调试器窗口，鼠标移动到调试器相关按钮所在<code class="language-plaintext highlighter-rouge">工具栏</code>-右键-<code class="language-plaintext highlighter-rouge">自定义工具栏..</code>-进入到<code class="language-plaintext highlighter-rouge">自定义 调试工具窗口顶部工具栏</code>对话框。</p>
+
+<p>点击<code class="language-plaintext highlighter-rouge">添加操作</code>按钮-进入到<code class="language-plaintext highlighter-rouge">添加操作</code>对话框。</p>
+
+<p>定位到<code class="language-plaintext highlighter-rouge">主菜单</code>-<code class="language-plaintext highlighter-rouge">运行</code>-<code class="language-plaintext highlighter-rouge">调试器操作</code>，可以看到相关功能按钮。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="IDEA" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Elasticsearch</title><link href="/2024/12/05/elasticsearch/" rel="alternate" type="text/html" title="Elasticsearch" /><published>2024-12-05T00:00:00+08:00</published><updated>2024-12-05T00:00:00+08:00</updated><id>/2024/12/05/elasticsearch</id><content type="html" xml:base="/2024/12/05/elasticsearch/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>elasticsearch的操作方法。</p>
 
@@ -8137,120 +8165,4 @@ Content-Type: text/plain
 
     <p>结果集将首先按 <code class="language-plaintext highlighter-rouge">status</code> 字段升序排列，对于具有相同 <code class="language-plaintext highlighter-rouge">status</code> 值的记录，将按 <code class="language-plaintext highlighter-rouge">salary</code> 字段降序排列。</p>
   </li>
-</ul>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">ADB相关知识</title><link href="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" rel="alternate" type="text/html" title="ADB相关知识" /><published>2024-10-31T00:00:00+08:00</published><updated>2024-10-31T00:00:00+08:00</updated><id>/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86</id><content type="html" xml:base="/2024/10/31/ADB%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><![CDATA[<h1 id="引言">引言</h1>
-<p>ADB（Android Debug Bridge）是一个命令行工具，用于与 Android 设备进行交互和管理。它是 Android SDK 的一部分，主要用于开发和调试 Android 应用程序。</p>
-
-<h1 id="adb">ADB</h1>
-
-<p>ADB 提供了一个通用的命令接口，可以通过 USB 或 Wi-Fi 连接 Android 设备，允许开发者执行多种操作，包括：</p>
-
-<ol>
-  <li><strong>安装和卸载应用</strong>：可以通过命令行在设备上安装或卸载 APK 文件。</li>
-  <li><strong>设备管理</strong>：能够列出已连接的设备，检查设备状态，重启设备等。</li>
-  <li><strong>调试应用</strong>：开发者可以通过 ADB 向 Android 设备发送调试命令，查看日志（使用 <code class="language-plaintext highlighter-rouge">logcat</code>），捕获屏幕截图等。</li>
-  <li><strong>文件传输</strong>：可以通过 ADB 在电脑和 Android 设备之间传输文件。</li>
-  <li><strong>运行 shell 命令</strong>：可以直接在设备上执行 shell 命令，以进行更深入的管理。</li>
-</ol>
-
-<p>ADB 的基本使用示例：</p>
-
-<p><strong>列出连接的设备</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
-</code></pre></div></div>
-
-<p><strong>安装应用</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb <span class="nb">install </span>path/to/app.apk
-</code></pre></div></div>
-
-<p><strong>卸载应用</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb uninstall package.name
-</code></pre></div></div>
-
-<p><strong>查看设备日志</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb logcat
-</code></pre></div></div>
-
-<p><strong>进入设备的 shell</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell
-</code></pre></div></div>
-
-<p><strong>工作原理：</strong></p>
-
-<p>ADB 通过 TCP/IP 协议与 Android 设备通信。它通常在本地机器和 Android 设备之间建立一个客户端-服务器架构，其中 ADB 服务器在主机上运行，而 ADB 客户端在命令行中运行，Android 设备则充当服务器端。</p>
-
-<h2 id="adb服务器">ADB服务器</h2>
-
-<p>ADB 服务器（ADB Server）是 Android Debug Bridge（ADB）中的一个关键组件，用于管理与 Android 设备之间的通信。它作为一个后台进程在主机上运行，负责协调 ADB 客户端和连接的 Android 设备。以下是 ADB 服务器的主要功能和特点：</p>
-
-<ol>
-  <li>
-    <p><strong>设备管理</strong>：ADB 服务器维护已连接设备的状态信息，包括设备 ID、状态（如在线或离线）等。当通过 ADB 客户端发出命令时，ADB 服务器会判断当前连接的设备并执行相应操作。</p>
-  </li>
-  <li>
-    <p><strong>命令转发</strong>：当开发者在命令行中使用 ADB 命令时，这些命令首先被发送到 ADB 服务器。ADB 服务器会将这些命令转发到相应的 Android 设备，并将结果返回给客户端。</p>
-  </li>
-  <li>
-    <p><strong>多设备支持</strong>：<strong>ADB 服务器允许同时与多个 Android 设备进行通信</strong>。开发者可以通过不同的设备 ID 来区分不同的设备。</p>
-  </li>
-  <li>
-    <p><strong>简化连接</strong>：ADB 服务器管理与设备之间的 TCP/IP 连接，简化了开发者的连接流程。当开发者首次连接设备时，ADB 服务器会自动启动并进行设备发现。</p>
-  </li>
-</ol>
-
-<p><strong>工作原理</strong></p>
-
-<ul>
-  <li><strong>启动过程</strong>：当运行任何 ADB 命令时，ADB 客户端会首先检查 ADB 服务器是否在运行。如果未运行，ADB 客户端会启动 ADB 服务器。</li>
-  <li><strong>端口</strong>：默认情况下，ADB 服务器在 5037 端口上监听请求。可以通过 <code class="language-plaintext highlighter-rouge">adb -P &lt;port&gt;</code> 命令指定其他端口。</li>
-  <li><strong>连接方式</strong>：ADB 可以通过 USB 连接设备，也可以通过 Wi-Fi 连接。当设备通过 USB 连接时，ADB 服务器会在设备上启用调试模式，以便进行操作。</li>
-</ul>
-
-<p><strong>常见命令</strong></p>
-
-<p><strong>启动 ADB 服务器</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb start-server
-</code></pre></div></div>
-
-<p><strong>停止 ADB 服务器</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb kill-server
-</code></pre></div></div>
-
-<p><strong>查看已连接设备</strong>：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
-</code></pre></div></div>
-
-<p>ADB 服务器是开发和调试 Android 应用不可或缺的组件，它通过提供统一的接口简化了与设备的交互，帮助开发者高效地进行应用测试和管理。</p>
-
-<p><strong>重要事项</strong></p>
-
-<ol>
-  <li><strong>单一端口</strong>：同一时间内，ADB 服务器只能绑定到一个端口。如果尝试在<strong>同一端口</strong>上启动多个 ADB 实例，将导致冲突并出现错误。</li>
-  <li><strong>更改端口</strong>：如果你需要在多个实例之间切换，可以使用不同的端口。例如，你可以使用 <code class="language-plaintext highlighter-rouge">adb -L tcp:12345 fork-server server --reply-fd 688</code> 启动另一个 ADB 实例在端口 12345 上运行。</li>
-  <li><strong>服务器状态</strong>：如果需要重新启动 ADB 服务器，建议先停止现有的 ADB 实例，以避免端口占用冲突。可以使用 <code class="language-plaintext highlighter-rouge">adb kill-server</code> 命令来停止当前的 ADB 服务器。</li>
-</ol>
-
-<p><strong>一个安卓设备只能与一个 ADB 服务器建立连接。</strong>即使在不同的端口上启动多个 ADB 服务器，它们仍然无法同时连接到同一个设备。以下是一些相关细节：</p>
-
-<p><strong>原因</strong></p>
-
-<ol>
-  <li><strong>端口和通信</strong>：ADB 服务器通过 TCP/IP 协议与安卓设备通信，通常使用端口 5037。每个设备在同一时间只能被一个 ADB 服务器控制。</li>
-  <li><strong>设备状态</strong>：当一个 ADB 服务器连接到设备时，该设备的状态会被标记为 “device”。其他尝试连接的 ADB 服务器将收到设备 “offline” 或 “unauthorized” 的状态，因为设备已经与现有的 ADB 服务器建立了连接。</li>
-</ol>
-
-<p><strong>解决方案</strong></p>
-
-<ul>
-  <li><strong>ADB 代理</strong>：如果需要在多个环境中使用 ADB，可以考虑使用 ADB 代理来转发命令，但这会增加复杂性。</li>
-  <li><strong>连接管理</strong>：确保在启动新的 ADB 服务器之前，先通过 <code class="language-plaintext highlighter-rouge">adb kill-server</code> 停止当前的 ADB 服务器连接，确保只有一个 ADB 实例在与设备通信。</li>
-</ul>
-
-<p>每次只允许一个 ADB 服务器与安卓设备建立连接，尝试同时连接多个 ADB 服务器将会导致连接冲突，无法正常工作。</p>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[安卓笔记]]></summary></entry></feed>
+</ul>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
