@@ -615,6 +615,14 @@
     } ,
   
     {
+      "title"    : "Drools规则引擎",
+      "category" : "Java",
+      
+      "url"      : "/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E/",
+      "keywords" : "Java,IDEA"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
