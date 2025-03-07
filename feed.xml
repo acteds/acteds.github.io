@@ -1,4 +1,492 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-02-28T23:42:27+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Drools规则引擎</title><link href="/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E/" rel="alternate" type="text/html" title="Drools规则引擎" /><published>2024-12-21T00:00:00+08:00</published><updated>2024-12-21T00:00:00+08:00</updated><id>/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E</id><content type="html" xml:base="/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-08T00:35:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">SecureRandom</title><link href="/2024/12/24/SecureRandom/" rel="alternate" type="text/html" title="SecureRandom" /><published>2024-12-24T00:00:00+08:00</published><updated>2024-12-24T00:00:00+08:00</updated><id>/2024/12/24/SecureRandom</id><content type="html" xml:base="/2024/12/24/SecureRandom/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p><code class="language-plaintext highlighter-rouge">SecureRandom</code>随机数的坑，java8版本与java17版本的该类底层原理不同。</p>
+
+<h1 id="securerandom">SecureRandom</h1>
+
+<h2 id="问题复现">问题复现</h2>
+
+<p>场景：需要对存入数据库的敏感数据进行非对称加密，对于不涉及加密数据的查询，无所谓随机数是否固定，但对于涉及加密数据的查询，就需要固定随机数了。因此有如下方法用来加密：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="cm">/**
+     * SM2加密
+     *
+     * @param data      待加密数据
+     * @return 加密后的数据
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">String</span> <span class="nf">sm2Encrypt</span><span class="o">(</span> <span class="nc">String</span> <span class="n">data</span><span class="o">){</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isNotNull</span><span class="o">(</span><span class="n">data</span><span class="o">)){</span>
+                <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">//使用固定随机数</span>
+            <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+            <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+            <span class="nc">ECPublicKeyParameters</span> <span class="n">publicKeyParam</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ECPublicKeyParameters</span><span class="o">)</span> <span class="nc">PublicKeyFactory</span><span class="o">.</span><span class="na">createKey</span><span class="o">(</span><span class="n">getPublicKey</span><span class="o">().</span><span class="na">getEncoded</span><span class="o">());</span>
+            <span class="nc">CipherParameters</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ParametersWithRandom</span><span class="o">(</span><span class="n">publicKeyParam</span><span class="o">,</span> <span class="n">random</span><span class="o">);</span>
+            <span class="kt">byte</span><span class="o">[]</span> <span class="n">encrypt</span> <span class="o">=</span> <span class="n">iniSmUtil</span><span class="o">().</span><span class="na">encrypt</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(),</span><span class="n">parameters</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">base64String</span> <span class="o">=</span> <span class="nc">Base64</span><span class="o">.</span><span class="na">encodeBase64String</span><span class="o">(</span><span class="n">encrypt</span><span class="o">);</span>
+            <span class="c1">//转16进制后返回</span>
+            <span class="k">return</span> <span class="nc">HexUtil</span><span class="o">.</span><span class="na">encodeHexStr</span><span class="o">(</span><span class="n">base64String</span><span class="o">,</span> <span class="nc">CharsetUtil</span><span class="o">.</span><span class="na">CHARSET_UTF_8</span><span class="o">);</span>
+        <span class="o">}</span><span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">){</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"SM2数据加密异常:"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>这里的：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+<span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+</code></pre></div></div>
+
+<p>就是固定随机数。测试在Java8中相同种子是否返回相同的随机数：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//使用固定随机数</span>
+<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+    <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">);</span><span class="c1">//[-1765061395]</span>
+</code></pre></div></div>
+
+<p><strong>相同</strong>，在Java17中：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+    <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">.</span><span class="na">size</span><span class="o">());</span><span class="c1">//10000</span>
+</code></pre></div></div>
+
+<p><strong>不相同</strong>。实际上是<code class="language-plaintext highlighter-rouge">SecureRandom</code>的底层随机数算法发生了变化。</p>
+
+<h2 id="基本用法">基本用法</h2>
+
+<p><code class="language-plaintext highlighter-rouge">SecureRandom</code> 是一个提供加密强随机数生成器（RNG）的类，用于生成符合加密要求的随机数。</p>
+
+<p><strong>加密强随机数</strong>：</p>
+<ul>
+  <li>加密强随机数是指符合统计随机数生成器测试要求的随机数，满足 FIPS 140-2 和 RFC 4086 的要求，必须生成不可预测的输出。</li>
+  <li><code class="language-plaintext highlighter-rouge">SecureRandom</code> 必须生成非确定性输出，即每次生成的结果应该是随机且难以预测的。</li>
+</ul>
+
+<p><strong>伪随机数生成器（PRNG）与真随机数</strong>：</p>
+<ul>
+  <li>大多数 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 的实现是基于伪随机数生成器（PRNG），即使用确定性的算法从随机种子生成伪随机数序列。</li>
+  <li>也有一些实现通过硬件或环境噪声等物理方式生成真随机数。</li>
+  <li>还有一些实现会结合这两种技术。</li>
+</ul>
+
+<p><strong>获取 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实例</strong>：</p>
+
+<p>可以通过无参构造函数或 <code class="language-plaintext highlighter-rouge">getInstance</code> 方法获取 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实例，并指定具体的随机数生成算法。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">SecureRandom</span> <span class="n">r1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span> <span class="c1">// 默认</span>
+<span class="nc">SecureRandom</span> <span class="n">r2</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"NativePRNG"</span><span class="o">);</span> <span class="c1">// 使用特定算法</span>
+<span class="nc">SecureRandom</span> <span class="n">r3</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"DRBG"</span><span class="o">,</span> <span class="nc">DrbgParameters</span><span class="o">.</span><span class="na">instantiation</span><span class="o">(</span><span class="mi">128</span><span class="o">,</span> <span class="no">RESEED_ONLY</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span> <span class="c1">// 使用 DRBG 算法</span>
+</code></pre></div></div>
+
+<p><strong>生成随机字节</strong>：</p>
+
+<p>常用的方法是通过 <code class="language-plaintext highlighter-rouge">nextBytes(byte[] bytes)</code> 生成随机字节数组。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+<span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="mi">20</span><span class="o">];</span>
+<span class="n">random</span><span class="o">.</span><span class="na">nextBytes</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><strong>生成种子</strong>：</p>
+
+<p><code class="language-plaintext highlighter-rouge">generateSeed</code> 方法可以用来生成一定数量的种子字节，通常用于给其他随机数生成器提供种子。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">byte</span><span class="o">[]</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="na">generateSeed</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><strong>自我播种</strong>：</p>
+<ul>
+  <li>新创建的 PRNG <code class="language-plaintext highlighter-rouge">SecureRandom</code> 对象不会自动播种，除非是通过 <code class="language-plaintext highlighter-rouge">SecureRandom(byte[])</code> 构造函数创建的。</li>
+  <li>如果没有显式调用 <code class="language-plaintext highlighter-rouge">setSeed</code>，第一次调用 <code class="language-plaintext highlighter-rouge">nextBytes</code> 时，它会自动从实现特定的熵源播种自己。</li>
+</ul>
+
+<p><strong>重播种</strong>：</p>
+<ul>
+  <li>可以通过 <code class="language-plaintext highlighter-rouge">reseed</code> 或 <code class="language-plaintext highlighter-rouge">setSeed</code> 方法对 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 进行重播种。<code class="language-plaintext highlighter-rouge">reseed</code> 方法会从熵源读取输入进行重播种，而 <code class="language-plaintext highlighter-rouge">setSeed</code> 方法则需要显式提供种子。</li>
+  <li>需要注意的是，并非所有实现都支持 <code class="language-plaintext highlighter-rouge">reseed</code>。</li>
+</ul>
+
+<p><strong>支持的实现和线程安全性</strong>：</p>
+<ul>
+  <li>一些 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实现可能会接受 <code class="language-plaintext highlighter-rouge">SecureRandomParameters</code> 参数来进一步控制方法行为。</li>
+  <li>根据实现的不同，<code class="language-plaintext highlighter-rouge">generateSeed</code>、<code class="language-plaintext highlighter-rouge">reseed</code> 和 <code class="language-plaintext highlighter-rouge">nextBytes</code> 方法可能会阻塞，尤其是当熵源是 <code class="language-plaintext highlighter-rouge">/dev/random</code>（在类 Unix 操作系统上）时。</li>
+  <li><code class="language-plaintext highlighter-rouge">SecureRandom</code> 对象是线程安全的，可以在多个并发线程中使用。</li>
+</ul>
+
+<p><strong>线程安全</strong>：</p>
+<ul>
+  <li>如果 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 服务提供者支持线程安全，则会在服务提供者注册时设置“ThreadSafe”属性为“true”。</li>
+  <li>如果没有声明线程安全，<code class="language-plaintext highlighter-rouge">SecureRandom</code> 会通过同步来确保以下方法的线程安全：</li>
+  <li><code class="language-plaintext highlighter-rouge">engineSetSeed(byte[])</code></li>
+  <li><code class="language-plaintext highlighter-rouge">engineNextBytes(byte[])</code></li>
+  <li><code class="language-plaintext highlighter-rouge">engineGenerateSeed(int)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">engineReseed(SecureRandomParameters)</code></li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">SecureRandom</code> 是 Java 提供的一个加密强度的随机数生成器，它可以生成适用于加密、密码学和其他安全应用的随机数。该类支持多种随机数生成算法，包括伪随机数生成算法和真随机数生成算法。用户可以通过不同的方式获取 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实例，并生成随机字节或种子。<code class="language-plaintext highlighter-rouge">SecureRandom</code> 对象是线程安全的，可以在多线程环境中使用。</p>
+
+<h2 id="数字生成算法">数字生成算法</h2>
+
+<p>SecureRandom 有如下数字生成算法：<a href="https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#securerandom-number-generation-algorithms">Java Security Standard Algorithm Names</a></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法名称</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>NativePRNG</strong></td>
+      <td>从底层操作系统获取随机数。没有对生成这些数字的阻塞性质做出任何声明。</td>
+    </tr>
+    <tr>
+      <td><strong>NativePRNGBlocking</strong></td>
+      <td>从底层操作系统获取随机数，必要时会阻塞。例如，类 UNIX 系统中的 <code class="language-plaintext highlighter-rouge">/dev/random</code>。</td>
+    </tr>
+    <tr>
+      <td><strong>NativePRNGNonBlocking</strong></td>
+      <td>从底层操作系统获取随机数，不会阻塞，避免应用程序过度停顿。例如，类 UNIX 系统中的 <code class="language-plaintext highlighter-rouge">/dev/urandom</code>。</td>
+    </tr>
+    <tr>
+      <td><strong>PKCS11</strong></td>
+      <td>从底层已安装并配置的 PKCS #11 库获取随机数。</td>
+    </tr>
+    <tr>
+      <td><strong>DRBG</strong></td>
+      <td>使用 NIST SP 800-90Ar1 中定义的 DRBG 机制的算法。</td>
+    </tr>
+    <tr>
+      <td><strong>SHA1PRNG</strong></td>
+      <td>使用 SUN 提供的伪随机数生成（PRNG）算法。该算法使用 SHA-1 作为 PRNG 的基础。通过对一个真实随机种子值和一个 64 位计数器进行 SHA-1 哈希计算，每次操作时计数器递增 1。 从 160 位的 SHA-1 输出中，仅使用 64 位。</td>
+    </tr>
+    <tr>
+      <td><strong>Windows-PRNG</strong></td>
+      <td>从底层 Windows 操作系统获取随机数。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这些算法各自具有不同的实现方式和用途，可以根据安全需求和平台特性选择合适的算法。</p>
+
+<p>通过 <code class="language-plaintext highlighter-rouge">new SecureRandom()</code> 创建的 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实例使用的算法是 <strong>平台默认的伪随机数生成算法</strong>。该算法通常依赖于操作系统提供的随机数生成机制，但具体算法的选择会根据操作系统和 Java 实现的不同而有所变化。</p>
+
+<p>常见的实现和算法：</p>
+<ol>
+  <li><strong>Unix-like 操作系统（Linux、macOS等）</strong>：
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">SecureRandom</code> 默认会使用基于 <code class="language-plaintext highlighter-rouge">/dev/urandom</code> 或 <code class="language-plaintext highlighter-rouge">/dev/random</code> 的随机数生成器。</li>
+      <li><code class="language-plaintext highlighter-rouge">/dev/urandom</code>：非阻塞的伪随机数生成器，它会不断使用系统熵池中的数据生成随机数。</li>
+      <li><code class="language-plaintext highlighter-rouge">/dev/random</code>：阻塞的伪随机数生成器，只有当系统熵池中的数据足够时才能生成随机数。</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Windows 操作系统</strong>：<code class="language-plaintext highlighter-rouge">SecureRandom</code> 默认会使用 <strong>Windows-PRNG</strong>（基于 Windows 操作系统的随机数生成器）。</p>
+  </li>
+  <li><strong>其他平台</strong>：在一些平台上，<code class="language-plaintext highlighter-rouge">SecureRandom</code> 可能会使用类似 <strong>NativePRNG</strong> 的伪随机数生成算法。</li>
+</ol>
+
+<p>实现原理：</p>
+<ul>
+  <li><strong>NativePRNG</strong>：一种伪随机数生成算法，通常会依赖于操作系统提供的底层熵源。在 Unix-like 系统中，它通过 <code class="language-plaintext highlighter-rouge">dev/urandom</code> 提供一个快速的、非阻塞的随机数生成方式。</li>
+  <li><strong>DRBG（Deterministic Random Bit Generator）</strong>：如果平台不提供足够的熵源，或者要求更强的加密性质，<code class="language-plaintext highlighter-rouge">SecureRandom</code> 会使用 DRBG 算法，它是一个基于确定性算法的伪随机数生成器。常用于满足更严格的安全需求。</li>
+</ul>
+
+<p>通过 <code class="language-plaintext highlighter-rouge">new SecureRandom()</code> 创建的 <code class="language-plaintext highlighter-rouge">SecureRandom</code> 实例使用的是平台默认的算法，它通常依赖于操作系统提供的熵源。在类 Unix 操作系统中，它通常基于 <code class="language-plaintext highlighter-rouge">/dev/urandom</code>，而在 Windows 操作系统中，它会使用 Windows 提供的 <code class="language-plaintext highlighter-rouge">Windows-PRNG</code> 算法。具体使用哪种算法，可以通过 <code class="language-plaintext highlighter-rouge">SecureRandom.getInstance()</code> 方法显式指定。</p>
+
+<p>下面是几个示例代码，展示了如何选择不同的随机数生成算法并输出其生成的随机数。</p>
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">NativePRNG</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 NativePRNG 算法</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"NativePRNG"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"NativePRNG Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>输出的随机数将来自底层操作系统的随机数源，没有对阻塞性质做任何声明。不同操作系统的行为可能不同。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">NativePRNGBlocking</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 NativePRNGBlocking 算法</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"NativePRNGBlocking"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"NativePRNGBlocking Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>该算法会从底层操作系统的 <code class="language-plaintext highlighter-rouge">blocking</code> 随机数源获取随机数。在 Linux 系统上，通常会从 <code class="language-plaintext highlighter-rouge">/dev/random</code> 获取，可能会在系统缺少足够的熵时导致阻塞。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">NativePRNGNonBlocking</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 NativePRNGNonBlocking 算法</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"NativePRNGNonBlocking"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"NativePRNGNonBlocking Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>该算法将从非阻塞的随机数源获取随机数，例如 <code class="language-plaintext highlighter-rouge">/dev/urandom</code>，即使系统缺乏熵，也不会阻塞，能保证更快的响应时间。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">PKCS11</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 PKCS11 算法（需要配置并且支持 PKCS11 提供者）</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"PKCS11"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"PKCS11 Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>该算法将使用已安装的 PKCS#11 加密模块提供的随机数生成器。如果没有安装支持的硬件加密模块或配置正确的 PKCS#11 提供者，可能会抛出异常。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">DRBG</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.bouncycastle.crypto.prng.DrbgParameters</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 DRBG 算法</span>
+       <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"DRBG"</span><span class="o">,</span> <span class="nc">DrbgParameters</span><span class="o">.</span><span class="na">instantiation</span><span class="o">(</span><span class="mi">128</span><span class="o">,</span> <span class="nc">DrbgParameters</span><span class="o">.</span><span class="na">Capability</span><span class="o">.</span><span class="na">RESEED_ONLY</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"DRBG Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>该算法使用 DRBG（Deterministic Random Bit Generator）机制，通常基于哈希函数或加密算法（例如 SHA-256）生成随机数。需要合适的参数进行初始化。此算法通常提供高安全性，并且能够生成高质量的随机数。</p>
+
+<p><strong>“DRBG”</strong></p>
+
+<p>这里指定了使用的算法为 <strong>DRBG</strong>（Deterministic Random Bit Generator）。它是基于特定标准（如 NIST SP 800-90A）定义的伪随机数生成算法。DRBG 主要通过一个确定性算法（通常是基于哈希函数或者加密算法）来生成伪随机数序列，并且可以通过一定的种子输入和系统熵来源进行初始化。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">DrbgParameters.instantiation(int securityStrength, DrbgParameters.Capability capability, byte[] personalizationString)</code></strong></p>
+
+<p>(DRBG 参数实例化)这个方法用于指定 DRBG 的生成方式，通常包括以下三个重要参数：</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">securityStrength</code></strong> (安全强度)</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">securityStrength</code> 是 DRBG 算法的安全强度，以位为单位。例如，<code class="language-plaintext highlighter-rouge">128</code> 表示 DRBG 的输出应该具有 128 位的安全强度，通常是为了保证随机数生成的强度和质量。这意味着生成的随机数在算法层面上应该至少提供 128 位的安全保障。</li>
+  <li>一般来说，安全强度是基于预期的用途来选择的。如果你需要更高的安全性，可以选择更高的安全强度（比如 256 位）。例如：</li>
+  <li>128：适用于一般的加密操作和安全应用。</li>
+  <li>256：适用于高安全性的要求。</li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">capability</code></strong> (能力)</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">PR_AND_RESEED</code></strong>:</p>
+
+<ul>
+  <li>这个值表示所请求的 <code class="language-plaintext highlighter-rouge">DRBG</code> 实例 <strong>同时支持预测抗性</strong> 和 <strong>重种子功能</strong>。</li>
+  <li><strong>预测抗性（Prediction Resistance）</strong>：确保通过某些途径预测随机数生成器的输出变得极其困难，增加安全性。对于加密应用，通常需要预测抗性来防止攻击者通过某些方式推测后续生成的随机数。</li>
+  <li><strong>重种子（Reseed）</strong>：DRBG 需要定期重新引入熵源（例如，新的随机输入），以保持生成的随机数的质量。重种子是为了避免长期使用同一种子产生的随机数序列趋向于可预测。</li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">RESEED_ONLY</code></strong>:</p>
+<ul>
+  <li>这个值表示所请求的 <code class="language-plaintext highlighter-rouge">DRBG</code> 实例 <strong>仅支持重种子功能</strong>，而 <strong>不支持预测抗性</strong>。</li>
+  <li>这种能力适用于需要定期刷新或更新种子的场景，但不要求具备强大的抗预测性。在一些不那么敏感的应用中，可能只需要重种子来保证随机数的质量，而不一定要求具有预测抗性。</li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">NONE</code></strong>:</p>
+<ul>
+  <li>这个值表示所请求的 <code class="language-plaintext highlighter-rouge">DRBG</code> 实例 <strong>既不支持预测抗性，也不支持重种子功能</strong>。</li>
+  <li>在某些情况下，可能仅需要生成一次性的随机数，而不需要进行任何后续的重种子或抗预测性保护。例如，一些简单的随机数生成应用可能不要求具有特别高的安全标准。</li>
+</ul>
+
+<p>不同的请求能力与可能的实际能力之间的关系：</p>
+<ul>
+  <li>请求 <strong>NONE</strong> 能力时，实际返回的能力可能是 <code class="language-plaintext highlighter-rouge">NONE</code>、<code class="language-plaintext highlighter-rouge">RESEED_ONLY</code> 或 <code class="language-plaintext highlighter-rouge">PR_AND_RESEED</code>。</li>
+  <li>请求 <strong>RESEED_ONLY</strong> 时，实际返回的能力可能是 <code class="language-plaintext highlighter-rouge">RESEED_ONLY</code> 或 <code class="language-plaintext highlighter-rouge">PR_AND_RESEED</code>。</li>
+  <li>请求 <strong>PR_AND_RESEED</strong> 时，实际返回的能力一定是 <code class="language-plaintext highlighter-rouge">PR_AND_RESEED</code>。</li>
+</ul>
+
+<p>总结：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PR_AND_RESEED</code>：支持重种子和预测抗性。</li>
+  <li><code class="language-plaintext highlighter-rouge">RESEED_ONLY</code>：仅支持重种子，不支持预测抗性。</li>
+  <li><code class="language-plaintext highlighter-rouge">NONE</code>：既不支持预测抗性，也不支持重种子。</li>
+</ul>
+
+<p>这种能力控制机制提供了灵活性，允许开发者根据实际安全需求选择最合适的 <code class="language-plaintext highlighter-rouge">DRBG</code> 配置。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">personalizationString</code></strong> (个性化字符串)</p>
+<ul>
+  <li>这个参数用于初始化 DRBG 时的个性化字符串，通常是额外的输入数据，用于增强生成随机数的多样性和不可预测性。传入 <code class="language-plaintext highlighter-rouge">null</code> 表示没有使用个性化字符串。</li>
+  <li>个性化字符串有助于在特定上下文中初始化 DRBG，确保在不同场景中生成的随机数是不同的。</li>
+  <li>如果你希望在初始化时根据特定的上下文或环境（如设备ID、时间戳等）来生成不同的随机数种子，可以使用个性化字符串。</li>
+</ul>
+
+<p><strong>整体效果</strong></p>
+
+<p>综合来看，这行代码通过 <code class="language-plaintext highlighter-rouge">DrbgParameters.instantiation(128, DrbgParameters.Capability.RESEED_ONLY, null)</code> 来创建一个 <code class="language-plaintext highlighter-rouge">DRBG</code> 实例，它有以下特点：</p>
+<ul>
+  <li><strong>128 位安全强度</strong>，生成的随机数序列具有较高的安全性。</li>
+  <li><strong>RESEED_ONLY</strong> 能力，意味着该实例不直接生成随机数，而是在需要时执行重种子操作。</li>
+  <li><strong>没有个性化字符串</strong>，即 DRBG 使用的是默认的熵源，而不是特定上下文的数据。</li>
+</ul>
+
+<p>这种配置通常适用于需要安全随机数生成、定期重种子的场景，尤其是在要求较高安全性的加密应用中。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">SHA1PRNG</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 SHA1PRNG 算法</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"SHA1PRNG"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"SHA1PRNG Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>SHA1PRNG 是一个基于 SHA-1 哈希的伪随机数生成器。其生成的随机数会受到初始种子和计数器的影响，生成的随机数相对较为可预测，但对于大多数非安全应用场景是足够的。</p>
+
+<hr />
+
+<p><strong>使用 <code class="language-plaintext highlighter-rouge">Windows-PRNG</code> 算法</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.security.SecureRandom</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecureRandomExample</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 使用 Windows-PRNG 算法</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"Windows-PRNG"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Windows-PRNG Random Number: "</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>预期结果：</strong></p>
+
+<p>该算法将从 Windows 操作系统的随机数源（例如通过 Windows Cryptographic API）生成随机数。</p>
+
+<hr />
+
+<p>总结</p>
+
+<ol>
+  <li><strong>NativePRNG</strong> 和 <strong>Windows-PRNG</strong> 会依赖操作系统的原生随机数生成机制，通常比较快，但可能不太适合高安全性需求。</li>
+  <li><strong>NativePRNGBlocking</strong> 会阻塞直到足够的随机数可用，适合用于高安全性的环境，但可能会延迟。</li>
+  <li><strong>NativePRNGNonBlocking</strong> 适用于不希望阻塞的环境，会优先使用 <code class="language-plaintext highlighter-rouge">/dev/urandom</code>。</li>
+  <li><strong>PKCS11</strong> 和 <strong>DRBG</strong> 提供硬件加速和更高的安全性，但依赖于相应的硬件和配置。</li>
+  <li><strong>SHA1PRNG</strong> 是基于 SHA-1 的伪随机数生成器，适用于一般用途，但不适合高安全性的要求。</li>
+</ol>
+
+<p>根据具体需求选择合适的算法。</p>
+
+<h2 id="解决">解决</h2>
+
+<p>在Java8中相同种子是否返回相同的随机数：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//使用固定随机数</span>
+<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+    <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">);</span><span class="c1">//[-1765061395]</span>
+</code></pre></div></div>
+
+<p>在Java17中，指定<code class="language-plaintext highlighter-rouge">SHA1PRNG</code>随机数生成器：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//使用固定随机数</span>
+<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"SHA1PRNG"</span><span class="o">);</span>
+    <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">);</span><span class="c1">//[-1765061395]</span>
+</code></pre></div></div>
+
+<p>进一步测试：</p>
+
+<p>java17：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="nc">SecureRandom</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"SHA1PRNG"</span><span class="o">);</span>
+        <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="n">j</span><span class="o">);</span>
+        <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">);</span><span class="c1">//[1171630791, -70273684, -1765061395, -786090109, 1560068868, 1762545591, 1861147253, -551574285, 1891309446, -1389656251]</span>
+</code></pre></div></div>
+
+<p>java8：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="nc">SecureRandom</span> <span class="n">random</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecureRandom</span><span class="o">();</span>
+        <span class="n">random</span><span class="o">.</span><span class="na">setSeed</span><span class="o">(</span><span class="n">j</span><span class="o">);</span>
+        <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">random</span><span class="o">.</span><span class="na">nextInt</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">set</span><span class="o">);</span><span class="c1">//[1171630791, -70273684, -1765061395, -786090109, 1560068868, 1762545591, 1861147253, -551574285, 1891309446, -1389656251]</span>
+</code></pre></div></div>
+
+<p>可以看出结果一致，实际上只要保证指定种子返回固定的随机数序列即可。</p>
+
+<p>然后将之前的数据重新指定算法加密即可。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="IDEA" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Drools规则引擎</title><link href="/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E/" rel="alternate" type="text/html" title="Drools规则引擎" /><published>2024-12-21T00:00:00+08:00</published><updated>2024-12-21T00:00:00+08:00</updated><id>/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E</id><content type="html" xml:base="/2024/12/21/Drools%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>Drools规则引擎，说明</p>
 
@@ -7919,400 +8407,4 @@ Content-Type: text/plain
 
 <span class="c1">// 打印结果</span>
 <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">MongoDB分组聚合解析器</title><link href="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="alternate" type="text/html" title="MongoDB分组聚合解析器" /><published>2024-11-04T00:00:00+08:00</published><updated>2024-11-04T00:00:00+08:00</updated><id>/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8</id><content type="html" xml:base="/2024/11/04/MongoDB%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88%E8%A7%A3%E6%9E%90%E5%99%A8/"><![CDATA[<h1 id="引言">引言</h1>
-<p>一个对MongoDB分组聚合操作的简单封装类。</p>
-
-<h1 id="mongodb">MongoDB</h1>
-
-<h2 id="mongodb分组聚合解析器">MongoDB分组聚合解析器</h2>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * 分组聚合解析器
- * @author aotmd
- * @version 1.1
- * @date 2024/10/30 10:34
- */</span>
-<span class="kd">private</span> <span class="kd">class</span> <span class="nc">GroupAggregationGenerator</span><span class="o">{</span>
-    <span class="cm">/**字段转换后加的后缀*/</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">TO_DECIMAL</span> <span class="o">=</span> <span class="s">"ToDecimal"</span><span class="o">;</span>
-    <span class="cm">/**实际主键名称*/</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">PRIMARY_KEY</span> <span class="o">=</span> <span class="s">"_id"</span><span class="o">;</span>
-
-    <span class="cm">/**
-     * 生成分组聚合操作
-     * @param groupBy 分组字段
-     * @param aggregations 聚合设置
-     * @return
-     */</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="nf">buildAggregationOperations</span><span class="o">(</span><span class="kd">final</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">&gt;</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 判断是否为空,分组字段和聚合字段都为空，则直接返回</span>
-        <span class="k">if</span> <span class="o">((</span><span class="n">aggregations</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">aggregations</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">==</span><span class="kc">null</span> <span class="o">||</span> <span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">0</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-        <span class="o">}</span>
-        <span class="c1">// 分组字段空串检测</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"分组字段为空"</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">aggregations</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"聚合设置为空"</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="kt">boolean</span> <span class="n">b</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">groupBy</span><span class="o">).</span><span class="na">parallel</span><span class="o">().</span><span class="na">anyMatch</span><span class="o">(</span><span class="nl">StringUtil:</span><span class="o">:</span><span class="n">isBlank</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">b</span><span class="o">){</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"分组字段出现空串"</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 字段检测</span>
-        <span class="n">aggregations</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">::</span><span class="n">fieldChecks</span><span class="o">);</span>
-
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">operations</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-
-        <span class="c1">// 处理类型转换，使用投影操作进行转换</span>
-        <span class="c1">// 不重复转换</span>
-        <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">processedFields</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
-        <span class="nc">ProjectionOperation</span> <span class="n">project</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">project</span><span class="o">();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span> <span class="n">agg</span> <span class="o">:</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 处理类型转换，如果需要转换为Decimal</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">processedFields</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">())){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">isConvertToDecimal</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span>
-                            <span class="nc">ConvertOperators</span><span class="o">.</span><span class="na">Convert</span><span class="o">.</span><span class="na">convertValueOf</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">())</span>
-                                    <span class="o">.</span><span class="na">to</span><span class="o">(</span><span class="s">"decimal"</span><span class="o">)</span>
-                                    <span class="o">.</span><span class="na">onErrorReturn</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
-                                    <span class="o">.</span><span class="na">onNullReturn</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
-                    <span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">()</span> <span class="o">+</span> <span class="no">TO_DECIMAL</span><span class="o">);</span>
-                    <span class="n">processedFields</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">());</span>
-                <span class="o">}</span>
-                <span class="c1">// 将原列也保留</span>
-                <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">()).</span><span class="na">as</span><span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">());</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">groupBy</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 将分组字段也保留</span>
-            <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">s</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 有转换才加入</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">processedFields</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-            <span class="n">operations</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">project</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 分组操作</span>
-        <span class="nc">GroupOperation</span> <span class="n">group</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="n">groupBy</span><span class="o">);</span>
-
-        <span class="c1">// 添加聚合操作</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span> <span class="n">agg</span> <span class="o">:</span> <span class="n">aggregations</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">String</span> <span class="n">field</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="na">getField</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">isConvertToDecimal</span><span class="o">()){</span>
-                <span class="n">field</span> <span class="o">+=</span> <span class="no">TO_DECIMAL</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="nc">String</span> <span class="n">alias</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="na">getAlias</span><span class="o">();</span>
-            <span class="k">switch</span> <span class="o">(</span><span class="n">agg</span><span class="o">.</span><span class="na">getType</span><span class="o">())</span> <span class="o">{</span>
-                <span class="k">case</span> <span class="s">"sum"</span><span class="o">:</span>
-                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">sum</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="k">case</span> <span class="s">"avg"</span><span class="o">:</span>
-                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">avg</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="k">case</span> <span class="s">"count"</span><span class="o">:</span>
-                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">count</span><span class="o">().</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="k">case</span> <span class="s">"max"</span><span class="o">:</span>
-                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="k">case</span> <span class="s">"min"</span><span class="o">:</span>
-                    <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">field</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="n">alias</span><span class="o">);</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="k">default</span><span class="o">:</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"不支持的聚合类型： "</span> <span class="o">+</span> <span class="n">agg</span><span class="o">.</span><span class="na">getType</span><span class="o">());</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="n">operations</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">group</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">operations</span><span class="o">;</span>
-    <span class="o">}</span>
-
-
-    <span class="cm">/**
-     * 聚合结果处理方法，将聚合结果处理为符合人类直觉的方式。
-     * @param result 聚合结果
-     * @param groupBy 分组依据
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">aggregateResultProcessing</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">,</span><span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">){</span>
-        <span class="n">result</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="n">map</span> <span class="o">-&gt;</span> <span class="o">{</span>
-            <span class="c1">// mango特色：如果没有分组字段，则返回数据多出一个字段_id=null,</span>
-            <span class="c1">// 如果有一个分组字段，比如sex，则_id=sex字段的值，比如_id="男"，_id="女"</span>
-            <span class="c1">// 如果有两个以上的分组，比如age、sex，则就正常了，就是age=age的值，sex=sex的值。</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">0</span><span class="o">){</span>
-                <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">groupBy</span><span class="o">.</span><span class="na">length</span><span class="o">==</span><span class="mi">1</span><span class="o">){</span>
-                <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">groupBy</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
-                <span class="c1">// 如果是主键，则不处理</span>
-                <span class="k">if</span> <span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">s</span><span class="o">)){</span><span class="k">return</span><span class="o">;}</span>
-                <span class="c1">// 去掉前缀</span>
-                <span class="nc">String</span> <span class="n">s0</span><span class="o">=</span><span class="n">removeKeyPrefix</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
-                <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">s0</span><span class="o">,</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">));</span>
-                <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="no">PRIMARY_KEY</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 环绕方法，先生成分组聚合操作，然后执行后function得到结果，然后人性化处理结果。
-     * @param groupBy 分组依据
-     * @param aggregations 聚合设置
-     * @param function 执行方法
-     * @return 处理后的结果
-     */</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="nf">wrappingMethod</span><span class="o">(</span><span class="kd">final</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">groupBy</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CommonFormParam</span><span class="o">.</span><span class="na">AggregationField</span><span class="o">&gt;</span> <span class="n">aggregations</span><span class="o">,</span><span class="nc">Function</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;&gt;</span> <span class="n">function</span><span class="o">){</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">aggregationOperationList</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">buildAggregationOperations</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">);</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">apply</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">aggregateResultProcessing</span><span class="o">(</span><span class="n">apply</span><span class="o">,</span><span class="n">groupBy</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">apply</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>入参：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**聚合设置*/</span>
-<span class="nd">@Getter</span>
-<span class="nd">@Setter</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">AggregationField</span> <span class="o">{</span>
-    <span class="cm">/**要聚合的字段*/</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">field</span><span class="o">;</span>
-    <span class="cm">/**聚合类型（如 sum, avg 等）*/</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">type</span><span class="o">;</span>
-    <span class="cm">/**聚合结果列的别名*/</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">alias</span><span class="o">;</span>
-    <span class="cm">/**可选，默认为否，是否在聚合前需要进行 decimal 转换*/</span>
-    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">convertToDecimal</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span>
-
-    <span class="cm">/**
-     * 字段校验
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">fieldChecks</span><span class="o">(){</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">field</span><span class="o">)||</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">type</span><span class="o">)||</span><span class="nc">StringUtil</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">alias</span><span class="o">)){</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"聚合字段设置不全，必须包含字段：field、type、alias"</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>使用方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">GroupAggregationGenerator</span> <span class="n">groupAggregationGenerator</span><span class="o">=</span> <span class="k">new</span> <span class="nc">GroupAggregationGenerator</span><span class="o">();</span>
-<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="n">groupAggregationGenerator</span><span class="o">.</span><span class="na">wrappingMethod</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">,</span> <span class="n">aggregationOperationList</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">criteria</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Aggregation</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">criteria</span><span class="o">));</span>
-    <span class="o">}</span>
-    <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
-    <span class="c1">// 创建聚合对象</span>
-    <span class="nc">Aggregation</span> <span class="n">aggregation</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">newAggregation</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
-
-    <span class="c1">// 执行聚合查询</span>
-    <span class="nc">AggregationResults</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-
-    <span class="c1">// 获取并输出投影结果</span>
-    <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="na">getMappedResults</span><span class="o">();</span>
-<span class="o">});</span>
-</code></pre></div></div>
-
-<p>其中，mongoTemplate还能封装一下：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * mongo服务层
- * @author aotmd
- * @version 1.0
- * @date 2024/10/22 14:07
- */</span>
-<span class="nd">@Service</span>
-<span class="nd">@Slf4j</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MongoService</span> <span class="o">{</span>
-    <span class="nd">@Autowired</span>
-    <span class="nc">MongoTemplate</span> <span class="n">mongoTemplate</span><span class="o">;</span>
-
-    <span class="cm">/**
-     * 高级查询，泛型方法
-     *
-     * @param &lt;T&gt;                  泛型
-     * @param collectionName       表名
-     * @param valueType            返回值Class
-     * @param criteria             查询条件
-     * @param aggregationOperationList 集合参数，聚合用
-     * @return List
-     */</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">aggregate</span><span class="o">(</span><span class="nc">String</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">valueType</span><span class="o">,</span> <span class="nc">Criteria</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span>  <span class="n">aggregationOperationList</span><span class="o">){</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">AggregationOperation</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">criteria</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="nc">Aggregation</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">criteria</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">aggregationOperationList</span><span class="o">);</span>
-        <span class="c1">// 创建聚合对象</span>
-        <span class="nc">Aggregation</span> <span class="n">aggregation</span> <span class="o">=</span> <span class="nc">Aggregation</span><span class="o">.</span><span class="na">newAggregation</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
-
-        <span class="c1">// 执行聚合查询</span>
-        <span class="nc">AggregationResults</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">mongoTemplate</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">collectionName</span><span class="o">,</span> <span class="n">valueType</span><span class="o">);</span>
-
-        <span class="c1">// 获取并输出投影结果</span>
-        <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="na">getMappedResults</span><span class="o">();</span>
-    <span class="o">}</span>
-    <span class="cm">/**
-     * 高级查询，泛型方法
-     *
-     * @param &lt;T&gt;                  泛型
-     * @param collectionName       表名
-     * @param valueType            返回值Class
-     * @param criteria             查询条件
-     * @param aggregationOperation 可变参数，聚合用
-     * @return List
-     */</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">aggregate</span><span class="o">(</span><span class="nc">String</span> <span class="n">collectionName</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">valueType</span><span class="o">,</span> <span class="nc">Criteria</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">AggregationOperation</span> <span class="o">...</span> <span class="n">aggregationOperation</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">collectionName</span><span class="o">,</span> <span class="n">valueType</span><span class="o">,</span> <span class="n">criteria</span><span class="o">,</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">aggregationOperation</span><span class="o">));</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>简化为：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">GroupAggregationGenerator</span> <span class="n">groupAggregationGenerator</span><span class="o">=</span> <span class="k">new</span> <span class="nc">GroupAggregationGenerator</span><span class="o">();</span>
-<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="n">groupAggregationGenerator</span><span class="o">.</span><span class="na">wrappingMethod</span><span class="o">(</span><span class="n">groupBy</span><span class="o">,</span> <span class="n">aggregations</span><span class="o">,</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">mongoService</span><span class="o">.</span><span class="na">aggregate</span><span class="o">(</span><span class="n">collectionName</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">criteria</span><span class="o">,</span> <span class="n">a</span><span class="o">));</span>
-</code></pre></div></div>
-
-<p>特别注意：</p>
-
-<p><strong><code class="language-plaintext highlighter-rouge">Decimal128</code> 最多只能表示 34 位有效数字（整数部分与小数部分合计）。如果超出这个范围，会导致精度丢失或舍入错误。</strong></p>
-
-<p>对于聚合结果<code class="language-plaintext highlighter-rouge">Decimal128</code>类型，一般来说都是通过转换为字符串返回，此时可以对数值进行判断，如果超过了34位数字，<code class="language-plaintext highlighter-rouge">Decimal128</code>类型的值会变为科学计数法，实际上会从最后一位开始舍去，若已经舍去到整数位了，那么直接填0，形成类似：<code class="language-plaintext highlighter-rouge">12345678901234567890123456789012340000000000000000</code>，这样的数值。</p>
-
-<p>应对方法为：可以在结果出来后，进行转换与精度判断：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 转换</span>
-<span class="n">systemFormData</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span>
-    <span class="n">item</span> <span class="o">-&gt;</span> <span class="n">item</span><span class="o">.</span><span class="na">forEach</span><span class="o">((</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-        <span class="c1">//! Decimal128 最多只能表示 34 位有效数字。如果超出这个范围，可能会导致精度丢失或舍入错误。</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">Decimal128</span><span class="o">){</span>
-            <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">convertDecimal128ToString</span><span class="o">((</span><span class="nc">Decimal128</span><span class="o">)</span> <span class="n">value</span><span class="o">);</span>
-            <span class="n">item</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">s</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">})</span>
-<span class="o">);</span>
-</code></pre></div></div>
-
-<p>方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * Decimal128转换为字符串
- * @param decimal128 待转换数据
- * @return
- */</span>
-<span class="kd">private</span> <span class="nc">String</span> <span class="nf">convertDecimal128ToString</span><span class="o">(</span><span class="nc">Decimal128</span> <span class="n">decimal128</span><span class="o">){</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isDecimal128Overflow</span><span class="o">(</span><span class="n">decimal128</span><span class="o">)){</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"Decimal128精度丢失"</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="n">decimal128</span><span class="o">.</span><span class="na">bigDecimalValue</span><span class="o">().</span><span class="na">toPlainString</span><span class="o">();</span>
-<span class="o">}</span>
-<span class="cm">/**
- * decimal128溢出判断
- * @param decimal128 mongo数据类型
- * @return
- */</span>
-<span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isDecimal128Overflow</span><span class="o">(</span><span class="nc">Decimal128</span> <span class="n">decimal128</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nc">BigDecimal</span> <span class="n">bigDecimalValue</span> <span class="o">=</span> <span class="n">decimal128</span><span class="o">.</span><span class="na">bigDecimalValue</span><span class="o">();</span>
-
-    <span class="c1">// 定义 Decimal128 的范围</span>
-    <span class="nc">BigDecimal</span> <span class="n">lowerBound</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"-1.0E+34"</span><span class="o">);</span>
-    <span class="nc">BigDecimal</span> <span class="n">upperBound</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="s">"1.0E+34"</span><span class="o">);</span>
-    <span class="c1">// 判断是否溢出</span>
-    <span class="k">return</span> <span class="n">bigDecimalValue</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">lowerBound</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">bigDecimalValue</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">upperBound</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<h3 id="分组和聚合设置文档">分组和聚合设置文档</h3>
-
-<p><strong><code class="language-plaintext highlighter-rouge">groupBy</code></strong></p>
-
-<ul>
-  <li><strong>类型</strong>: 数组 (<code class="language-plaintext highlighter-rouge">Array</code>)</li>
-  <li><strong>描述</strong>: 分组依据，可以为空数组 (<code class="language-plaintext highlighter-rouge">[]</code>) 表示不进行分组，也可以包含多个字段名进行多字段分组。
-    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"groupBy"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"job"</span><span class="p">]</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">按照岗位进行分组</span><span class="w">
-</span></code></pre></div>    </div>
-  </li>
-</ul>
-
-<p><strong><code class="language-plaintext highlighter-rouge">aggregations</code></strong></p>
-
-<ul>
-  <li>
-    <p><strong>类型</strong>: 数组 (<code class="language-plaintext highlighter-rouge">Array</code>)</p>
-  </li>
-  <li>
-    <p><strong>描述</strong>: 聚合设置，可以为空数组 (<code class="language-plaintext highlighter-rouge">[]</code>) 表示不进行任何聚合。每个聚合对象包含聚合字段、聚合类型和别名等信息。</p>
-  </li>
-</ul>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"aggregations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合字段列名</span><span class="w">
-      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sum"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合类型：sum、avg、min、max、count</span><span class="w">
-      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salarySum"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"avg"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryAvg"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"convertToDecimal"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">表示需要进行</span><span class="w"> </span><span class="err">decimal</span><span class="w"> </span><span class="err">转换，返回结果也为</span><span class="w"> </span><span class="err">Decimal</span><span class="w"> </span><span class="err">类型，因此为字符串</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"count"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryCount"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"max"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryMax"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"min"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"alias"</span><span class="p">:</span><span class="w"> </span><span class="s2">"salaryMin"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">聚合结果列名</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre></div></div>
-
-<p><strong>聚合对象字段说明</strong></p>
-
-<ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">field</code></strong>:
-    <ul>
-      <li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li>
-      <li><strong>描述</strong>: 需要进行聚合的字段名。</li>
-    </ul>
-  </li>
-  <li><strong><code class="language-plaintext highlighter-rouge">type</code></strong>:
-    <ul>
-      <li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li>
-      <li><strong>描述</strong>: 指定聚合操作的类型，可以是以下之一：
-        <ul>
-          <li><code class="language-plaintext highlighter-rouge">sum</code>：计算字段值的总和。</li>
-          <li><code class="language-plaintext highlighter-rouge">avg</code>：计算字段值的平均值。</li>
-          <li><code class="language-plaintext highlighter-rouge">min</code>：获取字段值的最小值。</li>
-          <li><code class="language-plaintext highlighter-rouge">max</code>：获取字段值的最大值。</li>
-          <li><code class="language-plaintext highlighter-rouge">count</code>：计算字段的数量。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong><code class="language-plaintext highlighter-rouge">alias</code></strong>:
-    <ul>
-      <li><strong>类型</strong>: 字符串 (<code class="language-plaintext highlighter-rouge">String</code>)</li>
-      <li><strong>描述</strong>: 聚合结果的别名，用于在结果集中引用聚合值。</li>
-    </ul>
-  </li>
-  <li><strong><code class="language-plaintext highlighter-rouge">convertToDecimal</code></strong> (可选):
-    <ul>
-      <li><strong>类型</strong>: 布尔 (<code class="language-plaintext highlighter-rouge">Boolean</code>)</li>
-      <li><strong>描述</strong>: 指定是否需要将聚合结果转换为 Decimal 类型。设置为 <code class="language-plaintext highlighter-rouge">true</code> 时，返回的结果将为 Decimal 类型，以字符串形式表示。</li>
-    </ul>
-  </li>
-</ul>
-
-<p>在执行聚合查询时，可以根据 <code class="language-plaintext highlighter-rouge">groupBy</code> 和 <code class="language-plaintext highlighter-rouge">aggregations</code> 字段的配置进行数据分组和聚合，生成所需的统计结果。此配置允许灵活处理多种聚合需求，适应不同的业务场景。</p>]]></content><author><name>acteds</name></author><category term="Java" /><category term="MongoDB" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
