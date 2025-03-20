@@ -1,4 +1,338 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-08T00:35:08+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">SecureRandom</title><link href="/2024/12/24/SecureRandom/" rel="alternate" type="text/html" title="SecureRandom" /><published>2024-12-24T00:00:00+08:00</published><updated>2024-12-24T00:00:00+08:00</updated><id>/2024/12/24/SecureRandom</id><content type="html" xml:base="/2024/12/24/SecureRandom/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-20T22:22:44+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">手机建站</title><link href="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="手机建站" /><published>2024-12-27T00:00:00+08:00</published><updated>2024-12-27T00:00:00+08:00</updated><id>/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99</id><content type="html" xml:base="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>手机建站的方法。</p>
+
+<h1 id="android">Android</h1>
+
+<h2 id="手机建站">手机建站</h2>
+
+<p>下载<a href="https://github.com/termux/termux-app">termux</a>。</p>
+
+<p>打开Termux后， 输入</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update
+</code></pre></div></div>
+
+<p>确保手机更新好源。然后输入</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>apache2
+</code></pre></div></div>
+
+<p>之后再询问中回答y即可安装。</p>
+
+<p>安装好之后 Termux的命令行会变成$, 如下</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Setting up apache2 <span class="o">(</span>2.4.41-3<span class="o">)</span> ...
+<span class="err">$</span>
+</code></pre></div></div>
+
+<p>这个时候你只在$后需要输入apachectl</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apachectl
+</code></pre></div></div>
+
+<p>即可运行apache</p>
+
+<p>需要注意的是，他会弹出</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AH00558: httpd: Could not reliably determine the server<span class="s1">'s fully qualified domain name, using l127.0.0.1. 
+Set the '</span>ServerName<span class="s1">' directive globally to suppress this message
+</span></code></pre></div></div>
+
+<p>这个问题暂时不用理他</p>
+
+<p>手机通过<code class="language-plaintext highlighter-rouge">127.0.0.1:8080</code>访问，电脑通过路由器中手机的IP地址访问，例如<code class="language-plaintext highlighter-rouge">192.168.2.200:8080</code>只要出现<code class="language-plaintext highlighter-rouge">It Works</code>即可证明网页服务器工作。</p>
+
+<p>网页服务器位置</p>
+
+<p>输入</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="nv">$ </span><span class="nb">ls</span>
+</code></pre></div></div>
+
+<p>之后会出现蓝色字体</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>home usr
+</code></pre></div></div>
+
+<p>然后输入</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>usr/share/apache2
+<span class="nv">$ </span><span class="nb">ls</span>
+</code></pre></div></div>
+
+<p>可以从这里看出蓝色字体的文件夹是</p>
+
+<p><code class="language-plaintext highlighter-rouge">default-site</code> 而这个文件夹下面，也还有一个文件夹是叫<code class="language-plaintext highlighter-rouge">htdocs</code>，进入到<code class="language-plaintext highlighter-rouge">htdocs</code>文件夹之后，即可发现<code class="language-plaintext highlighter-rouge">index.html</code>，实际完整地址：<code class="language-plaintext highlighter-rouge">/data/data/com.termux/files/usr/share/apache2/default-site/htdocs/</code></p>
+
+<p>另外需要注意的是当Termux被关闭后，apachectl也会被关闭。</p>
+
+<h2 id="修改位置">修改位置</h2>
+
+<p>修改文件夹映射位置通常是指更改Web服务器配置，使得URL路径指向服务器上的不同文件系统位置。对于Apache HTTP Server，这可以通过编辑其配置文件来实现。以下是针对Apache的步骤指南，用于修改文件夹映射位置。<strong>注意sdcard位置无法修改权限。</strong></p>
+
+<p><strong>确定配置文件位置</strong></p>
+
+<p>Apache的配置文件通常位于<code class="language-plaintext highlighter-rouge">/etc/apache2/</code>目录下（对于Debian/Ubuntu系统）或<code class="language-plaintext highlighter-rouge">/etc/httpd/</code>（对于Red Hat/CentOS系统）。主配置文件通常是<code class="language-plaintext highlighter-rouge">apache2.conf</code>或<code class="language-plaintext highlighter-rouge">httpd.conf</code>，而站点特定的配置则可能在<code class="language-plaintext highlighter-rouge">/etc/apache2/sites-available/</code>下的独立文件中。</p>
+
+<p><strong>修改<code class="language-plaintext highlighter-rouge">DocumentRoot</code>和&lt;<code class="language-plaintext highlighter-rouge">Directory</code>&gt;指令</strong></p>
+
+<p>通常情况下，这个文件位于<code class="language-plaintext highlighter-rouge">$PREFIX/etc/apache2/httpd.conf</code>（其中<code class="language-plaintext highlighter-rouge">$PREFIX</code>是Termux的前缀路径，默认为<code class="language-plaintext highlighter-rouge">/data/data/com.termux/files/usr</code>）。</p>
+
+<p>例如，要更改默认的文档根目录，需要编辑<code class="language-plaintext highlighter-rouge">httpd.conf</code>并更新<code class="language-plaintext highlighter-rouge">DocumentRoot</code>和对应的<code class="language-plaintext highlighter-rouge">&lt;Directory&gt;</code>块：</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">DocumentRoot</span> "/data/data/com.termux/files/home/mywebroot"
+
+<span class="p">&lt;</span><span class="nl">Directory</span><span class="sr"> "/data/data/com.termux/files/home/mywebroot"</span><span class="p">&gt;
+</span>    <span class="nc">Options</span> <span class="ss">Indexes</span> <span class="ss">FollowSymLinks</span>
+    <span class="nc">AllowOverride</span> <span class="ss">None</span>
+    <span class="nc">Require</span> <span class="ss">all</span> granted
+<span class="p">&lt;/</span><span class="nl">Directory</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p><strong>使用别名（Alias）和脚本别名（ScriptAlias）</strong></p>
+
+<p>如果想将一个特定的URL路径映射到一个不同的文件系统位置而不改变整个网站的根目录，可以使用<code class="language-plaintext highlighter-rouge">Alias</code>或<code class="language-plaintext highlighter-rouge">ScriptAlias</code>指令。例如：</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Alias</span> /images/ "/srv/images/"
+
+<span class="p">&lt;</span><span class="nl">Directory</span><span class="sr"> "/srv/images"</span><span class="p">&gt;
+</span>    <span class="nc">Options</span> <span class="ss">Indexes</span> <span class="ss">MultiViews</span>
+    <span class="nc">AllowOverride</span> <span class="ss">None</span>
+    <span class="nc">Require</span> <span class="ss">all</span> granted
+<span class="p">&lt;/</span><span class="nl">Directory</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p>上面的例子会将所有对<code class="language-plaintext highlighter-rouge">/images/</code>路径的请求重定向到服务器上的<code class="language-plaintext highlighter-rouge">/srv/images/</code>目录。</p>
+
+<p><strong>使用符号链接（Symlink）</strong></p>
+
+<p>另一种方法是创建符号链接，这允许你保持当前的配置不变，同时让Apache访问其他位置的文件。你可以通过命令行工具如<code class="language-plaintext highlighter-rouge">ln -s</code>创建符号链接。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /path/to/new/location /path/to/existing/location
+</code></pre></div></div>
+
+<hr />
+
+<p><strong>应用更改</strong></p>
+
+<p>完成上述更改后，记得测试配置文件是否有语法错误：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apachectl configtest
+<span class="c"># 或者</span>
+<span class="nb">sudo </span>apache2ctl configtest
+</code></pre></div></div>
+
+<p>如果测试结果显示配置正确，那么你可以重新启动Apache服务以应用更改：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apachectl restart
+<span class="c"># 或者</span>
+<span class="nb">sudo </span>service apache2 restart
+</code></pre></div></div>
+
+<p>注意事项</p>
+
+<ul>
+  <li>在进行任何更改之前，请确保备份了现有的配置文件。</li>
+  <li>修改配置文件需要root权限或sudo权限。</li>
+  <li>如果你的Apache配置分散在多个文件中，请确保你在正确的文件中进行了更改。</li>
+  <li>对于复杂的网站结构或大量子目录，考虑使用<code class="language-plaintext highlighter-rouge">.htaccess</code>文件来局部覆盖配置，但请注意性能影响。</li>
+  <li>修改完配置后务必检查配置是否正确，并重启Apache服务以使更改生效。</li>
+</ul>
+
+<h2 id="外部存储权限问题">外部存储权限问题</h2>
+
+<p>如果你希望将Apache2的Web目录设置为存储在<code class="language-plaintext highlighter-rouge">sdcard</code>（外部存储）上的文件夹，那么你需要特别注意权限和路径的问题。在Android设备上，默认情况下，应用程序对<code class="language-plaintext highlighter-rouge">sdcard</code>的访问权限可能受到限制。</p>
+
+<p>以下是配置步骤和注意事项：</p>
+
+<p><strong>确保Termux有适当的权限</strong></p>
+
+<p>首先，确保Termux应用本身有权限访问你的<code class="language-plaintext highlighter-rouge">sdcard</code>。你可以通过Termux的设置或Android系统的应用权限管理来授予这些权限。</p>
+
+<ul>
+  <li>打开Android的“设置”。</li>
+  <li>寻找“应用程序”或“应用管理”。</li>
+  <li>找到并选择Termux。</li>
+  <li>确认已授予存储权限。</li>
+</ul>
+
+<p>此外，在Termux中运行以下命令以安装必要的包，并启用对<code class="language-plaintext highlighter-rouge">sdcard</code>的访问：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pkg <span class="nb">install </span>termux-api
+termux-setup-storage
+</code></pre></div></div>
+
+<p>这将在Termux中创建一个指向<code class="language-plaintext highlighter-rouge">sdcard</code>的符号链接，通常位于<code class="language-plaintext highlighter-rouge">~/storage/</code>下。</p>
+
+<p><strong>设置正确的<code class="language-plaintext highlighter-rouge">DocumentRoot</code>路径</strong></p>
+
+<p>接下来，编辑Apache2的配置文件以正确地指向<code class="language-plaintext highlighter-rouge">sdcard</code>上的目录。假设你想将Web根目录设置为<code class="language-plaintext highlighter-rouge">sdcard</code>下的<code class="language-plaintext highlighter-rouge">www</code>文件夹，可以使用如下路径：</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">DocumentRoot</span> "/data/data/com.termux/files/home/storage/shared/www"
+
+<span class="p">&lt;</span><span class="nl">Directory</span><span class="sr"> "/data/data/com.termux/files/home/storage/shared/www"</span><span class="p">&gt;
+</span>    <span class="nc">Options</span> <span class="ss">Indexes</span> <span class="ss">FollowSymLinks</span>
+    <span class="nc">AllowOverride</span> <span class="ss">None</span>
+    <span class="nc">Require</span> <span class="ss">all</span> granted
+<span class="p">&lt;/</span><span class="nl">Directory</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p>请注意，<code class="language-plaintext highlighter-rouge">/data/data/com.termux/files/home/storage/shared/</code>是Termux创建的默认符号链接位置，指向<code class="language-plaintext highlighter-rouge">sdcard</code>。如果你的路径不同，请根据实际情况调整。</p>
+
+<p><strong>检查并设置文件和目录权限</strong></p>
+
+<p>确保<code class="language-plaintext highlighter-rouge">sdcard</code>上的文件和目录具有适当的权限。你可能需要使用<code class="language-plaintext highlighter-rouge">chmod</code>和<code class="language-plaintext highlighter-rouge">chown</code>命令来确保Apache可以读取这些文件。然而，由于<code class="language-plaintext highlighter-rouge">sdcard</code>上的文件系统通常是FAT32或exFAT，它们不支持Linux风格的权限设置。因此，确保Apache运行时使用的用户有权访问<code class="language-plaintext highlighter-rouge">sdcard</code>。</p>
+
+<p><strong>配置SELinux（如果适用）</strong></p>
+
+<p>某些Android版本可能会启用SELinux，它会进一步限制文件访问。如果你遇到权限问题，即使看起来所有权限都已经正确设置，你可能需要调整SELinux策略或暂时将其设置为宽容模式（permissive）。不过，改变SELinux配置需要root权限，而且这不是推荐的做法，因为它会影响整个系统的安全性。</p>
+
+<p><strong>测试配置并重启Apache</strong></p>
+
+<p>完成上述更改后，测试配置文件是否有语法错误，并重启Apache服务：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl configtest
+apachectl restart
+</code></pre></div></div>
+
+<p><strong>检查Apache错误日志</strong></p>
+
+<p>如果仍然遇到问题，检查Apache的错误日志可以帮助诊断问题。错误日志通常位于：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /data/data/com.termux/files/usr/var/log/apache2/error_log
+</code></pre></div></div>
+
+<p>注意事项</p>
+
+<ul>
+  <li><strong>性能和安全</strong>：将Web根目录设置在<code class="language-plaintext highlighter-rouge">sdcard</code>上可能影响性能，因为外部存储通常比内部存储慢。此外，从安全角度来看，将Web内容放在外部存储上也存在风险，尤其是当设备丢失或被盗时。</li>
+  <li><strong>持久性</strong>：一些Android设备在重新启动后可能会改变<code class="language-plaintext highlighter-rouge">sdcard</code>的挂载点或撤销之前授予的权限。如果遇到这种情况，可能需要每次启动后重新设置权限或使用脚本自动化这一过程。</li>
+</ul>
+
+<hr />
+
+<p>在Android设备上，<code class="language-plaintext highlighter-rouge">sdcard</code>（外部存储）的位置通常使用FAT32或exFAT文件系统，它们不支持Linux风格的权限设置。这意味着你不能直接修改这些位置上的文件和目录权限。然而，这并不意味着你无法让Apache访问这些文件。你可以通过以下几种方法来解决问题：</p>
+
+<p><strong>使用符号链接</strong></p>
+
+<p>创建一个指向<code class="language-plaintext highlighter-rouge">sdcard</code>上的文件夹的符号链接到Termux的内部存储中，这样你可以在内部存储中设置Apache的<code class="language-plaintext highlighter-rouge">DocumentRoot</code>。由于Apache运行时使用的用户通常对内部存储有适当的权限，这可以绕过权限问题。</p>
+
+<p>创建符号链接步骤：</p>
+
+<p><strong>确保已授予Termux存储权限</strong>：</p>
+
+<p>运行<code class="language-plaintext highlighter-rouge">termux-setup-storage</code>以创建必要的符号链接。</p>
+
+<p><strong>创建符号链接</strong>：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /storage/emulated/0/acteds.github.io-built ~/www
+</code></pre></div></div>
+
+<p><strong>配置Apache使用新的路径</strong>：</p>
+
+<p>修改你的Apache配置文件，将<code class="language-plaintext highlighter-rouge">DocumentRoot</code>设置为这个新的符号链接路径：</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">DocumentRoot</span> "/data/data/com.termux/files/home/www"
+
+<span class="p">&lt;</span><span class="nl">Directory</span><span class="sr"> "/data/data/com.termux/files/home/www"</span><span class="p">&gt;
+</span>  <span class="nc">Options</span> <span class="ss">Indexes</span> <span class="ss">FollowSymLinks</span>
+  <span class="nc">AllowOverride</span> <span class="ss">None</span>
+  <span class="nc">Require</span> <span class="ss">all</span> granted
+<span class="p">&lt;/</span><span class="nl">Directory</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p><strong>修改SELinux策略（如果适用）</strong></p>
+
+<p>如果你的设备启用了SELinux，它可能会进一步限制对<code class="language-plaintext highlighter-rouge">sdcard</code>的访问。虽然修改SELinux策略需要root权限，并且可能影响系统的安全性，但你可以尝试临时将SELinux设置为宽容模式（permissive），看看是否解决了问题。这不是推荐的做法，但它可以帮助诊断问题。</p>
+
+<p><strong>使用内部存储</strong></p>
+
+<p>最简单的方法可能是将你的Web内容放置在Termux的内部存储中，而不是<code class="language-plaintext highlighter-rouge">sdcard</code>。内部存储默认具有更宽松的权限，更容易配置。例如，你可以将网站文件放在<code class="language-plaintext highlighter-rouge">~/www</code>目录下，并按照上述方式配置Apache。</p>
+
+<p><strong>确认Apache运行用户</strong></p>
+
+<p>确保Apache服务是以能够访问<code class="language-plaintext highlighter-rouge">sdcard</code>的用户身份运行。你可以通过查看进程信息来确认这一点：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ps aux | <span class="nb">grep </span>httpd
+</code></pre></div></div>
+
+<p>确保该进程由拥有足够权限的用户运行，通常是启动Termux的用户。</p>
+
+<p><strong>总结</strong></p>
+
+<p>鉴于<code class="language-plaintext highlighter-rouge">sdcard</code>上的文件系统不支持Linux权限设置，最可靠的解决方案是将网站文件移动到Termux的内部存储中，或者创建一个指向<code class="language-plaintext highlighter-rouge">sdcard</code>上文件夹的符号链接。这两种方法都可以有效地绕过权限限制，并允许Apache正常访问你的网站文件。</p>
+
+<h2 id="apache2常用命令">apache2常用命令</h2>
+
+<p>在Termux环境中使用Apache HTTP Server（<code class="language-plaintext highlighter-rouge">apache2</code>）时，你可以通过<code class="language-plaintext highlighter-rouge">apachectl</code>工具来管理服务器。Termux是一个Android终端模拟器和Linux环境应用，它允许你在没有root权限的情况下运行一个Linux环境。以下是一些在Termux中管理<code class="language-plaintext highlighter-rouge">apache2</code>服务的常用命令：</p>
+
+<p>启动、停止和重启Apache</p>
+
+<p><strong>启动Apache</strong>：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl start
+</code></pre></div></div>
+
+<p><strong>停止Apache</strong>：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl stop
+</code></pre></div></div>
+
+<p><strong>重启Apache</strong>（这会先停止再启动服务）：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl restart
+</code></pre></div></div>
+
+<p><strong>重载配置文件而不中断当前连接</strong>（当修改了配置文件但不想完全重启服务时使用）：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl graceful
+</code></pre></div></div>
+
+<p>检查配置文件语法</p>
+
+<p><strong>检查配置文件是否有语法错误</strong>：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl configtest
+</code></pre></div></div>
+
+<p>查看状态</p>
+
+<p><strong>查看Apache的状态</strong>（是否正在运行等信息）：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl status
+</code></pre></div></div>
+<p>注意：为了使<code class="language-plaintext highlighter-rouge">status</code>命令工作，你可能需要安装额外的软件包，如<code class="language-plaintext highlighter-rouge">procps</code>，并且确保<code class="language-plaintext highlighter-rouge">mod_status</code>模块已经启用。</p>
+
+<p>启用或禁用模块</p>
+
+<p><strong>启用模块</strong>（例如<code class="language-plaintext highlighter-rouge">rewrite</code>模块）：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2enmod rewrite
+</code></pre></div></div>
+
+<p><strong>禁用模块</strong>：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2dismod rewrite
+</code></pre></div></div>
+
+<p>启用或禁用站点</p>
+
+<p><strong>启用站点配置</strong>（假设站点名为<code class="language-plaintext highlighter-rouge">example.com</code>）：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite example.com
+</code></pre></div></div>
+
+<p><strong>禁用站点配置</strong>：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2dissite example.com
+</code></pre></div></div>
+
+<p>应用更改</p>
+
+<p>完成配置文件编辑后，记得测试配置文件是否有语法错误，并重启Apache以应用更改：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apachectl configtest
+apachectl restart
+</code></pre></div></div>
+
+<p>注意事项</p>
+
+<ul>
+  <li>在进行任何更改之前，请备份现有的配置文件。</li>
+  <li>修改配置文件可能需要管理员权限，在Termux中可以通过<code class="language-plaintext highlighter-rouge">pkg install proot-distro</code>来安装一个更完整的Linux发行版，从而获得更好的权限控制。</li>
+</ul>]]></content><author><name>acteds</name></author><category term="Android" /><summary type="html"><![CDATA[安卓笔记]]></summary></entry><entry><title type="html">SecureRandom</title><link href="/2024/12/24/SecureRandom/" rel="alternate" type="text/html" title="SecureRandom" /><published>2024-12-24T00:00:00+08:00</published><updated>2024-12-24T00:00:00+08:00</updated><id>/2024/12/24/SecureRandom</id><content type="html" xml:base="/2024/12/24/SecureRandom/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p><code class="language-plaintext highlighter-rouge">SecureRandom</code>随机数的坑，java8版本与java17版本的该类底层原理不同。</p>
 
@@ -8347,64 +8681,4 @@ Content-Type: text/plain
 
 <p>如果 <code class="language-plaintext highlighter-rouge">flatMap</code> 中某个路径已经存在嵌套结构，则该路径的值将被复写为新的值。</p>
 
-<p>这两个方法可以方便地在平铺和嵌套 <code class="language-plaintext highlighter-rouge">Map</code> 之间转换，使得对复杂结构的数据操作更加简便。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">多级Map连续设值</title><link href="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/" rel="alternate" type="text/html" title="多级Map连续设值" /><published>2024-11-06T00:00:00+08:00</published><updated>2024-11-06T00:00:00+08:00</updated><id>/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC</id><content type="html" xml:base="/2024/11/06/%E5%A4%9A%E7%BA%A7Map%E8%BF%9E%E7%BB%AD%E8%AE%BE%E5%80%BC/"><![CDATA[<h1 id="引言">引言</h1>
-<p>一个简单的，连续设置Map值的方法。</p>
-
-<h1 id="map">Map</h1>
-
-<h2 id="多级map连续设值">多级Map连续设值</h2>
-
-<p>方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-<span class="cm">/**
- * 通过路径连续设置值，分隔符为.号
- * @param map 键值对
- * @param path 路径
- * @param value 设置的值
- * @param &lt;T&gt; 值类型
- */</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">setValueByPath</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">,</span> <span class="nc">String</span> <span class="n">path</span><span class="o">,</span> <span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">path</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">path</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"路径不能为空"</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="nc">String</span><span class="o">[]</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">"\\."</span><span class="o">);</span>
-    <span class="nc">Object</span> <span class="n">current</span> <span class="o">=</span> <span class="n">map</span><span class="o">;</span>
-
-    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">keys</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-        <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="n">current</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">currentMap</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;)</span> <span class="n">current</span><span class="o">;</span>
-            <span class="c1">// 如果当前Map中没有该key，创建一个新的Map</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">currentMap</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
-                <span class="n">currentMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;());</span>
-            <span class="o">}</span>
-            <span class="n">current</span> <span class="o">=</span> <span class="n">currentMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"路径中的某个节点不是Map类型，路径: "</span> <span class="o">+</span> <span class="n">path</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 最后一个key，设置值</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">current</span> <span class="k">instanceof</span> <span class="nc">Map</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">currentMap</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;)</span> <span class="n">current</span><span class="o">;</span>
-        <span class="n">currentMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">keys</span><span class="o">[</span><span class="n">keys</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">],</span> <span class="n">value</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"设置值时出错，路径指向的目标不是Map类型，路径: "</span> <span class="o">+</span> <span class="n">path</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>使用：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-
-<span class="c1">// 测试路径设置</span>
-<span class="n">setValueByPath</span><span class="o">(</span><span class="n">map</span><span class="o">,</span> <span class="s">"data.count"</span><span class="o">,</span> <span class="mi">100</span><span class="o">);</span>
-<span class="n">setValueByPath</span><span class="o">(</span><span class="n">map</span><span class="o">,</span> <span class="s">"data.count.details.value"</span><span class="o">,</span> <span class="mi">200</span><span class="o">);</span>
-
-<span class="c1">// 打印结果</span>
-<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+<p>这两个方法可以方便地在平铺和嵌套 <code class="language-plaintext highlighter-rouge">Map</code> 之间转换，使得对复杂结构的数据操作更加简便。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
