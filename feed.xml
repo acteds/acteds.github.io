@@ -1,4 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-20T22:22:44+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">手机建站</title><link href="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="手机建站" /><published>2024-12-27T00:00:00+08:00</published><updated>2024-12-27T00:00:00+08:00</updated><id>/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99</id><content type="html" xml:base="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-21T20:08:25+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">Chrome通过书签运行js代码的坑</title><link href="/2025/03/07/Chrome%E9%80%9A%E8%BF%87%E4%B9%A6%E7%AD%BE%E8%BF%90%E8%A1%8Cjs%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91/" rel="alternate" type="text/html" title="Chrome通过书签运行js代码的坑" /><published>2025-03-07T00:00:00+08:00</published><updated>2025-03-07T00:00:00+08:00</updated><id>/2025/03/07/Chrome%E9%80%9A%E8%BF%87%E4%B9%A6%E7%AD%BE%E8%BF%90%E8%A1%8Cjs%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91</id><content type="html" xml:base="/2025/03/07/Chrome%E9%80%9A%E8%BF%87%E4%B9%A6%E7%AD%BE%E8%BF%90%E8%A1%8Cjs%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>我想写一个下载CRX文件的JavaScript代码并封装到书签运行，但在调试的过程中，发现在书签中运行的JavaScript代码与在控制台运行的JavaScript逻辑不一致。</p>
+
+<h1 id="chrome">Chrome</h1>
+
+<p>一个简单的demo：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">javascript</span><span class="p">:(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+   <span class="kd">let</span> <span class="nx">a</span><span class="o">=</span><span class="dl">"</span><span class="s2">%26installsource%3Dondemand%26uc</span><span class="dl">"</span><span class="p">;</span>
+    <span class="nx">addStyle</span><span class="p">(</span><span class="dl">'</span><span class="s1">.masked1 {    padding: 5px 5px;    font-size: 14px;    color: snow;    position: fixed;    border-radius: 4px;    right: 5px;    top: 5%;    z-index: 999999;    text-align: center;    text-decoration: none;    display: inline-block;    margin: 4px 2px;    -webkit-transition-duration: 0.4s;    transition-duration: 0.4s;    cursor: pointer;    background-color: #4CAF50;    border: 2px solid #4CAF50;    padding: 0px;    font-size: 12px;    opacity: 0.8;    right: -40px;}.masked1:hover {    background-color: white;    color: black;    font-size: 14px;    padding: 5px 10px;    -webkit-transition: 0.5s;    opacity: 1;    margin: -3px 2px;    right: 5px;}</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">a1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">button</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">a1</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">masked1</span><span class="dl">"</span><span class="p">;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">a1</span><span class="p">);</span>
+    <span class="nx">a1</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">测试显示</span><span class="dl">"</span><span class="p">;</span>
+    <span class="nx">a1</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">a</span><span class="p">)));</span>
+    <span class="p">};</span>
+    <span class="kd">function</span> <span class="nx">addStyle</span><span class="p">(</span><span class="nx">rules</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">styleElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">style</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">styleElement</span><span class="p">[</span><span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">text/css</span><span class="dl">'</span><span class="p">;</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">head</span><span class="dl">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">styleElement</span><span class="p">);</span>
+        <span class="nx">styleElement</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">rules</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">})()</span>
+</code></pre></div></div>
+
+<p>将这段代码添加到书签中，并点击后会出现一个按钮，然后打开控制台，点击刚刚出现的按钮，则控制台会打印出两行文本：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&amp;installsource=ondemand&amp;uc
+%26installsource%3Dondemand%26uc
+</code></pre></div></div>
+
+<p>此时，发现<code class="language-plaintext highlighter-rouge">%26</code>和<code class="language-plaintext highlighter-rouge">%3D</code>被编码回去了。</p>
+
+<p>而同样的代码，直接运行在控制台，然后点击出现的按钮，则控制台打印的两行文本为：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%26installsource%3Dondemand%26uc
+%26installsource%3Dondemand%26uc
+</code></pre></div></div>
+
+<p>因此，想在书签中运行JavaScript代码则需要特别注意编码问题。要保持<code class="language-plaintext highlighter-rouge">a</code>不被转义需要通过<code class="language-plaintext highlighter-rouge">encodeURIComponent(decodeURIComponent(a)</code>来处理。</p>
+
+<p>在书签运行环境中，JavaScript代码会自动对某些字符进行解码，因此需要特别注意编码和解码的一致性。</p>
+
+<p>另外，最好在末尾加上分号分隔代码，否则代码压缩为一行放入书签后可能出现语法错误。且如果在书签执行的代码执行出错，不会显示在控制台上。</p>
+
+<p>附上一个下载扩展商店的扩展程序文件的JavaScript代码：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">javascript</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="dl">"</span><span class="s2">chrome.google.com</span><span class="dl">"</span><span class="p">)</span> <span class="o">||</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="dl">"</span><span class="s2">chromewebstore.google.com</span><span class="dl">"</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">ExtID</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">detail/</span><span class="dl">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="kd">let</span> <span class="nx">appname</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">detail/</span><span class="dl">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://clients2.google.com/service/update2/crx?response=redirect&amp;nacl_arch=&amp;prodversion=</span><span class="dl">"</span> <span class="o">+</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">"</span><span class="s2">Chrome/</span><span class="dl">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="dl">"</span><span class="s2"> </span><span class="dl">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">&amp;acceptformat=crx2,crx3&amp;x=id</span><span class="dl">"</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">%3D</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">ExtID</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">%26installsource%3Dondemand%26uc</span><span class="dl">"</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">p1</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">p2</span><span class="p">));</span>
+        <span class="kd">let</span> <span class="nx">downloadInnerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1"> 下载CRX文件</span><span class="dl">'</span><span class="p">;</span>
+        <span class="nx">addStyle</span><span class="p">(</span><span class="dl">'</span><span class="s1">.masked1 {    padding: 5px 5px;    font-size: 14px;    color: snow;    position: fixed;    border-radius: 4px;    right: 5px;    top: 5%;    z-index: 999999;    text-align: center;    text-decoration: none;    display: inline-block;    margin: 4px 2px;    -webkit-transition-duration: 0.4s;    transition-duration: 0.4s;    cursor: pointer;    background-color: #4CAF50;    border: 2px solid #4CAF50;    padding: 0px;    font-size: 12px;    opacity: 0.8;    right: -40px;}.masked1:hover {    background-color: white;    color: black;    font-size: 14px;    padding: 5px 10px;    -webkit-transition: 0.5s;    opacity: 1;    margin: -3px 2px;    right: 5px;}</span><span class="dl">'</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">a1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">button</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">a1</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">masked1</span><span class="dl">"</span><span class="p">;</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">a1</span><span class="p">);</span>
+        <span class="nx">a1</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">downloadInnerText</span><span class="p">;</span>
+        <span class="nx">a1</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">);</span>
+            <span class="nx">a</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">;</span>
+            <span class="nx">a</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+            <span class="nx">a</span><span class="p">.</span><span class="nx">download</span> <span class="o">=</span> <span class="nx">appname</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">.crx</span><span class="dl">"</span><span class="p">;</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+            <span class="nx">a</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">revokeObjectURL</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">addStyle</span><span class="p">(</span><span class="nx">rules</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">styleElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">style</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">styleElement</span><span class="p">[</span><span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">text/css</span><span class="dl">'</span><span class="p">;</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">head</span><span class="dl">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">styleElement</span><span class="p">);</span>
+        <span class="nx">styleElement</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">rules</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">})()</span>
+</code></pre></div></div>
+
+<p>虽然说Chrome会提示：无法从该网站添加应用、扩展程序和用户脚本，但实际上CRX文件已经下载到本地了。若没有发现下载的文件，可能是被Chrome拦截了，可以在Chrome的下载管理里放行。</p>
+
+<p>更简洁的版本：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">javascript</span><span class="p">:</span> <span class="p">(</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">let</span> <span class="nx">ExtID</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span> <span class="dl">'</span><span class="s1">detail/</span><span class="dl">'</span> <span class="p">)[</span> <span class="mi">1</span> <span class="p">].</span><span class="nx">split</span><span class="p">(</span> <span class="dl">'</span><span class="s1">/</span><span class="dl">'</span> <span class="p">)[</span> <span class="mi">1</span> <span class="p">];</span>
+	<span class="kd">let</span> <span class="nx">appname</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span> <span class="dl">'</span><span class="s1">detail/</span><span class="dl">'</span> <span class="p">)[</span> <span class="mi">1</span> <span class="p">].</span><span class="nx">split</span><span class="p">(</span> <span class="dl">'</span><span class="s1">/</span><span class="dl">'</span> <span class="p">)[</span> <span class="mi">0</span> <span class="p">];</span>
+	<span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">https://clients2.google.com/service/update2/crx?response=redirect&amp;nacl_arch=&amp;prodversion=</span><span class="dl">"</span> <span class="o">+</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span> <span class="dl">"</span><span class="s2">Chrome/</span><span class="dl">"</span> <span class="p">)[</span> <span class="mi">1</span> <span class="p">].</span><span class="nx">split</span><span class="p">(</span> <span class="dl">"</span><span class="s2"> </span><span class="dl">"</span> <span class="p">)[</span> <span class="mi">0</span> <span class="p">]</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">&amp;acceptformat=crx2,crx3&amp;x=id</span><span class="dl">"</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">%3D</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">ExtID</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">%26installsource%3Dondemand%26uc</span><span class="dl">"</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">p1</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span> <span class="nb">decodeURIComponent</span><span class="p">(</span> <span class="nx">p2</span> <span class="p">)</span> <span class="p">);</span>
+	<span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+<span class="p">}</span> <span class="p">)()</span>
+</code></pre></div></div>
+
+<p>实际上也可以通过插件下载CRX：<a href="https://chromewebstore.google.com/detail/get-crx/dijpllakibenlejkbajahncialkbdkjc">Get CRX</a>。</p>]]></content><author><name>acteds</name></author><category term="Chrome" /><summary type="html"><![CDATA[Chrome通过书签运行js代码的坑]]></summary></entry><entry><title type="html">手机建站</title><link href="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="手机建站" /><published>2024-12-27T00:00:00+08:00</published><updated>2024-12-27T00:00:00+08:00</updated><id>/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99</id><content type="html" xml:base="/2024/12/27/%E6%89%8B%E6%9C%BA%E5%BB%BA%E7%AB%99/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>手机建站的方法。</p>
 
@@ -8563,122 +8661,4 @@ Content-Type: text/plain
       <span class="na">charset</span><span class="pi">:</span> <span class="s">UTF-8</span>
       <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
       <span class="na">force</span><span class="pi">:</span> <span class="no">true</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">多级Map连续设值</title><link href="/2024/11/07/%E5%B5%8C%E5%A5%97Map%E7%9A%84%E5%B9%B3%E9%93%BA%E4%BA%8E%E5%8F%8D%E5%90%91%E6%93%8D%E4%BD%9C/" rel="alternate" type="text/html" title="多级Map连续设值" /><published>2024-11-07T00:00:00+08:00</published><updated>2024-11-07T00:00:00+08:00</updated><id>/2024/11/07/%E5%B5%8C%E5%A5%97Map%E7%9A%84%E5%B9%B3%E9%93%BA%E4%BA%8E%E5%8F%8D%E5%90%91%E6%93%8D%E4%BD%9C</id><content type="html" xml:base="/2024/11/07/%E5%B5%8C%E5%A5%97Map%E7%9A%84%E5%B9%B3%E9%93%BA%E4%BA%8E%E5%8F%8D%E5%90%91%E6%93%8D%E4%BD%9C/"><![CDATA[<h1 id="引言">引言</h1>
-<p>将多级Map平铺和反向操作的方法。</p>
-
-<h1 id="map">Map</h1>
-
-<h2 id="flattenmap-方法"><code class="language-plaintext highlighter-rouge">flattenMap</code> 方法</h2>
-
-<p><strong><code class="language-plaintext highlighter-rouge">flattenMap</code></strong>：将一个嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 转换为平铺的 <code class="language-plaintext highlighter-rouge">Map</code>，每一层的键用 <code class="language-plaintext highlighter-rouge">.</code> 连接，扁平化嵌套结构。</p>
-
-<p><strong>方法定义</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">flattenMap</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">nestedMap</span><span class="o">);</span>
-</code></pre></div></div>
-
-<p><strong>参数</strong></p>
-
-<p><strong><code class="language-plaintext highlighter-rouge">nestedMap</code></strong> (<code class="language-plaintext highlighter-rouge">Map&lt;String, Object&gt;</code>)：一个嵌套的 <code class="language-plaintext highlighter-rouge">Map</code>，其键值可能为更深层次的 <code class="language-plaintext highlighter-rouge">Map</code> 或基本数据类型。</p>
-
-<p><strong>返回值</strong></p>
-
-<p>返回一个平铺的 <code class="language-plaintext highlighter-rouge">Map&lt;String, Object&gt;</code>，其中嵌套的结构被展开，键名通过 <code class="language-plaintext highlighter-rouge">.</code> 分隔符表示路径。</p>
-
-<p><strong>功能</strong></p>
-
-<p>该方法将嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 转换为平铺的 <code class="language-plaintext highlighter-rouge">Map</code>，将嵌套对象的键名通过 <code class="language-plaintext highlighter-rouge">.</code> 符号进行连接，生成扁平化的键值对。</p>
-
-<p>例如，<code class="language-plaintext highlighter-rouge">data.testobj.name</code> 嵌套Map会被平铺为 <code class="language-plaintext highlighter-rouge">data.testobj.name</code> 键。</p>
-
-<p><strong>示例</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">nestedMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">testobj</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="n">testobj</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"age"</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
-<span class="n">testobj</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"3"</span><span class="o">);</span>
-
-<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="n">data</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"count"</span><span class="o">,</span> <span class="mi">6</span><span class="o">);</span>
-<span class="n">data</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"testobj"</span><span class="o">,</span> <span class="n">testobj</span><span class="o">);</span>
-
-<span class="n">nestedMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"data"</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
-<span class="n">nestedMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"_id"</span><span class="o">,</span> <span class="s">"67089190f180b00a00476c67"</span><span class="o">);</span>
-<span class="n">nestedMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"collectionName"</span><span class="o">,</span> <span class="s">"co_common_test1"</span><span class="o">);</span>
-
-<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">flatMap</span> <span class="o">=</span> <span class="n">flattenMap</span><span class="o">(</span><span class="n">nestedMap</span><span class="o">);</span>
-</code></pre></div></div>
-
-<p><strong>输出</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
-    <span class="s">"data.count"</span><span class="o">:</span> <span class="mi">6</span><span class="o">,</span>
-    <span class="s">"data.testobj.age"</span><span class="o">:</span> <span class="mi">5</span><span class="o">,</span>
-    <span class="s">"data.testobj.name"</span><span class="o">:</span> <span class="s">"3"</span><span class="o">,</span>
-    <span class="s">"_id"</span><span class="o">:</span> <span class="s">"67089190f180b00a00476c67"</span><span class="o">,</span>
-    <span class="s">"collectionName"</span><span class="o">:</span> <span class="s">"co_common_test1"</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>注意事项</strong></p>
-
-<p>该方法将嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 结构递归展开，每一层的键名通过 <code class="language-plaintext highlighter-rouge">.</code> 符号进行连接，形成一个平铺的结构。</p>
-
-<p>如果 <code class="language-plaintext highlighter-rouge">nestedMap</code> 中的某个值是非 <code class="language-plaintext highlighter-rouge">Map</code> 类型，则会将该值作为扁平化后的结果。</p>
-
-<h2 id="unflattenmap-方法"><code class="language-plaintext highlighter-rouge">unflattenMap</code> 方法</h2>
-
-<p><strong><code class="language-plaintext highlighter-rouge">unflattenMap</code></strong>：将一个平铺的 <code class="language-plaintext highlighter-rouge">Map</code>（带点的键）转换为嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 结构，逐级展开。</p>
-
-<p><strong>方法定义</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">unflattenMap</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">flatMap</span><span class="o">);</span>
-</code></pre></div></div>
-
-<p><strong>参数</strong></p>
-
-<p><strong><code class="language-plaintext highlighter-rouge">flatMap</code></strong> (<code class="language-plaintext highlighter-rouge">Map&lt;String, Object&gt;</code>)：一个平铺的 <code class="language-plaintext highlighter-rouge">Map</code>，其键名使用 <code class="language-plaintext highlighter-rouge">.</code> 作为分隔符（例如 <code class="language-plaintext highlighter-rouge">data.count</code>, <code class="language-plaintext highlighter-rouge">data.testobj.name</code>），表示嵌套的结构。</p>
-
-<p><strong>返回值</strong></p>
-
-<p>返回一个嵌套的 <code class="language-plaintext highlighter-rouge">Map&lt;String, Object&gt;</code>，其中键对应的路径会被还原为嵌套的对象结构。</p>
-
-<p><strong>功能</strong></p>
-
-<p>该方法将一个平铺的 <code class="language-plaintext highlighter-rouge">Map</code> 转换为嵌套的 <code class="language-plaintext highlighter-rouge">Map</code>。平铺的 <code class="language-plaintext highlighter-rouge">Map</code> 中的键名是通过 <code class="language-plaintext highlighter-rouge">.</code> 分隔符表示的路径。该方法会根据路径拆分并逐层构建嵌套的 <code class="language-plaintext highlighter-rouge">Map</code> 结构。</p>
-
-<p>例如，<code class="language-plaintext highlighter-rouge">data.testobj.name</code> 会被展开为 <code class="language-plaintext highlighter-rouge">Map</code> 结构：<code class="language-plaintext highlighter-rouge">data -&gt; testobj -&gt; name</code>。</p>
-
-<p><strong>示例</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">flatMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="n">flatMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"data.count"</span><span class="o">,</span> <span class="mi">6</span><span class="o">);</span>
-<span class="n">flatMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"data.testobj.age"</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
-<span class="n">flatMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"_id"</span><span class="o">,</span> <span class="s">"67089190f180b00a00476c67"</span><span class="o">);</span>
-<span class="n">flatMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"collectionName"</span><span class="o">,</span> <span class="s">"co_common_test1"</span><span class="o">);</span>
-<span class="n">flatMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"data.testobj.name"</span><span class="o">,</span> <span class="s">"3"</span><span class="o">);</span>
-
-<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">nestedMap</span> <span class="o">=</span> <span class="n">unflattenMap</span><span class="o">(</span><span class="n">flatMap</span><span class="o">);</span>
-</code></pre></div></div>
-<p><strong>输出</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
-    <span class="s">"data"</span><span class="o">:</span> <span class="o">{</span>
-        <span class="s">"count"</span><span class="o">:</span> <span class="mi">6</span><span class="o">,</span>
-        <span class="s">"testobj"</span><span class="o">:</span> <span class="o">{</span>
-            <span class="s">"age"</span><span class="o">:</span> <span class="mi">5</span><span class="o">,</span>
-            <span class="s">"name"</span><span class="o">:</span> <span class="s">"3"</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-    <span class="s">"_id"</span><span class="o">:</span> <span class="s">"67089190f180b00a00476c67"</span><span class="o">,</span>
-    <span class="s">"collectionName"</span><span class="o">:</span> <span class="s">"co_common_test1"</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>注意事项</strong></p>
-
-<p>该方法假设所有带点路径的键都需要进行解包，逐级生成嵌套 <code class="language-plaintext highlighter-rouge">Map</code>。</p>
-
-<p>如果 <code class="language-plaintext highlighter-rouge">flatMap</code> 中某个路径已经存在嵌套结构，则该路径的值将被复写为新的值。</p>
-
-<p>这两个方法可以方便地在平铺和嵌套 <code class="language-plaintext highlighter-rouge">Map</code> 之间转换，使得对复杂结构的数据操作更加简便。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>

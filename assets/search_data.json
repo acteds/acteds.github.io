@@ -639,6 +639,14 @@
     } ,
   
     {
+      "title"    : "Chrome通过书签运行js代码的坑",
+      "category" : "Chrome",
+      
+      "url"      : "/2025/03/07/Chrome%E9%80%9A%E8%BF%87%E4%B9%A6%E7%AD%BE%E8%BF%90%E8%A1%8Cjs%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91/",
+      "keywords" : "Chrome"
+    } ,
+  
+    {
       "title"    : "Wiki Template",
       "category" : "",
       
