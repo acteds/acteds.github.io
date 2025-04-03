@@ -1,4 +1,204 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-03-28T21:18:11+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">正确截断字符串</title><link href="/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="alternate" type="text/html" title="正确截断字符串" /><published>2025-03-13T00:00:00+08:00</published><updated>2025-03-13T00:00:00+08:00</updated><id>/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2</id><content type="html" xml:base="/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2/"><![CDATA[<h1 id="引言">引言</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-04-03T21:09:45+08:00</updated><id>/feed.xml</id><title type="html">个人博客</title><subtitle></subtitle><author><name>acteds</name></author><entry><title type="html">获取指定类的所有字段</title><link href="/2025/04/03/%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%97%E6%AE%B5/" rel="alternate" type="text/html" title="获取指定类的所有字段" /><published>2025-04-03T00:00:00+08:00</published><updated>2025-04-03T00:00:00+08:00</updated><id>/2025/04/03/%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%97%E6%AE%B5</id><content type="html" xml:base="/2025/04/03/%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%97%E6%AE%B5/"><![CDATA[<h1 id="引言">引言</h1>
+
+<p>为了对ES进行全文全字段搜索，于是就有了获取指定类的全部字段的需求，又因为该类涉及继承，持有其他类，泛型，因此有了写这个工具类的想法。</p>
+
+<h1 id="java">Java</h1>
+
+<h2 id="获取指定类的所有字段">获取指定类的所有字段</h2>
+
+<p>要获取指定类的所有字段，使用反射即可。但是由于类可能涉及继承、嵌套引用以及泛型（如 <code class="language-plaintext highlighter-rouge">B&lt;T&gt;</code>），直接反射会比较繁琐且性能不高。</p>
+
+<p>因此设计思路如下：</p>
+
+<ul>
+  <li><strong>反射获取字段：</strong> 利用 <code class="language-plaintext highlighter-rouge">Class.getDeclaredFields()</code> 递归获取当前类以及父类的字段。</li>
+  <li><strong>泛型映射处理：</strong> 对于泛型字段，通过 <code class="language-plaintext highlighter-rouge">ParameterizedType</code> 解析泛型参数，构建泛型映射关系，将泛型变量转换为具体类型，再递归解析其字段。</li>
+  <li><strong>递归解析嵌套字段：</strong> 对于持有其他自定义对象的字段，也递归获取其字段，并以“父字段.子字段”的形式返回。</li>
+  <li><strong>缓存机制：</strong> 由于反射性能较差，加入缓存机制保存已解析结果，下次使用时直接返回，提高效率。</li>
+</ul>
+
+<p>这种设计既满足了需求，又考虑到了复杂类型（继承、泛型、嵌套对象）的情况，并通过缓存优化了性能。</p>
+
+<p>具体代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.aotmd</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.lang.reflect.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.math.BigDecimal</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.time.LocalDate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.time.LocalDateTime</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.ConcurrentHashMap</span><span class="o">;</span>
+
+<span class="cm">/**
+ * 工具类：用于获取指定类的所有字段（包括继承、自持有类、泛型等）
+ * 主要用于ES的全文全字段搜索
+ * 
+ * 支持字段类型过滤（字符串、数值、布尔值、日期类型）
+ * 使用缓存提高性能
+ * 
+ * @author aotmd
+ * @version 1.0
+ * @date 2025/4/3 20:47
+ */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FieldUtil</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">MAX_DEPTH</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span> <span class="c1">// 避免无限递归，最大递归深度</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span><span class="o">[]</span> <span class="no">EXCLUDE_PACKAGES</span> <span class="o">=</span> <span class="o">{</span><span class="s">"java."</span><span class="o">,</span> <span class="s">"javax."</span><span class="o">,</span> <span class="s">"com.fasterxml.jackson."</span><span class="o">};</span>
+    
+    <span class="c1">// 使用并发Map缓存解析结果，提高性能</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">cacheFields</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">&lt;&gt;();</span>
+    
+    <span class="cm">/**
+     * 获取指定类的所有字符串类型字段
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getStringFields</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getFieldsByType</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="s">"String"</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 获取指定类的所有数值类型字段
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getNumberFields</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getFieldsByType</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
+                <span class="kt">byte</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">short</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">long</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">float</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">double</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                <span class="nc">Byte</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Short</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Long</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Float</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Double</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">BigDecimal</span><span class="o">.</span><span class="na">class</span>
+        <span class="o">),</span> <span class="s">"Number"</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 获取指定类的所有布尔类型字段
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getBooleanFields</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getFieldsByType</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="kt">boolean</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Boolean</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="s">"Boolean"</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 获取指定类的所有日期类型字段
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getDateFields</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getFieldsByType</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">LocalDate</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Date</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="s">"Date"</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 按指定类型获取字段（支持缓存）
+     * @param clazz 目标类
+     * @param targetTypes 需要匹配的类型集合
+     * @param typeKey 用于缓存的key前缀
+     * @return 符合类型的字段集合
+     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">getFieldsByType</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="nc">String</span> <span class="n">typeKey</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">cacheKey</span> <span class="o">=</span> <span class="s">"%s-%s"</span><span class="o">.</span><span class="na">formatted</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">(),</span> <span class="n">typeKey</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">cacheFields</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldNames</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+            <span class="n">getFieldsRecursive</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;(),</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;(),</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+            <span class="k">return</span> <span class="n">fieldNames</span><span class="o">;</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 递归获取类及其父类、泛型持有类的字段
+     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">getFieldsRecursive</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="nc">String</span> <span class="n">prefix</span><span class="o">,</span>
+                                           <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">TypeVariable</span><span class="o">&lt;?&gt;,</span> <span class="nc">Type</span><span class="o">&gt;</span> <span class="n">genericMap</span><span class="o">,</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">visited</span><span class="o">,</span>
+                                           <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">clazz</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">clazz</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="nc">Object</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">||</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="no">MAX_DEPTH</span> <span class="o">||</span> <span class="n">isExcluded</span><span class="o">(</span><span class="n">clazz</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">visited</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">clazz</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// 防止重复解析同一个类</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 解析泛型父类，并建立泛型映射关系</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getGenericSuperclass</span><span class="o">()</span> <span class="k">instanceof</span> <span class="nc">ParameterizedType</span> <span class="n">parameterizedType</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">Type</span><span class="o">[]</span> <span class="n">actualTypes</span> <span class="o">=</span> <span class="n">parameterizedType</span><span class="o">.</span><span class="na">getActualTypeArguments</span><span class="o">();</span>
+            <span class="nc">TypeVariable</span><span class="o">&lt;?&gt;[]</span> <span class="n">typeVariables</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">().</span><span class="na">getTypeParameters</span><span class="o">();</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">typeVariables</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="n">genericMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">typeVariables</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">actualTypes</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 解析字段</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Field</span> <span class="n">field</span> <span class="o">:</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredFields</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nc">Modifier</span><span class="o">.</span><span class="na">isStatic</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">())</span> <span class="o">||</span> <span class="nc">Modifier</span><span class="o">.</span><span class="na">isTransient</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()))</span> <span class="o">{</span>
+                <span class="k">continue</span><span class="o">;</span> <span class="c1">// 跳过静态字段和瞬态字段</span>
+            <span class="o">}</span>
+
+            <span class="nc">Type</span> <span class="n">fieldType</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="na">getGenericType</span><span class="o">();</span>
+            <span class="nc">String</span> <span class="n">fieldName</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">?</span> <span class="n">field</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">:</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">field</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">targetTypes</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getType</span><span class="o">()))</span> <span class="o">{</span>
+                <span class="n">fieldNames</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">fieldName</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">fieldType</span> <span class="k">instanceof</span> <span class="nc">TypeVariable</span><span class="o">&lt;?&gt;</span> <span class="n">typeVar</span> <span class="o">&amp;&amp;</span> <span class="n">genericMap</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">typeVar</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c1">// 泛型字段解析</span>
+                <span class="nc">Type</span> <span class="n">actualType</span> <span class="o">=</span> <span class="n">genericMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">typeVar</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">actualType</span> <span class="k">instanceof</span> <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">actualClass</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">getFieldsRecursive</span><span class="o">(</span><span class="n">actualClass</span><span class="o">,</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="n">fieldName</span><span class="o">,</span> <span class="n">genericMap</span><span class="o">,</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;(),</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">fieldType</span> <span class="k">instanceof</span> <span class="nc">ParameterizedType</span> <span class="n">parameterizedFieldType</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 处理泛型参数类型</span>
+                <span class="nc">Type</span> <span class="n">rawType</span> <span class="o">=</span> <span class="n">parameterizedFieldType</span><span class="o">.</span><span class="na">getRawType</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">rawType</span> <span class="k">instanceof</span> <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">rawClass</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">getFieldsRecursive</span><span class="o">(</span><span class="n">rawClass</span><span class="o">,</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="n">fieldName</span><span class="o">,</span> <span class="n">genericMap</span><span class="o">,</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;(),</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="n">field</span><span class="o">.</span><span class="na">getType</span><span class="o">().</span><span class="na">isPrimitive</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">isExcluded</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getType</span><span class="o">()))</span> <span class="o">{</span>
+                <span class="c1">// 递归解析非基本类型</span>
+                <span class="n">getFieldsRecursive</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getType</span><span class="o">(),</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="n">fieldName</span><span class="o">,</span> <span class="n">genericMap</span><span class="o">,</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;(),</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        
+        <span class="c1">// 递归处理父类字段</span>
+        <span class="n">getFieldsRecursive</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">(),</span> <span class="n">fieldNames</span><span class="o">,</span> <span class="n">prefix</span><span class="o">,</span> <span class="n">genericMap</span><span class="o">,</span> <span class="n">visited</span><span class="o">,</span> <span class="n">targetTypes</span><span class="o">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="cm">/**
+     * 判断是否属于排除的包（例如JDK类、Jackson类等）
+     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isExcluded</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">className</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">prefix</span> <span class="o">:</span> <span class="no">EXCLUDE_PACKAGES</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">className</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="n">prefix</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>测试代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">class</span> <span class="nc">A</span> <span class="o">{</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span><span class="nc">Integer</span> <span class="n">id</span><span class="o">;</span><span class="nc">Boolean</span> <span class="n">active</span><span class="o">;</span><span class="nc">LocalDate</span> <span class="n">birthDate</span><span class="o">;}</span>
+    <span class="kd">class</span> <span class="nc">B</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span> <span class="no">T</span> <span class="n">t1</span><span class="o">,</span> <span class="n">t2</span><span class="o">;</span><span class="nc">String</span> <span class="n">age</span><span class="o">;</span><span class="nc">Double</span> <span class="n">score</span><span class="o">;</span><span class="nc">Boolean</span> <span class="n">isMember</span><span class="o">;</span> <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">C</span> <span class="kd">extends</span> <span class="no">B</span><span class="o">&lt;</span><span class="no">A</span><span class="o">&gt;</span> <span class="o">{</span> <span class="nc">String</span> <span class="n">age2</span><span class="o">;</span><span class="nc">BigDecimal</span> <span class="n">salary</span><span class="o">;</span><span class="nc">LocalDateTime</span> <span class="n">lastLogin</span><span class="o">;}</span>
+
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">"String 字段：%s%n"</span><span class="o">,</span> <span class="n">getStringFields</span><span class="o">(</span><span class="no">C</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>  <span class="c1">// 预期：[age, t1.name, t2.name, age2]</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">"数字字段：%s%n"</span><span class="o">,</span> <span class="n">getNumberFields</span><span class="o">(</span><span class="no">C</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>  <span class="c1">// 预期：[score, salary, t1.id, t2.id]</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">"布尔字段：%s%n"</span><span class="o">,</span> <span class="n">getBooleanFields</span><span class="o">(</span><span class="no">C</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>  <span class="c1">// 预期：[isMember, t1.active, t2.active]</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">"日期字段：%s%n"</span><span class="o">,</span> <span class="n">getDateFields</span><span class="o">(</span><span class="no">C</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>  <span class="c1">// 预期：[lastLogin, t1.birthDate, t2.birthDate]</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>执行思路：</strong></p>
+
+<p><strong>递归解析类的字段</strong></p>
+
+<p>利用反射获取目标类（包括其父类）的所有字段，对于每个字段：</p>
+
+<ul>
+  <li>如果字段类型与目标类型（例如 <code class="language-plaintext highlighter-rouge">String</code>、<code class="language-plaintext highlighter-rouge">Number</code>、<code class="language-plaintext highlighter-rouge">Boolean</code>、<code class="language-plaintext highlighter-rouge">Date</code>）匹配，则将字段名称（支持嵌套形式，如 <code class="language-plaintext highlighter-rouge">t1.name</code>）加入结果集合。</li>
+  <li>如果字段是泛型（如 <code class="language-plaintext highlighter-rouge">B&lt;T&gt;</code> 中的 <code class="language-plaintext highlighter-rouge">T</code>），则通过泛型映射关系（由 <code class="language-plaintext highlighter-rouge">ParameterizedType</code> 解析得到）确定 <code class="language-plaintext highlighter-rouge">T</code> 的具体类型，然后递归解析该类型的字段。</li>
+  <li>如果字段为参数化类型（如 <code class="language-plaintext highlighter-rouge">List&lt;String&gt;</code>），则提取其原始类型，并继续递归。</li>
+  <li>对于非基本类型且不属于系统包（例如 <code class="language-plaintext highlighter-rouge">java.</code> 或 <code class="language-plaintext highlighter-rouge">Jackson</code> 相关的类），也递归解析，获取其内部符合要求的字段。</li>
+</ul>
+
+<p><strong>防止无限递归和重复解析</strong></p>
+
+<p>通过限制最大递归深度（<code class="language-plaintext highlighter-rouge">MAX_DEPTH</code>）和使用 visited 集合避免同一个类多次解析，防止出现死循环。</p>
+
+<p><strong>缓存优化</strong></p>
+
+<p>由于反射操作性能较低，所以通过 <code class="language-plaintext highlighter-rouge">ConcurrentHashMap</code> 缓存解析过的字段，使用“类名-字段类型”作为缓存键，下次再请求相同类型字段时直接返回缓存结果。</p>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">正确截断字符串</title><link href="/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="alternate" type="text/html" title="正确截断字符串" /><published>2025-03-13T00:00:00+08:00</published><updated>2025-03-13T00:00:00+08:00</updated><id>/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2</id><content type="html" xml:base="/2025/03/13/%E6%AD%A3%E7%A1%AE%E6%88%AA%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2/"><![CDATA[<h1 id="引言">引言</h1>
 
 <p>在JavaScript中截取字符串时，碰到特殊编码的字符，截断可能出现乱码。分词方法。</p>
 
@@ -7850,986 +8050,4 @@ Content-Type: text/plain
   <li><strong>小数据量</strong>：通常指几百到几千条数据，顺序流更高效。</li>
   <li><strong>大数据量</strong>：通常指超过十万条数据，并且需要进行计算、排序等操作时，使用并行流能带来显著性能提升。</li>
   <li>数据量“多”还是“少”没有严格标准，主要是看操作的复杂性和系统的硬件资源。在处理小数据量时，避免使用 <code class="language-plaintext highlighter-rouge">parallelStream()</code> 会更高效。</li>
-</ul>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry><entry><title type="html">Excel导入导出</title><link href="/2024/11/18/Excel%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA/" rel="alternate" type="text/html" title="Excel导入导出" /><published>2024-11-18T00:00:00+08:00</published><updated>2024-11-18T00:00:00+08:00</updated><id>/2024/11/18/Excel%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA</id><content type="html" xml:base="/2024/11/18/Excel%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA/"><![CDATA[<h1 id="引言">引言</h1>
-
-<p>Excel的导入导出、以及CSV文件的导出。</p>
-
-<h1 id="java">Java</h1>
-
-<h2 id="excel导入导出">Excel导入导出</h2>
-
-<p>依赖添加：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencies&gt;</span>
-    <span class="c">&lt;!-- Apache POI Core for Excel (xls) support --&gt;</span>
-    <span class="nt">&lt;dependency&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>org.apache.poi<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>poi<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>5.2.3<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;/dependency&gt;</span>
-
-    <span class="c">&lt;!-- Apache POI OOXML for Excel 2007+ (xlsx) support --&gt;</span>
-    <span class="nt">&lt;dependency&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>org.apache.poi<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>poi-ooxml<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>5.2.3<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;/dependency&gt;</span>
-
-    <span class="c">&lt;!-- Optional: Apache POI for handling Excel (xlsx) schemas --&gt;</span>
-    <span class="nt">&lt;dependency&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>org.apache.poi<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>poi-ooxml-schemas<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>5.2.3<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;/dependency&gt;</span>
-
-    <span class="c">&lt;!-- Optional: Apache POI Scratchpad for more advanced Excel functionalities --&gt;</span>
-    <span class="nt">&lt;dependency&gt;</span>
-        <span class="nt">&lt;groupId&gt;</span>org.apache.poi<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>poi-ooxml-scratchpad<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>5.2.3<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span>
-</code></pre></div></div>
-
-<h3 id="导出">导出</h3>
-
-<p>首先新建一个带异常抛出的<code class="language-plaintext highlighter-rouge">Consumer</code>接口。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * 带异常抛出的Consumer
- * @author aotmd
- * @version 1.0
- * @date 2024/11/26 17:34
- */</span>
-<span class="nd">@FunctionalInterface</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
-
-    <span class="cm">/**
-     * 对给定的参数执行此操作，并且可能会引发异常。
-     *
-     * @param t 输入参数
-     * @throws Exception 如果在处理过程中发生任何错误
-     */</span>
-    <span class="kt">void</span> <span class="nf">accept</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>然后建立一个服务层：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Service</span>
-<span class="nd">@Slf4j</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExcelService</span> <span class="o">{}</span>
-</code></pre></div></div>
-
-<p>对于导出，可以直接使用<code class="language-plaintext highlighter-rouge">SXSSFWorkbook</code>类，它会动态管理存储在内存中的行，防止内存溢出。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/** 在刷新之前保留在内存中的行数，请参见上文。 */</span>
-<span class="kd">private</span> <span class="kt">int</span> <span class="n">rowAccessWindowSize</span> <span class="o">=</span> <span class="no">DEFAULT_WINDOW_SIZE</span><span class="o">;</span>
-
-<span class="cm">/**
-* 设置写操作，在刷新之前保留在内存中的行数
-* @param rowAccessWindowSize 在刷新之前保留在内存中的行数
-*/</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRowAccessWindowSize</span><span class="o">(</span><span class="kt">int</span> <span class="n">rowAccessWindowSize</span><span class="o">)</span> <span class="o">{</span>
-<span class="k">this</span><span class="o">.</span><span class="na">rowAccessWindowSize</span> <span class="o">=</span> <span class="n">rowAccessWindowSize</span><span class="o">;</span>
-<span class="o">}</span>
-
-<span class="cm">/**
-* 导出Excel
-* @param os 输出流
-* @param chineseTableHeader 中文表头
-* @param callback 回调
-*/</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportExcel</span><span class="o">(</span><span class="nc">OutputStream</span> <span class="n">os</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">chineseTableHeader</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">Sheet</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
-<span class="cm">/*设置页码*/</span>
-<span class="c1">// 创建Excel工作簿</span>
-<span class="k">try</span> <span class="o">(</span><span class="nc">SXSSFWorkbook</span> <span class="n">wb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SXSSFWorkbook</span><span class="o">(</span><span class="n">rowAccessWindowSize</span><span class="o">))</span> <span class="o">{</span>
-    <span class="nc">Sheet</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createSheet</span><span class="o">(</span><span class="s">"Sheet1"</span><span class="o">);</span>
-    <span class="c1">// 设置每列的宽度</span>
-    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">chineseTableHeader</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-        <span class="n">sheet</span><span class="o">.</span><span class="na">setColumnWidth</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="mi">5000</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 创建一个CellStyle对象，用于设置加粗样式</span>
-    <span class="nc">CellStyle</span> <span class="n">headerCellStyle</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createCellStyle</span><span class="o">();</span>
-    <span class="nc">Font</span> <span class="n">headerFont</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createFont</span><span class="o">();</span>
-    <span class="n">headerFont</span><span class="o">.</span><span class="na">setBold</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>  <span class="c1">// 设置加粗</span>
-    <span class="n">headerCellStyle</span><span class="o">.</span><span class="na">setFont</span><span class="o">(</span><span class="n">headerFont</span><span class="o">);</span>  <span class="c1">// 将加粗字体应用到样式中</span>
-
-    <span class="c1">// 写入表头</span>
-    <span class="nc">Row</span> <span class="n">headerRow</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">createRow</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-    <span class="kt">int</span> <span class="n">colIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-    <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">chineseTableHeader</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">headerRow</span><span class="o">.</span><span class="na">createCell</span><span class="o">(</span><span class="n">colIndex</span><span class="o">++);</span>
-        <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-        <span class="n">cell</span><span class="o">.</span><span class="na">setCellStyle</span><span class="o">(</span><span class="n">headerCellStyle</span><span class="o">);</span>  <span class="c1">// 应用加粗样式</span>
-    <span class="o">}</span>
-    <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">sheet</span><span class="o">);</span>
-    <span class="n">wb</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">os</span><span class="o">);</span>
-    <span class="n">os</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-    <span class="n">os</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导出数据抛出异常"</span><span class="o">,</span><span class="n">e</span><span class="o">);</span>
-    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导出数据抛出异常"</span><span class="o">,</span><span class="n">e</span><span class="o">);</span>
-<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>这个方法会自动填充表头，并设置加粗样式，然后执行回调方法。</p>
-
-<p>还可以添加一个写入数据行的方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * 写入数据行到Excel
- *
- * @param sheet       excel对象
- * @param data        数据
- * @param fieldHeader 属性key
- * @param rowIndex    第几行
- */</span>
-<span class="kd">public</span> <span class="kt">int</span> <span class="nf">writeDataRowsToExcel</span><span class="o">(</span><span class="nc">Sheet</span> <span class="n">sheet</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">data</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldHeader</span><span class="o">,</span> <span class="kt">int</span> <span class="n">rowIndex</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kt">int</span> <span class="n">colIndex</span><span class="o">;</span>
-    <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">line</span> <span class="o">:</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Row</span> <span class="n">dataRow</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">createRow</span><span class="o">(</span><span class="n">rowIndex</span><span class="o">++);</span>
-        <span class="n">colIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">titleKey</span> <span class="o">:</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">dataRow</span><span class="o">.</span><span class="na">createCell</span><span class="o">(</span><span class="n">colIndex</span><span class="o">++);</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">line</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">titleKey</span><span class="o">))</span> <span class="o">{</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
-                <span class="k">continue</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="nc">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">titleKey</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="n">o</span><span class="o">;</span>
-                <span class="nc">String</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">String</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Integer</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">Integer</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">Double</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="n">rowIndex</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>使用：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">excelService</span><span class="o">.</span><span class="na">setRowAccessWindowSize</span><span class="o">(</span><span class="no">NUM_PER_PAGE</span><span class="o">);</span>
-<span class="n">excelService</span><span class="o">.</span><span class="na">exportExcel</span><span class="o">(</span><span class="n">outputStream</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">,</span> <span class="o">(</span><span class="n">sheet</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="c1">// 写入数据行，从第1行开始</span>
-    <span class="kt">int</span> <span class="n">rowIndex</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
-    <span class="cm">/*获取数据*/</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>
-    <span class="n">rowIndex</span> <span class="o">=</span> <span class="n">excelService</span><span class="o">.</span><span class="na">writeDataRowsToExcel</span><span class="o">(</span><span class="n">sheet</span><span class="o">,</span> <span class="n">rowsData</span><span class="o">,</span> <span class="n">keys</span><span class="o">,</span> <span class="n">rowIndex</span><span class="o">);</span>
-<span class="o">});</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">rowIndex</code>是下一个空行的索引，如果是分段写入，就需要这个值，如果需要通过这个值获取总行数，注意最后减一。</p>
-
-<h3 id="导入">导入</h3>
-
-<p>添加依赖：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!--大xlsx文件导入--&gt;</span>
-<span class="c">&lt;!-- https://mvnrepository.com/artifact/com.github.pjfanning/excel-streaming-reader --&gt;</span>
-<span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>com.github.pjfanning<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>excel-streaming-reader<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>2.3.6<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div></div>
-
-<p>添加方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * 导入Excel
- * @param is 输入流
- * @param callback 回调
- */</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">importExcel</span><span class="o">(</span><span class="nc">InputStream</span> <span class="n">is</span><span class="o">,</span> <span class="nc">BiConsumer</span><span class="o">&lt;</span><span class="nc">Sheet</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 使用StreamingReader包装后，就只能使用流来操作行了，不能指定获取指定行了</span>
-    <span class="k">try</span> <span class="o">(</span><span class="nc">Workbook</span> <span class="n">workbook</span> <span class="o">=</span> <span class="nc">StreamingReader</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">rowCacheSize</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>    <span class="c1">// 设置内存中保持的行数，默认是10</span>
-            <span class="o">.</span><span class="na">bufferSize</span><span class="o">(</span><span class="mi">4096</span><span class="o">)</span><span class="c1">// 设置读取 InputStream 时的缓冲区大小（字节）</span>
-            <span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">is</span><span class="o">))</span> <span class="o">{</span>
-        <span class="nc">Sheet</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="na">getSheetAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="n">sheet</span><span class="o">.</span><span class="na">getLastRowNum</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入的数据查过10000行"</span><span class="o">);</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导入的数据查过10000行"</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Row</span><span class="o">&gt;</span> <span class="n">rowIterator</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
-        <span class="c1">// 获取数据的表头,第一行</span>
-        <span class="nc">Row</span> <span class="n">r</span> <span class="o">=</span> <span class="n">rowIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span> <span class="o">=</span> <span class="nc">StreamSupport</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="na">spliterator</span><span class="o">(),</span> <span class="kc">false</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Cell:</span><span class="o">:</span><span class="n">getStringCellValue</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
-
-        <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">sheet</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入时发生异常：{}"</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导入时发生异常：{}"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">.rowCacheSize(100)</code> 这里也可以抽出来做为配置项。</p>
-
-<p>执行回调方法会传入两个参数，一个是对象，一个是读取到的表头，注意这里迭代器已经消耗完第一行了。</p>
-
-<p>还可以加一个读每行数据的方法：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * 获取原值
- *
- * @param cell 单元格
- * @return
- */</span>
-<span class="kd">public</span> <span class="nc">Object</span> <span class="nf">getValue</span><span class="o">(</span><span class="nc">Cell</span> <span class="n">cell</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 单元格类型</span>
-    <span class="nc">CellType</span> <span class="n">type</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getCellType</span><span class="o">();</span>
-    <span class="c1">// 值</span>
-    <span class="nc">Object</span> <span class="n">value</span><span class="o">;</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">NUMERIC</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 字符串或数字类型</span>
-        <span class="kt">double</span> <span class="n">numericCellValue</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getNumericCellValue</span><span class="o">();</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">numericCellValue</span> <span class="o">==</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">numericCellValue</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">numericCellValue</span><span class="o">;</span><span class="c1">// 转为整数</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">numericCellValue</span><span class="o">;</span> <span class="c1">//保持为浮动数</span>
-        <span class="o">}</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">STRING</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getStringCellValue</span><span class="o">();</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>使用示例：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">excelService</span><span class="o">.</span><span class="na">importExcel</span><span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">(),</span> <span class="o">(</span><span class="n">sheet</span><span class="o">,</span> <span class="n">chineseTableHeader</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="c1">// 得到实际表头</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span> <span class="o">=</span> <span class="n">getTableHeader</span><span class="o">(</span><span class="n">chineseTableHeader</span><span class="o">,</span> <span class="n">importMetadata</span><span class="o">.</span><span class="na">tableColumn</span><span class="o">);</span>
-    <span class="c1">// 获得需要写入的数据的索引</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">index</span> <span class="o">=</span> <span class="n">getIndex</span><span class="o">(</span><span class="n">tableHeader</span><span class="o">);</span>
-    <span class="c1">// 存储插入到原表的数据</span>
-    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">insertOriginal</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-    <span class="c1">// 获取迭代器</span>
-    <span class="k">for</span> <span class="o">(</span><span class="nc">Row</span> <span class="n">row</span> <span class="o">:</span> <span class="n">sheet</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 跳过excel空行</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nc">StreamSupport</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">row</span><span class="o">.</span><span class="na">spliterator</span><span class="o">(),</span> <span class="kc">true</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="nl">Cell:</span><span class="o">:</span><span class="n">getCellType</span><span class="o">).</span><span class="na">allMatch</span><span class="o">(</span><span class="n">cellType</span> <span class="o">-&gt;</span> <span class="n">cellType</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">BLANK</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">continue</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 原数据</span>
-        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">insertOriginalMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">&lt;&gt;();</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">index</span><span class="o">.</span><span class="na">parallelStream</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="n">i</span><span class="o">-&gt;{</span>
-                <span class="c1">// 单元格值</span>
-                <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="na">getCell</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-                <span class="c1">// 键</span>
-                <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">tableHeader</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">cell</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">insertOriginalMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="s">""</span><span class="o">);</span>
-                    <span class="k">return</span><span class="o">;</span>
-                <span class="o">}</span>
-                <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">excelService</span><span class="o">.</span><span class="na">getValue</span><span class="o">(</span><span class="n">cell</span><span class="o">);</span>
-                <span class="n">excelDataMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
-            <span class="o">});</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"数据类型错误："</span><span class="o">+</span><span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">(),</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 插入原表的数据</span>
-        <span class="n">insertOriginal</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">insertOriginal</span><span class="o">);</span>
-        <span class="c1">// 如果要插入明细表的数据达到500条则开始插入操作。</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">insertUploadDetail</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">insertOriginal</span><span class="o">(...);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="c1">// 将剩余的数据插入</span>
-    <span class="n">insertOriginal</span><span class="o">(...);</span>
-<span class="o">});</span>
-</code></pre></div></div>
-
-<p>导入还可能需要校验数据的合法性，以及数组类型，或者上传明细记录等业务处理，不一一展示。</p>
-
-<p>注意并行流导致的共享变量写入问题，可能导致数据丢失。</p>
-
-<h3 id="文本读取时变为浮点数">文本读取时变为浮点数</h3>
-
-<p>在 Excel 文件中，尤其是对于大型数字（如手机号码、身份证号码等），有时它们会被自动识别为数值类型（<code class="language-plaintext highlighter-rouge">NUMERIC</code>），但实际上你需要将它们作为文本来处理。因为 Excel 会将大数字（如 <code class="language-plaintext highlighter-rouge">18844344316</code>）转换为 <code class="language-plaintext highlighter-rouge">double</code>，可能会失去精度，或者会自动以科学计数法（如 <code class="language-plaintext highlighter-rouge">1.8844344316E10</code>）显示。</p>
-
-<p>为了确保读取正确的文本，可以尝试以下几种方法来获取单元格中的值：</p>
-
-<p><strong>检查单元格是否为文本类型</strong></p>
-
-<p>如果数据在 Excel 中是文本格式（即没有被误识别为数值），你可以直接读取为字符串。对于 <code class="language-plaintext highlighter-rouge">NUMERIC</code> 类型的单元格，你需要检查其值是否为 <code class="language-plaintext highlighter-rouge">double</code>，然后转回为字符串。</p>
-
-<p><strong>强制将 <code class="language-plaintext highlighter-rouge">NUMERIC</code> 类型转为字符串</strong></p>
-
-<p>如果遇到的是 <code class="language-plaintext highlighter-rouge">NUMERIC</code> 类型的单元格，并且该单元格的内容应该是一个大数字（如电话号码），可以使用以下方法将其读取为字符串，而不是 <code class="language-plaintext highlighter-rouge">double</code>：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.apache.poi.ss.usermodel.*</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">java.text.DecimalFormat</span><span class="o">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExcelReader</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 假设 cell 是当前单元格</span>
-        <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="o">...;</span>
-
-        <span class="c1">// 获取单元格类型</span>
-        <span class="nc">CellType</span> <span class="n">type</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getCellType</span><span class="o">();</span>
-
-        <span class="c1">// 值</span>
-        <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">STRING</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果是字符串类型</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getStringCellValue</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">NUMERIC</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果是数字类型，处理为字符串</span>
-            <span class="kt">double</span> <span class="n">numericValue</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getNumericCellValue</span><span class="o">();</span>
-
-            <span class="c1">// 使用 DecimalFormat 强制转换为字符串，不进行科学计数法</span>
-            <span class="nc">DecimalFormat</span> <span class="n">df</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DecimalFormat</span><span class="o">(</span><span class="s">"0"</span><span class="o">);</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">numericValue</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"单元格的值: "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>使用 <code class="language-plaintext highlighter-rouge">DataFormatter</code> 来处理</strong></p>
-
-<p><code class="language-plaintext highlighter-rouge">DataFormatter</code> 是 Apache POI 提供的一个工具，它可以根据单元格的实际显示格式来读取数据。这对于处理数值格式化问题特别有用，尤其是在数据被自动转换为数值类型时。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.apache.poi.ss.usermodel.*</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.poi.ss.util.*</span><span class="o">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExcelReader</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 假设 cell 是当前单元格</span>
-        <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="o">...;</span>
-
-        <span class="c1">// 使用 DataFormatter 获取值</span>
-        <span class="nc">DataFormatter</span> <span class="n">dataFormatter</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DataFormatter</span><span class="o">();</span>
-        <span class="nc">String</span> <span class="n">cellValue</span> <span class="o">=</span> <span class="n">dataFormatter</span><span class="o">.</span><span class="na">formatCellValue</span><span class="o">(</span><span class="n">cell</span><span class="o">);</span>
-
-        <span class="c1">// 输出读取的单元格值</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"单元格的值: "</span> <span class="o">+</span> <span class="n">cellValue</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>设置 Excel 中的单元格格式</strong></p>
-
-<p>如果你控制 Excel 文件的创建，确保该列的格式设置为文本格式。这可以避免 Excel 自动将大数字识别为 <code class="language-plaintext highlighter-rouge">double</code>。</p>
-
-<p>在 Apache POI 中，可以设置单元格格式为文本：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">CellStyle</span> <span class="n">cellStyle</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="na">createCellStyle</span><span class="o">();</span>
-<span class="nc">DataFormat</span> <span class="n">format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="na">createDataFormat</span><span class="o">();</span>
-<span class="n">cellStyle</span><span class="o">.</span><span class="na">setDataFormat</span><span class="o">(</span><span class="n">format</span><span class="o">.</span><span class="na">getFormat</span><span class="o">(</span><span class="s">"@"</span><span class="o">));</span> <span class="c1">// "@" 表示文本格式</span>
-<span class="n">cell</span><span class="o">.</span><span class="na">setCellStyle</span><span class="o">(</span><span class="n">cellStyle</span><span class="o">);</span>
-</code></pre></div></div>
-
-<p><strong>强制读取为字符串</strong></p>
-
-<p>如果你确定单元格中的数据应该是文本（如电话号码），即使 Excel 将其处理为数值类型，你也可以通过 <code class="language-plaintext highlighter-rouge">getStringCellValue</code> 强制将其作为字符串读取。为了确保数字不被科学计数法转换，你可以先将 <code class="language-plaintext highlighter-rouge">NUMERIC</code> 类型转换为字符串。</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">NUMERIC</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nc">String</span> <span class="n">cellText</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">cell</span><span class="o">.</span><span class="na">getNumericCellValue</span><span class="o">());</span>
-    <span class="c1">// 如果 cellText 显示为科学计数法，可以通过 String.format 转换成标准格式</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%.0f"</span><span class="o">,</span> <span class="n">cell</span><span class="o">.</span><span class="na">getNumericCellValue</span><span class="o">());</span>
-<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">STRING</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getStringCellValue</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><strong>读取前将单元格设置为文本类型读取</strong></p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="na">setCellType</span><span class="o">(</span><span class="nc">CellType</span><span class="o">.</span><span class="na">STRING</span><span class="o">);</span> 
-</code></pre></div></div>
-
-<p>总结：</p>
-
-<ol>
-  <li><strong>对于数字类型（<code class="language-plaintext highlighter-rouge">NUMERIC</code>），使用 <code class="language-plaintext highlighter-rouge">DecimalFormat</code></strong> 来确保数值以文本形式显示，避免科学计数法。</li>
-  <li><strong>使用 <code class="language-plaintext highlighter-rouge">DataFormatter</code></strong>，它能够智能处理数值与文本类型，并确保读取时按照实际显示格式处理。</li>
-  <li><strong>强制读取为文本</strong>，特别是对于像电话号码、身份证号等数据，不应将其当作数字类型处理，避免出现精度丢失或科学计数法的情况。</li>
-</ol>
-
-<h3 id="完整代码">完整代码</h3>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.ilw.formflowprovider.center.service.other</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">com.github.pjfanning.xlsx.StreamingReader</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">lombok.extern.slf4j.Slf4j</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.poi.ss.usermodel.*</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.poi.xssf.streaming.SXSSFWorkbook</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Service</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.io.InputStream</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.io.OutputStream</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.Iterator</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.function.BiConsumer</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.stream.Collectors</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.stream.StreamSupport</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">poi</span><span class="o">.</span><span class="na">xssf</span><span class="o">.</span><span class="na">streaming</span><span class="o">.</span><span class="na">SXSSFWorkbook</span><span class="o">.</span><span class="na">DEFAULT_WINDOW_SIZE</span><span class="o">;</span>
-
-<span class="cm">/**
- * Excel导出服务层
- * @author aotmd
- * @version 1.0
- * @date 2024/11/20 11:05
- */</span>
-<span class="nd">@Service</span>
-<span class="nd">@Slf4j</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExcelService</span> <span class="o">{</span>
-    <span class="cm">/** 在刷新之前保留在内存中的行数，请参见上文。 */</span>
-    <span class="kd">private</span> <span class="kt">int</span> <span class="n">rowAccessWindowSize</span> <span class="o">=</span> <span class="no">DEFAULT_WINDOW_SIZE</span><span class="o">;</span>
-
-    <span class="cm">/**
-     * 设置写操作，在刷新之前保留在内存中的行数
-     * @param rowAccessWindowSize 在刷新之前保留在内存中的行数
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRowAccessWindowSize</span><span class="o">(</span><span class="kt">int</span> <span class="n">rowAccessWindowSize</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">rowAccessWindowSize</span> <span class="o">=</span> <span class="n">rowAccessWindowSize</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 导出Excel
-     * @param os 输出流
-     * @param chineseTableHeader 中文表头
-     * @param callback 回调
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportExcel</span><span class="o">(</span><span class="nc">OutputStream</span> <span class="n">os</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">chineseTableHeader</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">Sheet</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="cm">/*设置页码*/</span>
-        <span class="c1">// 创建Excel工作簿</span>
-        <span class="k">try</span> <span class="o">(</span><span class="nc">SXSSFWorkbook</span> <span class="n">wb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SXSSFWorkbook</span><span class="o">(</span><span class="n">rowAccessWindowSize</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nc">Sheet</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createSheet</span><span class="o">(</span><span class="s">"Sheet1"</span><span class="o">);</span>
-            <span class="c1">// 设置每列的宽度</span>
-            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">chineseTableHeader</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="n">sheet</span><span class="o">.</span><span class="na">setColumnWidth</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="mi">5000</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c1">// 创建一个CellStyle对象，用于设置加粗样式</span>
-            <span class="nc">CellStyle</span> <span class="n">headerCellStyle</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createCellStyle</span><span class="o">();</span>
-            <span class="nc">Font</span> <span class="n">headerFont</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="na">createFont</span><span class="o">();</span>
-            <span class="n">headerFont</span><span class="o">.</span><span class="na">setBold</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>  <span class="c1">// 设置加粗</span>
-            <span class="n">headerCellStyle</span><span class="o">.</span><span class="na">setFont</span><span class="o">(</span><span class="n">headerFont</span><span class="o">);</span>  <span class="c1">// 将加粗字体应用到样式中</span>
-
-            <span class="c1">// 写入表头</span>
-            <span class="nc">Row</span> <span class="n">headerRow</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">createRow</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-            <span class="kt">int</span> <span class="n">colIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">chineseTableHeader</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">headerRow</span><span class="o">.</span><span class="na">createCell</span><span class="o">(</span><span class="n">colIndex</span><span class="o">++);</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-                <span class="n">cell</span><span class="o">.</span><span class="na">setCellStyle</span><span class="o">(</span><span class="n">headerCellStyle</span><span class="o">);</span>  <span class="c1">// 应用加粗样式</span>
-            <span class="o">}</span>
-            <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">sheet</span><span class="o">);</span>
-            <span class="n">wb</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">os</span><span class="o">);</span>
-            <span class="n">os</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-            <span class="n">os</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导出数据抛出异常"</span><span class="o">,</span><span class="n">e</span><span class="o">);</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导出数据抛出异常"</span><span class="o">,</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 导入Excel
-     * @param is 输入流
-     * @param callback 回调
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">importExcel</span><span class="o">(</span><span class="nc">InputStream</span> <span class="n">is</span><span class="o">,</span> <span class="nc">BiConsumer</span><span class="o">&lt;</span><span class="nc">Sheet</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 使用StreamingReader包装后，就只能使用流来操作行了，不能指定获取指定行了</span>
-        <span class="k">try</span> <span class="o">(</span><span class="nc">Workbook</span> <span class="n">workbook</span> <span class="o">=</span> <span class="nc">StreamingReader</span><span class="o">.</span><span class="na">builder</span><span class="o">().</span><span class="na">rowCacheSize</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>    <span class="c1">// 设置内存中保持的行数，默认是10</span>
-                <span class="o">.</span><span class="na">bufferSize</span><span class="o">(</span><span class="mi">4096</span><span class="o">)</span><span class="c1">// 设置读取 InputStream 时的缓冲区大小（字节）</span>
-                <span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">is</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nc">Sheet</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="na">getSheetAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="n">sheet</span><span class="o">.</span><span class="na">getLastRowNum</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入的数据查过10000行"</span><span class="o">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导入的数据查过10000行"</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Row</span><span class="o">&gt;</span> <span class="n">rowIterator</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
-            <span class="c1">// 获取数据的表头,第一行</span>
-            <span class="nc">Row</span> <span class="n">r</span> <span class="o">=</span> <span class="n">rowIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-
-            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span> <span class="o">=</span> <span class="nc">StreamSupport</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="na">spliterator</span><span class="o">(),</span> <span class="kc">false</span><span class="o">)</span>
-                    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Cell:</span><span class="o">:</span><span class="n">getStringCellValue</span><span class="o">)</span>
-                    <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
-
-            <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">sheet</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入时发生异常：{}"</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"导入时发生异常：{}"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 写入数据行到Excel
-     *
-     * @param sheet       excel对象
-     * @param data        数据
-     * @param fieldHeader 属性key
-     * @param rowIndex    第几行,注意最后返回的是新行
-     */</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">writeDataRowsToExcel</span><span class="o">(</span><span class="nc">Sheet</span> <span class="n">sheet</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">data</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldHeader</span><span class="o">,</span> <span class="kt">int</span> <span class="n">rowIndex</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">int</span> <span class="n">colIndex</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span><span class="nc">Object</span><span class="o">&gt;</span> <span class="n">line</span> <span class="o">:</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">Row</span> <span class="n">dataRow</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="na">createRow</span><span class="o">(</span><span class="n">rowIndex</span><span class="o">++);</span>
-            <span class="n">colIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">titleKey</span> <span class="o">:</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Cell</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">dataRow</span><span class="o">.</span><span class="na">createCell</span><span class="o">(</span><span class="n">colIndex</span><span class="o">++);</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="n">line</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">titleKey</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>
-                    <span class="k">continue</span><span class="o">;</span>
-                <span class="o">}</span>
-                <span class="nc">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">titleKey</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="n">o</span><span class="o">;</span>
-                    <span class="nc">String</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
-                    <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">String</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Integer</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">Integer</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">cell</span><span class="o">.</span><span class="na">setCellValue</span><span class="o">((</span><span class="nc">Double</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">rowIndex</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 获取原值
-     *
-     * @param cell 单元格
-     * @return
-     */</span>
-    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">getValue</span><span class="o">(</span><span class="nc">Cell</span> <span class="n">cell</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 单元格类型</span>
-        <span class="nc">CellType</span> <span class="n">type</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getCellType</span><span class="o">();</span>
-        <span class="c1">// 值</span>
-        <span class="nc">Object</span> <span class="n">value</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">NUMERIC</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 字符串或数字类型</span>
-            <span class="kt">double</span> <span class="n">numericCellValue</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getNumericCellValue</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">numericCellValue</span> <span class="o">==</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">numericCellValue</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">numericCellValue</span><span class="o">;</span><span class="c1">// 转为整数</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">numericCellValue</span><span class="o">;</span> <span class="c1">//保持为浮动数</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="o">==</span> <span class="nc">CellType</span><span class="o">.</span><span class="na">STRING</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="na">getStringCellValue</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<h2 id="csv导入导出">CSV导入导出</h2>
-
-<h3 id="导出-1">导出</h3>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
-<span class="nd">@Service</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CsvService</span> <span class="o">{</span>
-
-    <span class="cm">/**
-     * 导出CSV
-     * @param tableHeader 表头
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportCsv</span><span class="o">(</span><span class="nc">OutputStream</span> <span class="n">os</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">BufferedWriter</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="c1">// 写入BOM头，通知Excel使用UTF-8编码</span>
-        <span class="n">os</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xEF</span><span class="o">,</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xBB</span><span class="o">,</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xBF</span> <span class="o">});</span>
-        <span class="c1">// 将BufferedWriter包裹在BufferedOutputStream中</span>
-        <span class="c1">// 写入 CSV 文件</span>
-        <span class="c1">// 32KB缓冲区</span>
-        <span class="k">try</span> <span class="o">(</span><span class="nc">BufferedWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="n">os</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">),</span><span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 写入表头</span>
-            <span class="nc">String</span> <span class="n">headerLine</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">headerLine</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">newLine</span><span class="o">();</span>  <span class="c1">// 换行</span>
-            <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">writer</span><span class="o">);</span><span class="c1">//执行逻辑</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>  <span class="c1">// 确保所有数据都写入到响应流</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导出CSV数据抛出异常"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 写入CSV的数据（带转义处理）
-     * @param writer 输出流
-     * @param data 数据（数组）
-     * @param fieldHeader 字段名
-     * @throws IOException
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">writeCsvData</span><span class="o">(</span><span class="nc">BufferedWriter</span> <span class="n">writer</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">data</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">:</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">StringBuilder</span> <span class="n">line</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">field</span> <span class="o">:</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">rowData</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">field</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"\"\""</span><span class="o">);</span>  <span class="c1">// 对空值进行转义处理</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nc">String</span> <span class="n">valueStr</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="n">value</span><span class="o">;</span>
-                        <span class="n">valueStr</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
-                    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
-                        <span class="n">valueStr</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
-                    <span class="o">}</span>
-                    <span class="c1">// 对字段值进行转义处理</span>
-                    <span class="n">valueStr</span> <span class="o">=</span> <span class="n">escapeCsvValue</span><span class="o">(</span><span class="n">valueStr</span><span class="o">);</span>
-                    <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"\""</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">valueStr</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"\""</span><span class="o">);</span>  <span class="c1">// 用双引号包裹数据</span>
-                <span class="o">}</span>
-                <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">","</span><span class="o">);</span>  <span class="c1">// 每个字段后面加上逗号</span>
-            <span class="o">}</span>
-            <span class="c1">// 移除行尾的逗号</span>
-            <span class="n">line</span><span class="o">.</span><span class="na">deleteCharAt</span><span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">newLine</span><span class="o">();</span>  <span class="c1">// 换行</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 转义CSV中的特殊字符
-     * @param value 字段值
-     * @return 转义后的字符串
-     */</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">escapeCsvValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 替换双引号为两个双引号</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\""</span><span class="o">,</span> <span class="s">"\"\""</span><span class="o">);</span>
-        <span class="c1">// 去除可能的换行符和回车符</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\n"</span><span class="o">,</span> <span class="s">" "</span><span class="o">).</span><span class="na">replace</span><span class="o">(</span><span class="s">"\r"</span><span class="o">,</span> <span class="s">" "</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>注意设置BOM头，强制指定编码。使用Apipost接口调试时，会自动忽略掉BOM头，不用担心，改用浏览器调试就有正常的BOM头。</p>
-
-<p>使用示例：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">csvService</span><span class="o">.</span><span class="na">exportCsv</span><span class="o">(</span><span class="n">outputStream</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">,</span> <span class="o">(</span><span class="n">writer</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">data0</span><span class="o">;</span>
-    <span class="c1">// 分页获取数据并追加写入CSV文件</span>
-    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxPage</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="o">...</span>
-        <span class="n">csvService</span><span class="o">.</span><span class="na">writeCsvData</span><span class="o">(</span><span class="n">writer</span><span class="o">,</span> <span class="n">result</span><span class="o">,</span> <span class="n">keys</span><span class="o">);</span>
-        <span class="n">writer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">});</span>
-</code></pre></div></div>
-
-<h3 id="导入-1">导入</h3>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**导入每批次处理1000条数据*/</span>
-<span class="kd">private</span> <span class="kt">int</span> <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
-
-<span class="cm">/**
- * 设置导入每次处理数量
- * @param batchSize 处理数量
- */</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setBatchSize</span><span class="o">(</span><span class="kt">int</span> <span class="n">batchSize</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">this</span><span class="o">.</span><span class="na">batchSize</span> <span class="o">=</span> <span class="n">batchSize</span><span class="o">;</span>
-<span class="o">}</span>
-<span class="cm">/**
- * 导入CSV数据
- * @param inputStream 输入流
- * @param callback 处理每行数据的回调函数
- * @throws IOException
- */</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">importCsv</span><span class="o">(</span><span class="nc">InputStream</span> <span class="n">inputStream</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">(</span><span class="nc">BufferedReader</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">inputStream</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">)))</span> <span class="o">{</span>
-        <span class="c1">// 跳过BOM头</span>
-        <span class="n">reader</span><span class="o">.</span><span class="na">mark</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">()</span> <span class="o">!=</span> <span class="mh">0xEF</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">reader</span><span class="o">.</span><span class="na">reset</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="c1">// 读取表头</span>
-        <span class="nc">String</span> <span class="n">headerLine</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fileHeader</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">headerLine</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">","</span><span class="o">));</span>
-
-        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">dataList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-        <span class="nc">String</span> <span class="n">line</span><span class="o">;</span>
-        <span class="c1">// 每批次处理1000条数据</span>
-        <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
-        <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-
-        <span class="c1">// 逐行读取并处理CSV数据</span>
-        <span class="k">while</span> <span class="o">((</span><span class="n">line</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">=</span> <span class="n">parseCsvRow</span><span class="o">(</span><span class="n">line</span><span class="o">,</span> <span class="n">fileHeader</span><span class="o">);</span>
-            <span class="n">dataList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">rowData</span><span class="o">);</span>
-
-            <span class="c1">// 每处理完一个批次数据，调用回调函数</span>
-            <span class="k">if</span> <span class="o">(++</span><span class="n">count</span> <span class="o">%</span> <span class="n">batchSize</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">dataList</span><span class="o">));</span>
-                <span class="n">dataList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span> <span class="c1">// 清空当前批次数据</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 处理剩余的不足一批的数据</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">dataList</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-            <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">dataList</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入CSV数据抛出异常"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">"导入CSV文件时出现错误"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="cm">/**
- * 解析CSV每行数据并映射为Map
- * @param line CSV中的一行数据
- * @param tableHeader 表头
- * @return 行数据的Map
- */</span>
-<span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">parseCsvRow</span><span class="o">(</span><span class="nc">String</span> <span class="n">line</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="nc">String</span><span class="o">[]</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">","</span><span class="o">);</span>
-    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tableHeader</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-        <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">tableHeader</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-        <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">fields</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-
-        <span class="c1">// 处理转义字符</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">unescapeCsvValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
-        <span class="n">rowData</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="n">rowData</span><span class="o">;</span>
-<span class="o">}</span>
-
-<span class="cm">/**
- * 转义CSV中的特殊字符（例如，双引号、换行符等）
- * @param value 字段值
- * @return 还原转义后的字符串
- */</span>
-<span class="kd">private</span> <span class="nc">String</span> <span class="nf">unescapeCsvValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 去除双引号</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"\""</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s">"\""</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="c1">// 替换双引号为一个双引号</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\"\""</span><span class="o">,</span> <span class="s">"\""</span><span class="o">);</span>
-    <span class="c1">// 去除换行符和回车符</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">" "</span><span class="o">,</span> <span class="s">"\n"</span><span class="o">).</span><span class="na">replace</span><span class="o">(</span><span class="s">" "</span><span class="o">,</span> <span class="s">"\r"</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>使用示例：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">csvService</span><span class="o">.</span><span class="na">importCsv</span><span class="o">(</span><span class="n">csvInputStream</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">,</span> <span class="n">dataList</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="c1">// 这里处理导入的数据，比如保存到数据库</span>
-    <span class="n">dataList</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="n">row</span> <span class="o">-&gt;</span> <span class="o">{</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"导入的数据："</span> <span class="o">+</span> <span class="n">row</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">});</span>
-</code></pre></div></div>
-
-<h3 id="完整代码-1">完整代码</h3>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">com.ilw.formflowprovider.center.service.other</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">lombok.extern.slf4j.Slf4j</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Service</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.nio.charset.StandardCharsets</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
-
-<span class="cm">/**
- * CSV导出服务层
- * @author aotmd
- * @version 1.0
- * @date 2024/11/20 10:49
- */</span>
-<span class="nd">@Slf4j</span>
-<span class="nd">@Service</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CsvService</span> <span class="o">{</span>
-    <span class="cm">/**导入每批次处理1000条数据*/</span>
-    <span class="kd">private</span> <span class="kt">int</span> <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
-
-    <span class="cm">/**
-     * 设置导入每次处理数量
-     * @param batchSize 处理数量
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setBatchSize</span><span class="o">(</span><span class="kt">int</span> <span class="n">batchSize</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">batchSize</span> <span class="o">=</span> <span class="n">batchSize</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 导出CSV
-     * @param tableHeader 表头
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportCsv</span><span class="o">(</span><span class="nc">OutputStream</span> <span class="n">os</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">BufferedWriter</span><span class="o">&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="c1">// 写入BOM头，通知Excel使用UTF-8编码</span>
-        <span class="n">os</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xEF</span><span class="o">,</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xBB</span><span class="o">,</span> <span class="o">(</span><span class="kt">byte</span><span class="o">)</span> <span class="mh">0xBF</span> <span class="o">});</span>
-        <span class="c1">// 将BufferedWriter包裹在BufferedOutputStream中</span>
-        <span class="c1">// 写入 CSV 文件</span>
-        <span class="c1">// 32KB缓冲区</span>
-        <span class="k">try</span> <span class="o">(</span><span class="nc">BufferedWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="n">os</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">),</span><span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 写入表头</span>
-            <span class="nc">String</span> <span class="n">headerLine</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">tableHeader</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">headerLine</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">newLine</span><span class="o">();</span>  <span class="c1">// 换行</span>
-            <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">writer</span><span class="o">);</span><span class="c1">//执行逻辑</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>  <span class="c1">// 确保所有数据都写入到响应流</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导出CSV数据抛出异常"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 写入CSV的数据（带转义处理）
-     * @param writer 输出流
-     * @param data 数据（数组）
-     * @param fieldHeader 字段名
-     * @throws IOException
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">writeCsvData</span><span class="o">(</span><span class="nc">BufferedWriter</span> <span class="n">writer</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">data</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">:</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nc">StringBuilder</span> <span class="n">line</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">field</span> <span class="o">:</span> <span class="n">fieldHeader</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">rowData</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">field</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"\"\""</span><span class="o">);</span>  <span class="c1">// 对空值进行转义处理</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nc">String</span> <span class="n">valueStr</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="nc">List</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="n">value</span><span class="o">;</span>
-                        <span class="n">valueStr</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">","</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
-                    <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
-                        <span class="n">valueStr</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
-                    <span class="o">}</span>
-                    <span class="c1">// 对字段值进行转义处理</span>
-                    <span class="n">valueStr</span> <span class="o">=</span> <span class="n">escapeCsvValue</span><span class="o">(</span><span class="n">valueStr</span><span class="o">);</span>
-                    <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"\""</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">valueStr</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"\""</span><span class="o">);</span>  <span class="c1">// 用双引号包裹数据</span>
-                <span class="o">}</span>
-                <span class="n">line</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">","</span><span class="o">);</span>  <span class="c1">// 每个字段后面加上逗号</span>
-            <span class="o">}</span>
-            <span class="c1">// 移除行尾的逗号</span>
-            <span class="n">line</span><span class="o">.</span><span class="na">deleteCharAt</span><span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">line</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
-            <span class="n">writer</span><span class="o">.</span><span class="na">newLine</span><span class="o">();</span>  <span class="c1">// 换行</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 转义CSV中的特殊字符
-     * @param value 字段值
-     * @return 转义后的字符串
-     */</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">escapeCsvValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 替换双引号为两个双引号</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\""</span><span class="o">,</span> <span class="s">"\"\""</span><span class="o">);</span>
-        <span class="c1">// 去除可能的换行符和回车符</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\n"</span><span class="o">,</span> <span class="s">" "</span><span class="o">).</span><span class="na">replace</span><span class="o">(</span><span class="s">"\r"</span><span class="o">,</span> <span class="s">" "</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-    <span class="o">}</span>
-
-
-    <span class="cm">/**
-     * 导入CSV数据
-     * @param inputStream 输入流
-     * @param callback 处理每行数据的回调函数
-     * @throws IOException
-     */</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">importCsv</span><span class="o">(</span><span class="nc">InputStream</span> <span class="n">inputStream</span><span class="o">,</span> <span class="nc">ConsumerWithException</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;&gt;</span> <span class="n">callback</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-        <span class="k">try</span> <span class="o">(</span><span class="nc">BufferedReader</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">inputStream</span><span class="o">,</span> <span class="nc">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">)))</span> <span class="o">{</span>
-            <span class="c1">// 跳过BOM头</span>
-            <span class="n">reader</span><span class="o">.</span><span class="na">mark</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">()</span> <span class="o">!=</span> <span class="mh">0xEF</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">reader</span><span class="o">.</span><span class="na">reset</span><span class="o">();</span>
-            <span class="o">}</span>
-            <span class="c1">// 读取表头</span>
-            <span class="nc">String</span> <span class="n">headerLine</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
-            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">fileHeader</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">headerLine</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">","</span><span class="o">));</span>
-
-            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">dataList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-            <span class="nc">String</span> <span class="n">line</span><span class="o">;</span>
-            <span class="c1">// 每批次处理1000条数据</span>
-            <span class="n">batchSize</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
-            <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-
-            <span class="c1">// 逐行读取并处理CSV数据</span>
-            <span class="k">while</span> <span class="o">((</span><span class="n">line</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">=</span> <span class="n">parseCsvRow</span><span class="o">(</span><span class="n">line</span><span class="o">,</span> <span class="n">fileHeader</span><span class="o">);</span>
-                <span class="n">dataList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">rowData</span><span class="o">);</span>
-
-                <span class="c1">// 每处理完一个批次数据，调用回调函数</span>
-                <span class="k">if</span> <span class="o">(++</span><span class="n">count</span> <span class="o">%</span> <span class="n">batchSize</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">dataList</span><span class="o">));</span>
-                    <span class="n">dataList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span> <span class="c1">// 清空当前批次数据</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c1">// 处理剩余的不足一批的数据</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">dataList</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">callback</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">dataList</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"导入CSV数据抛出异常"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">"导入CSV文件时出现错误"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 解析CSV每行数据并映射为Map
-     * @param line CSV中的一行数据
-     * @param tableHeader 表头
-     * @return 行数据的Map
-     */</span>
-    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="nf">parseCsvRow</span><span class="o">(</span><span class="nc">String</span> <span class="n">line</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">tableHeader</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">rowData</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
-        <span class="nc">String</span><span class="o">[]</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">","</span><span class="o">);</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tableHeader</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">tableHeader</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-            <span class="nc">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">fields</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-
-            <span class="c1">// 处理转义字符</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">unescapeCsvValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
-            <span class="n">rowData</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">rowData</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="cm">/**
-     * 转义CSV中的特殊字符（例如，双引号、换行符等）
-     * @param value 字段值
-     * @return 还原转义后的字符串
-     */</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">unescapeCsvValue</span><span class="o">(</span><span class="nc">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 去除双引号</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"\""</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s">"\""</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">value</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 替换双引号为一个双引号</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">"\"\""</span><span class="o">,</span> <span class="s">"\""</span><span class="o">);</span>
-        <span class="c1">// 去除换行符和回车符</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">replace</span><span class="o">(</span><span class="s">" "</span><span class="o">,</span> <span class="s">"\n"</span><span class="o">).</span><span class="na">replace</span><span class="o">(</span><span class="s">" "</span><span class="o">,</span> <span class="s">"\r"</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
+</ul>]]></content><author><name>acteds</name></author><category term="Java" /><summary type="html"><![CDATA[Java笔记]]></summary></entry></feed>
