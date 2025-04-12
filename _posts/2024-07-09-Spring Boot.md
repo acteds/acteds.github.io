@@ -10,6 +10,8 @@ keywords: Java
 Spring Boot笔记，集成mybatis、使用spring-boot-devtools、打包、瘦身、Actuator、Profiles、Conditional、加载配置文件、禁用自动配置、Filter、生命周期、集成Open API、Redis、Artemis、RabbitMQ、Kafka。
 
 
+
+
 # Spring Boot
 
 Spring框架，它的主要功能包括IoC容器、AOP支持、事务支持、MVC开发以及强大的第三方集成功能等。而Spring Boot是一个基于Spring的套件，它帮我们预组装了Spring的一系列组件，以便以尽可能少的代码和配置来开发基于Spring的Java应用程序。
